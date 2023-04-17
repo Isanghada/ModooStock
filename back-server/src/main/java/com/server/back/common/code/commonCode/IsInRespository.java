@@ -1,2 +1,5 @@
-package com.server.back.common.code.commonCode;public enum IsInRespository {
+package com.server.back.common.code.commonCode;
+
+public enum IsInRespository {
+    Y,N;
 }
