@@ -45,7 +45,7 @@ const options = {
   weekday: 'long',
   day: 'numeric'
 };
-function Chatting ({ data }: { data: ChatPropsInterFace }) {
+function Chatting ({ data }: { data: ChatPropsInterFace })   {
   // const Chat = ( {usersNickName, roomName} : ChatPropsInterFace) => {
   const { usersNickName, roomName } = data;
   const dispatch = useAppDispatch();
