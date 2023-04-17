@@ -53,7 +53,7 @@ public class SpringSecurity {
 				"/swagger-resources", "/configuration/security",
 				"/swagger-ui.html", "/webjars/**", "/swagger/**",
 				"/swagger-ui/**")
-			.antMatchers("/") // TODO 잠시 열어둠 나중에 닫기
+			.antMatchers("/**") // TODO 잠시 열어둠 나중에 닫기
 //			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh")
 			.antMatchers(HttpMethod.POST, "/users");
 	}
@@ -86,7 +86,7 @@ public class SpringSecurity {
 			.authorizeRequests()
 //			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh").permitAll()
 //			.antMatchers(HttpMethod.POST, "/users").permitAll()
-			.antMatchers("/").permitAll()  // TODO 잠시 열어둠 나중에 닫기
+			.antMatchers("/**").permitAll()  // TODO 잠시 열어둠 나중에 닫기
 			.antMatchers("/swagger-resources/**", "/swagger-ui", "/swagger-ui/**").permitAll()
 
 			.anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
