@@ -11,14 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Api(tags = "유저 API")
 public class UserController {
 
-    UserService userService;
+    private final UserService userService;
 
     @PostMapping()
     @ApiOperation(value = "회원가입을 합니다.", notes = "")
