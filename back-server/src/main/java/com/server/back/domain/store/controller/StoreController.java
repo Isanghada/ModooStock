@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags="상점(가챠) API")
 public class StoreController {
     private final StoreService service;
-    @GetMapping
-    public String out(){
-        return "test";
-    }
+
     @PostMapping("/level/{assetLevel}")
     public ResponseEntity<ResultDto<AssetResDto>> gotchaAsset(@PathVariable String assetLevel){
-        AssetLevelType assetLevelType=AssetLevelType.of(assetLevel);
-        AssetResDto respnoseDto=service.createGotcha(assetLevelType);
+
+        AssetResDto respnoseDto=service.createGotcha(assetLevel);
         return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(respnoseDto));
     }
 }
