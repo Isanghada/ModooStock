@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 
-@Service
 @Log4j2
+@Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
