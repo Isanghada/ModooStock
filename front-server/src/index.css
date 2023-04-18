@@ -2,14 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @media (orientation: portrait) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
+@media screen and (orientation: portrait) {
+  body {
+    transform: rotate(90deg);
+    transform-origin: top left;
     width: 100vh;
     height: 100vw;
+    overflow-x: hidden;
     position: absolute;
-    top: 100%;
+    top: 0;
     left: 0;
   }
-} */
+}
