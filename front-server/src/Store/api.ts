@@ -37,7 +37,7 @@ export const everyStock = createApi({
   reducerPath: 'api',
   tagTypes: ['Api'],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'url주소',
+    baseUrl: process.env.REACT_APP_API_URL,
 
     // prepareHeaders(headers) {
     //   headers.set('accessToken', accessToken)
