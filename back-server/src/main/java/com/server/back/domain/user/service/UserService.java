@@ -1,16 +1,18 @@
 package com.server.back.domain.user.service;
 
-import com.server.back.domain.user.dto.UserInfoResDto;
-import com.server.back.domain.user.dto.UserResDto;
-import com.server.back.domain.user.dto.UsersModifyReqDto;
-import com.server.back.domain.user.dto.UsersRegisterReqDto;
+import com.server.back.domain.user.dto.*;
+import com.server.back.domain.user.entity.UserEntity;
 
 import java.util.List;
 
 public interface UserService {
+
+    UserEntity getUserById(Long id);
+    UserEntity getUserByNickname(String nickname);
+
     void createUser(UsersRegisterReqDto usersRegisterReqDto);
 
-    UserInfoResDto getUser();
+    UserInfoLoginResDto getLoginUser();
 
     Boolean checkAccount(String account);
 
@@ -23,4 +25,6 @@ public interface UserService {
     List<UserResDto> getUserList(String search);
 
     UserResDto getUserRandom();
+
+    UserInfoResDto getUser(String nickname);
 }

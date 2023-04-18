@@ -8,11 +8,16 @@ import lombok.Data;
 @Builder
 public class UserInfoResDto {
     private String nickname;
-    private Integer currentMoney;
-    private Float totalStockReturn;
+    private String profileImagePath;
+    private String introduction;
+    private Integer totalCash;
 
-    public static UserInfoResDto fromEntity(UserEntity xx) {
-        return UserInfoResDto.builder().build();
+    public static UserInfoResDto fromEntity(UserEntity user, Integer totalCash) {
+        return UserInfoResDto.builder()
+                .nickname(user.getNickname())
+                .profileImagePath(user.getProfileImagePath())
+                .introduction(user.getIntroduction())
+                .totalCash(totalCash)
+                .build();
     }
-
 }

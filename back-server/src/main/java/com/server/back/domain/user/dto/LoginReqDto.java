@@ -9,15 +9,10 @@ import lombok.NoArgsConstructor;
 /**
  * 로그인
  */
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginReqDto {
     private String account;
     private String password;
-
-    public UserEntity toEntity() {
-        return (UserEntity) new Object();
-    }
 }

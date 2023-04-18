@@ -1,10 +1,7 @@
 package com.server.back.domain.user.controller;
 
 import com.server.back.common.code.dto.ResultDto;
-import com.server.back.domain.user.dto.UserInfoResDto;
-import com.server.back.domain.user.dto.UserResDto;
-import com.server.back.domain.user.dto.UsersModifyReqDto;
-import com.server.back.domain.user.dto.UsersRegisterReqDto;
+import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,8 +29,8 @@ public class UserController {
 
     @GetMapping()
     @ApiOperation(value = "로그인한 유저 정보 반환합니다.", notes = "")
-    public ResponseEntity<ResultDto<UserInfoResDto>> getUser() {
-        UserInfoResDto user = userService.getUser();
+    public ResponseEntity<ResultDto<UserInfoLoginResDto>> getLoginUser() {
+        UserInfoLoginResDto user = userService.getLoginUser();
 
         return ResponseEntity.ok().body(ResultDto.of(user));
     }
@@ -86,6 +83,14 @@ public class UserController {
         UserResDto userResDto = userService.getUserRandom();
 
         return ResponseEntity.ok().body(ResultDto.of(userResDto));
+    }
+
+    @GetMapping("/info/{nickname}")
+    @ApiOperation(value = "방문한 회원 정보를 조회합니다.", notes = "")
+    public ResponseEntity<ResultDto<UserInfoResDto>> getUser(@PathVariable("nickname") String nickname) {
+        UserInfoResDto userInfoResDto = userService.getUser(nickname);
+
+        return ResponseEntity.ok().body(ResultDto.of(userInfoResDto));
     }
 
 

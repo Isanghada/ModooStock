@@ -4,8 +4,8 @@ import com.server.back.domain.user.entity.UserEntity;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -14,16 +14,15 @@ public class UserResDto {
     private String nickname;
     private String profileImagePath;
 
-    public static UserResDto fromEntity(UserEntity xx) {
-        return UserResDto.builder().build();
+    public static UserResDto fromEntity(UserEntity user) {
+        return UserResDto.builder()
+                .account(user.getAccount())
+                .nickname(user.getNickname())
+                .profileImagePath(user.getProfileImagePath())
+                .build();
     }
 
-    public static List<UserResDto> fromEnityList( List<UserEntity> xxList ){
-        List<UserResDto> result = new ArrayList<>();
-        for( UserEntity xx : xxList ) {
-            UserResDto xxResponseDto = UserResDto.fromEntity( xx );
-            result.add(xxResponseDto);
-        }
-        return result;
+    public static List<UserResDto> fromEnityList( List<UserEntity> userList ){
+        return userList.stream().map(UserResDto::fromEntity).collect(Collectors.toList());
     }
 }
