@@ -15,15 +15,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @RequiredArgsConstructor
 @Configuration
-@EnableRedisRepositories//Redis Repository 활성화
+@EnableRedisRepositories //Redis Repository 활성화
 public class RedisRepositoryConfig {
 
 	//lettuce
 	@Value("${spring.redis.host}")
-	private String redisHost;//redist host
+	private String redisHost; //redis host
 
 	@Value("${spring.redis.port}")
-	private int redisPort;//redist 포트 번호
+	private int redisPort; //redis 포트 번호
 
 	@Value("${spring.redis.password}")
 	private String redisPassword;
