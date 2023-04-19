@@ -1,12 +1,12 @@
 import { useGLTF } from '@react-three/drei';
-import { useRef } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useRef, useState } from 'react';
 
 function Bathroom({ len, pos, rot }: any): JSX.Element {
   const { nodes, materials }: any = useGLTF('/assets/Bathroom.gltf');
-  console.log(nodes);
-  console.log(materials);
+  const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
 
-  const ref = useRef(null);
+  const ref = useRef<any>(null);
 
   let cnt = -1;
   let geo: any = [];
@@ -40,6 +40,13 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
     );
   });
 
+  // size를 받아옴
+  const { size } = useThree();
+  useFrame(() => {
+    // 화면의 비율이 변경될 때마다 scale 값을 변경함
+    setScale(Math.max(size.width, size.height) * 0.0000122);
+  });
+
   return (
     <group
       ref={ref}
@@ -47,7 +54,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
         e.stopPropagation();
         console.log('집');
       }}>
-      <group position={pos} rotation={rot} scale={len}>
+      <group position={pos} rotation={rot} scale={scale}>
         {meshData}
       </group>
     </group>
