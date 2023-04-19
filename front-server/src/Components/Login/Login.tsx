@@ -40,7 +40,6 @@ function Login(): JSX.Element {
   //로그인 form 제출
   const onSubmitLoginForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // dispatch(loginAsync(loginAccount));
   };
 
   return (
