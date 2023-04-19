@@ -17,12 +17,12 @@ public class AssetEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String category;
     @Column(nullable = false)
     private String assetImagePath;
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(nullable = false)
     private AssetLevelType assetLevel;
 
 }

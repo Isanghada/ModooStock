@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 public interface AssetRepository extends JpaRepository<AssetEntity,Long> {
-    @Query(value = "SELECT * FROM asset WHERE asset_level = ?1 ORDER BY RAND() LIMIT = ?2", nativeQuery = true)
-    List<AssetEntity> findAllByAssetLevel(String assetLevelType,int limit);
+    @Query(value = "SELECT * FROM asset WHERE asset_level = :assetLevelType ORDER BY RAND() LIMIT :limitValue", nativeQuery = true)
+    List<AssetEntity> findAllByAssetLevelAndLimit(@Param("assetLevelType") String assetLevelType, @Param("limitValue") int limitValue);
 
 }
