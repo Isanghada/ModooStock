@@ -24,7 +24,7 @@ public class ChartEntity {
     private Integer priceBefore;
 
     @Column(nullable = false)
-    private Integer price_end;
+    private Integer priceEnd;
 
     @Column(nullable = false)
     private LocalDateTime date;
