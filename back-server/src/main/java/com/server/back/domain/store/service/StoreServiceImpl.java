@@ -18,6 +18,7 @@ import static com.server.back.domain.store.dto.AssetResDto.fromEntity;
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
+
     private final AssetRepository assetRepository;
 
     @Override
