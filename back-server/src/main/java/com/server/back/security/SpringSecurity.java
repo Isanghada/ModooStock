@@ -1,16 +1,11 @@
 package com.server.back.security;
 
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
 import com.server.back.config.JwtExceptionFilter;
 import com.server.back.config.JwtSecurityConfig;
-import com.server.back.domain.user.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -37,7 +32,6 @@ public class SpringSecurity {
 	private final JwtExceptionFilter jwtExceptionFilter;
 
 
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -53,7 +47,6 @@ public class SpringSecurity {
 				"/swagger-resources", "/configuration/security",
 				"/swagger-ui.html", "/webjars/**", "/swagger/**",
 				"/swagger-ui/**")
-//			.antMatchers("/**") // TODO 잠시 열어둠 나중에 닫기
 			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh")
 			.antMatchers(HttpMethod.POST, "/users");
 	}
@@ -87,8 +80,6 @@ public class SpringSecurity {
 			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh").permitAll()
 			.antMatchers(HttpMethod.POST, "/users").permitAll()
 			.antMatchers("/swagger-resources/**", "/swagger-ui", "/swagger-ui/**").permitAll()
-//			.antMatchers("/**").permitAll()  // TODO 잠시 열어둠 나중에 닫기
-
 			.anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
 			// JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
