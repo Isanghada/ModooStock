@@ -1,15 +1,15 @@
 package com.server.back.domain.user.controller;
 
 import com.server.back.common.code.dto.ResultDto;
-import com.server.back.domain.user.dto.UserInfoResDto;
-import com.server.back.domain.user.dto.UsersModifyReqDto;
-import com.server.back.domain.user.dto.UsersRegisterReqDto;
+import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -29,8 +29,8 @@ public class UserController {
 
     @GetMapping()
     @ApiOperation(value = "로그인한 유저 정보 반환합니다.", notes = "")
-    public ResponseEntity<ResultDto<UserInfoResDto>> getUser() {
-        UserInfoResDto user = userService.getUser();
+    public ResponseEntity<ResultDto<UserInfoLoginResDto>> getLoginUser() {
+        UserInfoLoginResDto user = userService.getLoginUser();
 
         return ResponseEntity.ok().body(ResultDto.of(user));
     }
@@ -67,5 +67,31 @@ public class UserController {
 
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
+
+
+    @GetMapping(params = {"search"})
+    @ApiOperation(value = "회원을 검색합니다.", notes = "")
+    public ResponseEntity<ResultDto<List<UserResDto>>> getUserList(@RequestParam("search") String search) {
+        List<UserResDto> userResDtoList = userService.getUserList(search);
+
+        return ResponseEntity.ok().body(ResultDto.of(userResDtoList));
+    }
+
+    @GetMapping("/random")
+    @ApiOperation(value = "랜덤 회원 조회합니다. (랜덤 방문)")
+    public ResponseEntity<ResultDto<UserResDto>> getUserRandom() {
+        UserResDto userResDto = userService.getUserRandom();
+
+        return ResponseEntity.ok().body(ResultDto.of(userResDto));
+    }
+
+    @GetMapping("/info/{nickname}")
+    @ApiOperation(value = "방문한 회원 정보를 조회합니다.", notes = "")
+    public ResponseEntity<ResultDto<UserInfoResDto>> getUser(@PathVariable("nickname") String nickname) {
+        UserInfoResDto userInfoResDto = userService.getUser(nickname);
+
+        return ResponseEntity.ok().body(ResultDto.of(userInfoResDto));
+    }
+
 
 }
