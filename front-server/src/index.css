@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @media screen and (orientation: portrait) {
   body {
     transform: rotate(90deg);
@@ -13,4 +14,20 @@
     top: 0;
     left: 0;
   }
+}
+
+/* 후보 1  */
+@font-face {
+  font-family: 'IBMPlexSansKR-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family : 'IBMPlexSansKR-Regular';
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none
 }
