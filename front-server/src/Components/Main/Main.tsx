@@ -19,8 +19,8 @@ function Main(): JSX.Element {
           <ambientLight intensity={0.5} />
           <pointLight distance={2000} position={10} power={8} />
 
-          {/* <Bathroom len={0.02} pos={[-0.2, 0, -15]} rot={[2.15, 0, 0.5]} /> */}
-          <Bathroom len={0.008} pos={[-0.2, -1.5, -1.8]} rot={[1.6, 0, 0]} />
+          <Bathroom len={0.022} pos={[-0.2, -6.65, -18]} rot={[1.43, 0, 0.1]} />
+          {/* <Bathroom len={0.008} pos={[-0.2, -1.5, -1.8]} rot={[1.6, 0, 0]} /> */}
           {/* <MyHomeAsset len={0.008} pos={[-0.2, -1.5, -1.8]} rot={[1.6, 0, 0]} /> */}
         </Canvas>
       </div>
