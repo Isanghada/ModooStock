@@ -7,6 +7,7 @@ function Layout(): JSX.Element {
         <div className="container relative flex w-full h-screen max-w-screen-xl mx-auto">
           <Outlet />
         </div>
+        {/* <div className='min-h-full bg-white w-[40vw]'></div> */}
       </div>
     </>
   );
