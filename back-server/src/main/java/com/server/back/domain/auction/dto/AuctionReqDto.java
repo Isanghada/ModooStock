@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AuctionReqDto {
     private Long userAssetId;
-    private int price;
+    private Integer price;
 
     public AuctionEntity toEntity(UserAssetEntity userAsset){
         return AuctionEntity.builder()

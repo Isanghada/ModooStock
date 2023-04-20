@@ -25,7 +25,7 @@ public class AuctionEntity extends CommonEntity {
     private UserAssetEntity userAsset;
 
     @Column(nullable = false)
-    private int auctionPrice;
+    private Integer auctionPrice;
 
     @Column(nullable = false)
     private IsCompleted isCompleted;
