@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByIdAndIsDeleted(long id, IsDeleted isDeleted);
+    Optional<UserEntity> findByIdAndIsDeleted(Long id, IsDeleted isDeleted);
 
     Optional<UserEntity> findByAccount(String account);
 

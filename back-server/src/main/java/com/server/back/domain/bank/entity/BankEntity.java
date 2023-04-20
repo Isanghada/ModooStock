@@ -23,4 +23,9 @@ public class BankEntity extends DealEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private IsCompleted isCompleted = IsCompleted.N;
+
+
+    public void setIsCompleted(IsCompleted isCompleted) {
+        this.isCompleted = isCompleted;
+    }
 }
