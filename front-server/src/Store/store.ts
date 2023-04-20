@@ -25,6 +25,16 @@ const loginStatus = createSlice({
     }
   }
 })
+// 회원가입 상태관리
+const signUpStatus = createSlice({
+  name: "signUpStatus",
+  initialState: false,
+  reducers: {
+    changeSignUpStatus(state, action) {
+      return state = action.payload
+    }
+  }
+})
 
 
 export const store = configureStore({
@@ -33,6 +43,7 @@ export const store = configureStore({
     [everyStock.reducerPath]: everyStock.reducer,
     // dictList: dictList.reducer,
     loginStatus: loginStatus.reducer,
+    signUpStatus: signUpStatus.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(everyStock.middleware),
 
@@ -43,6 +54,7 @@ setupListeners(store.dispatch)
 
 // export const { changeDictList } = dictList.actions;
 export const { changeLoginStatus } = loginStatus.actions;
+export const { changeSignUpStatus } = signUpStatus.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

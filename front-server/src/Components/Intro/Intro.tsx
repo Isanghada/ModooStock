@@ -12,6 +12,7 @@ function Intro(): JSX.Element {
     dispatch(changeLoginStatus(true));
     setShowLogin(false);
   };
+  // 로그인 창 닫기
   const closeLogIn = () => {
     dispatch(changeLoginStatus(false));
     setShowLogin(true)
