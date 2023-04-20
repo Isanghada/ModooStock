@@ -32,133 +32,65 @@ function Main(): JSX.Element {
 
   return (
     <>
-      {/* <div className="absolute flex items-center justify-center w-full h-full border-4">
-        <img
-          aria-label="마카롱"
-          className="absolute object-contain scale-110 mt-[21rem]"
-          src="/images/toys/floor.png"
-          alt=""
-        />
-        <img
-          aria-label="은행"
-          className="absolute z-10 object-contain w-[11rem] h-[11rem] top-20 right-1/2"
-          src="/images/toys/bank.png"
-          alt=""
-        />
-        <img
-          aria-label="정보상"
-          className="absolute z-10 object-contain w-[13rem] h-[13rem] top-32 right-[14rem]"
-          src="/images/toys/info.png"
-          alt=""
-        />
-        <img
-          aria-label="방문하기"
-          className="absolute z-10 object-contain w-[13rem] h-[13rem] top-44 left-56"
-          src="/images/toys/visit.png"
-          alt=""
-        />
-        <img
-          aria-label="랭킹"
-          className="absolute z-10 object-contain w-[9rem] h-[9rem] top-80 right-[15rem]"
-          src="/images/toys/rank.png"
-          alt=""
-        />
-        <img
-          aria-label="경매장"
-          className="absolute z-10 object-contain w-[15rem] h-[15rem] top-80 left-52"
-          src="/images/toys/auction.png"
-          alt=""
-        />
-        <img
-          aria-label="뽑기상점"
-          className="absolute z-10 object-contain w-[12rem] h-[12rem] bottom-0 right-1/2"
-          src="/images/toys/gatcha.png"
-          alt=""
-        />
-        <img
-          aria-label="주식거래소"
-          className="absolute z-10 object-contain w-[15rem] h-[15rem] bottom-10 right-44"
-          src="/images/toys/chart.png"
-          alt=""
-        />
-        <img
-          aria-label="가이드"
-          className="absolute left-0 z-10 object-contain w-[10rem] h-[10rem] bottom-0"
-          src="/images/toys/guide.png"
-          alt=""
-        />
-      </div>*/}
-
       <div className="items-center justify-between hidden w-full h-full max-w-screen-xl lg:flex">
-        {/* 1번 구역 */}
-        <div className="flex justify-center items-end w-[28%] h-full">
-          <div className="flex justify-between h-[87%] w-full">
-            <div className="flex flex-col justify-end items-start w-[40%] h-full border-black">
-              <div className="w-full h-4/5"></div>
-              <div className="h-auto">
-                <img
-                  aria-label="가이드"
-                  className="z-10"
-                  src="/images/toys/guide.png"
-                  alt=""
-                />
-              </div>
-              <div className="h-[3%]"></div>
+        <div className="flex justify-between items-center w-[28%] h-full">
+          <div className='flex justify-start items-end w-[40%] h-[80%] max-h-[49rem]'>
+            <div className="h-auto pb-5">
+              <img
+                aria-label="가이드"
+                className="z-10"
+                src="/images/toys/guide.png"
+                alt=""
+              />
             </div>
-            <div className="flex flex-col items-center justify-start w-[45%] h-full ">
-              {/* 빈칸 */}
-              <div className="h-[5%]"></div>
-              {/* 방문하기 */}
-              <div className="relative flex justify-end h-[30%]">
-                <img
+          </div>
+          <div className="w-[50%] h-[80%] max-h-[49rem]">
+            <div className="h-[20%]"></div>
+            <div className="flex justify-center h-[15%] w-full">
+              <img
                   aria-label="방문하기"
-                  className="z-10 h-full"
+                  className="z-10 h-full scale-150"
                   src="/images/toys/visit.png"
                   alt=""
                 />
-              </div>
-              {/* 빈칸 */}
-              <div className="h-[3%]"></div>
-              {/* 경매장 */}
-              <div className="relative w-full h-[23%]">
-                <img
-                  aria-label="경매장"
-                  className="z-10 h-full "
-                  src="/images/toys/auction.png"
-                  alt=""
-                />
-              </div>
-              {/* 빈칸 */}
-              <div className="h-[7%]"></div>
-              <div className="relative w-full h-[18%] flex justify-end">
-                <img
-                  aria-label="게임기"
-                  className="z-10 h-full"
-                  src="/images/toys/nintendoBorder.png"
-                  alt=""
-                />
-              </div>
-              {/* 빈칸 */}
-              <div className="h-auto"></div>
             </div>
+            <div className="h-[6%]"></div>
+            <div className="flex justify-center h-[18%] w-full">
+              <img
+                aria-label="경매장"
+                className="z-10 h-full scale-90"
+                src="/images/toys/auction.png"
+                alt=""
+              />
+            </div>
+            <div className="h-[10%]"></div>
+            <div className="flex justify-center h-[15%] w-full">
+              <img
+                aria-label="게임기"
+                className="z-10 h-full"
+                src="/images/toys/nintendoBorder.png"
+                alt=""
+              />
+            </div>
+            <div className="h-[10%]"></div>
           </div>
         </div>
         {/* 2번 구역 */}
         <div className="flex items-center justify-center h-full w-[44%] max-h-[49rem] relative">
-          <div className="absolute z-10 flex items-end justify-between w-full h-full ">
+          <div className="absolute z-10 flex items-end justify-between w-full h-full">
             <div className="flex flex-col items-end justify-start w-1/2 h-[92%]">
               <div className="flex justify-center h-[22%] w-full">
                 <img
-                  aria-label="가이드"
+                  aria-label="은행"
                   className="z-10 h-full"
                   src="/images/toys/bank.png"
                   alt=""
                 />
               </div>
               <div className="h-[52%]"></div>
-              <div className="flex justify-start h-[18%] w-[82%]">
+              <div className="flex justify-start h-[15%] w-[82%]">
                 <img
-                  aria-label="가이드"
+                  aria-label="뽑기 상점"
                   className="z-10 h-full"
                   src="/images/toys/gatcha.png"
                   alt=""
@@ -199,30 +131,30 @@ function Main(): JSX.Element {
         </div>
         {/* 3번 구역 */}
         <div className="flex justify-start items-center w-[28%] h-full">
-          <div className="w-[60%] h-[80%]">
-            <div className="h-[15%]"></div>
-            <div className="flex justify-center h-[17%] w-full">
+          <div className="w-[60%] h-[80%] max-h-[49rem]">
+            <div className="h-[20%]"></div>
+            <div className="flex justify-center h-[15%] w-full">
               <img
-                aria-label="가이드"
-                className="z-10 h-full"
+                aria-label="정보"
+                className="z-10 h-full scale-90"
                 src="/images/toys/info.png"
                 alt=""
               />
             </div>
             <div className="h-[6%]"></div>
-            <div className="flex justify-center h-[23%] w-full">
+            <div className="flex justify-center h-[18%] w-full">
               <img
-                aria-label="가이드"
-                className="z-10 h-full"
+                aria-label="랭킹"
+                className="z-10 h-full scale-90"
                 src="/images/toys/rank.png"
                 alt=""
               />
             </div>
             <div className="h-[10%]"></div>
-            <div className="flex justify-center h-[30%] w-full">
+            <div className="flex justify-center h-[25%] w-full">
               <img
-                aria-label="가이드"
-                className="z-10 h-full"
+                aria-label="주식 거래소"
+                className="z-10 h-full scale-90"
                 src="/images/toys/chart.png"
                 alt=""
               />
