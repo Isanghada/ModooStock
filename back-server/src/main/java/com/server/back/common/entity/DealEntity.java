@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -33,8 +32,5 @@ public class DealEntity extends CommonEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private DealType dealType;
-
-	@Column(nullable = false)
-	private LocalDateTime dealDate;
 
 }

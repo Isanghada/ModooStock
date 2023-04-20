@@ -2,7 +2,7 @@ package com.server.back.domain.bank.controller;
 
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.bank.dto.BankReqDto;
-import com.server.back.domain.bank.dto.MyBankListResDto;
+import com.server.back.domain.bank.dto.MyBankResDto;
 import com.server.back.domain.bank.dto.MyTotalResDto;
 import com.server.back.domain.bank.dto.TransferReqDto;
 import com.server.back.domain.bank.service.BankService;
@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bank")
@@ -35,18 +37,18 @@ public class BankController {
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
-    @GetMapping("/total")
+    @GetMapping("/list")
     @ApiOperation(value = "내 예금 리스트를 확인합니다.", notes = "")
-    public ResponseEntity<ResultDto<MyBankListResDto>> checkBankAccount() {
-        MyBankListResDto myBankListResDto = bankService.checkBankAccount();
+    public ResponseEntity<ResultDto<List<MyBankResDto>>> getBankAccountList() {
+        List<MyBankResDto> myBankResDtoList = bankService.getBankAccountList();
 
-        return ResponseEntity.ok().body(ResultDto.of(myBankListResDto));
+        return ResponseEntity.ok().body(ResultDto.of(myBankResDtoList));
     }
 
     @GetMapping()
     @ApiOperation(value = "내 통장 잔고를 확인합니다.", notes = "")
-    public ResponseEntity<ResultDto<MyTotalResDto>> checkBankTotal() {
-        MyTotalResDto myTotalResDto = bankService.checkBankTotal();
+    public ResponseEntity<ResultDto<MyTotalResDto>> getBankTotal() {
+        MyTotalResDto myTotalResDto = bankService.getBankTotal();
 
         return ResponseEntity.ok().body(ResultDto.of(myTotalResDto));
     }
