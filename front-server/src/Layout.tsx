@@ -43,9 +43,7 @@ function Layout(): JSX.Element {
             <motion.div
               className="max-h-screen min-h-full"
               initial={{ width: 0 }}
-              animate={
-                screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }
-              }
+              animate={screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }}
               exit={{ width: 0, opacity: 0 }}
               transition={{
                 duration: 0.7,

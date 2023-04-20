@@ -90,9 +90,88 @@ function Main(): JSX.Element {
       </div>*/}
 
       <div className="items-center justify-between hidden w-full h-full max-w-screen-xl lg:flex">
-        <div className="w-[28%] h-full">1</div>
-        <div className="flex items-center justify-center h-full w-[44%] max-h-[49rem]">
-          <div className="flex justify-center items-center w-full border-4 h-[60%] mt-10 relative min-w-[14.3rem] min-h-[29.4rem]">
+        {/* 1번 구역 */}
+        <div className="flex justify-center items-end w-[28%] h-full">
+          <div className="flex justify-between h-[87%] w-full">
+            <div className="flex flex-col justify-end items-start w-[40%] h-full border-black">
+              <div className="w-full h-4/5"></div>
+              <div className="h-auto">
+                <img
+                  aria-label="가이드"
+                  className="z-10"
+                  src="/images/toys/guide.png"
+                  alt=""
+                />
+              </div>
+              <div className="h-[3%]"></div>
+            </div>
+            <div className="flex flex-col items-center justify-start w-[45%] h-full ">
+              {/* 빈칸 */}
+              <div className="h-[5%]"></div>
+              {/* 방문하기 */}
+              <div className="relative flex justify-end h-[30%]">
+                <img
+                  aria-label="방문하기"
+                  className="z-10 h-full"
+                  src="/images/toys/visit.png"
+                  alt=""
+                />
+              </div>
+              {/* 빈칸 */}
+              <div className="h-[3%]"></div>
+              {/* 경매장 */}
+              <div className="relative w-full h-[23%]">
+                <img
+                  aria-label="경매장"
+                  className="z-10 h-full "
+                  src="/images/toys/auction.png"
+                  alt=""
+                />
+              </div>
+              {/* 빈칸 */}
+              <div className="h-[7%]"></div>
+              <div className="relative w-full h-[18%] flex justify-end">
+                <img
+                  aria-label="게임기"
+                  className="z-10 h-full"
+                  src="/images/toys/nintendoBorder.png"
+                  alt=""
+                />
+              </div>
+              {/* 빈칸 */}
+              <div className="h-auto"></div>
+            </div>
+          </div>
+        </div>
+        {/* 2번 구역 */}
+        <div className="flex items-center justify-center h-full w-[44%] max-h-[49rem] relative">
+          <div className="absolute z-10 flex items-end justify-between w-full h-full ">
+            <div className="flex flex-col items-end justify-start w-1/2 h-[92%]">
+              <div className="flex justify-center h-[22%] w-full">
+                <img
+                  aria-label="가이드"
+                  className="z-10 h-full"
+                  src="/images/toys/bank.png"
+                  alt=""
+                />
+              </div>
+              <div className="h-[52%]"></div>
+              <div className="flex justify-start h-[18%] w-[82%]">
+                <img
+                  aria-label="가이드"
+                  className="z-10 h-full"
+                  src="/images/toys/gatcha.png"
+                  alt=""
+                />
+              </div>
+              <div className="w-full h-[6%]"></div>
+            </div>
+            <div className="flex flex-col items-center justify-start w-1/2 h-full">
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div className="flex justify-center items-center w-full h-[60%] relative min-w-[14.3rem] min-h-[29.4rem]">
             <img
               aria-label="마카롱"
               className={`absolute object-contain scale-110 w-full`}
@@ -118,7 +197,38 @@ function Main(): JSX.Element {
             </Canvas>
           </div>
         </div>
-        <div className="w-[28%] h-full">3</div>
+        {/* 3번 구역 */}
+        <div className="flex justify-start items-center w-[28%] h-full">
+          <div className="w-[60%] h-[80%]">
+            <div className="h-[15%]"></div>
+            <div className="flex justify-center h-[17%] w-full">
+              <img
+                aria-label="가이드"
+                className="z-10 h-full"
+                src="/images/toys/info.png"
+                alt=""
+              />
+            </div>
+            <div className="h-[6%]"></div>
+            <div className="flex justify-center h-[23%] w-full">
+              <img
+                aria-label="가이드"
+                className="z-10 h-full"
+                src="/images/toys/rank.png"
+                alt=""
+              />
+            </div>
+            <div className="h-[10%]"></div>
+            <div className="flex justify-center h-[30%] w-full">
+              <img
+                aria-label="가이드"
+                className="z-10 h-full"
+                src="/images/toys/chart.png"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
