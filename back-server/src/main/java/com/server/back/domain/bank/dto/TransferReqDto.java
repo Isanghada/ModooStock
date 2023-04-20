@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferReqDto {
-    private String sender;
     private String receiver;
     private Integer money;
 }

@@ -10,8 +10,8 @@ import lombok.Data;
 public class MyTotalResDto {
     Integer currentMoney;
 
-    public static MyTotalResDto fromEntity(BankEntity bank) {
-        return MyTotalResDto.builder().build();
+    public static MyTotalResDto fromEntity(Integer currentMoney) {
+        return MyTotalResDto.builder().currentMoney(currentMoney).build();
     }
 
 }
