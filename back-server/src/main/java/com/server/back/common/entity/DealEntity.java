@@ -33,4 +33,10 @@ public class DealEntity extends CommonEntity {
 	@Enumerated(EnumType.STRING)
 	private DealType dealType;
 
+	public DealEntity(UserEntity user, DealType dealType,int price){
+		this.user=user;
+		this.dealType=dealType;
+		this.price=price;
+	}
+
 }

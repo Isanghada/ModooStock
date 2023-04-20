@@ -5,7 +5,9 @@ import com.server.back.common.service.AuthService;
 import com.server.back.domain.store.dto.AssetResDto;
 import com.server.back.domain.store.entity.AssetEntity;
 import com.server.back.domain.store.entity.UserAssetEntity;
+import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.AssetRepository;
+import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
@@ -29,7 +31,7 @@ public class StoreServiceImpl implements StoreService {
 
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
-    private final UserAssetRepository userAssetRepository;
+    private final UserAssetLocationRepository userAssetLocationRepository;
     private final AuthService authService;
 
     /**
@@ -70,15 +72,17 @@ public class StoreServiceImpl implements StoreService {
         AssetEntity asset=list.get(randomIdx);
 
         //userAsset에 user와 asset 조합해서 삽임
-        UserAssetEntity userAsset=UserAssetEntity.builder()
+        UserAssetLocation userAssetLocation=UserAssetLocation.builder()
                 .asset(asset)
                 .user(user)
                 .isDeleted(IsDeleted.N)
                 .isInRepository(IsInRespository.Y)
                 .isAuctioned(IsAuctioned.N)
                 .build();
+        userAssetLocation.init();
 
-        userAssetRepository.save(userAsset);
+
+        userAssetLocationRepository.save(userAssetLocation);
 
         // asset 반환
         return fromEntity(asset);
