@@ -82,11 +82,7 @@ public class BankServiceImpl implements BankService {
             getMoney += bank.getInterest();
         }
         // 거래 내역 생성
-        DealEntity deal = DealEntity.builder()
-                .user(user)
-                .price(getMoney)
-                .dealType(DealType.GET_MONEY_FOR_DEPOSIT)
-                .build();
+        DealEntity deal = new DealEntity(user, DealType.GET_MONEY_FOR_DEPOSIT, getMoney);
         dealRepository.save(deal);
         
         // 현재 보유돈에 출금한 돈 추가
@@ -146,22 +142,14 @@ public class BankServiceImpl implements BankService {
         sender.decreaseCurrentMoney(transferReqDto.getMoney());
 
         // 거래 내역 생성
-        DealEntity senderDeal = DealEntity.builder()
-                .user(sender)
-                .price(transferReqDto.getMoney())
-                .dealType(DealType.LOSE_MONEY_FOR_TRANSFER)
-                .build();
+        DealEntity senderDeal = new DealEntity(sender, DealType.LOSE_MONEY_FOR_TRANSFER, transferReqDto.getMoney());
         dealRepository.save(senderDeal);
         
         // receiver currentMoney 늘이기
         receiver.increaseCurrentMoney(transferReqDto.getMoney());
         
         // 거래내역 남기기
-        DealEntity receiverDeal = DealEntity.builder()
-                .user(receiver)
-                .price(transferReqDto.getMoney())
-                .dealType(DealType.GET_MONEY_FOR_TRANSFER)
-                .build();
+        DealEntity receiverDeal = new DealEntity(receiver, DealType.GET_MONEY_FOR_TRANSFER, transferReqDto.getMoney());
         dealRepository.save(receiverDeal);
     }
 }

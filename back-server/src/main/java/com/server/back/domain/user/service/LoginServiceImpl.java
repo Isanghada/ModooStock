@@ -1,6 +1,5 @@
 package com.server.back.domain.user.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
 import com.server.back.common.service.AuthTokenProvider;
@@ -11,14 +10,14 @@ import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
