@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppSelector } from 'Store/hooks';
 import Login from 'Components/Login/Login';
+import SignUp from 'Components/SignUp/SignUp';
 import { useEffect, useState } from 'react';
 
 function Layout(): JSX.Element {
@@ -12,6 +13,10 @@ function Layout(): JSX.Element {
   const loginStatus = useAppSelector((state) => {
     return state.loginStatus;
   });
+  // 회원가입 창 상태
+  const signUpStatus = useAppSelector((state) => {
+    return state.signUpStatus;
+  });
 
   useEffect(() => {
     // 창크기 변할때마다 실행
@@ -19,14 +24,17 @@ function Layout(): JSX.Element {
       const newWidth = window.innerWidth;
       setScreenWidth(newWidth);
     };
-    window.addEventListener("resize", updateScreenWidth);
-    return () => window.removeEventListener("resize", updateScreenWidth) 
-  }, [])
+    window.addEventListener('resize', updateScreenWidth);
+    return () => window.removeEventListener('resize', updateScreenWidth);
+  }, []);
 
   return (
     <>
       <div className="bg-[#FEF9F9] w-screen relative flex">
-        <div className={`${loginStatus ? "w-[60vw] lg:w-[70vw]" : "w-full"} container relative flex h-screen mx-auto lg:max-w-screen-xl`}>
+        <div
+          className={`${
+            loginStatus || signUpStatus ? 'w-[60vw] lg:w-[70vw]' : 'w-full'
+          } container relative flex h-screen mx-auto lg:max-w-screen-xl`}>
           <Outlet />
         </div>
         {/* 로그인 컴포넌트 */}
@@ -35,15 +43,16 @@ function Layout(): JSX.Element {
             <motion.div
               className="max-h-screen min-h-full"
               initial={{ width: 0 }}
-              animate={screenWidth <= 1024 ? { width: '40vw'} : { width: '30vw'}}
+              animate={
+                screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }
+              }
               exit={{ width: 0, opacity: 0 }}
               transition={{
                 duration: 0.7,
-                delay: 0,
                 ease: 'easeInOut'
               }}>
-                <Login />
-              </motion.div>
+              {signUpStatus ? <SignUp /> : <Login />}
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
