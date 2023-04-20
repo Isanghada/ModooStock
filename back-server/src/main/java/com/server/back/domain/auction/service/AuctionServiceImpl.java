@@ -124,6 +124,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @param auctionReqDto
      */
     @Override
+    @Transactional
     public void createAuction(AuctionReqDto auctionReqDto) {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
