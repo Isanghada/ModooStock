@@ -10,7 +10,7 @@ function Layout(): JSX.Element {
   });
   return (
     <>
-      <div className="bg-[#FEF9F9] w-screen relative flex">
+      <div className="bg-[#FDE2E2]/40 w-screen relative flex">
         <div className="container relative flex w-full h-screen mx-auto lg:max-w-screen-xl">
           <Outlet />
         </div>
@@ -27,8 +27,8 @@ function Layout(): JSX.Element {
                 delay: 0,
                 ease: 'easeInOut'
               }}>
-                <Login />
-              </motion.div>
+              <Login />
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
