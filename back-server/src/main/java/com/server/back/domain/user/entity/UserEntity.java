@@ -130,4 +130,12 @@ public class UserEntity extends CommonEntity implements UserDetails {
     public void setIsDeleted(IsDeleted isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    public void increaseCurrentMoney(Integer money) {
+        this.currentMoney += money;
+    }
+
+    public void decreaseCurrentMoney(Integer money) {
+        this.currentMoney -= money;
+    }
 }
