@@ -30,13 +30,13 @@ public class AuctionEntity extends CommonEntity {
     @Column(nullable = false)
     private IsCompleted isCompleted;
 
-    @Column
-    private Long bidder_id;
-
-    @Column
-    private LocalDateTime bidTime;
-
     @Column(nullable = false)
     private IsDeleted isDeleted;
 
+    public void update(IsDeleted isDeleted){
+        this.isDeleted=isDeleted;
+    }
+    public void update(IsCompleted isCompleted){
+        this.isCompleted=isCompleted;
+    }
 }

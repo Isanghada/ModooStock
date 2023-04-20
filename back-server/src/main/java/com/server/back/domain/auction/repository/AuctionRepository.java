@@ -1,8 +1,14 @@
 package com.server.back.domain.auction.repository;
 
+import com.server.back.common.code.commonCode.IsCompleted;
+import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.domain.auction.entity.AuctionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
+import java.util.List;
+import java.util.Optional;
 
+public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
+    List<AuctionEntity> findAllByIsDeletedAndIsCompletedOrderByCreatedAtDesc(IsDeleted isDeleted,IsCompleted isCompleted);
+    Optional<AuctionEntity> findByIdAndIsDeletedAndIsCompleted(Long auctionId, IsDeleted isDeleted, IsCompleted isCompleted);
 }

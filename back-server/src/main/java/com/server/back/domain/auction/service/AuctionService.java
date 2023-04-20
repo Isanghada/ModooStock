@@ -1,5 +1,6 @@
 package com.server.back.domain.auction.service;
 
+import com.server.back.domain.auction.dto.AuctionReqDto;
 import com.server.back.domain.auction.dto.AuctionResDto;
 
 import java.util.List;
@@ -10,7 +11,9 @@ public interface AuctionService {
 
     AuctionResDto getAuctionDetail(Long auctionId);
 
-    Boolean createAuction(Long auctionId);
+    void participateAuction(Long auctionId);
 
-    Boolean deleteAuction(Long auctionId);
+    void deleteAuction(Long auctionId);
+
+    void createAuction(AuctionReqDto auctionReqDto);
 }

@@ -1,6 +1,7 @@
 package com.server.back.domain.auction.controller;
 
 import com.server.back.common.code.dto.ResultDto;
+import com.server.back.domain.auction.dto.AuctionReqDto;
 import com.server.back.domain.auction.dto.AuctionResDto;
 import com.server.back.domain.auction.service.AuctionService;
 import io.swagger.annotations.Api;
@@ -33,18 +34,25 @@ public class AuctionController {
         return ResponseEntity.ok(ResultDto.of(auctionResDto));
     }
 
-    @PostMapping ("/{auctionId}")
-    @ApiOperation(value = "경매 물품을 등록합니다.")
-    public ResponseEntity<ResultDto<Boolean>> createAuction(@PathVariable Long auctionId){
+    @PostMapping
+    @ApiOperation(value = "경매에 물품을 등록합니다.")
+    public ResponseEntity<ResultDto<Boolean>> createAuction(@RequestBody AuctionReqDto auctionReqDto){
+        auctionService.createAuction(auctionReqDto);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+    }
 
-        return ResponseEntity.ok(ResultDto.of(auctionService.createAuction(auctionId)));
+    @PostMapping ("/{auctionId}")
+    @ApiOperation(value = "경매에 참여합니다.")
+    public ResponseEntity<ResultDto<Boolean>> participateAuction(@PathVariable Long auctionId){
+        auctionService.participateAuction(auctionId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
     @DeleteMapping ("/{auctionId}")
-    @ApiOperation(value = "경매 물품을 등록합니다.")
+    @ApiOperation(value = "경매를 취소합니다.")
     public ResponseEntity<ResultDto<Boolean>> deleteAuction(@PathVariable Long auctionId){
-
-        return ResponseEntity.ok(ResultDto.of(auctionService.deleteAuction(auctionId)));
+        auctionService.deleteAuction(auctionId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
 }
