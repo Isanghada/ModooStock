@@ -16,6 +16,10 @@ public class UsersRegisterReqDto {
     private String password;
 
     public UserEntity toEntity() {
-        return (UserEntity) new Object();
+        return UserEntity.builder()
+                .account(account)
+                .nickname(nickname)
+                .password(password)
+                .build();
     }
 }
