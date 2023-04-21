@@ -15,11 +15,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class BackApplication {
 
-	@Bean
-	public BCryptPasswordEncoder encodePwd() {
-		return new BCryptPasswordEncoder();
-	}
-
 	@PostConstruct
 	public void started() {
 		// timezone Asia/Seoul 셋팅

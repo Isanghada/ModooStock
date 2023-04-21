@@ -3,7 +3,7 @@ package com.server.back.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Log4j2
+@Slf4j
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
