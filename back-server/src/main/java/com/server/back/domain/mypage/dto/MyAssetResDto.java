@@ -2,9 +2,6 @@ package com.server.back.domain.mypage.dto;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.domain.auction.dto.AuctionResDto;
-import com.server.back.domain.auction.entity.AuctionEntity;
-import com.server.back.domain.store.dto.AssetResDto;
 import com.server.back.domain.store.entity.UserAssetEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +26,10 @@ public class MyAssetResDto {
                 .assetCategory(userAsset.getAsset().getCategory())
                 .isAuctioned(userAsset.getIsAuctioned())
                 .build();
+    }
+
+    public static List<MyAssetResDto> fromEntityList(List<UserAssetEntity> userAssetEntityList ){
+        return userAssetEntityList.stream().map(MyAssetResDto::fromEntity).collect(Collectors.toList());
     }
 
 

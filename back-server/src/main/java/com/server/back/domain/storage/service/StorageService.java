@@ -1,7 +1,9 @@
 package com.server.back.domain.storage.service;
 
-import com.server.back.domain.storage.dto.StorageResDto;
+import com.server.back.domain.mypage.dto.MyAssetResDto;
+
+import java.util.List;
 
 public interface StorageService {
-    StorageResDto getStorageList();
+    List<MyAssetResDto> getStorageList();
 }

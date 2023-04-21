@@ -3,7 +3,7 @@ package com.server.back.domain.storage.service;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.common.service.AuthService;
-import com.server.back.domain.storage.dto.StorageResDto;
+import com.server.back.domain.mypage.dto.MyAssetResDto;
 import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.entity.UserEntity;
@@ -26,11 +26,11 @@ public class StorageServiceImpl implements StorageService {
     private final UserAssetRepository userAssetRepository;
 
     @Override
-    public StorageResDto getStorageList() {
+    public List<MyAssetResDto> getStorageList() {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<UserAssetEntity> userAssetEntityList=userAssetRepository.findByUserAndIsInRepositoryAndIsDeleted(user, IsInRespository.Y, IsDeleted.N);
-        return StorageResDto.fromEntityList(userAssetEntityList);
+        return MyAssetResDto.fromEntityList(userAssetEntityList);
     }
 }
