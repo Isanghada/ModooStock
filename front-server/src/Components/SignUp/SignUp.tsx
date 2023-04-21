@@ -16,6 +16,8 @@ interface ValueInterFace {
   password: boolean;
 }
 
+const screenHeight = window.screen.height
+
 function SignUp(): JSX.Element {
   const dispatch = useAppDispatch();
   // 빈값 체크
@@ -41,31 +43,31 @@ function SignUp(): JSX.Element {
     password2: ''
   });
 
-  // 이메일 양식 체크
-  const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+  // 이메일 양식 체크 우선 주석처리
+  // const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = event.target;
+  //   const emailRegex =
+  //     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
 
-    // 빈값 체크
-    setEmptyValue({
-      ...emptyValue,
-      [name]: value !== ''
-    });
+  //   // 빈값 체크
+  //   setEmptyValue({
+  //     ...emptyValue,
+  //     [name]: value !== ''
+  //   });
 
-    // 이메일 유효성 검사
-    if (!emailRegex.test(value)) {
-      setEmailComment('이메일 형식을 다시 확인해주세요!');
-    } else {
-      setEmailComment('');
-    }
+  //   // 이메일 유효성 검사
+  //   if (!emailRegex.test(value)) {
+  //     setEmailComment('이메일 형식을 다시 확인해주세요!');
+  //   } else {
+  //     setEmailComment('');
+  //   }
 
-    // 제출할 이메일계정 정보
-    setAccount({
-      ...account,
-      [name]: value
-    });
-  }
+  //   // 제출할 이메일계정 정보
+  //   setAccount({
+  //     ...account,
+  //     [name]: value
+  //   });
+  // }
 
   //input에 입력될 때마다 account state값 변경되게 하는 함수
   const onChangeAccount = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -138,22 +140,23 @@ function SignUp(): JSX.Element {
         <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
         <form
           onSubmit={onSubmitSignUpForm}
-          className="flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between">
+          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:min-h-[calc(var(--screen-height) / 2)] lg:h-[50vh] justify-between`}>
           <div className="flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full">
             {/* 이메일 */}
             <div className="h-8 lg:h-12">
               <input
-                onChange={onChangeEmail}
+                onChange={onChangeAccount}
                 name="email"
-                type="email"
+                type="string"
                 className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
-                placeholder="이메일"
+                placeholder="아이디"
+                maxLength={15}
                 required
               />
               {emptyValue.email && (
                 <div className={`text-[0.5rem] lg:text-base h-1/6 ${checkEmail ? `text-green-500` : `text-red-500`}`}>
-                  {/* {checkEmail ? '사용가능한 이메일입니다' : '이미 사용중인 이메일입니다'} */}
-                  {emailComment}
+                  {checkEmail ? '사용가능한 아이디입니다' : '이미 사용중인 아이디입니다'}
+                  {/* {emailComment} */}
                 </div>
               )}
             </div>
