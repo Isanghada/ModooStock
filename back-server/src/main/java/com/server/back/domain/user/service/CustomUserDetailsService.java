@@ -4,7 +4,7 @@ import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 
+@Slf4j
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 

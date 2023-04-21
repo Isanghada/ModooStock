@@ -4,7 +4,7 @@ package com.server.back.config;
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 // 직접 만든 TokenProvider 와 JwtFilter 를 SecurityConfig 에 적용할 때 사용
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 

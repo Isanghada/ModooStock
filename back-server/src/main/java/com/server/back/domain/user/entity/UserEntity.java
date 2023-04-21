@@ -3,10 +3,7 @@ package com.server.back.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.entity.CommonEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,39 +14,44 @@ import java.util.Collection;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "user_table")
 public class UserEntity extends CommonEntity implements UserDetails {
 
+    private static String PROFILE_IMAGE_PATH_DEFAULT = "/user/default.jpg";
+    private static String INTRODUCTION_DEFAULT= "때가 올때까지 기다리는 사람이 성공한다!";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 15)
     private String account;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 6)
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private String profileImagePath;
-
-    @Column(nullable = false)
-    private String introduction;
-
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private IsDeleted isDeleted;
+    @Builder.Default
+    private String profileImagePath= PROFILE_IMAGE_PATH_DEFAULT;
 
     @Column(nullable = false)
     @Builder.Default
-    private Integer currentMoney = 0;
+    private String introduction= INTRODUCTION_DEFAULT;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private IsDeleted isDeleted = IsDeleted.N;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer currentMoney = 10000_0000;
 
 
     @Override
@@ -125,4 +127,15 @@ public class UserEntity extends CommonEntity implements UserDetails {
         return isDeleted == IsDeleted.N;
     }
 
+    public void setIsDeleted(IsDeleted isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public void increaseCurrentMoney(Integer money) {
+        this.currentMoney += money;
+    }
+
+    public void decreaseCurrentMoney(Integer money) {
+        this.currentMoney -= money;
+    }
 }

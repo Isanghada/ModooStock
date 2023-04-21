@@ -1,7 +1,6 @@
 package com.server.back.common.service;
 
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -9,7 +8,7 @@ import com.server.back.domain.user.service.CustomUserDetailsService;
 import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
 import io.jsonwebtoken.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Log4j2
+@Slf4j
 @Component
 public class AuthTokenProvider {
 
