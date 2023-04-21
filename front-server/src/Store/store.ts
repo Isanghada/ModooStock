@@ -2,6 +2,8 @@
 import { configureStore, createSlice, } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query/react";
 import { everyStock } from "./api"
+import { NonAuthApi } from './NonAuthApi';
+
 
 
 // 한페이지에 나타나는 단어 리스트
@@ -41,6 +43,7 @@ export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
   reducer: {
     [everyStock.reducerPath]: everyStock.reducer,
+    [NonAuthApi.reducerPath]: NonAuthApi.reducer,
     // dictList: dictList.reducer,
     loginStatus: loginStatus.reducer,
     signUpStatus: signUpStatus.reducer,
