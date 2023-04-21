@@ -13,7 +13,7 @@ public class StockListResDto {
     String kind;
 
     public static StockListResDto fromEntity(StockEntity stock) {
-        return StockListResDto.builder().build();
+        return StockListResDto.builder().stockId(stock.getId()).kind(stock.getCompany().getKind()).build();
     }
 
     public static List<StockListResDto> fromEntityList(List<StockEntity> stockList) {

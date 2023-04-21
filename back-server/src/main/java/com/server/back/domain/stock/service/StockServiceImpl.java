@@ -1,6 +1,7 @@
 package com.server.back.domain.stock.service;
 
 import com.server.back.domain.stock.dto.StockListResDto;
+import com.server.back.domain.stock.dto.StockResDto;
 import com.server.back.domain.stock.entity.StockEntity;
 import com.server.back.domain.stock.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,10 @@ public class StockServiceImpl implements StockService {
     public List<StockListResDto> getStockList() {
         List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
         return StockListResDto.fromEntityList(stockList);
+    }
+
+    @Override
+    public StockResDto getStockChart(Long stockId) {
+        return null;
     }
 }
