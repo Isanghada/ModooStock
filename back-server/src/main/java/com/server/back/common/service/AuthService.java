@@ -5,13 +5,13 @@ import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
 @Service
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 

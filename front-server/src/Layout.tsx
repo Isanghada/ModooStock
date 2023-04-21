@@ -24,6 +24,9 @@ function Layout(): JSX.Element {
       const newWidth = window.innerWidth;
       setScreenWidth(newWidth);
     };
+    // 처음 한번 실행
+    updateScreenWidth();
+    
     window.addEventListener('resize', updateScreenWidth);
     return () => window.removeEventListener('resize', updateScreenWidth);
   }, []);

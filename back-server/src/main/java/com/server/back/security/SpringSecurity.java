@@ -1,14 +1,11 @@
-package com.server.back.config;
+package com.server.back.security;
 
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
-import com.server.back.domain.user.service.CustomUserDetailsService;
+import com.server.back.config.JwtExceptionFilter;
+import com.server.back.config.JwtSecurityConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -33,9 +30,6 @@ public class SpringSecurity {
 	private final AuthTokenProvider tokenProvider;
 	private final RedisService redisService;
 	private final JwtExceptionFilter jwtExceptionFilter;
-	private final CustomUserDetailsService userDetailsService;
-	private final ObjectMapper objectMapper;
-
 
 
 	@Bean
@@ -53,8 +47,7 @@ public class SpringSecurity {
 				"/swagger-resources", "/configuration/security",
 				"/swagger-ui.html", "/webjars/**", "/swagger/**",
 				"/swagger-ui/**")
-			.antMatchers("/**") // TODO 잠시 열어둠 나중에 닫기
-//			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh")
+			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh")
 			.antMatchers(HttpMethod.POST, "/users");
 	}
 
@@ -84,11 +77,9 @@ public class SpringSecurity {
 			// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
 			.and()
 			.authorizeRequests()
-//			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh").permitAll()
-//			.antMatchers(HttpMethod.POST, "/users").permitAll()
-			.antMatchers("/**").permitAll()  // TODO 잠시 열어둠 나중에 닫기
+			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh").permitAll()
+			.antMatchers(HttpMethod.POST, "/users").permitAll()
 			.antMatchers("/swagger-resources/**", "/swagger-ui", "/swagger-ui/**").permitAll()
-
 			.anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
 			// JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
