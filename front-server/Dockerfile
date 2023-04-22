@@ -2,7 +2,7 @@ FROM node:18.12.1 as build-stage
 WORKDIR /var/jenkins_home/workspace/modoostock-deploy/front-server
 COPY package*.json ./
 
-RUN npm install -g yarn
+# RUN npm install -g yarn
 RUN yarn install
 COPY . .
 RUN yarn build
