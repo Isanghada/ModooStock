@@ -1,6 +1,7 @@
 package com.server.back.exception;
 
 
+import com.server.back.common.code.dto.ResultEnum;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class ErrorResponse {
 	private final String error;
 	private final String code;
 	private final String message;
+	private final ResultEnum result = ResultEnum.FAIL;
 
 
 	public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {

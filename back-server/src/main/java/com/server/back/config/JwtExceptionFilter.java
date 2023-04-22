@@ -2,6 +2,7 @@ package com.server.back.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.back.common.code.dto.ResultEnum;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -42,9 +43,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 		// ex.getMessage() 에는 jwtException을 발생시키면서 입력한 메세지가 들어있다.
 		body.put("message", ex.getMessage());
 		body.put("path", req.getServletPath());
+		body.put("result",  ResultEnum.FAIL);
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(res.getOutputStream(), body);
-		res.setStatus(HttpServletResponse.SC_OK);
+		res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 
 }
