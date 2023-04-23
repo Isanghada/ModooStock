@@ -10,22 +10,30 @@ function Main(): JSX.Element {
   );
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
-
+  
   useEffect(() => {
     console.log(window.screen.width);
-    console.log(window.screen.width - 1024);
+    console.log(window.innerWidth);
+
+    // console.log(window.screen.width - 1024);
 
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [window.screen.width]);
+  }, [window.innerWidth]);
 
   const handleResize = () => {
-    if (window.screen.width <= 1280) {
-      const st = 2 + (window.screen.width - 1024) * (1 / 140);
+    if (1024 <= window.innerWidth && window.innerWidth <= 1280) {
+      const st = 2 + (window.innerWidth - 1024) * (1 / 140);
       setFloor(`${st}rem`);
+    } else if (1024 > window.innerWidth) {
+      console.log('hihi');
+      
+      setFloor('5rem');
     } else {
+      console.log('bye');
+      
       setFloor('4rem');
     }
   };
@@ -33,7 +41,7 @@ function Main(): JSX.Element {
   return (
     <>
       {/* 데스크탑 */}
-      <div className="items-center justify-between hidden w-full h-full max-w-[1280px] max-h-[1080px] lg:flex">
+      <div className="items-center justify-between hidden w-full h-full max-w-[1280px] max-h-[1080px] mx-auto lg:flex">
         {/* 1번 구역 */}
         <div className="flex justify-start items-center w-[28%] h-full">
           <div className="w-[10%]"></div>
@@ -221,7 +229,7 @@ function Main(): JSX.Element {
         </div>
       </div>
       {/* 모바일 */}
-      <div className="relative flex flex-col items-center justify-end w-full h-full overflow-y-hidden lg:hidden">
+      <div className="relative flex flex-col items-center justify-center w-full h-full overflow-y-hidden max-w-[41.6rem] max-h-[23.4rem] lg:hidden mx-auto my-auto">
         {/* 메인 */}
         <div className="absolute flex items-end justify-center w-[60%] -bottom-4">
           <img
@@ -233,7 +241,7 @@ function Main(): JSX.Element {
           />
         </div>
         <div className="h-[10%]"></div>
-        <div className="w-[50%] h-[75%] flex justify-center items-center border-black">
+        <div className="w-[50%] h-[75%] flex justify-center items-center">
           <Canvas
             style={{ width: '100%', height: '100%' }}
             orthographic
@@ -253,7 +261,7 @@ function Main(): JSX.Element {
         </div>
         <div className="w-[50%] h-[15%]"></div>
         {/* 라우터 아이콘 */}
-        <div className="absolute flex items-center justify-start w-full h-full border-black">
+        <div className="absolute flex items-center justify-start w-full h-full">
           {/* 1번째 */}
           <div className="flex flex-col items-end w-[11%] h-full">
             <div className="h-[81%]"></div>
@@ -288,14 +296,14 @@ function Main(): JSX.Element {
               />
             </div>
             <div className="h-[5%]"></div>
-            <div className="flex justify-center pr-2 h-[15%] w-full">
+            <div className="flex justify-center pr-2 h-[13%] w-full">
               <img aria-label="게임기" className="z-10 h-full" src="/images/toys/nintendo.png" alt="" />
             </div>
-            <div className="h-[5%]"></div>
+            <div className="h-[7%]"></div>
           </div>
           {/* 3번째 */}
           <div className="flex flex-col w-[18%] h-full">
-            <div className="h-[12%]"></div>
+            <div className="h-[9%]"></div>
             <div className="flex justify-center h-[20%] w-full animate-moving">
               <img
                 aria-label="은행"
@@ -304,7 +312,7 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
-            <div className="h-[52%]"></div>
+            <div className="h-[55%]"></div>
             <div className="flex justify-start h-[15%] w-[82%] animate-moving">
               <img
                 aria-label="뽑기 상점"
@@ -346,6 +354,54 @@ function Main(): JSX.Element {
               />
             </div>
             <div className="h-[5%]"></div>
+          </div>
+        </div>
+        {/* 앱솔 아이콘 */}
+        <div className='absolute flex justify-start items-center w-[60%] h-full'>
+        <div className="flex flex-col w-1/4 h-full">
+              <div className="h-[15%]"></div>
+              <div className="flex justify-start h-[15%] w-full">
+                <img aria-label="조이스틱" className="z-20 h-full" src="/images/toys/joystic.png" alt="" />
+              </div>
+              <div className="h-[16%]"></div>
+              <div className="flex justify-center h-[14%] w-full">
+                <img aria-label="믹스" className="z-20 h-full pr-2" src="/images/toys/mixassets.png" alt="" />
+              </div>
+              <div className="h-[32%]"></div>
+              <div className="flex justify-start h-[5%] w-full">
+                <img aria-label="공" className="z-20 h-full" src="/images/toys/one.png" alt="" />
+              </div>
+              <div className="h-[3%]"></div>
+            </div>
+          <div className='w-1/4 h-full'></div>
+          <div className='w-1/4 h-full'>
+            <div className="h-[13%]"></div>
+              <div className="flex justify-start h-[6%] w-full">
+                <img aria-label="믹스2" className="z-10 h-full" src="/images/toys/mixassets2.png" alt="" />
+              </div>
+              <div className="flex justify-end h-[10%] w-full">
+                <img aria-label="말" className="z-10 h-full" src="/images/toys/horse.png" alt="" />
+              </div>
+              <div className="h-[55%]"></div>
+              <div className="flex justify-center h-[14%] w-full">
+                <img aria-label="차" className="z-10 h-full" src="/images/toys/car.png" alt="" />
+              </div>
+              <div className="h-[2%]"></div>
+          </div>
+          <div className='w-1/4 h-full'>
+            <div className="h-[22%]"></div>
+            <div className="flex justify-center h-[7%] w-full">
+              <img aria-label="게임기" className="z-10 h-full" src="/images/toys/zebra.png" alt="" />
+            </div>
+            <div className="h-[10%]"></div>
+            <div className="flex justify-end h-[7%] w-full">
+              <img aria-label="플러스" className="z-10 h-full pr-5" src="/images/toys/plus.png" alt="" />
+            </div>
+            <div className="h-[42%]"></div>
+            <div className="flex justify-center h-[10%] w-full">
+              <img aria-label="공" className=" h-full" src="/images/toys/ball.png" alt="" />
+            </div>
+            <div className="h-[2%]"></div>
           </div>
         </div>
       </div>
