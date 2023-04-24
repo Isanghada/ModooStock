@@ -87,8 +87,8 @@ public class UserController {
 
     @GetMapping("/info/{nickname}")
     @ApiOperation(value = "방문한 회원 정보를 조회합니다.", notes = "")
-    public ResponseEntity<ResultDto<UserInfoResDto>> getUser(@PathVariable("nickname") String nickname) {
-        UserInfoResDto userInfoResDto = userService.getUser(nickname);
+    public ResponseEntity<ResultDto<UserInfoResDto>> getUser(@PathVariable("nickname") String nickname, @RequestBody UserInfoReqDto userInfoReqDto) {
+        UserInfoResDto userInfoResDto = userService.getUser(nickname, userInfoReqDto);
 
         return ResponseEntity.ok().body(ResultDto.of(userInfoResDto));
     }

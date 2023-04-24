@@ -1,7 +1,16 @@
 package com.server.back.domain.user.service;
 
+import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
+import com.server.back.domain.bank.service.BankService;
+import com.server.back.domain.stock.entity.ChartEntity;
+import com.server.back.domain.stock.entity.UserDealEntity;
+import com.server.back.domain.stock.repository.ChartRepository;
+import com.server.back.domain.stock.repository.UserDealRepository;
+import com.server.back.domain.store.entity.AssetPriceEntity;
+import com.server.back.domain.store.repository.AssetPriceRepository;
+import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
@@ -15,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,6 +33,11 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final BankService bankService;
+    private final UserDealRepository userDealRepository;
+    private final ChartRepository chartRepository;
+    private final UserAssetRepository userAssetRepository;
+    private final AssetPriceRepository assetPriceRepository;
 
     @Override
     public UserEntity getUserById(Long id) {
@@ -161,16 +176,51 @@ public class UserServiceImpl implements UserService{
      * @return         방문한 회원에 대한 정보  (닉네임, 프로필 이미지, 한즐소개, 총자산)
      */
     @Override
-    public UserInfoResDto getUser(String nickname) {
+    public UserInfoResDto getUser(String nickname, UserInfoReqDto userInfoReqDto) {
         UserEntity user = getUserByNickname(nickname);
-        
+        Long userId = user.getId();
+
         // TODO 총 자산 계산 후 가져오기
+        // 게임 내 시간 가져오기
+
         // 계산 방법:
         // 은행 이자 붙이기전 금액 싹다
         // + 현 지갑에 있는 돈
         // + 주식에 넣은 돈 (종가 * 개수)
         // + 내 에셋 별 돈 계산
-        Integer totalCash = user.getCurrentMoney();
+
+
+        Integer totalCash = bankService.getBankTotal().getCurrentMoney()  // 은행 이자 붙이기전 금액 싹다
+            + user.getCurrentMoney(); // + 현 지갑에 있는 돈
+
+        // + 주식에 넣은 돈 (종가 * 개수)
+        // TODO userDealEntity 값이 4분마다 변경되는 값이면?! 그냥 가져오는 로직으로 변경
+        // userDeal.getTotalPrice()를 더하는 로직으로 변경
+        List<UserDealEntity> userDealList = userDealRepository.findByUserId(userId);
+        for ( UserDealEntity userDeal : userDealList) {
+            ChartEntity chart = chartRepository.findByCompanyIdAndDate(userDeal.getStock().getCompany().getId(), userInfoReqDto.getTime())
+                .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+            totalCash += chart.getPriceEnd() * userDeal.getTotalAmount();
+        }
+
+        Integer countUserAssetRare = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "RARE").orElse( 0);
+        Integer countUserAssetEpic= userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "EPIC").orElse( 0);
+        Integer countUserAssetUnique = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "UNIQUE").orElse( 0);
+
+        Optional<AssetPriceEntity> assetPriceRare = assetPriceRepository.findByAssetLevel(AssetLevelType.RARE);
+        if(assetPriceRare.isPresent()){
+            totalCash += countUserAssetRare * assetPriceRare.get().getPrice();
+        }
+
+        Optional<AssetPriceEntity> assetPriceEpic = assetPriceRepository.findByAssetLevel(AssetLevelType.EPIC);
+        if(assetPriceEpic.isPresent()){
+            totalCash += countUserAssetEpic * assetPriceEpic.get().getPrice();
+        }
+
+        Optional<AssetPriceEntity> assetPriceUnique = assetPriceRepository.findByAssetLevel(AssetLevelType.UNIQUE);
+        if(assetPriceUnique.isPresent()){
+            totalCash += countUserAssetUnique * assetPriceUnique.get().getPrice();
+        }
         return UserInfoResDto.fromEntity(user, totalCash);
     }
 }
