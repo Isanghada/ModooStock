@@ -13,4 +13,6 @@ public interface StockService {
     StockResDto getStockChart(Long stockId);
 
     void buyStock(StockReqDto stockReqDto);
+
+    void sellStock(StockReqDto stockReqDto);
 }

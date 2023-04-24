@@ -41,6 +41,12 @@ public class StockController {
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
+    @DeleteMapping()
+    @ApiOperation(value="매도")
+    public ResponseEntity<ResultDto<Boolean>> sellStock(@RequestBody StockReqDto stockReqDto){
+        stockService.sellStock(stockReqDto);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+    }
 
 
 

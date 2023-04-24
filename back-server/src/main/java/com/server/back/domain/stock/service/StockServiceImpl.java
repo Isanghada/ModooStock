@@ -92,8 +92,28 @@ public class StockServiceImpl implements StockService {
             UserDealEntity newDeal = new UserDealEntity(user, stockReqDto, stock);
             userDealRepository.save(newDeal);
         }
+    }
 
+    @Override
+    public void sellStock(StockReqDto stockReqDto) {
+        // 로그인한 유저 가져오기
+        Long userId = authService.getUserId();
+        UserEntity user = userService.getUserById(userId);
+        StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
+        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId());
 
+        // 매도
+        // 1. 주식 판 만큼 돈 더하기
+        if(userDeal.getTotalAmount() < stockReqDto.getStockAmount()){
+            stockReqDto.setStockAmount(userDeal.getTotalAmount());
+        }
+        user.increaseCurrentMoney(stockReqDto.getPrice() * stockReqDto.getStockAmount());
+        userRepository.save(user);
+        // 2. 거래내역 남기기
+        dealStockRepository.save(stockReqDto.toEntity(user, DealType.GET_MONEY_FOR_STOCK, stock));
+        // 3. user_deal 수정
+        userDeal.decrease(stockReqDto.getStockAmount());
+        userDealRepository.save(userDeal);
 
     }
 }

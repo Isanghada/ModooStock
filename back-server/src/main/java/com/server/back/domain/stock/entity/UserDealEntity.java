@@ -50,13 +50,16 @@ public class UserDealEntity {
     // 매수
     public void increase(Integer price, Integer amount){
         this.totalPrice += (price * amount);
-        this.totalAmount += amount;
-        this.average = totalPrice / amount;
+        this.totalAmount = this.totalAmount + amount;
+        this.average = this.totalPrice / this.totalAmount;
     }
 
     // 매도
-    public void decrease(Integer price, Integer amount){
-        this.totalPrice -= (this.average*amount);
+    public void decrease(Integer amount){
+        this.totalPrice -= (this.average * amount);
         this.totalAmount -= amount;
+        if(totalAmount <= 0){
+            this.average =  (float) 0;
+        }
     }
 }
