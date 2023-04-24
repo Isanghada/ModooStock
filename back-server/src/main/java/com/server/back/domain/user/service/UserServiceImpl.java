@@ -1,9 +1,10 @@
 package com.server.back.domain.user.service;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
-import com.server.back.domain.bank.service.BankService;
+import com.server.back.domain.bank.repository.BankRepository;
 import com.server.back.domain.stock.entity.ChartEntity;
 import com.server.back.domain.stock.entity.UserDealEntity;
 import com.server.back.domain.stock.repository.ChartRepository;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final BankService bankService;
+    private final BankRepository bankRepository;
     private final UserDealRepository userDealRepository;
     private final ChartRepository chartRepository;
     private final UserAssetRepository userAssetRepository;
@@ -189,8 +190,7 @@ public class UserServiceImpl implements UserService{
         // + 주식에 넣은 돈 (종가 * 개수)
         // + 내 에셋 별 돈 계산
 
-
-        Integer totalCash = bankService.getBankTotal().getCurrentMoney()  // 은행 이자 붙이기전 금액 싹다
+        Integer totalCash =bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0)  // 은행 이자 붙이기전 금액 싹다
             + user.getCurrentMoney(); // + 현 지갑에 있는 돈
 
         // + 주식에 넣은 돈 (종가 * 개수)
