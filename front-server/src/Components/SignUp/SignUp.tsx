@@ -2,32 +2,38 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
 import { AnimatePresence, motion } from 'framer-motion';
 import { changeSignUpStatus } from 'Store/store';
+import {
+  useLazyGetUsersEmailCheckQuery,
+  useLazyGetUsersNickCheckQuery,
+  usePostUsersSignUpMutation
+} from 'Store/NonAuthApi';
+import { toast } from 'react-toastify';
 
 interface AccountInterFace {
-  email: string;
+  account: string;
   nickname: string;
   password: string;
   password2: string;
 }
 
 interface ValueInterFace {
-  email: boolean;
+  account: boolean;
   nickname: boolean;
   password: boolean;
 }
 
-const screenHeight = window.screen.height
+const screenHeight = window.screen.height;
 
 function SignUp(): JSX.Element {
   const dispatch = useAppDispatch();
   // 빈값 체크
   const [emptyValue, setEmptyValue] = useState<ValueInterFace>({
-    email: false,
+    account: false,
     nickname: false,
     password: false
   });
   // 이메일 유효성 알림 코멘트
-  const [emailComment, setEmailComment] = useState<string>('')
+  const [emailComment, setEmailComment] = useState<string>('');
   // 이메일 확인 일치여부
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   // 닉네임 확인 일치여부
@@ -37,11 +43,15 @@ function SignUp(): JSX.Element {
 
   // 제출할 정보
   const [account, setAccount] = useState<AccountInterFace>({
-    email: '',
+    account: '',
     nickname: '',
     password: '',
     password2: ''
   });
+  // API 가져오기
+  const [postUsersSignUp, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersSignUpMutation();
+  const [getUsersEmailCheck] = useLazyGetUsersEmailCheckQuery();
+  const [getUsersNickCheck] = useLazyGetUsersNickCheckQuery();
 
   // 이메일 양식 체크 우선 주석처리
   // const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,15 +80,26 @@ function SignUp(): JSX.Element {
   // }
 
   //input에 입력될 때마다 account state값 변경되게 하는 함수
-  const onChangeAccount = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const onChangeAccount = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+    // 케이스에 따른 api 요청
+    switch (name) {
+      case 'account':
+        const emailResult = await getUsersEmailCheck(value).unwrap();
+        setCheckEmail(emailResult.data);
+        break;
+      case 'nickname':
+        const nickData = await getUsersNickCheck(value).unwrap();
+        setCheckNickname(nickData.data);
+        break;
+    }
 
     // 빈값 체크
     setEmptyValue({
       ...emptyValue,
       [name]: value !== ''
     });
-    
+
     // 제출할 계정 정보
     setAccount({
       ...account,
@@ -97,33 +118,48 @@ function SignUp(): JSX.Element {
         break;
     }
   };
-
   // 회원가입 창 닫고 다시 로그인 화면가기
   const closeSignUp = () => {
     dispatch(changeSignUpStatus(false));
   };
 
-  // 로그인 요청후 값 받아오기
-  // const {token, email, status} = useAppSelector(state => {
-  //   return state.login;
-  // });
-
-  // 로그인 요청후 받아온 상태값 변화에 따른 처리
-  useEffect(() => {
-    // status값 init
-    // dispatch(initStatus());
-    // dispatch(initStatusSignUp());
-  }, []);
 
   //회원가입 form 제출
-  const onSubmitSignUpForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitSignUpForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // 제출 데이터
+    const accoutData = {
+      account: account.account,
+      nickname: account.nickname,
+      password: account.password
+    };
+
+    try {
+      await postUsersSignUp(accoutData).unwrap();
+      toast.success("회원가입성공");
+      closeSignUp();
+    } catch (error) {
+      toast.error('회원가입실패');
+    }
+
+    // switch (signUpResult.result) {
+    //   case 'SUCCESS':
+    //     toast.success('회원가입 성공!!');
+    //     closeSignUp();
+    //     break;
+    //     case 'FAIL':
+    //       toast.error('회원가입 실패ㅋㅋ');
+    //       break;
+    //     }
+
     // if (checkPassword === '비밀번호가 일치하지 않습니다') {
-    //   toast('비밀번호가 일치하지 않습니다'); 
+    //   toast('비밀번호가 일치하지 않습니다');
     // } else {
     //   dispatch(signUpAsync(account));
     // }
   };
+  
+
 
   return (
     <motion.div
@@ -136,24 +172,32 @@ function SignUp(): JSX.Element {
         ease: 'easeInOut'
       }}>
       {/* 오른쪽 폼 */}
-      <div className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${screenHeight >= 800 ? "lg:min-h-[38rem] min-h-[19rem]" : ""}`}>
+      <div
+        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${
+          screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
+        }`}>
         <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
         <form
           onSubmit={onSubmitSignUpForm}
-          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between ${screenHeight >= 800 ? "lg:min-h-[28rem] min-h-[16rem]" : ""}`}>
-          <div className={`flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full ${screenHeight >= 800 ? "lg:min-h-[25rem] min-h-[12rem]" : ""} `}>
-            {/* 이메일 */}
+          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between ${
+            screenHeight >= 800 ? 'lg:min-h-[28rem] min-h-[16rem]' : ''
+          }`}>
+          <div
+            className={`flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full ${
+              screenHeight >= 800 ? 'lg:min-h-[25rem] min-h-[12rem]' : ''
+            } `}>
+            {/* 아이디 */}
             <div className="h-8 lg:h-12">
               <input
                 onChange={onChangeAccount}
-                name="email"
+                name="account"
                 type="string"
                 className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
                 placeholder="아이디"
                 maxLength={15}
                 required
               />
-              {emptyValue.email && (
+              {emptyValue.account && (
                 <div className={`text-[0.5rem] lg:text-base h-1/6 ${checkEmail ? `text-green-500` : `text-red-500`}`}>
                   {checkEmail ? '사용가능한 아이디입니다' : '이미 사용중인 아이디입니다'}
                   {/* {emailComment} */}
