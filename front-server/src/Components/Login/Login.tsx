@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+import { useAppDispatch } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
+import { motion } from 'framer-motion';
 import { changeLoginStatus, changeSignUpStatus } from 'Store/store';
 import { usePostUsersLoginMutation } from 'Store/NonAuthApi';
 import { toast } from 'react-toastify';
@@ -25,6 +25,10 @@ function Login(): JSX.Element {
   const showSignUp = () => {
     dispatch(changeSignUpStatus(true));
   };
+  // 로그인 창 닫기
+  const closeLogin = () => {
+    dispatch(changeLoginStatus(false));
+  }
   // 로그인 API
   const [postUsersLogin, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersLoginMutation();
 
@@ -45,6 +49,7 @@ function Login(): JSX.Element {
     if (loginData.data) {
       console.log(loginData.data)
       toast.success('어서오세요!!');
+      closeLogin();
       navigate("/main");
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');

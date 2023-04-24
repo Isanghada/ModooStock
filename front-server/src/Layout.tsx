@@ -1,13 +1,18 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppSelector } from 'Store/hooks';
 import Login from 'Components/Login/Login';
 import SignUp from 'Components/SignUp/SignUp';
 import { useEffect, useState } from 'react';
+import Navbar from 'Components/Common/Navbar';
 
 function Layout(): JSX.Element {
+  // 현재 주소 가져올 useLocation
+  const location = useLocation();
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
+  // 네브바 상태 체크
+  const [isNavBar, setIsNavBar] = useState<boolean>(false);
 
   // 로그인 창 상태
   const loginStatus = useAppSelector((state) => {
@@ -26,10 +31,16 @@ function Layout(): JSX.Element {
     };
     // 처음 한번 실행
     updateScreenWidth();
-    
+
     window.addEventListener('resize', updateScreenWidth);
     return () => window.removeEventListener('resize', updateScreenWidth);
   }, []);
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setIsNavBar(true);
+    }
+  }, [location]);
 
   return (
     <>
@@ -38,6 +49,9 @@ function Layout(): JSX.Element {
           className={`${
             loginStatus || signUpStatus ? 'w-[60vw] lg:w-[70vw]' : 'w-full'
           } container relative flex h-screen mx-auto lg:max-w-screen-xl`}>
+          {/* 네브바  */}
+          {isNavBar && <Navbar />}
+          {/* 그 밖의 컴포넌트 */}
           <Outlet />
         </div>
         {/* 로그인 컴포넌트 */}
