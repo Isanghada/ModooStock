@@ -69,7 +69,7 @@ function Intro(): JSX.Element {
         {/* 로그인 깜빡임 */}
         {showLogin && <motion.div
           onClick={showLogIn}
-          className="cursor-pointer absolute right-0 w-[5%] lg:text-5xl lg:text-bold h-fit"
+          className="cursor-pointer absolute right-0 w-[5%] lg:text-5xl lg:text-bold h-[4vh]"
           animate={{ opacity: [0, 1, 0] }}
           transition={{
             duration: 2,
@@ -78,7 +78,7 @@ function Intro(): JSX.Element {
             ease: 'linear'
           }}>
           <img
-            className="w-full h-full hover:scale-110"
+            className="w-full h-full hover:scale-105"
             src="/images/intro/increase.png"
             alt="arrow"
           />
