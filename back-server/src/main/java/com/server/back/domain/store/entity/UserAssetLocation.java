@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class UserAssetLocation extends UserAssetEntity {
 
     @Column(nullable = false)
@@ -38,6 +37,15 @@ public class UserAssetLocation extends UserAssetEntity {
         this.rotX=0F;
         this.rotY=0F;
         this.rotZ=0F;
+    }
+
+    public void update(float posX,float posY,float posZ,float rotX,float rotY,float rotZ){
+        this.posX=posX;
+        this.posY=posY;
+        this.posZ=posZ;
+        this.rotX=rotX;
+        this.rotY=rotY;
+        this.rotZ=rotZ;
     }
 
 
