@@ -2,9 +2,12 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
 import { AnimatePresence, motion } from 'framer-motion';
 import { changeLoginStatus, changeSignUpStatus } from 'Store/store';
+import { usePostUsersLoginMutation } from 'Store/NonAuthApi';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginInterFace {
-  email: string;
+  account: string;
   password: string;
 }
 
@@ -12,27 +15,19 @@ const screenHeight = window.screen.height
 
 function Login(): JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [loginAccount, setLoginAccount] = useState<LoginInterFace>({
-    email: '',
+    account: '',
     password: ''
   });
   // 회원가입 창 띄우기
   const showSignUp = () => {
     dispatch(changeSignUpStatus(true));
   };
+  // 로그인 API
+  const [postUsersLogin, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersLoginMutation();
 
-  // 로그인 요청후 값 받아오기
-  // const {token, email, status} = useAppSelector(state => {
-  //   return state.login;
-  // });
-
-  // 로그인 요청후 받아온 상태값 변화에 따른 처리
-  useEffect(() => {
-    // status값 init
-    // dispatch(initStatus());
-    // dispatch(initStatusSignUp());
-  }, []);
 
   //input에 입력될 때마다 loginAccount state값 변경되게 하는 함수
   const onChangeAccount = (
@@ -45,8 +40,18 @@ function Login(): JSX.Element {
   };
 
   //로그인 form 제출
-  const onSubmitLoginForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      const loginData = await postUsersLogin(loginAccount);
+      console.log(loginData, "성공로긴");
+      toast.success("어서오세요!!")
+      // navigate("/main");
+    } catch (error) {
+      toast.error("아이디와 비밀번호를 확인해주세요!")
+      console.log("로그인 에러", error);
+    }
+    
   };
 
   return (
@@ -71,10 +76,10 @@ function Login(): JSX.Element {
           className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[45vh] lg:h-[25vh] justify-evenly ${screenHeight >= 800 ? "min-h-[12rem]" : ""}`}>
           <input
             onChange={onChangeAccount}
-            name="email"
-            type="email"
+            name="account"
+            type="text"
             className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
-            placeholder="이메일"
+            placeholder="아이디"
             required
           />
           <input

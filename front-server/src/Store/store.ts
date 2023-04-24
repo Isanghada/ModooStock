@@ -48,7 +48,7 @@ export const store = configureStore({
     loginStatus: loginStatus.reducer,
     signUpStatus: signUpStatus.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(everyStock.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(everyStock.middleware).concat(NonAuthApi.middleware),
 
 });
 //주석추가

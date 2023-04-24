@@ -38,7 +38,6 @@ export const everyStock = createApi({
   tagTypes: ['Api'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
-
     // prepareHeaders(headers) {
     //   headers.set('accessToken', accessToken)
     // },
