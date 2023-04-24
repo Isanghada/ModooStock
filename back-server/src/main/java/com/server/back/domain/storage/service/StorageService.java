@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface StorageService {
     List<MyAssetResDto> getStorageList();
+    void createResale(Long myAssetId);
 }
