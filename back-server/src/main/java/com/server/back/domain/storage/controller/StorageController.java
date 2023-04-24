@@ -6,9 +6,7 @@ import com.server.back.domain.storage.service.StorageService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +23,11 @@ public class StorageController {
         List<MyAssetResDto> storageResDto= storageService.getStorageList();
         return ResponseEntity.ok(ResultDto.of(storageResDto));
 
+    }
+
+    @PostMapping("/resale/{myAssetId}")
+    public ResponseEntity<ResultDto<Boolean>> createResale(@PathVariable Long myAssetId){
+        storageService.createResale(myAssetId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 }
