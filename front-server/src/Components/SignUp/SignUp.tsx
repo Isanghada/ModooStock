@@ -119,7 +119,7 @@ function SignUp(): JSX.Element {
   const onSubmitSignUpForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // if (checkPassword === '비밀번호가 일치하지 않습니다') {
-    //   toast('비밀번호가 일치하지 않습니다');
+    //   toast('비밀번호가 일치하지 않습니다'); 
     // } else {
     //   dispatch(signUpAsync(account));
     // }
