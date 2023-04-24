@@ -12,7 +12,7 @@ import Mypage from 'Components/Mypage/Mypage';
 function App() {
   return (
     <>
-      <ToastContainer />
+      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} />
       <Routes>
         <Route path="" element={<Layout />}>
           <Route path="/" element={<Intro />} />
