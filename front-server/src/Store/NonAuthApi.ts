@@ -18,6 +18,7 @@ interface ReturnDataInterFace {
 }
 
 
+
 export const NonAuthApi = createApi({
   reducerPath: "NonAuthApi",
   tagTypes: ['NonAuthApi'],
@@ -28,7 +29,6 @@ export const NonAuthApi = createApi({
     // 1. 아이디 중복체크
     getUsersEmailCheck: builder.query<ReturnDataInterFace, string>({
       query: (email) => {
-        console.log("이메일체크 : ", email);
         return {
           url: `users/account/${email}`,
           method: "GET",
@@ -41,7 +41,6 @@ export const NonAuthApi = createApi({
     // 2. 닉네임 중복체크
     getUsersNickCheck: builder.query<ReturnDataInterFace, string>({
       query: (nickname) => {
-        console.log("닉네임체크 : ", nickname);
         return {
           url: `users/nickname/${nickname}`,
           method: "GET",
@@ -54,7 +53,7 @@ export const NonAuthApi = createApi({
     // 3. 회원가입
     postUsersSignUp: builder.mutation<ReturnDataInterFace, SignUpStateInterFace>({
       query: (data) => {
-        console.log("회원가입 : ", data);
+        // console.log("회원가입 : ", data);
         return {
           url: `users`,
           method: "POST",
@@ -66,7 +65,7 @@ export const NonAuthApi = createApi({
     // 4. 로그인
     postUsersLogin: builder.mutation<ReturnDataInterFace, LoginStateInterFace>({
       query: (data) => {
-        console.log("로그인 : ", data);
+        // console.log("로그인 : ", data);
         return {
           url: `login`,
           method: "POST",

@@ -11,7 +11,7 @@ interface LoginInterFace {
   password: string;
 }
 
-const screenHeight = window.screen.height
+const screenHeight = window.screen.height;
 
 function Login(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -28,11 +28,8 @@ function Login(): JSX.Element {
   // 로그인 API
   const [postUsersLogin, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersLoginMutation();
 
-
   //input에 입력될 때마다 loginAccount state값 변경되게 하는 함수
-  const onChangeAccount = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const onChangeAccount = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setLoginAccount({
       ...loginAccount,
       [event.target.name]: event.target.value
@@ -42,16 +39,17 @@ function Login(): JSX.Element {
   //로그인 form 제출
   const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const loginData = await postUsersLogin(loginAccount);
-      console.log(loginData, "성공로긴");
-      toast.success("어서오세요!!")
-      // navigate("/main");
-    } catch (error) {
-      toast.error("아이디와 비밀번호를 확인해주세요!")
-      console.log("로그인 에러", error);
+
+    const loginData: any = await postUsersLogin(loginAccount);
+    // 로그인 시도후 처리
+    if (loginData.data) {
+      console.log(loginData.data)
+      toast.success('어서오세요!!');
+      navigate("/main");
+    } else {
+      toast.error('아이디와 비밀번호를 확인해주세요!!');
+      console.log("로그인 에러 :",  loginData.error);
     }
-    
   };
 
   return (
@@ -66,14 +64,15 @@ function Login(): JSX.Element {
       }}>
       {/* 오른쪽 폼 */}
       <div
-        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${screenHeight >= 800 ? "lg:min-h-[38rem] min-h-[19rem]" : ""}`}>
-        <div
-          className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>
-          로그인
-        </div>
+        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${
+          screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
+        }`}>
+        <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>로그인</div>
         <form
           onSubmit={onSubmitLoginForm}
-          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[45vh] lg:h-[25vh] justify-evenly ${screenHeight >= 800 ? "min-h-[12rem]" : ""}`}>
+          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[45vh] lg:h-[25vh] justify-evenly ${
+            screenHeight >= 800 ? 'min-h-[12rem]' : ''
+          }`}>
           <input
             onChange={onChangeAccount}
             name="account"
@@ -97,10 +96,7 @@ function Login(): JSX.Element {
           />
         </form>
         <div className={`w-5/6 flex justify-end items-end`}>
-          <div className="mr-1 text-xs lg:mr-2 lg:text-sm">
-            {' '}
-            계정이 없으신가요?{' '}
-          </div>
+          <div className="mr-1 text-xs lg:mr-2 lg:text-sm"> 계정이 없으신가요? </div>
           <div
             onClick={showSignUp}
             className="text-sm lg:text-lg font-semibold lg:font-bold cursor-pointer text-[#fca699] hover:text-[#f98270]">

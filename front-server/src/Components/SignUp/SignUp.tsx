@@ -123,12 +123,6 @@ function SignUp(): JSX.Element {
     dispatch(changeSignUpStatus(false));
   };
 
-  // 로그인 요청후 받아온 상태값 변화에 따른 처리
-  useEffect(() => {
-    // status값 init
-    // dispatch(initStatus());
-    // dispatch(initStatusSignUp());
-  }, []);
 
   //회원가입 form 제출
   const onSubmitSignUpForm = async (event: React.FormEvent<HTMLFormElement>) => {
