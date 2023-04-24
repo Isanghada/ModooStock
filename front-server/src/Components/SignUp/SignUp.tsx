@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { useAppDispatch } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
+import { motion } from 'framer-motion';
 import { changeSignUpStatus } from 'Store/store';
 import {
   useLazyGetUsersEmailCheckQuery,
@@ -22,18 +22,15 @@ interface ValueInterFace {
   password: boolean;
 }
 
-const screenHeight = window.screen.height;
-
 function SignUp(): JSX.Element {
   const dispatch = useAppDispatch();
+  const [screenHeight, setScreenHeight] = useState<number>(0);
   // 빈값 체크
   const [emptyValue, setEmptyValue] = useState<ValueInterFace>({
     account: false,
     nickname: false,
     password: false
   });
-  // 이메일 유효성 알림 코멘트
-  const [emailComment, setEmailComment] = useState<string>('');
   // 이메일 확인 일치여부
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   // 닉네임 확인 일치여부
@@ -52,32 +49,6 @@ function SignUp(): JSX.Element {
   const [postUsersSignUp, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersSignUpMutation();
   const [getUsersEmailCheck] = useLazyGetUsersEmailCheckQuery();
   const [getUsersNickCheck] = useLazyGetUsersNickCheckQuery();
-
-  // 이메일 양식 체크 우선 주석처리
-  // const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = event.target;
-  //   const emailRegex =
-  //     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-
-  //   // 빈값 체크
-  //   setEmptyValue({
-  //     ...emptyValue,
-  //     [name]: value !== ''
-  //   });
-
-  //   // 이메일 유효성 검사
-  //   if (!emailRegex.test(value)) {
-  //     setEmailComment('이메일 형식을 다시 확인해주세요!');
-  //   } else {
-  //     setEmailComment('');
-  //   }
-
-  //   // 제출할 이메일계정 정보
-  //   setAccount({
-  //     ...account,
-  //     [name]: value
-  //   });
-  // }
 
   //input에 입력될 때마다 account state값 변경되게 하는 함수
   const onChangeAccount = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -123,7 +94,6 @@ function SignUp(): JSX.Element {
     dispatch(changeSignUpStatus(false));
   };
 
-
   //회원가입 form 제출
   const onSubmitSignUpForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -136,30 +106,18 @@ function SignUp(): JSX.Element {
 
     try {
       await postUsersSignUp(accoutData).unwrap();
-      toast.success("회원가입성공");
+      toast.success('회원가입성공');
       closeSignUp();
     } catch (error) {
       toast.error('회원가입실패');
     }
-
-    // switch (signUpResult.result) {
-    //   case 'SUCCESS':
-    //     toast.success('회원가입 성공!!');
-    //     closeSignUp();
-    //     break;
-    //     case 'FAIL':
-    //       toast.error('회원가입 실패ㅋㅋ');
-    //       break;
-    //     }
-
-    // if (checkPassword === '비밀번호가 일치하지 않습니다') {
-    //   toast('비밀번호가 일치하지 않습니다');
-    // } else {
-    //   dispatch(signUpAsync(account));
-    // }
   };
-  
 
+  useEffect(() => {
+    // 창 높이 변할떄마다 실행
+    const height = window.screen.height;
+    setScreenHeight(height);
+  }, [window.screen.height]);
 
   return (
     <motion.div
