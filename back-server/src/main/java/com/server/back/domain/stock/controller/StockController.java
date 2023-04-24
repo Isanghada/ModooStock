@@ -2,6 +2,7 @@ package com.server.back.domain.stock.controller;
 
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.stock.dto.StockListResDto;
+import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.stock.dto.StockResDto;
 import com.server.back.domain.stock.service.StockService;
 import io.swagger.annotations.*;
@@ -32,6 +33,15 @@ public class StockController {
         StockResDto stockResDto = stockService.getStockChart(stockId);
         return ResponseEntity.ok().body(ResultDto.of(stockResDto));
     }
+
+    @PostMapping()
+    @ApiOperation(value="매수")
+    public ResponseEntity<ResultDto<Boolean>> buyStock(@RequestBody StockReqDto stockReqDto) {
+        stockService.buyStock(stockReqDto);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.server.back.domain.stock.entity;
 
+import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.user.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,9 +33,30 @@ public class UserDealEntity {
     private Float average;
 
     @Column(nullable = false)
-    private Integer totalPrice;
+    private Float totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id", nullable = false)
     private StockEntity stock;
+
+    public UserDealEntity(UserEntity user, StockReqDto stockReqDto , StockEntity stock){
+        this.user = user;
+        this.totalAmount = stockReqDto.getStockAmount();
+        this.average = (float)stockReqDto.getPrice();
+        this.totalPrice = (float) stockReqDto.getStockAmount() * stockReqDto.getPrice();
+        this.stock = stock;
+    }
+
+    // 매수
+    public void increase(Integer price, Integer amount){
+        this.totalPrice += (price * amount);
+        this.totalAmount += amount;
+        this.average = totalPrice / amount;
+    }
+
+    // 매도
+    public void decrease(Integer price, Integer amount){
+        this.totalPrice -= (this.average*amount);
+        this.totalAmount -= amount;
+    }
 }
