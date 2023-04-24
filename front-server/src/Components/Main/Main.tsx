@@ -1,6 +1,7 @@
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
 
@@ -10,6 +11,7 @@ function Main(): JSX.Element {
   );
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(window.screen.width);
@@ -38,6 +40,9 @@ function Main(): JSX.Element {
     }
   };
 
+  const Click = () => {
+    navigate('/bank');
+  };
   return (
     <>
       {/* 데스크탑 */}
@@ -265,10 +270,10 @@ function Main(): JSX.Element {
           {/* 1번째 */}
           <div className="flex flex-col items-end w-[11%] h-full">
             <div className="h-[81%]"></div>
-            <div className="h-[14%] w-full animate-moving">
+            <div className="h-[14%] w-full animate-moving relative">
               <img
                 aria-label="가이드"
-                className="z-10 h-full w-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
+                className="z-10 h-full w-full cursor-pointer absolute pl-1 hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/guide.png"
                 alt=""
               />
@@ -278,7 +283,7 @@ function Main(): JSX.Element {
           {/* 2번째 */}
           <div className="flex flex-col w-[18%] h-full">
             <div className="h-[23%] w-full"></div>
-            <div className="flex justify-center h-[25%] w-full animate-moving">
+            <div className="flex justify-center h-[25%] w-full z-20 animate-moving">
               <img
                 aria-label="방문하기"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
@@ -302,7 +307,7 @@ function Main(): JSX.Element {
             <div className="h-[7%]"></div>
           </div>
           {/* 3번째 */}
-          <div className="flex flex-col w-[18%] h-full">
+          <div className="flex flex-col w-[18%] h-full z-20">
             <div className="h-[9%]"></div>
             <div className="flex justify-center h-[20%] w-full animate-moving">
               <img
