@@ -44,7 +44,7 @@ public class SpringSecurity {
 			.antMatchers("/static/css/**", "/static/js/**", "*.ico", "/images/**", "/js/**", "/webjars/**")
 			.antMatchers(
 				"/v2/api-docs", "/configuration/ui",
-				"/swagger-resources", "/configuration/security",
+				"/swagger-resources/**","/configuration/security",
 				"/swagger-ui.html", "/webjars/**", "/swagger/**",
 				"/swagger-ui/**")
 			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh")

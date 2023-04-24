@@ -57,10 +57,33 @@ export const everyStock = createApi({
 
   endpoints: (builder) => ({
 
+    // // 1. 전체 회원 목록
+    // getAdminUserList: builder.query({
+    //   query: () => "/admin/user",
+    //   providesTags: (result, error, arg) => {
+    //     return [{ type: "adminUser" }]
+    //   }
+    // }),
+
+    // // 3. 회원 삭제
+    // putAdminUserDelete: builder.mutation({
+    //   query: (data) => {
+    //     let [delete_id, my_id] = data
+    //     my_id = parseInt(my_id)
+    //     return {
+    //       url: `/admin/user/${my_id}/${delete_id}`,
+    //       method: 'put'
+    //     }
+    //   },
+    //   invalidatesTags: (result, error, arg) => [{ type: "adminUser" }]
+    // }),
     
   }),
 })
 // 임시저장
 export const {
+
+  // useLazyGetAdminUserListQuery,
+  // usePutAdminUserDeleteMutation,
 
 } = everyStock 
