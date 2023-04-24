@@ -136,12 +136,12 @@ function SignUp(): JSX.Element {
         ease: 'easeInOut'
       }}>
       {/* 오른쪽 폼 */}
-      <div className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center`}>
+      <div className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${screenHeight >= 800 ? "lg:min-h-[38rem] min-h-[19rem]" : ""}`}>
         <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
         <form
           onSubmit={onSubmitSignUpForm}
-          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:min-h-[calc(var(--screen-height) / 2)] lg:h-[50vh] justify-between`}>
-          <div className="flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full">
+          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between ${screenHeight >= 800 ? "lg:min-h-[28rem] min-h-[16rem]" : ""}`}>
+          <div className={`flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full ${screenHeight >= 800 ? "lg:min-h-[25rem] min-h-[12rem]" : ""} `}>
             {/* 이메일 */}
             <div className="h-8 lg:h-12">
               <input
@@ -212,7 +212,7 @@ function SignUp(): JSX.Element {
             value="회원가입"
           />
         </form>
-        <div className={`w-5/6 flex justify-end items-end h-[8vh]`}>
+        <div className={`w-5/6 flex justify-end items-end h-[8vh] `}>
           <div className="mr-1 text-xs lg:mr-2 lg:text-sm"> 계정이 있으신가요? </div>
           <div
             onClick={closeSignUp}

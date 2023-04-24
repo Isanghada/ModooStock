@@ -22,7 +22,7 @@ function Intro(): JSX.Element {
     <AnimatePresence>
       {/* 전체 배경 */}
       <motion.div
-        className="flex flex-col justify-center items-center w-full h-full text-xl bg-center bg-[url('/src/intro/IntroBG.png')] bg-no-repeat bg-contain"
+        className="flex flex-col justify-center items-center w-full h-full text-xl bg-center bg-[url('/src/intro/IntroBG.png')] bg-no-repeat bg-contain lg:min-h-[38rem] min-h-[19rem]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
