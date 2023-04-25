@@ -1,8 +1,10 @@
 package com.server.back.domain.rank.service;
 
 
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
-import com.server.back.domain.rank.dto.RankListResDto;
+import com.server.back.domain.bank.repository.BankRepository;
+import com.server.back.domain.rank.dto.RankResDto;
 import com.server.back.domain.rank.entity.RankEntity;
 import com.server.back.domain.rank.repository.RankRepository;
 import com.server.back.domain.stock.entity.ChartEntity;
@@ -34,16 +36,27 @@ public class RankServiceImpl implements  RankService{
     private final UserDealRepository userDealRepository;
     private final MarketRepository marketRepository;
     private final ChartRepository chartRepository;
+    private final BankRepository bankRepository;
 
     /**
-     * 랭킹 세우기
+     * 랭킹 가져오기
      *
      * @return
      */
-
-    @Scheduled(cron = "0 0 10-22 * * 1-6",zone = "Asia/Seoul")
     @Override
-    public List<RankListResDto> getRanking() {
+    public List<RankResDto> getRanking() {
+        List<RankEntity>list=rankRepository.findTop10ByOrderByTotalMoneyDesc();
+        return RankResDto.fromEntityList(list);
+    }
+
+
+    /**
+     * 랭킹 세우는 로직
+     * 한 시간에 한 번 계산
+     *
+     */
+    @Scheduled(cron = "0 0 10-22 * * 1-6",zone = "Asia/Seoul")
+    public void calRanking(){
 
         //랭킹 레퍼지토리 전체 삭제
         rankRepository.deleteAll();
@@ -73,15 +86,18 @@ public class RankServiceImpl implements  RankService{
                 totalMoney+=amount*(chart.getPriceEnd()*amount);
             }
 
+            //예금에 있는 거
+            Integer bankMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(user.getId(), IsCompleted.N).orElse(0);
+            totalMoney+=bankMoney;
 
             RankEntity rank=RankEntity.builder()
                     .nickname(user.getNickname())
+                    .totalMoney(totalMoney)
                     .profileImagePath(user.getProfileImagePath())
                     .build();
             rankRepository.save(rank);
 
-
         }
-        return null;
+
     }
 }
