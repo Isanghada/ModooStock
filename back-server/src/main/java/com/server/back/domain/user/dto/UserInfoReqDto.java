@@ -6,13 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoReqDto {
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	private LocalDateTime time;
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate time;
 }
