@@ -1,6 +1,6 @@
-package com.server.back.domain.stock.entity;
+package com.server.back.domain.news.entity;
 
-import com.server.back.common.code.commonCode.IsUsed;
+import com.server.back.domain.stock.entity.CompanyEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

@@ -24,4 +24,7 @@ public class StockEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private CompanyEntity company;
+
+    @Column(nullable = false)
+    private Integer average;
 }
