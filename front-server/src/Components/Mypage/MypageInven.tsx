@@ -1,9 +1,12 @@
 import styled from './Mypage.module.css';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 function MypageInven(): JSX.Element {
   const funitureList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((funiture, idx) => {
     return (
-      <div key={idx} className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 border-[#F0EBE3] rounded-2xl mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
+      <div
+        key={idx}
+        className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 border-[#F0EBE3] rounded-2xl mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
         {/* 이미지 */}
         <div className="flex justify-center w-[50%] h-[75%] mb-1">
           <img className="h-full" src="/images/funitures/funiture.png" alt="asdsd" />
