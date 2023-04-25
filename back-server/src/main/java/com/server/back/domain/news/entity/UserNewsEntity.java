@@ -1,4 +1,4 @@
-package com.server.back.domain.stock.entity;
+package com.server.back.domain.news.entity;
 
 import com.server.back.domain.user.entity.UserEntity;
 import lombok.*;

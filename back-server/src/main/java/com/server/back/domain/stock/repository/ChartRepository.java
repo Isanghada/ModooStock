@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ChartRepository extends JpaRepository<ChartEntity, Long> {
 
-    List<ChartEntity> findTop360ByCompanyIdAndDateAfter(Long companyId, LocalDateTime date);
-    Optional<ChartEntity> findByCompanyIdAndDate(Long companyId, LocalDateTime date);
+    List<ChartEntity> findTop360ByCompanyIdAndDateAfter(Long companyId, LocalDate date);
+    Optional<ChartEntity> findByCompanyIdAndDate(Long companyId, LocalDate date);
 }
