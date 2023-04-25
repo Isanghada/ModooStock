@@ -62,18 +62,13 @@ function Main(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
-    console.log("open Modal");
     setIsOpen(true);
-    console.log("open Modal");
   };
 
   const handleCloseModal = () => {
     setIsOpen(false);
   };
 
-  const checkOpen = () => { 
-    console.log("check");
-  };
 
   return (
     <>
