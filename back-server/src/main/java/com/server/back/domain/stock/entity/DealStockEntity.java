@@ -1,7 +1,6 @@
 package com.server.back.domain.stock.entity;
 
 import com.server.back.common.entity.DealEntity;
-import com.server.back.domain.user.entity.UserEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

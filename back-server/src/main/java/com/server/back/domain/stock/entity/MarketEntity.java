@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -19,6 +19,9 @@ public class MarketEntity extends CommonEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime startAt;
+    private LocalDate startAt;
+
+    @Column(nullable = false)
+    private LocalDate gameDate;
 
 }
