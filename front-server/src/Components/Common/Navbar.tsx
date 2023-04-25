@@ -10,7 +10,7 @@ function Navbar(): JSX.Element {
   }, [window.screen.height])
   
   return (
-   <div className={`fixed top-0 left-0 flex w-screen bg-black h-[10vh] ${ screenHeight >= 800 ? 'min-h-[6rem]' : '' }`}>
+   <div className={`fixed top-0 left-0 flex w-screen bg-black h-[10vh] ${ screenHeight >= 800 ? 'min-h-[5rem]' : '' }`}>
     Navbar
    </div>
   );
