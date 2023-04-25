@@ -1,6 +1,7 @@
 package com.server.back.domain.stock.controller;
 
 import com.server.back.common.code.dto.ResultDto;
+import com.server.back.domain.news.repository.NewsRepository;
 import com.server.back.domain.stock.dto.StockListResDto;
 import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.stock.dto.StockResDto;
@@ -17,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Api(tags = "주식 API")
 public class StockController {
-
     private final StockService stockService;
 
     @GetMapping()

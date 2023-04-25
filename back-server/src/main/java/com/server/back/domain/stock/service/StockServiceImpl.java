@@ -58,12 +58,12 @@ public class StockServiceImpl implements StockService {
         Long companyId = stock.getCompany().getId();
 
         // 주식 chart
-        List<ChartEntity> stockChartList = chartRepository.findTop360ByCompanyIdAndDateAfter(companyId, date);
+        List<ChartEntity> stockChartList = chartRepository.findTop360ByCompanyIdAndDateGreaterThanEqual(companyId, date);
 
         // 유저 보유 주식
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockId).get();
+        Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
 
-        return StockResDto.fromEntity(stockId,userDeal, stockChartList);
+        return StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
     }
 
     @Override
