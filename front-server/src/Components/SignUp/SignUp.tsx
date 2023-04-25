@@ -131,7 +131,7 @@ function SignUp(): JSX.Element {
       }}>
       {/* 오른쪽 폼 */}
       <div
-        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${
+        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center  ${
           screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
         }`}>
         <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
@@ -181,22 +181,24 @@ function SignUp(): JSX.Element {
               )}
             </div>
             {/* 비밀번호  */}
-            <input
-              onChange={onChangeAccount}
-              name="password"
-              type="password"
-              className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
-              placeholder="비밀번호"
-              minLength={4}
-              maxLength={15}
-              required
-            />
+            <div className="h-8 lg:h-12">
+              <input
+                onChange={onChangeAccount}
+                name="password"
+                type="password"
+                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+                placeholder="비밀번호"
+                minLength={4}
+                maxLength={15}
+                required
+              />
+            </div>
             <div className="h-8 lg:h-12">
               <input
                 onChange={onChangeAccount}
                 name="password2"
                 type="password"
-                className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
                 placeholder="비밀번호 확인"
                 required
               />
