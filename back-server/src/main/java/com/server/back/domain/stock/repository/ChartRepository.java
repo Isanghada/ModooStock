@@ -3,6 +3,7 @@ package com.server.back.domain.stock.repository;
 import com.server.back.domain.stock.entity.ChartEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
