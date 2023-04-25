@@ -1,7 +1,11 @@
 import styled from './Mypage.module.css';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { useRef, useState } from 'react';
 
 function MypageInven(): JSX.Element {
+  const containerRef = useRef<any>(null);
+  const [dragging, setDragging] = useState<boolean>(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const funitureList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((funiture, idx) => {
     return (
       <div
@@ -19,11 +23,30 @@ function MypageInven(): JSX.Element {
     );
   });
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    console.log('마우스 다운', e);
+
+    setDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragging) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const dx = x - startX;
+    containerRef.current.scrollLeft = scrollLeft - dx;
+  };
   return (
     <>
-      <div className="absolute flex flex-start w-full mx-auto h-[6rem] lg:h-[11rem] bg-[#FFFFFF]/40 bottom-0 z-10 text-white ">
+      <div className="absolute flex flex-start w-full mx-auto h-[5.7rem] lg:h-[11rem] bg-[#FFFFFF]/40 bottom-0 z-10 text-white ">
         {/* 가구 섹션 */}
-        <div className="flex flex-col text-center justify-center text-white w-[8%] lg:w-[9%] text-[0.8rem] lg:text-[1rem] font-extrabold">
+        <div className="flex flex-col text-center justify-center text-white w-[8%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
           <div className="w-full my-[1px] lg:py-1 bg-[#FB6B9F] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>ALL</span>
           </div>
@@ -39,7 +62,13 @@ function MypageInven(): JSX.Element {
         </div>
         <div className="w-[2%]"></div>
         {/* 가구 목록 */}
-        <div className={`flex justify-start w-[84%] h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
+
+        <div
+          ref={containerRef}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          className={`flex scroll-container justify-start w-[84%] h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
           <div className="flex justify-start">{funitureList}</div>
         </div>
       </div>
