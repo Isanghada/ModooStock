@@ -1,6 +1,6 @@
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
@@ -44,8 +44,16 @@ function Main(): JSX.Element {
     }
   };
 
-  const Click = () => {
-    navigate('/bank');
+  const click = (e: React.MouseEvent) => {
+    const target = e.target as HTMLDivElement;
+    switch (target.ariaLabel) {
+      case '은행':
+        navigate('/bank');
+        break;
+
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -54,10 +62,10 @@ function Main(): JSX.Element {
       const { data } = await getUsersInfo('');
       // 닉네임 세팅
       if (data) {
-        const {nickname, currentMoney, totalStockReturn} = data.data;
-        localStorage.setItem("nickname", nickname)
-        localStorage.setItem("currentMoney", String(currentMoney))
-        localStorage.setItem("totalStockReturn", String(totalStockReturn))
+        const { nickname, currentMoney, totalStockReturn } = data.data;
+        localStorage.setItem('nickname', nickname);
+        localStorage.setItem('currentMoney', String(currentMoney));
+        localStorage.setItem('totalStockReturn', String(totalStockReturn));
       }
     };
     getMyInfo();
@@ -120,6 +128,7 @@ function Main(): JSX.Element {
                   className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                   src="/images/toys/bank.png"
                   alt=""
+                  onClick={click}
                 />
               </div>
               <div className="h-[52%]"></div>
@@ -335,6 +344,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/bank.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[55%]"></div>
