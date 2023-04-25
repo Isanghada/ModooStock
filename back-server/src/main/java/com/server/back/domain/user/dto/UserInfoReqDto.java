@@ -13,6 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoReqDto {
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate time;
 }
