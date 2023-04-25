@@ -26,5 +26,5 @@ public interface UserService {
 
     UserResDto getUserRandom();
 
-    UserInfoResDto getUser(String nickname);
+    UserInfoResDto getUser(String nickname, UserInfoReqDto userInfoReqDto);
 }
