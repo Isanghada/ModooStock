@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,8 +25,8 @@ public class RankController {
 
     @GetMapping
     @ApiOperation(value = "랭킹 리스트를 뽑아줍니다.", notes = "")
-    public ResponseEntity<ResultDto<List<RankListResDto>>> getRanking(){
-        List<RankListResDto>ranking=rankService.getRanking();
-        return ResponseEntity.ok(ResultDto.of(ranking));
+    public ResponseEntity<ResultDto<List<RankListResDto>>> getRanking(@RequestParam LocalDate date){
+        //List<RankListResDto>ranking=rankService.getRanking(date);
+        return ResponseEntity.ok(ResultDto.of(null));
     }
 }
