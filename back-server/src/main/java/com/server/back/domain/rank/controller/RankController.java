@@ -4,6 +4,7 @@ import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.rank.dto.RankListResDto;
 import com.server.back.domain.rank.service.RankService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ public class RankController {
     private RankService rankService;
 
     @GetMapping
+    @ApiOperation(value = "랭킹 리스트를 뽑아줍니다.", notes = "")
     public ResponseEntity<ResultDto<List<RankListResDto>>> getRanking(){
         List<RankListResDto>ranking=rankService.getRanking();
         return ResponseEntity.ok(ResultDto.of(ranking));
