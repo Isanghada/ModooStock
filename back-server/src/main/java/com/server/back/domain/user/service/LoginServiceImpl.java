@@ -5,6 +5,7 @@ import com.server.back.common.service.AuthService;
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
 import com.server.back.domain.user.dto.LoginReqDto;
+import com.server.back.domain.user.dto.LoginResDto;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
@@ -34,7 +35,7 @@ public class LoginServiceImpl implements LoginService{
      * @param response    엑세스 토큰을 담을 response
      */
     @Override
-    public void login(LoginReqDto loginReqDto, HttpServletResponse response) {
+    public LoginResDto login(LoginReqDto loginReqDto, HttpServletResponse response) {
         // 유저가 존재하지 않을 때 혹은 탈퇴한 유저 일때 error 발생
         UserEntity user = userRepository.findByAccountAndIsDeleted(loginReqDto.getAccount(), IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -56,6 +57,9 @@ public class LoginServiceImpl implements LoginService{
 
         // refresh token Redis에 저장
         redisService.setDataExpireMilliseconds("RT:" + user.getId(), refreshToken, authTokenProvider.getExpiration(refreshToken));
+
+        // 토큰 body에 담아서 전달
+        return LoginResDto.fromEntity(accessToken, refreshToken);
     }
 
 
@@ -66,7 +70,7 @@ public class LoginServiceImpl implements LoginService{
      * @param response           엑세스 토큰을 담을 response
      */
     @Override
-    public void createAccessToken(Map<String, String> loginRequestHeader, HttpServletResponse response) {
+    public LoginResDto createAccessToken(Map<String, String> loginRequestHeader, HttpServletResponse response) {
         // 로그인 유저 가져오기
         String loginRequestRefreshToken = getHeader(loginRequestHeader, "x-refresh-token");
 
@@ -98,6 +102,8 @@ public class LoginServiceImpl implements LoginService{
         authTokenProvider.setHeaderAccessToken(response, newAccessToken);
         authTokenProvider.setHeaderRefreshToken(response, newRefreshToken);
 
+        // 토큰 body에 담아서 전달
+        return LoginResDto.fromEntity(newAccessToken, newRefreshToken);
     }
 
     /**
