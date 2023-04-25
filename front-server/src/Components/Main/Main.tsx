@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
+import { useLazyGetUsersInfoQuery } from 'Store/api';
+import axios from 'axios';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -12,6 +14,8 @@ function Main(): JSX.Element {
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
   const navigate = useNavigate();
+  // 내 정보 API
+  const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   useEffect(() => {
     console.log(window.screen.width);
@@ -43,6 +47,15 @@ function Main(): JSX.Element {
   const Click = () => {
     navigate('/bank');
   };
+
+  useEffect(() => {
+    const getMyInfo = async () => {
+      // 내 정보 가져오기 API
+      const myData = await getUsersInfo('');
+      console.log(myData, '마이데이터');
+    };
+    getMyInfo();
+  }, []);
   return (
     <>
       {/* 데스크탑 */}
@@ -230,7 +243,7 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
-            <div className='h-[3%]'></div>
+            <div className="h-[3%]"></div>
           </div>
         </div>
       </div>

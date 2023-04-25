@@ -6,6 +6,7 @@ import { usePostUsersLoginMutation } from 'Store/NonAuthApi';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
+
 interface LoginInterFace {
   account: string;
   password: string;
@@ -28,7 +29,7 @@ function Login(): JSX.Element {
   // 로그인 창 닫기
   const closeLogin = () => {
     dispatch(changeLoginStatus(false));
-  }
+  };
   // 로그인 API
   const [postUsersLogin, { isSuccess: isSuccess1, isError: isError1 }] = usePostUsersLoginMutation();
 
@@ -43,17 +44,22 @@ function Login(): JSX.Element {
   //로그인 form 제출
   const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    // 로그인 시도 API
     const loginData: any = await postUsersLogin(loginAccount);
     // 로그인 시도후 처리
     if (loginData.data) {
-      console.log(loginData.data)
+      console.log(loginData.data);
+      // 토큰 세팅
+      const { accessToken, refreshToken } = loginData.data.data;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
       toast.success('어서오세요!!');
       closeLogin();
-      navigate("/main");
+      navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
-      console.log("로그인 에러 :",  loginData.error);
+      console.log('로그인 에러 :', loginData.error);
     }
   };
 
