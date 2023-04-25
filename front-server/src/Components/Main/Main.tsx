@@ -51,8 +51,14 @@ function Main(): JSX.Element {
   useEffect(() => {
     const getMyInfo = async () => {
       // 내 정보 가져오기 API
-      const myData = await getUsersInfo('');
-      console.log(myData, '마이데이터');
+      const { data } = await getUsersInfo('');
+      // 닉네임 세팅
+      if (data) {
+        const {nickname, currentMoney, totalStockReturn} = data.data;
+        localStorage.setItem("nickname", nickname)
+        localStorage.setItem("currentMoney", String(currentMoney))
+        localStorage.setItem("totalStockReturn", String(totalStockReturn))
+      }
     };
     getMyInfo();
   }, []);
