@@ -42,7 +42,7 @@ function Mypage(): JSX.Element {
   return (
     <>
       {/* 데스크탑 */}
-      <div className="hidden items-center w-full h-full justify-evenly border-4 max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
+      <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
         <div className="flex justify-evenly items-center w-[65%] h-full relative">
           <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
             <img aria-label="마카롱" className={`object-contain w-full`} src="/images/toys/floor.png" alt="" />
@@ -70,10 +70,10 @@ function Mypage(): JSX.Element {
           <div className="flex flex-col w-full font-extrabold">
             {/* 버튼 */}
             <div className="flex justify-end mb-3 text-white">
-              <div className="py-1 px-5 cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] rounded-full mr-2">
+              <div className="py-1 px-5 cursor-pointer hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-2">
                 <span>되팔기</span>
               </div>
-              <div className="py-1 px-5 cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] rounded-full">
+              <div className="py-1 px-5 cursor-pointer hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full">
                 <span>경매장 등록</span>
               </div>
             </div>
@@ -81,13 +81,13 @@ function Mypage(): JSX.Element {
             <div className="flex flex-col justify-center items-center border-4 border-[#fb7c7c] rounded-3xl text-white mb-10">
               {/* 등급 */}
               <div className="flex justify-start w-full pt-2 pl-2">
-                <div className="bg-[#FFC34F] px-7 py-[2px] rounded-full">
+                <div className="bg-[#FFC34F] drop-shadow-lg px-7 py-[2px] rounded-full">
                   <span>유니크</span>
                 </div>
               </div>
               {/* 에셋 이미지 */}
               <div className="flex justify-center my-2 w-[5rem] h-[10rem] max-w-[5rem] max-h-[10rem]">
-                <img src="/images/funitures/funiture.png" alt="가구" />
+                <img className="drop-shadow-lg" src="/images/funitures/funiture.png" alt="가구" />
               </div>
               {/* 포지션 변경 */}
               <div className="flex justify-between w-4/5 py-3 mb-2 text-black">
@@ -196,13 +196,13 @@ function Mypage(): JSX.Element {
               </div>
               {/* 버튼 */}
               <div className="flex w-full pb-2 justify-evenly">
-                <div className="bg-[#87D21F] py-1 px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <div className="bg-[#87D21F] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                   <span>배치 완료</span>
                 </div>
-                <div className="bg-[#41A4F7] py-1 px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <div className="bg-[#41A4F7] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                   <span>창고에 넣기</span>
                 </div>
-                <div className="bg-[#E94561] py-1 px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <div className="bg-[#E94561] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                   <span>취소</span>
                 </div>
               </div>
@@ -240,21 +240,21 @@ function Mypage(): JSX.Element {
           <div className="flex flex-col justify-center items-center absolute border-[3px] border-[#fb7c7c] rounded-2xl text-white mb-10">
             {/* 등급 */}
             <div className="flex justify-between w-full pt-2 pl-1 pb-1 text-[0.6rem]">
-              <div className="bg-[#FFC34F] px-[0.8rem] py-[2px] rounded-full">
+              <div className="bg-[#FFC34F] drop-shadow-lg px-[0.8rem] py-[2px] rounded-full">
                 <span>유니크</span>
               </div>
               <div className="flex pr-1">
-                <div className="py-[2px] px-[0.7rem] cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] rounded-full mr-[2px]">
+                <div className="py-[2px] px-[0.7rem] cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] drop-shadow-lg rounded-full mr-[2px]">
                   <span>되팔기</span>
                 </div>
-                <div className="py-[2px] px-[0.7rem] cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] rounded-full">
+                <div className="py-[2px] px-[0.7rem] cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] drop-shadow-lg rounded-full">
                   <span>경매장 등록</span>
                 </div>
               </div>
             </div>
             {/* 에셋 이미지 */}
             <div className="flex justify-center my-1 w-[2.8rem] h-[4.5rem]">
-              <img src="/images/funitures/funiture.png" alt="가구" />
+              <img className="drop-shadow-lg" src="/images/funitures/funiture.png" alt="가구" />
             </div>
             {/* 포지션 변경 */}
             <div className="flex justify-between w-4/5 py-1 mb-2 text-black text-[0.6rem]">
@@ -363,13 +363,13 @@ function Mypage(): JSX.Element {
             </div>
             {/* 버튼 */}
             <div className="flex w-full pb-2 justify-evenly text-[0.6rem]">
-              <div className="bg-[#87D21F] py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#87D21F] drop-shadow-lg py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>배치 완료</span>
               </div>
-              <div className="bg-[#41A4F7] py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#41A4F7] drop-shadow-lg py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>창고에 넣기</span>
               </div>
-              <div className="bg-[#E94561] py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#E94561] drop-shadow-lg py-[1px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>취소</span>
               </div>
             </div>
