@@ -1,12 +1,11 @@
 package com.server.back.domain.stock.entity;
 
 
-import com.server.back.domain.user.entity.UserEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -27,7 +26,7 @@ public class ChartEntity {
     private Integer priceEnd;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)

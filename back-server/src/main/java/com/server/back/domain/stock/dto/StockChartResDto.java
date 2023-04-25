@@ -3,7 +3,7 @@ package com.server.back.domain.stock.dto;
 import com.server.back.domain.stock.entity.ChartEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class StockChartResDto {
     Integer priceBefore;
     Integer priceEnd;
-    LocalDateTime date;
+    LocalDate date;
     Long id;
     Long companyId;
 

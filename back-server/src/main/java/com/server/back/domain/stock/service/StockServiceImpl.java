@@ -6,7 +6,6 @@ import com.server.back.domain.stock.dto.StockListResDto;
 import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.stock.dto.StockResDto;
 import com.server.back.domain.stock.entity.ChartEntity;
-import com.server.back.domain.stock.entity.DealStockEntity;
 import com.server.back.domain.stock.entity.StockEntity;
 import com.server.back.domain.stock.entity.UserDealEntity;
 import com.server.back.domain.stock.repository.ChartRepository;
@@ -20,8 +19,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -54,14 +54,14 @@ public class StockServiceImpl implements StockService {
 
         // 장 정보 가져오기
         StockEntity stock = stockRepository.findById(stockId).get();
-        LocalDateTime date = stock.getMarket().getStartAt();
+        LocalDate date = stock.getMarket().getStartAt();
         Long companyId = stock.getCompany().getId();
 
         // 주식 chart
         List<ChartEntity> stockChartList = chartRepository.findTop360ByCompanyIdAndDateAfter(companyId, date);
 
         // 유저 보유 주식
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
+        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockId).get();
 
         return StockResDto.fromEntity(stockId,userDeal, stockChartList);
     }
@@ -83,10 +83,10 @@ public class StockServiceImpl implements StockService {
 
         // 보유 주식 data 수정
         // 있을 경우
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId());
-        if(userDeal != null){
-            userDeal.increase(stockReqDto.getPrice(), stockReqDto.getStockAmount());
-            userDealRepository.save(userDeal);
+        Optional<UserDealEntity> userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId());
+        if(userDeal.isPresent()){
+            userDeal.get().increase(stockReqDto.getPrice(), stockReqDto.getStockAmount());
+            userDealRepository.save(userDeal.get());
         }
         else {
             UserDealEntity newDeal = new UserDealEntity(user, stockReqDto, stock);
@@ -100,7 +100,7 @@ public class StockServiceImpl implements StockService {
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId());
+        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId()).get();
 
         // 매도
         // 1. 주식 판 만큼 돈 더하기
