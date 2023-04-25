@@ -6,6 +6,8 @@ import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
 import { useLazyGetUsersInfoQuery } from 'Store/api';
 import axios from 'axios';
+import Modal from './Modal';
+import VisitModal from './VisitModal';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -56,6 +58,23 @@ function Main(): JSX.Element {
     };
     getMyInfo();
   }, []);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    console.log("open Modal");
+    setIsOpen(true);
+    console.log("open Modal");
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
+  const checkOpen = () => { 
+    console.log("check");
+  };
+
   return (
     <>
       {/* 데스크탑 */}
@@ -83,7 +102,11 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
+              <Modal isOpen={isOpen} onClose={handleCloseModal}>
+                <VisitModal onClose={handleCloseModal}/>
+              </Modal>
             </div>
             <div className="h-[5%]"></div>
             <div className="flex justify-center h-[21%] w-full animate-moving">
@@ -303,6 +326,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
             </div>
             <div className="h-[5%]"></div>
