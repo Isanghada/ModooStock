@@ -1,15 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLazyGetUsersInfoQuery } from 'Store/api';
+
+interface MyInfoInterFace {
+  currentMoney: number;
+  nickname: string;
+  totalStockReturn: number;
+}
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate();
-  // 나의 정보 가져오기
-  const myNickName = localStorage.getItem('nickname');
-  const currentMoney = localStorage.getItem('currentMoney');
-  const totalStockReturn = localStorage.getItem('totalStockReturn');
+  const [myNickName, setMyNickName] = useState<string>('');
+  const [currentMoney, setCurrentMoney] = useState<number>(0);
+  const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
+  // 내 정보 API
+  const [getUsersInfo] = useLazyGetUsersInfoQuery();
+
+  // if (data) {
+  //   const { nickname, currentMoney, totalStockReturn } = data.data;
+  //   setMyNickName(nickname);
+  //   setCurrentMoney(currentMoney);
+  //   setTotalStockReturn(totalStockReturn);
+  //   localStorage.setItem('nickname', nickname);
+  //   localStorage.setItem('currentMoney', String(currentMoney));
+  //   localStorage.setItem('totalStockReturn', String(totalStockReturn));
+  // }
   const checkTotalStock = Number(totalStockReturn);
+  console.log(checkTotalStock >= 0, "색");
 
   const [screenHeight, setScreenHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const getMyInfo = async () => {
+      // 내 정보 가져오기 API
+      const { data } = await getUsersInfo('');
+      // 닉네임 세팅
+      if (data) {
+        const { nickname, currentMoney, totalStockReturn } = data.data;
+        setMyNickName(nickname);
+        setCurrentMoney(currentMoney);
+        setTotalStockReturn(totalStockReturn);
+        localStorage.setItem('nickname', nickname);
+      }
+    };
+    getMyInfo();
+  }, []);
 
   useEffect(() => {
     // 창 높이 변할떄마다 실행
@@ -31,7 +66,7 @@ function Navbar(): JSX.Element {
 
   return (
     <div
-      className={`fixed top-0 left-0 flex justify-evenly items-center w-screen h-[10vh] ${
+      className={`fixed top-1 lg:top-2 left-0 flex justify-evenly items-center w-screen h-[10vh] ${
         screenHeight >= 800 ? 'min-h-[3rem] max-h-[5rem]' : ''
       }`}>
       <div className={`flex items-center w-[20vw] h-full`}>
@@ -68,7 +103,7 @@ function Navbar(): JSX.Element {
           />
         </div>
         <div
-          className={`bg-[#cfc8b1] w-[20vw] h-1/2 rounded-2xl text-md lg:text-2xl text-white font-medium lg:font-bold cursor-pointer flex justify-center items-center ${
+          className={`bg-[#cfc8b1] w-[20vw] h-1/2 rounded-2xl text-md lg:text-2xl font-medium lg:font-bold cursor-pointer flex justify-center items-center ${
             checkTotalStock >= 0 ? 'text-red-600' : 'text-blue-600'
           } ${screenHeight >= 800 ? 'min-w-fit max-w-[20vw]' : ''}`}>
           {totalStockReturn}%

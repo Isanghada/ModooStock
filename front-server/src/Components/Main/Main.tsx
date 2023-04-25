@@ -4,7 +4,6 @@ import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
-import { useLazyGetUsersInfoQuery } from 'Store/api';
 import axios from 'axios';
 
 function Main(): JSX.Element {
@@ -14,8 +13,6 @@ function Main(): JSX.Element {
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
   const navigate = useNavigate();
-  // 내 정보 API
-  const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   useEffect(() => {
     console.log(window.screen.width);
@@ -56,20 +53,6 @@ function Main(): JSX.Element {
     }
   };
 
-  useEffect(() => {
-    const getMyInfo = async () => {
-      // 내 정보 가져오기 API
-      const { data } = await getUsersInfo('');
-      // 닉네임 세팅
-      if (data) {
-        const { nickname, currentMoney, totalStockReturn } = data.data;
-        localStorage.setItem('nickname', nickname);
-        localStorage.setItem('currentMoney', String(currentMoney));
-        localStorage.setItem('totalStockReturn', String(totalStockReturn));
-      }
-    };
-    getMyInfo();
-  }, []);
   return (
     <>
       {/* 데스크탑 */}

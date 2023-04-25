@@ -111,7 +111,7 @@ export const everyStock = createApi({
 });
 // 임시저장
 export const {
-  useLazyGetUsersInfoQuery
+  useLazyGetUsersInfoQuery,
   // useLazyGetAdminUserListQuery,
   // usePutAdminUserDeleteMutation,
 } = everyStock;
