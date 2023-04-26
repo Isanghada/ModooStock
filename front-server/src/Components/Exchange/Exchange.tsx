@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-
 function Exchange(): JSX.Element {
-  
   return (
     <>
       <div className="flex flex-col items-center justify-center w-full h-full">
@@ -63,28 +61,40 @@ function Exchange(): JSX.Element {
               </div>
               {/* 차트 */}
               <div className="w-full h-[20rem] bg-white">
-                <Example/>
+                <Example />
               </div>
             </div>
-            <div className="flex w-full justify-between my-4">
+            <div className="flex justify-between w-full my-4">
               {/* 유가 시세 */}
-              <div className='flex flex-col items-start w-[49%] text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg'>
-                <div className='flex justify-between items-end w-full'>
-                  <div><span>유가 시세</span></div>
-                  <div><span className='text-[#006EC9]'>82.16</span><span>원</span><span className='text-[1rem] text-[#006EC9]'>(-1.10)</span></div>
+              <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg">
+                <div className="flex items-end justify-between w-full">
+                  <div>
+                    <span>유가 시세</span>
+                  </div>
+                  <div>
+                    <span className="text-[#006EC9]">82.16</span>
+                    <span>원</span>
+                    <span className="text-[1rem] text-[#006EC9]">(-1.10)</span>
+                  </div>
                 </div>
-                <div className='w-full h-[10rem]'>
-                  <Example/>
+                <div className="w-full h-[10rem]">
+                  <Example />
                 </div>
               </div>
               {/* 금 시세 */}
-              <div className='flex flex-col items-start w-[49%] text-[1.4rem] bg-white px-5 font-semibold drop-shadow-lg'>
-                <div className='flex justify-between items-end w-full'>
-                  <div><span>금 시세</span></div>
-                  <div><span className='text-[#006EC9]'>82.16</span><span>원</span><span className='text-[1rem] text-[#006EC9]'>(-1.10)</span></div>
+              <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white px-5 font-semibold drop-shadow-lg">
+                <div className="flex items-end justify-between w-full">
+                  <div>
+                    <span>금 시세</span>
+                  </div>
+                  <div>
+                    <span className="text-[#006EC9]">82.16</span>
+                    <span>원</span>
+                    <span className="text-[1rem] text-[#006EC9]">(-1.10)</span>
+                  </div>
                 </div>
-                <div className='w-full h-[10rem]'>
-                  <Example/>
+                <div className="w-full h-[10rem]">
+                  <Example />
                 </div>
               </div>
             </div>
@@ -103,40 +113,39 @@ const data = [
     name: '1월',
     uv: 4000,
     pv: 2400,
-    amt: 2400,
+    amt: 2400
   },
   {
     name: '2월',
     uv: 3000,
     pv: 1398,
-    amt: 2210,
+    amt: 2210
   },
   {
     name: '3월',
     uv: 2000,
     pv: 9800,
-    amt: 2290,
+    amt: 2290
   },
   {
     name: '4월',
     uv: 2780,
     pv: 3908,
-    amt: 2000,
+    amt: 2000
   },
   {
     name: '5월',
     uv: 1890,
     pv: 4800,
-    amt: 2181,
+    amt: 2181
   },
   {
     name: '6월',
     uv: 2390,
     pv: 3800,
-    amt: 2500,
-  },
+    amt: 2500
+  }
 ];
-
 
 export class Example extends PureComponent {
   static demoUrl = 'https://codesandbox.io/s/simple-area-chart-4ujxw';
@@ -152,9 +161,8 @@ export class Example extends PureComponent {
             top: 10,
             right: 30,
             left: 0,
-            bottom: 0,
-          }}
-        >
+            bottom: 0
+          }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
