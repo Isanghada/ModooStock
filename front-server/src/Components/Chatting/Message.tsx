@@ -66,27 +66,13 @@ function Message({
                   {data.downLoadUrl && (
                     <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                   )}
-                  {/* {data.downLoadUrl && (
-                  <div className="relative w-80 h-60"> */}
-                  {/* 외부 링크 쓸려면 next.config.js에 등록해야함 */}
-                  {/* https://png-pixel.com/ 에서 blurDataURL 처리 */}
-                  {/* <Image
-                      className="object-contain"
-                      src={data.downLoadUrl}
-                      alt={data.downLoadUrl}
-                      fill
-                      sizes="250px"
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-                    />
-                  </div>
-                )} */}
                   {data.content}
                 </div>
               )}
             </div>
           </div>
         ) : (
+          // 상대방 채팅
           <div className="w-full px-2">
             <div className="flex flex-col max-w-md lg:w-3/5 h-fit">
               {checkSameNick ? (
@@ -100,30 +86,15 @@ function Message({
                       />
                     </div>
                   )}
-                  <div className="m-1">{data.nickname}</div>
+                  <div className="m-1 text-black">{data.nickname}</div>
                 </div>
               ) : null}
               <div className="flex items-end my-[0.3rem] ml-12">
                 {date && (
-                  <div className="flex flex-col items-center py-2 px-3 border-[0.1rem] rounded-tl-none rounded-2xl break-words w-fit">
+                  <div className="flex flex-col items-center py-2 px-3 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-words w-fit">
                     {data.downLoadUrl && (
                       <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                     )}
-                    {/*{data.downLoadUrl && (
-                    <div className="relative w-80 h-60">
-                      {/* 외부 링크 쓸려면 next.config.js에 등록해야함 */}
-                    {/* https://png-pixel.com/ 에서 blurDataURL 처리 */}
-                    {/* <Image
-                        className="object-contain"
-                        src={data.downLoadUrl}
-                        alt={data.downLoadUrl}
-                        fill
-                        sizes="250px"
-                        placeholder="blur"
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-                      />
-                    </div>
-                  )}*/}
                     {data.content}
                   </div>
                 )}
