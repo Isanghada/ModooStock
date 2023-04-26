@@ -46,7 +46,7 @@ function MypageInven(): JSX.Element {
     <>
       <div className="absolute flex flex-start w-[63%] lg:w-full mx-auto h-[5.7rem] md:h-[7rem] lg:h-[11.5rem] bg-[#FFFFFF]/40 bottom-0 lg:bottom-2 z-10 text-white ">
         {/* 가구 섹션 */}
-        <div className="flex flex-col text-center justify-center text-white w-[10%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
+        <div className="flex flex-col text-center justify-center text-white w-[12.5%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
           <div className="w-full my-[1px] md:py-[2px] lg:py-2 drop-shadow-lg bg-[#FB6B9F] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>ALL</span>
           </div>

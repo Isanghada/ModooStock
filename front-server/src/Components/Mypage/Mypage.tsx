@@ -364,13 +364,13 @@ function Mypage(): JSX.Element {
             </div>
             {/* 버튼 */}
             <div className="flex w-full pb-2 justify-evenly text-[0.65rem]">
-              <div className="bg-[#E94561] drop-shadow-lg py-[3px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#E94561] drop-shadow-lg py-[3px] px-[0.85rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>취소</span>
               </div>
-              <div className="bg-[#41A4F7] drop-shadow-lg py-[3px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#41A4F7] drop-shadow-lg py-[3px] px-[0.85rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>창고에 넣기</span>
               </div>
-              <div className="bg-[#87D21F] drop-shadow-lg py-[3px] px-[0.77rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+              <div className="bg-[#87D21F] drop-shadow-lg py-[3px] px-[0.85rem] rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
                 <span>배치 완료</span>
               </div>
             </div>
