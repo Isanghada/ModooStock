@@ -2,6 +2,7 @@ package com.server.back.domain.stock.controller;
 
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.news.repository.NewsRepository;
+import com.server.back.domain.stock.dto.StockInfoResDto;
 import com.server.back.domain.stock.dto.StockListResDto;
 import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.stock.dto.StockResDto;
@@ -22,9 +23,9 @@ public class StockController {
 
     @GetMapping()
     @ApiOperation(value="현재 주식 종목 리스트")
-    public ResponseEntity<ResultDto<List<StockListResDto>>> getStockList() {
-        List<StockListResDto> stockListResDto = stockService.getStockList();
-        return ResponseEntity.ok().body(ResultDto.of(stockListResDto));
+    public ResponseEntity<ResultDto<StockInfoResDto>> getStockList() {
+        StockInfoResDto stockInfo = stockService.getStockList();
+        return ResponseEntity.ok().body(ResultDto.of(stockInfo));
     }
 
     @GetMapping("/{stockId}")
