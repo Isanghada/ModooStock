@@ -11,19 +11,8 @@
 .pos1::-webkit-slider-thumb {
   background-color: #ff7b7b;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
-  cursor: pointer;
-  z-index: 3;
-  position: relative;
-  border-radius: 100%;
-}
-
-.pos1::-webkit-progress-bar {
-  background-color: #ffc0c0;
-  -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -41,19 +30,8 @@
 .pos2::-webkit-slider-thumb {
   background-color: #ff8f51;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
-  cursor: pointer;
-  z-index: 3;
-  position: relative;
-  border-radius: 100%;
-}
-
-.pos2::-webkit-progress-bar {
-  background-color: #ffedc0;
-  -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -71,19 +49,8 @@
 .pos3::-webkit-slider-thumb {
   background-color: #ffd600;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
-  cursor: pointer;
-  z-index: 3;
-  position: relative;
-  border-radius: 100%;
-}
-
-.pos3::-webkit-progress-bar {
-  background-color: #fffca9;
-  -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -103,19 +70,8 @@
 .rot1::-webkit-slider-thumb {
   background-color: #b1dd00;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
-  cursor: pointer;
-  z-index: 3;
-  position: relative;
-  border-radius: 100%;
-}
-
-.rot1::-webkit-progress-bar {
-  background-color: #dcffc0;
-  -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -133,19 +89,8 @@
 .rot2::-webkit-slider-thumb {
   background-color: #65c3ea;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
-  cursor: pointer;
-  z-index: 3;
-  position: relative;
-  border-radius: 100%;
-}
-
-.rot2::-webkit-progress-bar {
-  background-color: #c6eeff;
-  -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -163,19 +108,126 @@
 .rot3::-webkit-slider-thumb {
   background-color: #d57bff;
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
   border-radius: 100%;
 }
 
-.rot3::-webkit-progress-bar {
-  background-color: #f0d9ff;
+/* samll position */
+
+.sPos1 {
   -webkit-appearance: none;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sPos1::-webkit-slider-thumb {
+  background-color: #ff7b7b;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+}
+
+.sPos2 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sPos2::-webkit-slider-thumb {
+  background-color: #ff8f51;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+}
+
+.sPos3 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sPos3::-webkit-slider-thumb {
+  background-color: #ffd600;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+}
+
+/* small Rotation */
+
+.sRot1 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sRot1::-webkit-slider-thumb {
+  background-color: #b1dd00;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+}
+
+.sRot2 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sRot2::-webkit-slider-thumb {
+  background-color: #65c3ea;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+}
+
+.sRot3 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  border-radius: 3px;
+}
+
+.sRot3::-webkit-slider-thumb {
+  background-color: #d57bff;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
   cursor: pointer;
   z-index: 3;
   position: relative;
@@ -190,3 +242,14 @@
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
 }
+
+/* .sRot3::-webkit-progress-bar {
+  background-color: #f0d9ff;
+  -webkit-appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  border-radius: 100%;
+} */
