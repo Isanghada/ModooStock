@@ -1,7 +1,7 @@
 // createSlice: store state 생성 (name: state 변수 이름, initialState: 초기 데이터, reducers: state 변경 함수)
 import { configureStore, createSlice, } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query/react";
-import { everyStock } from "./api"
+import { UserApi } from "./api"
 import { NonAuthApi } from './NonAuthApi';
 
 
@@ -42,13 +42,13 @@ const signUpStatus = createSlice({
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
   reducer: {
-    [everyStock.reducerPath]: everyStock.reducer,
+    [UserApi.reducerPath]: UserApi.reducer,
     [NonAuthApi.reducerPath]: NonAuthApi.reducer,
     // dictList: dictList.reducer,
     loginStatus: loginStatus.reducer,
     signUpStatus: signUpStatus.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(everyStock.middleware).concat(NonAuthApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(UserApi.middleware).concat(NonAuthApi.middleware),
 
 });
 //주석추가
