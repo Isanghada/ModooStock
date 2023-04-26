@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetUsersInfoQuery } from 'Store/api';
-
-interface MyInfoInterFace {
-  currentMoney: number;
-  nickname: string;
-  totalStockReturn: number;
-}
+import Chatting from 'Components/Chatting/Chatting';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { changeChattingStatus } from 'Store/store';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [myNickName, setMyNickName] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
   // 내 정보 API
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
-
+  // 전체 스크린 높이
   const [screenHeight, setScreenHeight] = useState<number>(0);
+  
+  // 현재 브라우저 윈도우 너비 값
+  const [screenWidth, setScreenWidth] = useState<number>(0);
+
+  // 채팅 창 상태
+  const chattingStatus = useAppSelector((state) => {
+    return state.chattingStatus;
+  });
+
+  // 채팅 창 띄우기
+  const showChatting = () => {
+    console.log(chattingStatus, '채ㅔ팅');
+    if (chattingStatus) {
+      dispatch(changeChattingStatus(false));
+    } else {
+      dispatch(changeChattingStatus(true));
+    }
+  };
 
   useEffect(() => {
     const getMyInfo = async () => {
@@ -40,7 +57,20 @@ function Navbar(): JSX.Element {
     setScreenHeight(height);
   }, [window.screen.height]);
 
-  // 네브바 이동부분
+  useEffect(() => {
+    // 창 넓이 변할때마다 실행
+    const updateScreenWidth = () => {
+      const newWidth = window.innerWidth;
+      setScreenWidth(newWidth);
+    };
+    // 처음 한번 실행
+    updateScreenWidth();
+
+    window.addEventListener('resize', updateScreenWidth);
+    return () => window.removeEventListener('resize', updateScreenWidth);
+  }, []);
+
+  // 클릭 이벤트 처리
   const click = (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     console.log(target, '라벨');
@@ -49,8 +79,10 @@ function Navbar(): JSX.Element {
         navigate('/mypage');
         break;
       case '홈':
-        console.log('?');
         navigate('/main');
+        break;
+      case '채팅':
+        showChatting();
         break;
       default:
         break;
@@ -59,9 +91,8 @@ function Navbar(): JSX.Element {
 
   return (
     <>
-    {/* <div></div> */}
       <div
-        className={`fixed top-1 lg:top-2 left-0 flex justify-between items-center w-screen h-[10vh] z-50 ${
+        className={`fixed top-2 px-2 lg:top-2 left-0 flex justify-between items-center w-screen h-[10vh] z-40 ${
           screenHeight >= 800 ? 'min-h-[3rem] max-h-[5rem]' : ''
         }`}>
         <div className="flex justify-evenly items-center w-[70vw] h-full max-w-[70vw]">
@@ -107,7 +138,7 @@ function Navbar(): JSX.Element {
           </div>
         </div>
         <div className={`w-[20vw] lg:w-[16vw] h-full justify-evenly items-center flex `}>
-          <div className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+          <div aria-label="채팅" onClick={click} className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/chat2.png" alt="chat" />
           </div>
           <div aria-label="홈" onClick={click} className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
@@ -118,6 +149,21 @@ function Navbar(): JSX.Element {
           </div>
         </div>
       </div>
+      {chattingStatus && (
+        <AnimatePresence>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={screenWidth <= 1024 ? { width: '50vw' } : { width: '30vw' }}
+            exit={{ width: 0 }}
+            transition={{
+              duration: 0.5,
+              ease: 'easeInOut'
+            }}
+            className={`fixed bottom-0 right-0 z-50 h-[85vh] bg-white border-2 border-[#FB6B9F] bg-opacity-90 rounded-md`}>
+            <Chatting />
+          </motion.div>
+        </AnimatePresence>
+      )}
     </>
   );
 }
