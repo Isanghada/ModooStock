@@ -51,18 +51,17 @@ function Message({
     <>
       {init ? (
         isMe ? (
-          <div className="flex justify-end w-full px-2 h-fit">
-            <div className="flex justify-end items-end max-w-md lg:w-3/5 my-[0.3rem]">
+          <div className="flex justify-end w-full px-2 text-xs h-fit lg:text-base">
+            <div className="flex justify-end items-end max-w-md lg:w-3/5 my-[0.1rem] lg:my-[0.3rem]">
               <div
-                className={`mr-2 text-sm text-slate-400 min-w-fit ${
+                className={`mr-2 text-[0.5rem] lg:text-sm text-slate-400 min-w-fit ${
                   // 시간이 보이고 말고 세팅 하지만 date값은 유지해서 크기유지
                   checkLastTime || checkSameTime ? 'visible' : 'invisible'
                 }`}>
                 {date}
               </div>
-
               {date && (
-                <div className="flex flex-col items-center px-3 py-2 break-words bg-gray-800 rounded-tr-none rounded-2xl w-fit">
+                <div className="flex flex-col items-center px-2 py-1 break-words bg-gray-800 rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
                   {data.downLoadUrl && (
                     <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                   )}
@@ -73,12 +72,12 @@ function Message({
           </div>
         ) : (
           // 상대방 채팅
-          <div className="w-full px-2">
+          <div className="w-full px-2 text-xs lg:text-base">
             <div className="flex flex-col max-w-md lg:w-3/5 h-fit">
               {checkSameNick ? (
                 <div className="flex items-center w-fit">
                   {data.profilePath && (
-                    <div className="w-10 h-10 overflow-hidden rounded-full">
+                    <div className="w-6 h-6 overflow-hidden rounded-full lg:w-10 lg:h-10">
                       <img
                         className="object-fill"
                         src={data.profilePath}
@@ -86,12 +85,12 @@ function Message({
                       />
                     </div>
                   )}
-                  <div className="m-1 text-black">{data.nickname}</div>
+                  <div className="m-1 text-sm text-black lg:text-lg">{data.nickname}</div>
                 </div>
               ) : null}
-              <div className="flex items-end my-[0.3rem] ml-12">
+              <div className="flex items-end my-[0.1rem] lg:my-[0.3rem] ml-8 lg:ml-12">
                 {date && (
-                  <div className="flex flex-col items-center py-2 px-3 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-words w-fit">
+                  <div className="flex flex-col items-center py-1 px-2 lg:px-3 lg:py-2 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-words w-fit max-w-[60%] lg:max-w-[80%]">
                     {data.downLoadUrl && (
                       <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                     )}
@@ -99,7 +98,7 @@ function Message({
                   </div>
                 )}
                 <div
-                  className={`ml-2 text-sm text-slate-400 min-w-fit ${
+                  className={`ml-2 text-[0.5rem] lg:text-sm text-slate-400 min-w-fit ${
                     checkLastTime || checkSameTime ? 'visible' : 'invisible'
                   }`}>
                   {date}
