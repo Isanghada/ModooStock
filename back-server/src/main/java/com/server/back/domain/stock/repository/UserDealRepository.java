@@ -1,6 +1,7 @@
 package com.server.back.domain.stock.repository;
 
 import com.server.back.domain.stock.entity.UserDealEntity;
+import com.server.back.domain.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface UserDealRepository extends JpaRepository<UserDealEntity, Long> 
 
     List<UserDealEntity> findByUserId(Long userId);
     Optional<UserDealEntity> findByUserIdAndStockId(Long userId, Long stockId);
+
+    List<UserDealEntity>findAllByUserAndStockMarketId(UserEntity user, Long marketId);
 }
