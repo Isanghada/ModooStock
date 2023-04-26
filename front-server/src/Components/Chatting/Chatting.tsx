@@ -146,7 +146,7 @@ const Chatting = () => {
         <div ref={chatDiv} className="w-11/12 h-full overflow-y-auto">
           {/* 대화 시작 시간 */}
           <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
-            <span className="px-5 py-1 text-base text-center w-fit h-fit bg-slate-800 rounded-3xl">
+            <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
               {messageDatas[0]?.createdAt.toDate().toLocaleDateString('ko-KR', options)}
             </span>
           </div>
@@ -191,11 +191,11 @@ const Chatting = () => {
           })}
         </div>
         {/* 메시지 보내는 곳 */}
-        <form className="flex justify-center w-full mt-6 mb-36 lg:my-6" onSubmit={onSubmitMessage}>
-          <div className="border-2 border-[#ffa7c7] rounded-lg w-5/6 flex justify-between items-center px-[0.7rem] py-[0.3rem] ">
+        <form className="flex justify-center w-full my-1 lg:my-6" onSubmit={onSubmitMessage}>
+          <div className="border-[1px] border-[#ffa7c7] rounded-lg w-5/6 flex justify-between items-center px-[0.7rem] py-[0.3rem] ">
             {/* 뉴스 업로드 */}
             <img
-              className={`w-6 h-6 lg:min-w-8 lg:min-h-8 lg:w-8 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
+              className={`w-4 h-4 lg:min-w-8 lg:min-h-8 lg:w-8 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
               src="/chatting/news.png"
               alt="imagefile"
             />
@@ -211,7 +211,7 @@ const Chatting = () => {
               </div>
             )}
             <input
-              className={`w-3/4 h-8 lg:h-10 bg-transparent outline-none px-4 text-black`}
+              className={`w-3/4 h-4 lg:h-10 bg-transparent outline-none px-1 lg:px-4 text-black text-xs lg:text-base`}
               type="text"
               placeholder="메시지 보내기..."
               value={message}
@@ -221,7 +221,7 @@ const Chatting = () => {
             {/* 메시지 전송 */}
             <label htmlFor="sendMsg">
               <img
-                className={`w-6 h-6 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
+                className={`w-4 h-4 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
                 src="/chatting/send.png"
                 alt="send"
               />
