@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppSelector } from 'Store/hooks';
 import Login from 'Components/Login/Login';
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Navbar from 'Components/Common/Navbar';
 
 function Layout(): JSX.Element {
+  const navigate = useNavigate();
   // 현재 주소 가져올 useLocation
   const location = useLocation();
   // 현재 브라우저 윈도우 너비 값
@@ -37,10 +38,18 @@ function Layout(): JSX.Element {
   }, []);
 
   useEffect(() => {
+    // 네브바 보이기 설정
     if (location.pathname !== '/') {
       setIsNavBar(true);
+    } else {
+      setIsNavBar(false);
     }
-  }, [location]);
+    // 로그인 여부 체크후 인트로 보내기
+    if (!localStorage.getItem('accessToken')) {
+      navigate('/');
+    }
+  }, [location.pathname]);
+;
 
   return (
     <>
