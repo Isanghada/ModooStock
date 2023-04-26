@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
 import axios from 'axios';
+import Modal from './Modal';
+import VisitModal from './VisitModal';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -56,6 +58,17 @@ function Main(): JSX.Element {
     }
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
+
   return (
     <>
       {/* 데스크탑 */}
@@ -83,7 +96,11 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
+              <Modal isOpen={isOpen} onClose={handleCloseModal}>
+                <VisitModal onClose={handleCloseModal}/>
+              </Modal>
             </div>
             <div className="h-[5%]"></div>
             <div className="flex justify-center h-[21%] w-full animate-moving">
@@ -305,6 +322,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
             </div>
             <div className="h-[5%]"></div>

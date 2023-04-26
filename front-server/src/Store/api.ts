@@ -18,6 +18,25 @@ interface ReturnMyInfoInterFace {
   };
   result: string;
 }
+
+interface ReturnUsersSearchInterFace {
+  data: Array<{
+    account: string;
+    nickname: string;
+    profileImagePath: string;
+  }>;
+  result: string;
+}
+
+interface ReturnUsersRandomInterFace {
+  data: {
+    account: string;
+    nickname: string;
+    profileImagePath: string;
+  };
+  result: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -95,6 +114,22 @@ export const UserApi = createApi({
       }
     }),
 
+    // 2. 회원 검색
+    getUsersSearch: builder.query<ReturnUsersSearchInterFace, string>({
+      query: (keyword) => `/users?search=${keyword}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: "UserApi" }]
+      }
+    }),
+    
+    // 3.랜덤 유저 방문
+    getUsersRandom: builder.query<ReturnUsersRandomInterFace, string>({
+      query: () => `/users/random`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
 
     // // 3. 회원 삭제
     // putAdminUserDelete: builder.mutation({
@@ -116,6 +151,8 @@ export const UserApi = createApi({
 // 임시저장
 export const {
   useLazyGetUsersInfoQuery,
+  useLazyGetUsersSearchQuery,
+  useLazyGetUsersRandomQuery
   // useLazyGetAdminUserListQuery,
   // usePutAdminUserDeleteMutation,
 } = UserApi;
