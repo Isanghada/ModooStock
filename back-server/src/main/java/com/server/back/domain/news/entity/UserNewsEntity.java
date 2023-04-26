@@ -24,4 +24,5 @@ public class UserNewsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id", nullable = false)
     private NewsEntity news;
+
 }

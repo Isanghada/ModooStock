@@ -22,6 +22,9 @@ public class MarketEntity extends CommonEntity {
     private LocalDate startAt;
 
     @Column(nullable = false)
+    private LocalDate endAt;
+
+    @Column(nullable = false)
     private LocalDate gameDate;
 
 }
