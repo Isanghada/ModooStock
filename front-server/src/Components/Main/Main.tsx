@@ -1,9 +1,11 @@
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
+import { useLazyGetUsersInfoQuery } from 'Store/api';
+import axios from 'axios';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -12,6 +14,8 @@ function Main(): JSX.Element {
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
   const navigate = useNavigate();
+  // 내 정보 API
+  const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   useEffect(() => {
     console.log(window.screen.width);
@@ -40,19 +44,42 @@ function Main(): JSX.Element {
     }
   };
 
-  const Click = () => {
-    navigate('/bank');
+  const click = (e: React.MouseEvent) => {
+    const target = e.target as HTMLDivElement;
+    switch (target.ariaLabel) {
+      case '은행':
+        navigate('/bank');
+        break;
+
+      default:
+        break;
+    }
   };
+
+  useEffect(() => {
+    const getMyInfo = async () => {
+      // 내 정보 가져오기 API
+      const { data } = await getUsersInfo('');
+      // 닉네임 세팅
+      if (data) {
+        const { nickname, currentMoney, totalStockReturn } = data.data;
+        localStorage.setItem('nickname', nickname);
+        localStorage.setItem('currentMoney', String(currentMoney));
+        localStorage.setItem('totalStockReturn', String(totalStockReturn));
+      }
+    };
+    getMyInfo();
+  }, []);
   return (
     <>
       {/* 데스크탑 */}
-      <div className="items-center justify-between hidden w-full h-full max-w-[1280px] max-h-[1080px] mx-auto lg:flex">
+      <div className="items-center justify-between hidden w-full h-full max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
         {/* 1번 구역 */}
         <div className="flex justify-start items-center w-[28%] h-full">
           <div className="w-[10%]"></div>
           <div className="flex justify-end items-end w-[40%] h-[80%] max-h-[80%]">
             <div className="h-[65%]"></div>
-            <div className="h-[15%] animate-moving">
+            <div className="h-[16%] animate-moving">
               <img
                 aria-label="가이드"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
@@ -60,7 +87,7 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
-            <div className="h-[20%]"></div>
+            <div className="h-[19%]"></div>
           </div>
           <div className="w-[50%] h-[80%] max-h-[49rem]">
             <div className="h-[9%]"></div>
@@ -81,11 +108,11 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
-            <div className="h-[9%]"></div>
-            <div className="flex justify-center h-[19%] w-full">
+            <div className="h-[12%]"></div>
+            <div className="flex justify-center h-[15%] w-full">
               <img aria-label="게임기" className="z-10 h-full" src="/images/toys/nintendo.png" alt="" />
             </div>
-            <div className="h-[5%]"></div>
+            <div className="h-[6%]"></div>
           </div>
         </div>
         {/* 2번 구역 */}
@@ -101,6 +128,7 @@ function Main(): JSX.Element {
                   className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                   src="/images/toys/bank.png"
                   alt=""
+                  onClick={click}
                 />
               </div>
               <div className="h-[52%]"></div>
@@ -116,8 +144,8 @@ function Main(): JSX.Element {
             </div>
             {/* 오른쪽 */}
             <div className="flex flex-col items-center justify-start w-1/2 h-[92%]">
-              <div className="h-[10%]"></div>
-              <div className="flex justify-center h-[12%] w-full">
+              <div className="h-[12%]"></div>
+              <div className="flex justify-center h-[10%] w-full">
                 <img aria-label="말" className="z-10 h-full" src="/images/toys/horse.png" alt="" />
               </div>
               <div className="h-[56%]"></div>
@@ -131,8 +159,8 @@ function Main(): JSX.Element {
           <div className="absolute z-10 flex items-end justify-start w-[120%] h-[80%]">
             {/* 왼쪽 */}
             <div className="flex flex-col w-[17%] h-full">
-              <div className="h-[8%]"></div>
-              <div className="flex justify-center h-[17%] w-full">
+              <div className="h-[11%]"></div>
+              <div className="flex justify-center h-[14%] w-full">
                 <img aria-label="조이스틱" className="z-20 h-full" src="/images/toys/joystic.png" alt="" />
               </div>
               <div className="h-[30%]"></div>
@@ -141,7 +169,7 @@ function Main(): JSX.Element {
               </div>
               <div className="h-[18%]"></div>
               <div className="flex justify-start h-[7%] w-full">
-                <img aria-label="공" className="z-20 h-full" src="/images/toys/one.png" alt="" />
+                <img aria-label="원" className="z-20 h-full" src="/images/toys/one.png" alt="" />
               </div>
               <div className="h-[3%]"></div>
             </div>
@@ -158,19 +186,19 @@ function Main(): JSX.Element {
             <div className="w-[17%] h-full"></div>
             {/* 오른쪽 */}
             <div className="w-[15%] h-full">
-              <div className="h-[5%]"></div>
-              <div className="flex justify-start h-[10%] w-full">
-                <img aria-label="게임기" className="z-10 h-full" src="/images/toys/zebra.png" alt="" />
+              <div className="h-[8%]"></div>
+              <div className="flex justify-start h-[7%] w-full">
+                <img aria-label="줄무늬공" className="z-10 h-full" src="/images/toys/zebra.png" alt="" />
               </div>
-              <div className="h-[25%]"></div>
-              <div className="flex justify-center h-[10%] w-full">
+              <div className="h-[27%]"></div>
+              <div className="flex justify-center h-[8%] w-full">
                 <img aria-label="플러스" className="z-10 h-full" src="/images/toys/plus.png" alt="" />
               </div>
-              <div className="h-[25%]"></div>
-              <div className="flex justify-start h-[14%] w-full">
+              <div className="h-[33%]"></div>
+              <div className="flex justify-start h-[12%] w-full">
                 <img aria-label="공" className="z-10 h-full" src="/images/toys/ball.png" alt="" />
               </div>
-              <div className="h-[11%]"></div>
+              <div className="h-[6%]"></div>
             </div>
           </div>
           {/* 2번 구역 메인 */}
@@ -221,8 +249,8 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
-            <div className="h-[10%]"></div>
-            <div className="flex justify-center h-[35%] w-full animate-moving">
+            {/* <div className="h-[5%]"></div> */}
+            <div className="flex justify-start h-[32%] w-full animate-moving">
               <img
                 aria-label="주식 거래소"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
@@ -230,6 +258,7 @@ function Main(): JSX.Element {
                 alt=""
               />
             </div>
+            <div className="h-[13%]"></div>
           </div>
         </div>
       </div>
@@ -315,6 +344,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/bank.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[55%]"></div>
