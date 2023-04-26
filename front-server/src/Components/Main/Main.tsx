@@ -47,6 +47,9 @@ function Main(): JSX.Element {
       case '은행':
         navigate('/bank');
         break;
+      case '주식 거래소':
+        navigate('/exchange');
+        break;
 
       default:
         break;
@@ -239,6 +242,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/chart.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[13%]"></div>
@@ -369,6 +373,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/chart.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[5%]"></div>
