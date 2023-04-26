@@ -10,7 +10,7 @@ function MypageInven(): JSX.Element {
     return (
       <div
         key={idx}
-        className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 border-[#F0EBE3] rounded-2xl mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
+        className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 border-[#F0EBE3] rounded-2xl mx-1 lg:mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
         {/* 이미지 */}
         <div className="flex justify-center w-[50%] h-[75%] mb-1">
           <img className="h-full drop-shadow-lg" src="/images/funitures/funiture.png" alt="asdsd" />
@@ -44,19 +44,19 @@ function MypageInven(): JSX.Element {
   };
   return (
     <>
-      <div className="absolute flex flex-start w-full mx-auto h-[5.7rem] lg:h-[11rem] bg-[#FFFFFF]/40 bottom-0 z-10 text-white ">
+      <div className="absolute flex flex-start w-[63%] lg:w-full mx-auto h-[5.7rem] md:h-[7rem] lg:h-[11.5rem] bg-[#FFFFFF]/40 bottom-0 lg:bottom-2 z-10 text-white ">
         {/* 가구 섹션 */}
-        <div className="flex flex-col text-center justify-center text-white w-[8%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
-          <div className="w-full my-[1px] lg:py-1 drop-shadow-lg bg-[#FB6B9F] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+        <div className="flex flex-col text-center justify-center text-white w-[10%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
+          <div className="w-full my-[1px] md:py-[2px] lg:py-2 drop-shadow-lg bg-[#FB6B9F] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>ALL</span>
           </div>
-          <div className="w-full my-[1px] lg:py-1 drop-shadow-lg bg-[#FB8B2D] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div className="w-full my-[1px] md:py-[2px] lg:py-2 drop-shadow-lg bg-[#FB8B2D] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>가구</span>
           </div>
-          <div className="w-full my-[1px] lg:py-1 drop-shadow-lg bg-[#D46AED] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div className="w-full my-[1px] md:py-[2px] lg:py-2 drop-shadow-lg bg-[#D46AED] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>소품</span>
           </div>
-          <div className="w-full my-[1px] lg:py-1 drop-shadow-lg bg-[#2E94E8] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div className="w-full my-[1px] md:py-[2px] lg:py-2 drop-shadow-lg bg-[#2E94E8] rounded-tr-lg rounded-br-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <span>기타</span>
           </div>
         </div>
