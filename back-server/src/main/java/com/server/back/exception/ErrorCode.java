@@ -21,6 +21,9 @@ public enum ErrorCode {
 
 	/* 400 BAD REQUEST : 잘못된 요청. 입력된 데이터에 문제가 있음 */
 	PASSWORD_NOT_MATCH(BAD_REQUEST, "패스워드가 일치하지 않습니다."),
+	LACK_OF_MONEY(BAD_REQUEST, "잔액이 부족합니다."),
+	FULL_OF_MONEY(BAD_REQUEST,"지갑이 꽉찼습니다."),
+
 
 	/* 401 UNAUTHORIZED : 권한 인증 문제. JWT 토큰과 관련된 에러 */
 	UNAUTHORIZED_USER(UNAUTHORIZED, "권한이 허용되지 않은 유저입니다."),
