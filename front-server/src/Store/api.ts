@@ -71,9 +71,9 @@ const fetchAccessToken = async () => {
 };
 
 
-export const everyStock = createApi({
-  reducerPath: 'api',
-  tagTypes: ['Api'],
+export const UserApi = createApi({
+  reducerPath: 'UserApi',
+  tagTypes: ['UserApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -91,9 +91,10 @@ export const everyStock = createApi({
     getUsersInfo: builder.query<ReturnMyInfoInterFace, string>({
       query: () => '/users',
       providesTags: (result, error, arg) => {
-        return [{ type: 'Api' }];
+        return [{ type: 'UserApi' }];
       }
     }),
+
 
     // // 3. 회원 삭제
     // putAdminUserDelete: builder.mutation({
@@ -109,9 +110,12 @@ export const everyStock = createApi({
     // }),
   })
 });
+
+
+
 // 임시저장
 export const {
   useLazyGetUsersInfoQuery,
   // useLazyGetAdminUserListQuery,
   // usePutAdminUserDeleteMutation,
-} = everyStock;
+} = UserApi;

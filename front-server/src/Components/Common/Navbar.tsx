@@ -26,7 +26,7 @@ function Navbar(): JSX.Element {
   //   localStorage.setItem('totalStockReturn', String(totalStockReturn));
   // }
   const checkTotalStock = Number(totalStockReturn);
-  console.log(checkTotalStock >= 0, "색");
+  console.log(checkTotalStock >= 0, '색');
 
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
@@ -66,7 +66,7 @@ function Navbar(): JSX.Element {
 
   return (
     <div
-      className={`fixed top-1 lg:top-2 left-0 flex justify-evenly items-center w-screen h-[10vh] ${
+      className={`fixed top-1 lg:top-2 left-0 flex justify-evenly items-center w-screen h-[10vh] z-50 ${
         screenHeight >= 800 ? 'min-h-[3rem] max-h-[5rem]' : ''
       }`}>
       <div className={`flex items-center w-[20vw] h-full`}>
@@ -77,7 +77,7 @@ function Navbar(): JSX.Element {
           }`}
           onClick={click}></div>
         <div
-          className={`bg-[#FB6B9F] w-[20vw] h-1/2 rounded-2xl text-md lg:text-2xl text-white font-medium lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 ${
+          className={`bg-[#FB6B9F] w-[20vw] h-2/3 lg:h-1/2 rounded-2xl text-md lg:text-2xl text-white font-medium lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 ${
             screenHeight >= 800 ? 'min-w-fit max-w-[20vw] pl-[3rem] lg:pl-[8vh]' : 'pl-[8vh]'
           }`}>
           {myNickName}
@@ -88,8 +88,8 @@ function Navbar(): JSX.Element {
           <img className="w-full" src="/images/icons/money.png" alt="money" />
         </div>
         <div
-          className={`bg-[#FFBF4D] w-[20vw] min-w-fit px-2 h-1/2 rounded-2xl text-md lg:text-2xl text-white font-medium lg:font-bold cursor-pointer flex justify-center items-center  ${
-            screenHeight >= 800 ? 'max-w-[20vw]' : ''
+          className={`bg-[#FFBF4D] w-[24vw] min-w-fit px-2 h-2/3 lg:h-1/2 rounded-2xl text-md lg:text-2xl text-white font-medium lg:font-bold flex justify-center items-center  ${
+            screenHeight >= 800 ? 'max-w-[24vw]' : ''
           }`}>
           {currentMoney}원
         </div>
@@ -103,11 +103,20 @@ function Navbar(): JSX.Element {
           />
         </div>
         <div
-          className={`bg-[#cfc8b1] w-[20vw] h-1/2 rounded-2xl text-md lg:text-2xl font-medium lg:font-bold cursor-pointer flex justify-center items-center ${
+          className={`bg-[#cfc8b1] w-[20vw] h-2/3 lg:h-1/2 rounded-2xl text-md lg:text-2xl font-medium lg:font-bold flex justify-center items-center ${
             checkTotalStock >= 0 ? 'text-red-600' : 'text-blue-600'
           } ${screenHeight >= 800 ? 'min-w-fit max-w-[20vw]' : ''}`}>
           {totalStockReturn}%
         </div>
+      </div>
+      <div className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+        <img className="w-full" src="/images/icons/chat2.png" alt="chat" />
+      </div>
+      <div className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+        <img className="w-full" src="/images/icons/shop.png" alt="shop" />
+      </div>
+      <div className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+        <img className="w-full" src="/images/icons/setting.png" alt="setting" />
       </div>
     </div>
   );
