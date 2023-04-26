@@ -152,7 +152,7 @@ const Chatting = () => {
           &nbsp;{usersNickName}
         </div>
       </div> */}
-
+ 
       <div className="flex flex-col items-center justify-center w-full h-full bg-black rounded-lg">
         {/* 메시지들 보이는 곳 */}
         <div ref={chatDiv} className="w-11/12 h-full overflow-y-auto">
