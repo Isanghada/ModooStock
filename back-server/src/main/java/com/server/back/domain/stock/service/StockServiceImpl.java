@@ -104,7 +104,7 @@ public class StockServiceImpl implements StockService {
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
         // 종가 가져오기
-        Integer chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
+        Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
 
         // 매수
         // 1. 주식 산 만큼 돈 빼내기
@@ -134,7 +134,7 @@ public class StockServiceImpl implements StockService {
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
         UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId()).get();
         // 종가 가져오기
-        Integer chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
+        Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
 
 
         // 매도
@@ -159,7 +159,7 @@ public class StockServiceImpl implements StockService {
 
         // 종목마다 종가 들고온 후 계산
         stockList.forEach(stock -> {
-            Integer chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+            Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
                     .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND)).getPriceEnd();
 
             List<UserDealEntity> usersDeal = userDealRepository.findAllById(Collections.singleton(stock.getId()));

@@ -41,7 +41,7 @@ public class UserDealEntity {
     @Column(nullable = false)
     private Float rate;
 
-    public UserDealEntity(UserEntity user, StockReqDto stockReqDto , StockEntity stock, Integer chartPrice){
+    public UserDealEntity(UserEntity user, StockReqDto stockReqDto , StockEntity stock, Long chartPrice){
         this.user = user;
         this.totalAmount = stockReqDto.getStockAmount();
         this.average = (float) chartPrice;
@@ -51,7 +51,7 @@ public class UserDealEntity {
     }
 
     // 매수
-    public void increase(Integer amount, Integer chartPrice){
+    public void increase(Integer amount, Long chartPrice){
         this.totalPrice += (chartPrice * amount);
         this.totalAmount = this.totalAmount + amount;
         this.average = this.totalPrice / this.totalAmount;
@@ -59,7 +59,7 @@ public class UserDealEntity {
     }
 
     // 매도
-    public void decrease(Integer amount, Integer chartPrice){
+    public void decrease(Integer amount, Long chartPrice){
         this.totalPrice -= (this.average * amount);
         this.totalAmount -= amount;
         if(totalAmount <= 0){
@@ -72,7 +72,7 @@ public class UserDealEntity {
     }
 
     // 수익률 변경
-    public void calRate(Integer chartPrice){
+    public void calRate(Long chartPrice){
         if(totalAmount > 0){
             this.rate = (chartPrice - average) / (float) average;
         }
