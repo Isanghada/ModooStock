@@ -48,14 +48,13 @@ function Login(): JSX.Element {
     const loginData: any = await postUsersLogin(loginAccount);
     // 로그인 시도후 처리
     if (loginData.data) {
-      console.log(loginData.data);
       // 토큰 세팅
       const { accessToken, refreshToken } = loginData.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
-      toast.success('어서오세요!!');
       closeLogin();
+      toast.success('어서오세요!!');
       navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');

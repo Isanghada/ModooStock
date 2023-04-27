@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -52,7 +51,7 @@ public class UserDealEntity {
     }
 
     // 매수
-    public void increase(Integer amount , Integer chartPrice){
+    public void increase(Integer amount, Integer chartPrice){
         this.totalPrice += (chartPrice * amount);
         this.totalAmount = this.totalAmount + amount;
         this.average = this.totalPrice / this.totalAmount;

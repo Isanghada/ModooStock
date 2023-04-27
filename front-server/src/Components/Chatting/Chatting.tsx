@@ -1,18 +1,8 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {v4 as uuidv4} from 'uuid';
-import { useAppDispatch } from 'Store/hooks';
-
+import React, { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
-import {
-  query,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  collection,
-  serverTimestamp,
-
-} from 'firebase/firestore';
+import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 // 컴포넌트
 import Message from './Message';
@@ -31,17 +21,14 @@ const options = {
   day: 'numeric'
 };
 const Chatting = () => {
-  // const Chat = ( {usersNickName, roomName} : ChatPropsInterFace) => {
-  const usersNickName = "유ㅜ저ㅏ"
-  const roomName = "룸네임"
-  const myEmail = "나의이메일"
-  const dispatch = useAppDispatch();
+  const roomName = 'chatting';
 
   // 채팅 div
   const chatDiv = useRef<HTMLDivElement>(null);
   // 유저 프로필 데이터
-  const nickname = "닉네임"
-  const profile_img_path = "이미지주소" 
+  const myEmail = localStorage.getItem('nickname');
+  const nickname = localStorage.getItem('nickname');
+  const profile_img_path = '/images/toys/pink.png';
   // 내 이미지 주소
 
   // 상대방 이미지 주소 << 앞에 ..nickname에서 상대정보 요청해놧음
@@ -57,19 +44,19 @@ const Chatting = () => {
     // 우선 query로 데이터 가져오기 두번째 인자 where로 조건문도 가능
     const content = query(
       // 여기 중요.. 바로 router에서 가져와서 해야함.. 안그러니까 한박자 느리네
-      collection(dbService, `chatting`),
+      collection(dbService, roomName),
       orderBy('createdAt')
     );
 
     // 실시간 변화 감지 최신버전
-    onSnapshot(content, snapshot => {
-      const contentSnapshot = snapshot.docs.map(con => {
+    onSnapshot(content, (snapshot) => {
+      const contentSnapshot = snapshot.docs.map((con) => {
         return {
           ...con.data(),
           id: con.id
         };
       });
-      setMessageDatas(prev => [...contentSnapshot]);
+      setMessageDatas((prev) => [...contentSnapshot]);
     });
   };
 
@@ -81,13 +68,12 @@ const Chatting = () => {
 
   // 메시지 제출
   const onSubmitMessage = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log(message)
     event.preventDefault();
     // let downLoadUrl = '';
-    // // 이미지랑 메시지 빈값일떄 무시
-    // if (fileUpload === '' && message === '') {
-    //   return;
-    // }
+    // 이미지랑 메시지 빈값일떄 무시
+    if (fileUpload === '' && message === '') {
+      return;
+    }
     // // 파일 데이터 가져오기
     // if (fileUpload !== '') {
     //   //파일 경로 참조 만들기
@@ -98,14 +84,13 @@ const Chatting = () => {
     //   downLoadUrl = await getDownloadURL(imageFileRef);
     // }
     // 메시지 데이터에 추가
-    await addDoc(collection(dbService, "chatting"), {
+    await addDoc(collection(dbService, roomName), {
       email: myEmail,
       nickname: nickname,
       content: message,
       createdAt: serverTimestamp(),
-      // profilePath: profile_img_path
+      profilePath: profile_img_path
     });
-
 
     setMessage('');
     setFileUpload('');
@@ -113,12 +98,12 @@ const Chatting = () => {
   };
   // 파일 받기
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {files} = event.target;
+    const { files } = event.target;
     const theFile = files![0];
     const reader = new FileReader();
 
-    reader.onloadend = finishedEvent => {
-      const {result}: any = finishedEvent.currentTarget;
+    reader.onloadend = (finishedEvent) => {
+      const { result }: any = finishedEvent.currentTarget;
       setFileUpload(result);
     };
     reader.readAsDataURL(theFile);
@@ -146,22 +131,23 @@ const Chatting = () => {
   }, [messageDatas, fileUpload]);
 
   return (
-    <div className="flex flex-col justify-center w-full h-full text-white ">
-      {/* <div className="fixed z-10 top-0 w-full h-[5vh] bg-black md:hidden">
-        <div className="flex items-center h-full text-lg cursor-pointer ">
-          &nbsp;{usersNickName}
-        </div>
-      </div> */}
-
-      <div className="flex flex-col items-center justify-center w-full h-full bg-black rounded-lg">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        delay: 0.4,
+        duration: 0.7,
+        ease: 'easeInOut'
+      }}
+      className="flex flex-col justify-center w-full h-full text-white ">
+      <div className="flex flex-col items-center justify-center w-full h-full rounded-lg">
         {/* 메시지들 보이는 곳 */}
         <div ref={chatDiv} className="w-11/12 h-full overflow-y-auto">
           {/* 대화 시작 시간 */}
           <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
-            <span className="px-5 py-1 text-base text-center w-fit h-fit bg-slate-800 rounded-3xl">
-              {messageDatas[0]?.createdAt
-                .toDate()
-                .toLocaleDateString('ko-KR', options)}
+            <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
+              {messageDatas[0]?.createdAt.toDate().toLocaleDateString('ko-KR', options)}
             </span>
           </div>
           {messageDatas.map((msg, index) => {
@@ -170,19 +156,14 @@ const Chatting = () => {
             }
             // 상대방의 닉네임 처음 한번만
             let checkSameNick = true;
-            if (
-              index !== 0 &&
-              msg.email !== myEmail &&
-              msg.email === messageDatas[index - 1].email
-            ) {
+            if (index !== 0 && msg.email !== myEmail && msg.email === messageDatas[index - 1].email) {
               checkSameNick = false;
             }
             // 마지막 대화에만 시간뜨게
             let checkLastTime = false;
             if (
               index === messageDatas.length - 1 ||
-              (index !== messageDatas.length - 1 &&
-                msg.email !== messageDatas[index + 1].email)
+              (index !== messageDatas.length - 1 && msg.email !== messageDatas[index + 1].email)
             ) {
               checkLastTime = true;
             }
@@ -192,8 +173,7 @@ const Chatting = () => {
             if (
               index !== messageDatas.length - 1 &&
               messageDatas[index + 1].createdAt &&
-              msg.createdAt.seconds >=
-                messageDatas[index + 1].createdAt.seconds - 30
+              msg.createdAt.seconds >= messageDatas[index + 1].createdAt.seconds - 30
             ) {
               checkSameTime = false;
             }
@@ -211,28 +191,15 @@ const Chatting = () => {
           })}
         </div>
         {/* 메시지 보내는 곳 */}
-        <form
-          className="flex justify-center w-full mt-6 mb-36 lg:my-6"
-          onSubmit={onSubmitMessage}>
-          <div className="border-[1px] rounded-lg w-5/6 flex justify-between items-center px-[0.7rem] py-[0.3rem] ">
-            {/* 파일 업로드 */}
-            <label htmlFor="file">
-              {' '}
-              {/* <Image
-                className={`w-6 h-6 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
-                src={imageURL}
-                alt="imagefile"
-              /> */}
-            </label>
-            <input
-              className="hidden"
-              type="file"
-              accept="image/*"
-              id="file"
-              onChange={onFileChange}
-              ref={fileInput}
+        <form className="flex justify-center w-full my-1 lg:my-6" onSubmit={onSubmitMessage}>
+          <div className="border-[1px] border-[#ffa7c7] rounded-lg w-5/6 flex justify-between items-center px-[0.7rem] py-[0.3rem] ">
+            {/* 뉴스 업로드 */}
+            <img
+              className={`w-4 h-4 lg:min-w-8 lg:min-h-8 lg:w-8 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
+              src="/chatting/news.png"
+              alt="imagefile"
             />
-            {/* 파일 및 메시지 입력 */}
+            {/* 뉴스 및 메시지 입력 */}
             {fileUpload && (
               <div className="relative w-12 h-12 lg:w-20 lg:h-20 border-[0.1rem]">
                 <div
@@ -244,7 +211,7 @@ const Chatting = () => {
               </div>
             )}
             <input
-              className={`w-3/4 h-8 lg:h-10 bg-transparent outline-none px-4`}
+              className={`w-3/4 h-4 lg:h-10 bg-transparent outline-none px-1 lg:px-4 text-black text-xs lg:text-base`}
               type="text"
               placeholder="메시지 보내기..."
               value={message}
@@ -254,7 +221,7 @@ const Chatting = () => {
             {/* 메시지 전송 */}
             <label htmlFor="sendMsg">
               <img
-                className={`w-6 h-6 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
+                className={`w-4 h-4 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
                 src="/chatting/send.png"
                 alt="send"
               />
@@ -263,7 +230,7 @@ const Chatting = () => {
           </div>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

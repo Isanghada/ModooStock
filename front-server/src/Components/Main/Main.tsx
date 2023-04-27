@@ -4,8 +4,9 @@ import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
-import { useLazyGetUsersInfoQuery } from 'Store/api';
 import axios from 'axios';
+import Modal from './Modal';
+import VisitModal from './VisitModal';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -14,8 +15,6 @@ function Main(): JSX.Element {
   const [ishover, setIshover] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
   const navigate = useNavigate();
-  // 내 정보 API
-  const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   useEffect(() => {
     console.log(window.screen.width);
@@ -50,26 +49,26 @@ function Main(): JSX.Element {
       case '은행':
         navigate('/bank');
         break;
+      case '주식 거래소':
+        navigate('/exchange');
+        break;
 
       default:
         break;
     }
   };
 
-  useEffect(() => {
-    const getMyInfo = async () => {
-      // 내 정보 가져오기 API
-      const { data } = await getUsersInfo('');
-      // 닉네임 세팅
-      if (data) {
-        const { nickname, currentMoney, totalStockReturn } = data.data;
-        localStorage.setItem('nickname', nickname);
-        localStorage.setItem('currentMoney', String(currentMoney));
-        localStorage.setItem('totalStockReturn', String(totalStockReturn));
-      }
-    };
-    getMyInfo();
-  }, []);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
+
   return (
     <>
       {/* 데스크탑 */}
@@ -97,7 +96,11 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
+              <Modal isOpen={isOpen} onClose={handleCloseModal}>
+                <VisitModal onClose={handleCloseModal}/>
+              </Modal>
             </div>
             <div className="h-[5%]"></div>
             <div className="flex justify-center h-[21%] w-full animate-moving">
@@ -256,6 +259,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/chart.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[13%]"></div>
@@ -318,6 +322,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/visit.png"
                 alt=""
+                onClick={handleOpenModal}
               />
             </div>
             <div className="h-[5%]"></div>
@@ -386,6 +391,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/chart.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[5%]"></div>

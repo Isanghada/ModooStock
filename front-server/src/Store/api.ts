@@ -18,6 +18,25 @@ interface ReturnMyInfoInterFace {
   };
   result: string;
 }
+
+interface ReturnUsersSearchInterFace {
+  data: Array<{
+    account: string;
+    nickname: string;
+    profileImagePath: string;
+  }>;
+  result: string;
+}
+
+interface ReturnUsersRandomInterFace {
+  data: {
+    account: string;
+    nickname: string;
+    profileImagePath: string;
+  };
+  result: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -71,9 +90,9 @@ const fetchAccessToken = async () => {
 };
 
 
-export const everyStock = createApi({
-  reducerPath: 'api',
-  tagTypes: ['Api'],
+export const UserApi = createApi({
+  reducerPath: 'UserApi',
+  tagTypes: ['UserApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -91,9 +110,26 @@ export const everyStock = createApi({
     getUsersInfo: builder.query<ReturnMyInfoInterFace, string>({
       query: () => '/users',
       providesTags: (result, error, arg) => {
-        return [{ type: 'Api' }];
+        return [{ type: 'UserApi' }];
       }
     }),
+
+    // 2. 회원 검색
+    getUsersSearch: builder.query<ReturnUsersSearchInterFace, string>({
+      query: (keyword) => `/users?search=${keyword}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: "UserApi" }]
+      }
+    }),
+    
+    // 3.랜덤 유저 방문
+    getUsersRandom: builder.query<ReturnUsersRandomInterFace, string>({
+      query: () => `/users/random`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
 
     // // 3. 회원 삭제
     // putAdminUserDelete: builder.mutation({
@@ -109,9 +145,14 @@ export const everyStock = createApi({
     // }),
   })
 });
+
+
+
 // 임시저장
 export const {
-  useLazyGetUsersInfoQuery
+  useLazyGetUsersInfoQuery,
+  useLazyGetUsersSearchQuery,
+  useLazyGetUsersRandomQuery
   // useLazyGetAdminUserListQuery,
   // usePutAdminUserDeleteMutation,
-} = everyStock;
+} = UserApi;

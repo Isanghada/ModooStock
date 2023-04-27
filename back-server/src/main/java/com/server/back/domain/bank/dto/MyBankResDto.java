@@ -17,12 +17,12 @@ public class MyBankResDto {
     Long bankId;
     LocalDateTime startDate;
     LocalDateTime endDate;
-    Integer price;
+    Long price;
     Boolean isPaid;
 
     public static MyBankResDto fromEntity(BankEntity bank) {
         // 기본으로 은행에 넣었던 돈 얻기
-        Integer getMoney = bank.getPrice();
+        Long getMoney = bank.getPrice();
         // 만기일
         LocalDateTime endDate = bank.getCreatedAt().plusHours(BANK_PERIOD);
 

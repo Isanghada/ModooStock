@@ -51,7 +51,7 @@ public class UserEntity extends CommonEntity implements UserDetails {
 
     @Column(nullable = false)
     @Builder.Default
-    private Integer currentMoney = 10000_0000;
+    private Long currentMoney = 10000_0000L;
 
 
     @Override
@@ -131,11 +131,11 @@ public class UserEntity extends CommonEntity implements UserDetails {
         this.isDeleted = isDeleted;
     }
 
-    public void increaseCurrentMoney(Integer money) {
+    public void increaseCurrentMoney(Long money) {
         this.currentMoney += money;
     }
 
-    public void decreaseCurrentMoney(Integer money) {
+    public void decreaseCurrentMoney(Long money) {
         this.currentMoney -= money;
     }
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class RankResDto {
     private String nickname;
     private String profileImagePath;
-    private Integer totalMoney;
+    private Long totalMoney;
 
     public static RankResDto fromEntity(RankEntity rank){
         return RankResDto.builder()

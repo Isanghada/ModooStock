@@ -69,11 +69,11 @@ function Intro(): JSX.Element {
         {/* 로그인 깜빡임 */}
         {showLogin && <motion.div
           onClick={showLogIn}
-          className="cursor-pointer absolute right-0 w-[5%] lg:text-5xl lg:text-bold h-[4vh]"
+          className="cursor-pointer absolute right-0 w-[5%] lg:text-5xl lg:text-bold h-[5vh]"
           animate={{ opacity: [0, 1, 0] }}
           transition={{
             duration: 2,
-            delay: 2,
+            delay: 1,
             repeat: Infinity,
             ease: 'linear'
           }}>
@@ -82,6 +82,7 @@ function Intro(): JSX.Element {
             src="/images/intro/increase.png"
             alt="arrow"
           />
+          {/* <div className='text-sm font-medium text-red-700 lg:font-bold lg:text-xl'>화성</div> */}
         </motion.div>}
       </motion.div>
     </AnimatePresence>

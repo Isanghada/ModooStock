@@ -73,7 +73,7 @@ public class BankServiceImpl implements BankService {
         bankRepository.save(bank);
 
         // 기본으로 은행에 넣었던 돈 얻기
-        Integer getMoney = bank.getPrice();
+        Long getMoney = bank.getPrice();
         // 만기일
         LocalDateTime endDate = bank.getCreatedAt().plusHours(BANK_PERIOD);
         
@@ -114,7 +114,7 @@ public class BankServiceImpl implements BankService {
         Long userId = authService.getUserId();
 
         // 총 예금 금액
-        Integer currentMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0);
+        Long currentMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0L);
         return MyTotalResDto.fromEntity(currentMoney);
     }
 
