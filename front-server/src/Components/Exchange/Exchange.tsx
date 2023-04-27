@@ -25,9 +25,9 @@ function Exchange(): JSX.Element {
               <span className="pb-5 lg:pb-9 text-[0.8rem] lg:text-[1.1rem] text-[#FF4F4F] font-bold">신문 스크랩</span>
               <img className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem]" src="/images/icons/news.png" alt="" />
             </div>
-            <div className="flex flex-col items-end text-[0.82rem]">
-              <span className="font-semibold">시간</span>
-              <span className="text-[0.6rem] lg:text-[1.5rem] font-bold">20XX.03.17</span>
+            <div className="flex flex-col items-end text-[0.68rem] lg:text-[1rem]">
+              <span className="font-semibold leading-[0.6rem]">시간</span>
+              <span className="text-[0.9rem] lg:text-[1.5rem] font-bold">20XX.03.17</span>
             </div>
           </div>
         </div>
@@ -202,24 +202,24 @@ function Exchange(): JSX.Element {
                   />
                 </div>
                 <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
-                  <div className="w-1/4 transition-all duration-300 border-r-2 hover:scale-105">
-                    <span>+1개</span>
+                  <div className="w-1/4 duration-200 border-r-2 rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white">
+                    <span className="cursor-pointer">+1개</span>
                   </div>
-                  <div className="w-1/4 transition-all duration-300 border-r-2 hover:scale-105">
-                    <span>+10개</span>
+                  <div className="w-1/4 duration-200 border-r-2 rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white">
+                    <span className="cursor-pointer">+10개</span>
                   </div>
-                  <div className="w-1/4 transition-all duration-300 border-r-2 hover:scale-105">
-                    <span>+100개</span>
+                  <div className="w-1/4 duration-200 border-r-2 rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white">
+                    <span className="cursor-pointer">+100개</span>
                   </div>
-                  <div className="w-1/4 transition-all duration-300 hover:scale-105">
-                    <span>+1000개</span>
+                  <div className="w-1/4 duration-200 rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white">
+                    <span className="cursor-pointer">+1000개</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-2">
-                  <div className="w-[45%] py-1 bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
+                  <div className="w-[45%] py-1 cursor-pointer hover:bg-[#1860ef] bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매도</span>
                   </div>
-                  <div className="w-[45%] py-1 bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                  <div className="w-[45%] py-1 cursor-pointer hover:bg-[#f90025fd] bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매수</span>
                   </div>
                 </div>
@@ -231,14 +231,14 @@ function Exchange(): JSX.Element {
                 <div className="w-full">
                   <span>국제시장 환율</span>
                 </div>
-                <div className="flex justify-evenly w-full bg-[#EDEDED] text-[1.2rem]">
-                  <div>
+                <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1">
+                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
                     <span>미국</span>
                   </div>
-                  <div>
+                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
                     <span>일본</span>
                   </div>
-                  <div>
+                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
                     <span>유럽연합</span>
                   </div>
                 </div>
@@ -252,18 +252,18 @@ function Exchange(): JSX.Element {
           <div className="flex flex-col w-[32%] space-y-3 justify-end items-start lg:hidden">
             {/* 회사 정보, 뉴스, 정보 */}
             <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
-              <div className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
+              <div className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                 <span>기업활동</span>
               </div>
-              <div className="w-[30%] border-r-2 text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
+              <div className="w-[30%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                 <span>신문</span>
               </div>
-              <div className="w-[30%] text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
+              <div className="w-[30%] text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                 <span>정보</span>
               </div>
             </div>
             {/* 종목 갱신, 날짜 갱신 */}
-            <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
+            <div className="flex flex-col w-full py-1 text-white bg-black rounded-lg">
               <div className="flex justify-between w-full text-[0.85rem] px-[5%] font-semibold">
                 <div className="w-[50%] text-center">
                   <span className="text-[#FF5151]">종목 갱신</span>
@@ -313,24 +313,24 @@ function Exchange(): JSX.Element {
                   />
                 </div>
                 <div className="flex items-center w-full text-center justify-evenly text-[0.761rem] md:text-[0.935rem] pt-2 text-[#464646]">
-                  <div className="w-[21%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                  <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                     <span>+1개</span>
                   </div>
-                  <div className="w-[21%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                  <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                     <span>+10개</span>
                   </div>
-                  <div className="w-[24%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                  <div className="w-[24%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                     <span>+100개</span>
                   </div>
-                  <div className="w-[35%%] transition-all duration-300 hover:scale-105">
+                  <div className="w-[35%%] hover:transition duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white rounded-md">
                     <span>+1000개</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between w-full text-center text-[1.1rem] md:text-[1.3rem] text-white font-semibold pt-2">
-                  <div className="w-[45%] py-1 bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                  <div className="w-[45%] py-1 active:bg-[#1860ef] bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매도</span>
                   </div>
-                  <div className="w-[45%] py-1  bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                  <div className="w-[45%] py-1 active:bg-[#f90025fd] bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매수</span>
                   </div>
                 </div>
