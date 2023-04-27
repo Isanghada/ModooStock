@@ -57,7 +57,7 @@ function Layout(): JSX.Element {
         <div
           className={`${
             loginStatus || signUpStatus ? 'w-[60vw] lg:w-[70vw]' : 'w-full'
-          } container relative flex h-screen mx-auto lg:max-w-screen-xl`}>
+          } container relative flex h-screen max-h-screen mx-auto lg:max-w-screen-xl`}>
           {/* 네브바  */}
           {isNavBar && <Navbar />}
           {/* 그 밖의 컴포넌트 */}

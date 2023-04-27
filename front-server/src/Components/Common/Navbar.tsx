@@ -19,6 +19,8 @@ function Navbar(): JSX.Element {
 
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
+  // 채팅 창 탭 선택
+  const [isSelectChat, setIsSelectChat] = useState<boolean>(true);
 
   // 채팅 창 상태
   const chattingStatus = useAppSelector((state) => {
@@ -27,7 +29,6 @@ function Navbar(): JSX.Element {
 
   // 채팅 창 띄우기
   const showChatting = () => {
-    console.log(chattingStatus, '채ㅔ팅');
     if (chattingStatus) {
       dispatch(changeChattingStatus(false));
     } else {
@@ -73,7 +74,6 @@ function Navbar(): JSX.Element {
   // 클릭 이벤트 처리
   const click = (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
-    console.log(target, '라벨');
     switch (target.ariaLabel) {
       case '마이페이지':
         navigate('/mypage');
@@ -83,6 +83,12 @@ function Navbar(): JSX.Element {
         break;
       case '채팅':
         showChatting();
+        break;
+      case '투자알림':
+        setIsSelectChat(false);
+        break;
+      case '공개채팅':
+        setIsSelectChat(true);
         break;
       default:
         break;
@@ -103,11 +109,7 @@ function Navbar(): JSX.Element {
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
               onClick={click}>
-              <img
-                className="w-5/6"
-                src={`/images/toys/pink.png`}
-                alt="money"
-              />
+              <img className="w-5/6" src={`/images/toys/pink.png`} alt="money" />
             </div>
             <div
               className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${
@@ -117,7 +119,7 @@ function Navbar(): JSX.Element {
             </div>
           </div>
           <div className={`flex items-center min-w-fit w-[20vw] h-full`}>
-            <div className="min-w-[10vh] w-[10vh]">
+            <div className="min-w-[10vh] w-[5vw]">
               <img className="w-full" src="/images/icons/money.png" alt="money" />
             </div>
             <div
@@ -128,7 +130,7 @@ function Navbar(): JSX.Element {
             </div>
           </div>
           <div className={`flex items-center w-[18vw] h-full`}>
-            <div className="min-w-[9vh] w-[9vh]">
+            <div className="min-w-[9vh] w-[4vw]">
               <img
                 className="w-full "
                 src={`${totalStockReturn >= 0 ? `/images/icons/upgold.png` : `/images/icons/downgold.png`}`}
@@ -144,13 +146,13 @@ function Navbar(): JSX.Element {
           </div>
         </div>
         <div className={`mt-2 w-[20vw] lg:w-[16vw] h-full justify-evenly items-center flex `}>
-          <div aria-label="채팅" onClick={click} className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+          <div aria-label="채팅" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/chat2.png" alt="chat" />
           </div>
-          <div aria-label="홈" onClick={click} className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+          <div aria-label="홈" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/home.png" alt="home" />
           </div>
-          <div className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
+          <div className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/setting.png" alt="setting" />
           </div>
         </div>
@@ -159,14 +161,20 @@ function Navbar(): JSX.Element {
         <AnimatePresence>
           <motion.div
             initial={{ width: 0 }}
-            animate={screenWidth <= 1024 ? { width: '50vw' } : { width: '30vw' }}
+            animate={screenWidth <= 1024 ? { width: '55vw' } : { width: '35vw' }}
             exit={{ width: 0 }}
             transition={{
               duration: 0.5,
               ease: 'easeInOut'
             }}
-            className={`fixed bottom-0 right-0 z-50 h-[85vh] bg-white border-l-2 border-t-2 border-[#FB6B9F] bg-opacity-95 rounded-md`}>
-            <Chatting />
+            className={`fixed bottom-0 right-0 z-50 h-[85vh]  flex`}>
+            <div className="w-[5vw] h-full bg-transparent flex flex-col justify-end text-[#FB6B9F]">
+              <div onClick={click} aria-label="투자알림" className={`flex justify-center items-start w-full border-[1px] lg:border-2 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "bg-gray-200 border-b-0 border-gray-400 border-r-[#FB6B9F]" : "border-r-0 border-b-2 bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F]"}`}>투자</div>
+              <div onClick={click} aria-label="공개채팅" className={`flex justify-center items-start w-full border-[1px] lg:border-2 border-b-0 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "border-r-0 bg-white font-semibold border-[#FB6B9F] " : "bg-gray-200 border-t-0 border-gray-400 border-r-[#FB6B9F]"}`}>토론</div>
+            </div>
+            <div className="w-[50vw] lg:w-[30vw] h-full bg-white bg-opacity-95">
+              <Chatting />
+            </div>
           </motion.div>
         </AnimatePresence>
       )}
