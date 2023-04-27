@@ -9,10 +9,17 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from 'Store/store';
 
+
+
+if ('virtualKeyboard' in navigator) {
+  (navigator.virtualKeyboard as any).overlaysContent = true;
+}
+
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
-);
-root.render(
+  );
+  root.render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
