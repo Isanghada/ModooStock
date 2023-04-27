@@ -28,6 +28,7 @@ public class UsersModifyReqDto {
                 .introduction(introduction)
                 .isDeleted(user.getIsDeleted())
                 .currentMoney(user.getCurrentMoney())
+                .role(user.getRole())
                 .build();
     }
 }
