@@ -16,7 +16,7 @@ function Navbar(): JSX.Element {
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
   // 전체 스크린 높이
   const [screenHeight, setScreenHeight] = useState<number>(0);
-  
+
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
 
@@ -95,16 +95,22 @@ function Navbar(): JSX.Element {
         className={`fixed top-2 px-2 lg:top-2 left-0 flex justify-between items-center w-screen h-[10vh] z-40 ${
           screenHeight >= 800 ? 'min-h-[3rem] max-h-[5rem]' : ''
         }`}>
-        <div className="flex justify-evenly items-center w-[70vw] h-full max-w-[70vw]">
-          <div className={`flex items-center w-[20vw] h-full`}>
+        <div className="flex justify-evenly items-center w-[65vw] h-full max-w-[70vw]">
+          <div className={`flex items-center w-[18vw] h-full`}>
             <div
               aria-label="마이페이지"
-              className={`bg-[#ff498c] rounded-full cursor-pointer w-[10vh] h-full ${
+              className={`bg-[#ff498c] rounded-full cursor-pointer w-[10vh] h-full flex justify-center items-center  ${
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
-              onClick={click}></div>
+              onClick={click}>
+              <img
+                className="w-5/6"
+                src={`/images/toys/pink.png`}
+                alt="money"
+              />
+            </div>
             <div
-              className={`bg-[#FB6B9F] w-[20vw] h-2/3 lg:h-1/2 rounded-2xl text-sm lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 ${
+              className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${
                 screenHeight >= 800 ? 'min-w-fit max-w-[20vw] pl-[3rem] lg:pl-[8vh]' : 'pl-[8vh]'
               }`}>
               {myNickName}
@@ -115,29 +121,29 @@ function Navbar(): JSX.Element {
               <img className="w-full" src="/images/icons/money.png" alt="money" />
             </div>
             <div
-              className={`bg-[#FFBF4D] w-[20vw] min-w-fit px-2 h-2/3 lg:h-1/2 rounded-2xl text-sm lg:text-2xl text-white font-medium lg:font-bold flex justify-center items-center  ${
+              className={`bg-[#FFBF4D] grow min-w-fit px-2 h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 screenHeight >= 800 ? 'max-w-[20vw]' : ''
               }`}>
               {currentMoney}원
             </div>
           </div>
-          <div className={`flex items-center w-[20vw] h-full`}>
+          <div className={`flex items-center w-[18vw] h-full`}>
             <div className="min-w-[9vh] w-[9vh]">
               <img
-                className="w-full"
+                className="w-full "
                 src={`${totalStockReturn >= 0 ? `/images/icons/upgold.png` : `/images/icons/downgold.png`}`}
                 alt="money"
               />
             </div>
             <div
-              className={`bg-[#cfc8b1] w-[20vw] h-2/3 lg:h-1/2 rounded-2xl text-sm lg:text-2xl font-medium lg:font-bold flex justify-center items-center ${
+              className={`bg-[#cfc8b1] grow h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 totalStockReturn >= 0 ? 'text-red-600' : 'text-blue-600'
               } ${screenHeight >= 800 ? 'min-w-fit max-w-[20vw]' : ''}`}>
               {totalStockReturn}%
             </div>
           </div>
         </div>
-        <div className={`w-[20vw] lg:w-[16vw] h-full justify-evenly items-center flex `}>
+        <div className={`mt-2 w-[20vw] lg:w-[16vw] h-full justify-evenly items-center flex `}>
           <div aria-label="채팅" onClick={click} className="min-w-[9vh] w-[9vh] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/chat2.png" alt="chat" />
           </div>
@@ -159,7 +165,7 @@ function Navbar(): JSX.Element {
               duration: 0.5,
               ease: 'easeInOut'
             }}
-            className={`fixed bottom-0 right-0 z-50 h-[85vh] bg-white border-2 border-[#FB6B9F] bg-opacity-90 rounded-md`}>
+            className={`fixed bottom-0 right-0 z-50 h-[85vh] bg-white border-l-2 border-t-2 border-[#FB6B9F] bg-opacity-95 rounded-md`}>
             <Chatting />
           </motion.div>
         </AnimatePresence>
