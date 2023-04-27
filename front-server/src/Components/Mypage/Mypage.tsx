@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Bathroom from 'Components/Main/Bathroom';
 import styled from './Mypage.module.css';
 import MypageInven from './MypageInven';
 
 function Mypage(): JSX.Element {
+  const [isModalClick, setIsModalClick] = useState<boolean>(false);
+
   const [pos1, setPos1] = useState<string>('0');
   const [pos2, setPos2] = useState<string>('0');
   const [pos3, setPos3] = useState<string>('0');
@@ -39,8 +41,79 @@ function Mypage(): JSX.Element {
         break;
     }
   };
+
+  const click = () => {
+    setIsModalClick((pre) => !pre);
+  };
+
+  const Auction = () => {
+    const ref = useRef(null);
+    return (
+      <>
+        <div
+          ref={ref}
+          className="fixed flex items-center z-50 justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0"
+          onClick={(e) => {
+            if (e.target === ref.current) {
+              setIsModalClick((pre) => !pre);
+            }
+          }}>
+          <div className="bg-[#FEF3F3] border-[#D9D9D9] border-2 flex flex-col max-w-[32rem] min-w-[32rem] lg:max-w-[32rem] lg:min-w-[32rem] w-[33%] rounded-lg px-10 py-4">
+            <div className="flex flex-col items-center w-full py-2 border-b-2">
+              <span className="text-[1rem] lg:text-[1.2rem] font-semibold">경매장</span>
+              <span className="font-bold text-[1.2rem] lg:text-[1.5rem]" onClick={click}>
+                판매 아이템 등록
+              </span>
+            </div>
+            <div className="flex justify-center w-full py-4 space-x-6">
+              <div className="flex justify-center items-center w-[35%] bg-white rounded-lg">
+                <img
+                  className="w-[4rem] h-[9rem] lg:w-[4.5rem] lg:h-[10rem] pb-2"
+                  src="/images/funitures/funiture.png"
+                  alt="가구"
+                />
+              </div>
+              <div className="flex justify-start items-start flex-col w-[55%] space-y-2">
+                <div className="bg-[#FFC34F] px-4 py-[1px] text-[0.8rem] lg:text-[1rem] font-semibold text-white rounded-xl">
+                  <span>유니크</span>
+                </div>
+                <div className="flex flex-col w-full space-y-1">
+                  <div className="text-[0.9rem] lg:text-[1rem] font-semibold">
+                    <span>가격</span>
+                  </div>
+                  <div>
+                    <input
+                      className="border-[#FDE2E2] py-[2px] lg:py-1 border-2 rounded-md outline-none pl-2 text-[0.8rem] lg:text-[0.9rem]"
+                      type="text"
+                      placeholder="판매 가격"
+                    />
+                  </div>
+                  <div className="w-full flex flex-col text-[0.7rem] lg:text-[0.85em] text-[#8A8A8A] leading-4">
+                    <span>등록시간은 6시간입니다.</span>
+                    <span>미판매시 자도응로 창고에 저장됩니다.</span>
+                  </div>
+                </div>
+                <div className="flex w-full space-x-2 text-[0.9rem] lg:text-[1.1rem] text-center font-bold text-white">
+                  <div
+                    className="bg-[#ACACAC] cursor-pointer hover:bg-[#828181] hover:scale-105 active:bg-[#828181] active:scale-105 transition-all duration-300 py-1 w-1/2 rounded-md"
+                    onClick={click}>
+                    <span>닫기</span>
+                  </div>
+                  <div className="bg-[#FFB0B0] cursor-pointer hover:bg-[#eb8585] hover:scale-105 active:bg-[#eb8585] active:scale-105 transition-all duration-300 py-1 w-1/2 rounded-md">
+                    <span>판매 등록</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
+      {isModalClick && <Auction />}
       {/* 데스크탑 */}
       <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
         <div className="flex justify-center items-center w-[65%] h-full relative">
@@ -81,7 +154,7 @@ function Mypage(): JSX.Element {
                     <span>되팔기</span>
                   </div>
                   <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full">
-                    <span>경매장 등록</span>
+                    <span onClick={click}>경매장 등록</span>
                   </div>
                 </div>
               </div>
@@ -249,7 +322,7 @@ function Mypage(): JSX.Element {
                   <span>되팔기</span>
                 </div>
                 <div className="py-[3px] px-[0.7rem] cursor-pointer hover:scale-105 transition-all duration-300 bg-[#EA455D] drop-shadow-lg rounded-full">
-                  <span>경매장 등록</span>
+                  <span onClick={click}>경매장 등록</span>
                 </div>
               </div>
             </div>
