@@ -11,4 +11,6 @@ public interface ChartRepository extends JpaRepository<ChartEntity, Long> {
 
     List<ChartEntity> findTop360ByCompanyIdAndDateGreaterThanEqual(Long companyId, LocalDate date);
     Optional<ChartEntity> findByCompanyIdAndDate(Long companyId, LocalDate date);
+
+    List<ChartEntity> findAllByCompanyIdAndDateBetween(Long companyId, LocalDate startDate, LocalDate date);
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Example</title>
+</head>
+<body>
+<h1>Stock Chart</h1>
+<ul id="stock-chart"></ul>
+
+<script>
+        const stockId = 1;
+        const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJuaWNrbmFtZVwiOlwi7Jik66asXCIsXCJ0b2tlblR5cGVcIjpcIkFDQ0VTU1wiLFwidXNlcklkXCI6XCIxOVwifSIsImlhdCI6MTY4MjU1NzI2OCwiZXhwIjoxNjgyNjQzNjY4fQ.CZDUWTN3S1ZIg3zd9qeCSwLkklKAkMPJHyTPiaou_0E";
+        const source = new EventSourcePolyfill(`http://localhost:8080/api/stock/${stockId}` ,
+        {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: Bearer `${token}`,
+          'Cache-Control': 'no-cache',
+        },
+        heartbeatTimeout: 86400000,
+        withCredentials: true,
+      });
+        console.log(source);
+        const stockChartList = document.getElementById("stock-chart");
+
+        source.addEventListener('message', function(event) {
+            const data = JSON.parse(event.data);
+            console.log(data);
+
+            // 데이터 처리 로직 추가
+            const listItem = document.createElement('li');
+            listItem.textContent = data;
+            stockChartList.appendChild(listItem);
+        });
+
+        source.onerror = function(event) {
+            console.error('EventSource error:', event);
+        };
+    </script>
+</body>
+</html>
