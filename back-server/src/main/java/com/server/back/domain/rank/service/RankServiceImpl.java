@@ -65,7 +65,7 @@ public class RankServiceImpl implements  RankService{
         List<UserEntity> everyUser=userRepository.findAllByIsDeleted(IsDeleted.N);
         for (UserEntity user: everyUser) {
             //로직 구현
-            Integer totalMoney=0;
+            Long totalMoney=0L;
 
             //현금
             totalMoney+=user.getCurrentMoney();
@@ -83,7 +83,7 @@ public class RankServiceImpl implements  RankService{
                 CompanyEntity company =userDeal.getStock().getCompany();
                 ChartEntity chart=chartRepository.findByCompanyIdAndDate(company.getId(),date).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND
                 ));
-                totalMoney+=amount*(chart.getPriceEnd()*amount);
+                totalMoney+=(chart.getPriceEnd()*amount);
             }
 
             //예금에 있는 거
