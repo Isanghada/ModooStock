@@ -1,5 +1,6 @@
 package com.server.back.domain.store.repository;
 
+import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.domain.store.entity.UserAssetEntity;
@@ -14,6 +15,6 @@ import java.util.Optional;
 public interface UserAssetRepository extends JpaRepository<UserAssetEntity,Long> {
     List<UserAssetEntity>findByUserAndIsInRepositoryAndIsDeleted(UserEntity user, IsInRespository isInRespository, IsDeleted isDeleted);
     @Query("SELECT COUNT(u) FROM UserAssetEntity u WHERE u.user.id = :userId AND u.isDeleted = :isDeleted AND u.asset.assetLevel = :assetLevel")
-    Optional<Integer> countByUserIdAndIsDeletedAndAssetLevel(@Param("userId") Long userId, @Param("isDeleted") IsDeleted isDeleted, @Param("assetLevel") String assetLevel);
+    Optional<Integer> countByUserIdAndIsDeletedAndAssetLevel(@Param("userId") Long userId, @Param("isDeleted") IsDeleted isDeleted, @Param("assetLevel") AssetLevelType assetLevel);
 
 }

@@ -65,8 +65,8 @@ public class StorageServiceImpl implements StorageService {
         userAsset.update();
 
         //돈 얼마인지
-        Integer price=assetPriceRepository.findByAssetLevel(userAsset.getAsset().getAssetLevel()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND)).getPrice();
-        Integer resalePrice= Math.toIntExact(Math.round(price * 0.7));
+        Long price=assetPriceRepository.findByAssetLevel(userAsset.getAsset().getAssetLevel()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND)).getPrice();
+        Long resalePrice= Math.round(price * 0.7);
 
         //유저에게 돈 넣어주기
         DealEntity resale=new DealEntity(user,DealType.GET_MONEY_FOR_RESALE,resalePrice);

@@ -14,6 +14,6 @@ public interface BankRepository extends JpaRepository<BankEntity, Long> {
     List<BankEntity> findByUserIdAndIsCompleted(Long userId, IsCompleted isCompleted);
 
     @Query("SELECT SUM(d.price) FROM BankEntity d WHERE d.user.id = :userId AND d.isCompleted = :isCompleted")
-    Optional<Integer> getPriceSumByUserIdAndIsCompleted(@Param("userId") Long userId, @Param("isCompleted") IsCompleted isCompleted);
+    Optional<Long> getPriceSumByUserIdAndIsCompleted(@Param("userId") Long userId, @Param("isCompleted") IsCompleted isCompleted);
 
 }

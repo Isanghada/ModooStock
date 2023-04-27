@@ -21,6 +21,6 @@ public class AssetPriceEntity {
     private AssetLevelType assetLevel;
 
     @Column(nullable = false)
-    private Integer price;
+    private Long price;
 
 }

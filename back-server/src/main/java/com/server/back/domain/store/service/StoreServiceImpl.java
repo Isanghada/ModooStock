@@ -6,11 +6,9 @@ import com.server.back.common.repository.DealRepository;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.store.dto.AssetResDto;
 import com.server.back.domain.store.entity.AssetEntity;
-import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.AssetRepository;
 import com.server.back.domain.store.repository.UserAssetLocationRepository;
-import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
@@ -51,23 +49,26 @@ public class StoreServiceImpl implements StoreService {
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         GotchaLevel level=GotchaLevel.valueOf(gotchaLevel);
 
-        Integer price=0;
+        Long price=0L;
 
         List<AssetEntity>list=new ArrayList<>();
 
         //gotcha 레벨에 따라 비율이 달라짐
         if(level.equals(GotchaLevel.HIGH)) {
-            price=2000000;
+            price=2000000L;
+            if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 10));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 40));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 50));
         }else if(level.equals(GotchaLevel.MIDDLE)) {
-            price=1000000;
+            price=1000000L;
+            if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 3));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 27));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 70));
         }else if(level.equals(GotchaLevel.LOW)){
-            price=500000;
+            price=500000L;
+            if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 1));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 14));
             list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 85));

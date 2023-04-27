@@ -11,10 +11,10 @@ import java.util.List;
 public class StockListResDto {
     Long stockId;
     String kind;
-    Integer price;
+    Long price;
 
     public static StockListResDto fromEntity(StockEntity stock) {
-        return StockListResDto.builder().stockId(stock.getId()).kind(stock.getCompany().getKind()).price((int) (stock.getAverage() * 1.75)).build();
+        return StockListResDto.builder().stockId(stock.getId()).kind(stock.getCompany().getKind()).price((long) (stock.getAverage() * 1.75)).build();
     }
 
     public static List<StockListResDto> fromEntityList(List<StockEntity> stockList) {

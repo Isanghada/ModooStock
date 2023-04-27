@@ -2,16 +2,20 @@ package com.server.back.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.Role;
 import com.server.back.common.entity.CommonEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
-
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,12 +55,23 @@ public class UserEntity extends CommonEntity implements UserDetails {
 
     @Column(nullable = false)
     @Builder.Default
-    private Integer currentMoney = 10000_0000;
+    private Long currentMoney = 10000_0000L;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+        for(String role : role.getDescription().split(",")){
+            log.info("[ROLE] role {}", role);
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
     }
 
 
@@ -131,11 +146,11 @@ public class UserEntity extends CommonEntity implements UserDetails {
         this.isDeleted = isDeleted;
     }
 
-    public void increaseCurrentMoney(Integer money) {
+    public void increaseCurrentMoney(Long money) {
         this.currentMoney += money;
     }
 
-    public void decreaseCurrentMoney(Integer money) {
+    public void decreaseCurrentMoney(Long money) {
         this.currentMoney -= money;
     }
 }
