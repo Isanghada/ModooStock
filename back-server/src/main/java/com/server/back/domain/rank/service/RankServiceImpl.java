@@ -23,8 +23,11 @@ import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import springfox.documentation.annotations.Cacheable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,6 +52,7 @@ public class RankServiceImpl implements  RankService{
      * @return
      */
     @Override
+    @Cacheable(value = "rank")
     public List<RankResDto> getRanking() {
         List<RankEntity>list=rankRepository.findTop10ByOrderByTotalMoneyDesc();
         return RankResDto.fromEntityList(list);
@@ -60,7 +64,9 @@ public class RankServiceImpl implements  RankService{
      * 한 시간에 한 번 계산
      *
      */
-    @Scheduled(cron = "0 0 10-22 * * 1-6",zone = "Asia/Seoul")
+    @Transactional
+    @CachePut(value = "rank")
+    @Scheduled(cron = "0 55 10-22 * * 1-6",zone = "Asia/Seoul")
     public void calRanking(){
 
         //랭킹 레퍼지토리 전체 삭제
