@@ -111,7 +111,7 @@ public class StockServiceImpl implements StockService {
         user.decreaseCurrentMoney(chartPrice * stockReqDto.getStockAmount());
         userRepository.save(user);
         // 2. 거래내역 남기기
-        dealStockRepository.save(stockReqDto.toEntity(user, DealType.LOSE_MONEY_FOR_STOCK, stock));
+        dealStockRepository.save(stockReqDto.toEntity(user, DealType.LOSE_MONEY_FOR_STOCK, stock, chartPrice));
 
 
         // 보유 주식 data 수정
@@ -145,7 +145,7 @@ public class StockServiceImpl implements StockService {
         user.increaseCurrentMoney(chartPrice * stockReqDto.getStockAmount());
         userRepository.save(user);
         // 2. 거래내역 남기기
-        dealStockRepository.save(stockReqDto.toEntity(user, DealType.GET_MONEY_FOR_STOCK, stock));
+        dealStockRepository.save(stockReqDto.toEntity(user, DealType.GET_MONEY_FOR_STOCK, stock, chartPrice));
         // 3. user_deal 수정
         userDeal.decrease(stockReqDto.getStockAmount(), chartPrice);
         userDealRepository.save(userDeal);
