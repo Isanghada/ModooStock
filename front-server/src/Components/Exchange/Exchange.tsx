@@ -6,7 +6,7 @@ function Exchange(): JSX.Element {
     <>
       <div className="flex flex-col items-center justify-center w-full h-full pt-[10vh]">
         <div className="flex justify-between w-full border-b-4">
-          <div className="flex justify-start items-end w-3/5 text-[1.7rem] space-x-3 font-black">
+          <div className="flex justify-start items-end w-3/5 text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
             <div className="px-3 transition-all duration-300 hover:scale-105">
               <span>A 전자</span>
             </div>
@@ -22,19 +22,20 @@ function Exchange(): JSX.Element {
           </div>
           <div className="flex items-end justify-end w-2/5">
             <div className="relative flex flex-col items-center pr-2 transition-all duration-300 hover:scale-105">
-              <span className="pb-9 text-[1.1rem] text-[#FF4F4F] font-bold">신문 스크랩</span>
-              <img className="absolute -bottom-4 h-[4.5rem]" src="/images/icons/news.png" alt="" />
+              <span className="pb-5 lg:pb-9 text-[0.8rem] lg:text-[1.1rem] text-[#FF4F4F] font-bold">신문 스크랩</span>
+              <img className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem]" src="/images/icons/news.png" alt="" />
             </div>
-            <div className="flex flex-col items-end ">
-              <span>게임 속 시간</span>
-              <span className="text-[1.5rem]">20XX.03.17</span>
+            <div className="flex flex-col items-end text-[0.82rem]">
+              <span className="font-semibold">시간</span>
+              <span className="text-[0.6rem] lg:text-[1.5rem] font-bold">20XX.03.17</span>
             </div>
           </div>
         </div>
         {/* 클릭한 주식 데이터 */}
-        <div className="flex items-start justify-between w-full pt-5">
+        <div className="flex items-start justify-between w-full pt-2 lg:pt-5">
           {/* 왼쪽 차트 */}
-          <div className="flex flex-col justify-center px-2 w-[70%]">
+          {/* 데스크탑 */}
+          <div className="hidden flex-col justify-center px-2 w-[70%] lg:flex">
             <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
               <div className="flex items-end justify-between w-full pt-2 font-bold">
                 <div className="flex items-end space-x-1">
@@ -107,11 +108,52 @@ function Exchange(): JSX.Element {
               </div>
             </div>
           </div>
+          {/* 모바일 */}
+          <div className="flex flex-col justify-center px-2 w-[69%] lg:hidden">
+            <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
+              <div className="flex items-end justify-between w-full pt-2 font-bold">
+                <div className="flex items-end space-x-1">
+                  <span className="text-[1rem]">나의 투자 현황</span>
+                  <span className="text-[0.7rem] font-semibold">A 전자</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-[#707070] text-[0.7rem]">기업활동</span>
+                  <span className="">🍳</span>
+                </div>
+              </div>
+              {/* 데이터 */}
+              <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold pt-1 pb-2 ">
+                <div className="flex items-end space-x-1 text-[#006EC9]">
+                  <span className="text-[1rem]">- 48,424</span>
+                  <span className="text-[0.7rem]">(6.74 %)</span>
+                </div>
+                <div className="flex space-x-3 items-end  text-[1rem]">
+                  <div className="flex items-center space-x-1">
+                    <span className="text-[0.7rem]">보유수량</span>
+                    <span className="text-black">10</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span className=" items-end text-[0.7rem]">평균단가</span>
+                    <span className="text-black">70,250</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-[0.7rem]">현재가</span>
+                    <span className="text-[#006EC9]">65,800</span>
+                  </div>
+                </div>
+              </div>
+              {/* 차트 */}
+              <div className="w-full h-[12.7rem] flex justify-start text-[0.7rem] bg-white">
+                <Example />
+              </div>
+            </div>
+          </div>
           {/* 오른쪽 주식 거래 및 차트 */}
-          <div className="flex flex-col w-[28%] space-y-3 justify-end items-start">
+          {/* 데스크탑 */}
+          <div className="hidden flex-col w-[28%] space-y-3 justify-end items-start lg:flex">
             {/* 갱신 시간 */}
             <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
-              <div className="flex justify-between w-full text-[1.2rem] px-[5%]">
+              <div className="flex justify-between w-full text-[1.2rem] px-[5%] font-semibold">
                 <div className="w-[55%] text-center">
                   <span className="text-[#FF5151]">종목 갱신</span>
                 </div>
@@ -203,6 +245,95 @@ function Exchange(): JSX.Element {
               </div>
               <div className="w-full h-[9rem] text-[0.8rem]">
                 <Example />
+              </div>
+            </div>
+          </div>
+          {/* 모바일 */}
+          <div className="flex flex-col w-[31%] space-y-3 justify-end items-start lg:hidden">
+            {/* 회사 정보, 뉴스, 정보 */}
+            <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
+              <div className="w-[40%] border-r-2 text-[1rem]">
+                <span>기업활동</span>
+              </div>
+              <div className="w-[30%] border-r-2 text-[1rem]">
+                <span>신문</span>
+              </div>
+              <div className="w-[30%] text-[1rem]">
+                <span>정보</span>
+              </div>
+            </div>
+            {/* 종목 갱신, 날짜 갱신 */}
+            <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
+              <div className="flex justify-between w-full text-[0.85rem] px-[5%] font-semibold">
+                <div className="w-[50%] text-center">
+                  <span className="text-[#FF5151]">종목 갱신</span>
+                </div>
+                <div className="w-[45%] text-center">
+                  <span className="text-[#00A3FF]">날짜 갱신</span>
+                </div>
+              </div>
+              <div className="flex justify-between w-full text-[1rem] font-bold px-[5%]">
+                <div className="flex items-start justify-center w-[50%]">
+                  <div className="flex flex-col items-center">
+                    <span>24 :</span>
+                    <span className="text-[0.6rem] font-medium">시간&ensp;</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span>27 :</span>
+                    <span className="text-[0.6rem] font-medium">분&ensp;</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span>54</span>
+                    <span className="text-[0.6rem] font-medium">초</span>
+                  </div>
+                </div>
+                <div className="flex items-start justify-center w-[45%]">
+                  <div className="flex flex-col items-center">
+                    <span>02 :</span>
+                    <span className="text-[0.6rem] font-medium">분&ensp;</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span>17</span>
+                    <span className="text-[0.6rem] font-medium">초</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* 주식 거래 */}
+            <div className="w-full bg-white rounded-lg">
+              <div className="flex flex-col items-start justify-start w-full px-1 py-1 space-y-1">
+                <div className="w-full">
+                  <span className="text-[1.2rem] font-extrabold">주식 거래</span>
+                </div>
+                <div className="w-full">
+                  <input
+                    className="bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pl-2 py-1 w-full outline-[#e2a2a7] placeholder:text-[0.8rem]"
+                    type="text"
+                    placeholder="거래량을 입력하세요."
+                  />
+                </div>
+                <div className="flex items-center w-full text-center justify-evenly text-[0.935rem] pt-2 text-[#464646]">
+                  <div className="w-[21%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                    <span>+1개</span>
+                  </div>
+                  <div className="w-[21%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                    <span>+10개</span>
+                  </div>
+                  <div className="w-[24%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
+                    <span>+100개</span>
+                  </div>
+                  <div className="w-[35%%] transition-all duration-300 hover:scale-105">
+                    <span>+1000개</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between w-full text-center text-[1.3rem] text-white font-semibold pt-2">
+                  <div className="w-[45%] py-1 bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                    <span>매도</span>
+                  </div>
+                  <div className="w-[45%] py-1 bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                    <span>매수</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
