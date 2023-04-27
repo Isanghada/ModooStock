@@ -27,4 +27,5 @@ public class StockEntity {
 
     @Column(nullable = false)
     private Integer average;
+
 }
