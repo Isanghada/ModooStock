@@ -122,9 +122,15 @@ public class UserServiceImpl implements UserService{
         Long userId = authService.getUserId();
         UserEntity user = getUserById(userId);
 
+        // 본인 닉네임을 수정 시 이미 존재하는 경우 에러 발생
+        if (!usersModifyReqDto.getNickname().equals(user.getNickname())
+                && userRepository.findByNickname(usersModifyReqDto.getNickname()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
+        }
+
         usersModifyReqDto.setPassword(passwordEncoder.encode(usersModifyReqDto.getPassword()));
         userRepository.save(usersModifyReqDto.toEntity(user));
-        log.info("getUserById(userId): {}", getUserById(userId));
+        log.info("[updateUser] getUserById(userId): {}", getUserById(userId));
     }
 
     /**
