@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StockReqDto {
     Long stockId;
-    Integer price;
+    Long price;
     Integer stockAmount;
 
     public DealStockEntity toEntity(UserEntity user, DealType dealType, StockEntity stock){

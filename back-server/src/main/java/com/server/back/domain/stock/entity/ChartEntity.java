@@ -20,10 +20,10 @@ public class ChartEntity {
     private Long id;
 
     @Column
-    private Integer priceBefore;
+    private Long priceBefore;
 
     @Column(nullable = false)
-    private Integer priceEnd;
+    private Long priceEnd;
 
     @Column(nullable = false)
     private LocalDate date;

@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class StockChartResDto {
-    Integer priceBefore;
-    Integer priceEnd;
+    Long priceBefore;
+    Long priceEnd;
     LocalDate date;
     Long id;
     Long companyId;

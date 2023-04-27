@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class UserInfoLoginResDto {
     private String nickname;
-    private Integer currentMoney;
+    private Long currentMoney;
     private Float totalStockReturn;
 
     public static UserInfoLoginResDto fromEntity(UserEntity user, Float totalStockReturn) {

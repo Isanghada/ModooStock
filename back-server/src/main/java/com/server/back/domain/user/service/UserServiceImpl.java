@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService{
         // + 주식에 넣은 돈 (종가 * 개수)
         // + 내 에셋 별 돈 계산
 
-        Integer totalCash =bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0)  // 은행 이자 붙이기전 금액 싹다
+        Long totalCash =bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0L)  // 은행 이자 붙이기전 금액 싹다
             + user.getCurrentMoney(); // + 현 지갑에 있는 돈
 
         // + 주식에 넣은 돈 (종가 * 개수)
@@ -203,9 +203,9 @@ public class UserServiceImpl implements UserService{
             totalCash += chart.getPriceEnd() * userDeal.getTotalAmount();
         }
 
-        Integer countUserAssetRare = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "RARE").orElse( 0);
-        Integer countUserAssetEpic= userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "EPIC").orElse( 0);
-        Integer countUserAssetUnique = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, "UNIQUE").orElse( 0);
+        Integer countUserAssetRare = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, AssetLevelType.RARE).orElse( 0);
+        Integer countUserAssetEpic= userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, AssetLevelType.EPIC).orElse( 0);
+        Integer countUserAssetUnique = userAssetRepository.countByUserIdAndIsDeletedAndAssetLevel(userId, IsDeleted.N, AssetLevelType.UNIQUE).orElse( 0);
 
         Optional<AssetPriceEntity> assetPriceRare = assetPriceRepository.findByAssetLevel(AssetLevelType.RARE);
         if(assetPriceRare.isPresent()){

@@ -15,7 +15,7 @@ public class ExchangeResDto {
     String nationalCode;
     LocalDate date;
 
-    Integer price;
+    Long price;
 
     public static ExchangeResDto fromEntity(ExchangeEntity exchange) {
         return ExchangeResDto.builder()

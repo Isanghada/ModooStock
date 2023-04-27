@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankReqDto {
-    private Integer price;
+    private Long price;
 
     public BankEntity toEntity(UserEntity user) {
         return BankEntity.builder()
                 .user(user)
                 .price(price)
                 .dealType(DealType.LOSE_MONEY_FOR_DEPOSIT)
-                .interest((int) Math.round(price * 0.01))
+                .interest(Math.round(price * 0.01))
                 .build();
     }
 }

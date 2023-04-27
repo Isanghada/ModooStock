@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Builder
 public class AuctionResDto {
     private AssetResDto assetResDto;
-    private Integer price;
+    private Long price;
 
     public static AuctionResDto fromEntity(AuctionEntity auction){
         AssetResDto assetResDto=AssetResDto.fromEntity(auction.getUserAsset().getAsset());
