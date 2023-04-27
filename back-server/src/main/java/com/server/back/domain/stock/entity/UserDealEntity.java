@@ -38,27 +38,43 @@ public class UserDealEntity {
     @JoinColumn(name = "stock_id", nullable = false)
     private StockEntity stock;
 
-    public UserDealEntity(UserEntity user, StockReqDto stockReqDto , StockEntity stock){
+    @Column(nullable = false)
+    private Float rate;
+
+    public UserDealEntity(UserEntity user, StockReqDto stockReqDto , StockEntity stock, Long chartPrice){
         this.user = user;
         this.totalAmount = stockReqDto.getStockAmount();
-        this.average = (float)stockReqDto.getPrice();
-        this.totalPrice = (float) stockReqDto.getStockAmount() * stockReqDto.getPrice();
+        this.average = (float) chartPrice;
+        this.totalPrice = (float) stockReqDto.getStockAmount() * chartPrice;
         this.stock = stock;
+        this.rate = (chartPrice - average) / (float) average;
     }
 
     // 매수
-    public void increase(Long price, Integer amount){
-        this.totalPrice += (price * amount);
+    public void increase(Integer amount, Long chartPrice){
+        this.totalPrice += (chartPrice * amount);
         this.totalAmount = this.totalAmount + amount;
         this.average = this.totalPrice / this.totalAmount;
+        this.rate = (chartPrice - average) / (float) average;
     }
 
     // 매도
-    public void decrease(Integer amount){
+    public void decrease(Integer amount, Long chartPrice){
         this.totalPrice -= (this.average * amount);
         this.totalAmount -= amount;
         if(totalAmount <= 0){
             this.average =  (float) 0;
+            this.rate = (float) 0;
+        }
+        else {
+            this.rate = (chartPrice - average) / (float) average;
+        }
+    }
+
+    // 수익률 변경
+    public void calRate(Long chartPrice){
+        if(totalAmount > 0){
+            this.rate = (chartPrice - average) / (float) average;
         }
     }
 }

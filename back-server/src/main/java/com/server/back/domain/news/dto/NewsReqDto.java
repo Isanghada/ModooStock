@@ -14,8 +14,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class NewsReqDto {
     Long stockId;
-    Long price;
-    LocalDate date;
 
     public UserNewsEntity toEntity(UserEntity user, NewsEntity news){
         return UserNewsEntity.builder()
