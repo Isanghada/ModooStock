@@ -33,10 +33,10 @@ public class SchedulerService {
     private final UserDealRepository userDealRepository;
     private final UserService userService;
 
-    // 새로운 장(시즌) 생성 : 주식 분할 시기가 있을 경우의 처리 필요
+    // 새로운 장(시즌) 생성 : 월, 수, 금 오전 9시에 새로운 장(시즌) 선택
+    // - 주식 분할 시기가 있을 경우의 처리 필요
     @Scheduled(cron = "0 0 9 * * 1,3,5")
     @Transactional
-    // 장 선택
     public void market_select() {
         log.info("[schedulerService] 새로운 market(시즌) 선택");
         // 주식 데이터가 2011년 1월 3일부터 시작
@@ -97,9 +97,8 @@ public class SchedulerService {
         }
     }
 
-//    @Scheduled(cron = "* 10 22 * * 2,4,6")
-    @Scheduled(cron = "* * * * * *")
-    // 장 마감
+    // 장 마감 : 화, 목, 토 오후 10시 10분에 모든 주식 처분
+    @Scheduled(cron = "* 10 22 * * 2,4,6")
     public void market_end() {
         log.info("[schedulerService] market(시즌) 마감 - 가지고 있는 모든 주식 판매");
         MarketEntity marketEntity = marketRepository.findTopByOrderByCreatedAtDesc().orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
