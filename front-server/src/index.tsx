@@ -5,16 +5,19 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
+// redux
+import { Provider } from 'react-redux';
+import { store } from 'Store/store';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <RecoilRoot>
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </RecoilRoot>
+  </Provider>
 );
 
 // If you want your app to work offline and load faster, you can change

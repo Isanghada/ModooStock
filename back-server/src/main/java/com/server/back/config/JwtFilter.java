@@ -3,14 +3,11 @@ package com.server.back.config;
 
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
-
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -53,11 +50,14 @@ public class JwtFilter extends OncePerRequestFilter {
 					Authentication authentication = tokenProvider.getAuthentication(token);
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 				} else {
-					throw new JwtException("로그아웃 된 accessToken 유효하지 않음");
+					throw new JwtException("로그아웃 된 액세스 토큰으로 유효하지 않습니다.");
 				}
 			}
 
+		} else {
+			throw new JwtException("액세스 토큰이 존재하지 않습니다.");
 		}
+
 		filterChain.doFilter(request, response);
 	}
 
