@@ -21,6 +21,10 @@ interface ValueInterFace {
   nickname: boolean;
   password: boolean;
 }
+interface MinValueInterFace {
+  account: boolean;
+  nickname: boolean;
+}
 
 function SignUp(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -30,6 +34,11 @@ function SignUp(): JSX.Element {
     account: false,
     nickname: false,
     password: false
+  });
+  // 최소값 체크
+  const [minValue, setMinValue] = useState<MinValueInterFace>({
+    account: false,
+    nickname: false
   });
   // 이메일 확인 일치여부
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
@@ -54,17 +63,36 @@ function SignUp(): JSX.Element {
   const onChangeAccount = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     // 케이스에 따른 api 요청
-    switch (name) {
-      case 'account':
-        const emailResult = await getUsersEmailCheck(value).unwrap();
-        setCheckEmail(emailResult.data);
-        break;
-      case 'nickname':
-        const nickData = await getUsersNickCheck(value).unwrap();
-        setCheckNickname(nickData.data);
-        break;
+    if (value.length >= 2) {
+      setMinValue({
+        ...minValue,
+        [name]: true
+      });
+      switch (name) {
+        case 'account':
+          const emailResult = await getUsersEmailCheck(value).unwrap();
+          setCheckEmail(emailResult.data);
+          break;
+        case 'nickname':
+          const nickData = await getUsersNickCheck(value).unwrap();
+          setCheckNickname(nickData.data);
+          break;
+      }
+    } else {
+      // 2글자가 아닐때
+      setMinValue({
+        ...minValue,
+        [name]: false
+      });
+      switch (name) {
+        case 'account':
+          setCheckEmail(false);
+          break;
+        case 'nickname':
+          setCheckNickname(false);
+          break;
+      }
     }
-
     // 빈값 체크
     setEmptyValue({
       ...emptyValue,
@@ -153,11 +181,13 @@ function SignUp(): JSX.Element {
                 className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
                 placeholder="아이디"
                 maxLength={15}
+                minLength={2}
                 required
               />
               {emptyValue.account && (
                 <div className={`text-[0.5rem] lg:text-base h-1/6 ${checkEmail ? `text-green-500` : `text-red-500`}`}>
-                  {checkEmail ? '사용가능한 아이디입니다' : '이미 사용중인 아이디입니다'}
+                  {minValue.account ? checkEmail ? '사용가능한 아이디입니다' : '이미 사용중인 아이디입니다' : '아이디를 2글자 이상 입력해주세요'}
+
                   {/* {emailComment} */}
                 </div>
               )}
@@ -171,12 +201,13 @@ function SignUp(): JSX.Element {
                 className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
                 placeholder="닉네임"
                 maxLength={6}
+                minLength={2}
                 required
               />
               {emptyValue.nickname && (
                 <div
                   className={`text-[0.5rem] lg:text-base h-1/6 ${checkNickname ? `text-green-500` : `text-red-500`}`}>
-                  {checkNickname ? '사용가능한 닉네임입니다' : '이미 사용중인 닉네임입니다'}
+                  {minValue.nickname ? checkNickname ? '사용가능한 닉네임입니다' : '이미 사용중인 닉네임입니다' : "닉네임을 2글자 이상 입력해주세요"}
                 </div>
               )}
             </div>
