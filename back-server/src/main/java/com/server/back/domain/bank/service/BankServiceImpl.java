@@ -46,8 +46,13 @@ public class BankServiceImpl implements BankService {
     public void createBankAccount(BankReqDto bankReqDto) {
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
-        
-        // 유자가 보유한 돈 빼내기
+
+        // 회원의 현재 보유돈보다 작은지 확인
+        if(user.getCurrentMoney() < bankReqDto.getPrice()){
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
+        }
+
+        // 회원이 보유한 돈 빼내기
         user.decreaseCurrentMoney(bankReqDto.getPrice());
         userRepository.save(user);
         
@@ -133,8 +138,8 @@ public class BankServiceImpl implements BankService {
         UserEntity receiver = userService.getUserByNickname(transferReqDto.getReceiver());
 
         // 돈을 보내는 사람의 현재 보유돈 보다 작은지 확인
-        if(sender.getCurrentMoney() < transferReqDto.getMoney()){
-            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
+        if(sender.getCurrentMoney() < transferReqDto.getMoney()) {
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
         }
         
         // 현재 보유돈 보다 작을 경우 돈을 보냄
