@@ -89,10 +89,47 @@ const SystemChatting = () => {
               {messageDatas[0]?.createdAt.toDate().toLocaleDateString('ko-KR', options)}
             </span>
           </div>
-          <div className='flex items-center justify-center'>
+          <div className="flex flex-col items-center justify-center">
             {messageDatas.map((msg, index) => {
-              console.log(msg.content);
-              return <div className="flex justify-center py-1 bg-gray-800 lg:w-4/5 h-fit">{msg.content}</div>;
+              if (index === 0) {
+                return;
+              }
+              // 시간, 분 세팅
+              let date = '';
+              if (msg.createdAt) {
+                date = msg.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              }
+              // 전날과 같은지 체크
+              const prevDate = messageDatas[index - 1].createdAt.toDate().toLocaleDateString('ko-KR', options);
+              const currentDate = msg.createdAt.toDate().toLocaleDateString('ko-KR', options);
+              if (prevDate !== currentDate) {
+                return (
+                  <>
+                    <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
+                      <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
+                        {currentDate}
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-center lg:w-11/12">
+                      <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
+                        {msg.nickname}
+                        {msg.content}
+                      </div>
+                      <div className="text-black h-fit grow">{date}</div>
+                    </div>
+                  </>
+                );
+              }
+              // 전날과 같지 않으면
+              return (
+                <div className="flex items-end justify-center lg:w-11/12">
+                  <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
+                    {msg.nickname}
+                    {msg.content}
+                  </div>
+                  <div className="text-black h-fit grow">{date}</div>
+                </div>
+              );
             })}
           </div>
         </div>
