@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,6 +28,6 @@ public class NewsEntity {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
 }

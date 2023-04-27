@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransferReqDto {
     private String receiver;
-    private Integer money;
+    private Long money;
 }

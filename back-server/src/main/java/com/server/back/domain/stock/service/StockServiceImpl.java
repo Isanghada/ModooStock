@@ -2,16 +2,12 @@ package com.server.back.domain.stock.service;
 
 import com.server.back.common.code.commonCode.DealType;
 import com.server.back.common.service.AuthService;
+import com.server.back.domain.stock.dto.StockInfoResDto;
 import com.server.back.domain.stock.dto.StockListResDto;
 import com.server.back.domain.stock.dto.StockReqDto;
 import com.server.back.domain.stock.dto.StockResDto;
-import com.server.back.domain.stock.entity.ChartEntity;
-import com.server.back.domain.stock.entity.StockEntity;
-import com.server.back.domain.stock.entity.UserDealEntity;
-import com.server.back.domain.stock.repository.ChartRepository;
-import com.server.back.domain.stock.repository.DealStockRepository;
-import com.server.back.domain.stock.repository.StockRepository;
-import com.server.back.domain.stock.repository.UserDealRepository;
+import com.server.back.domain.stock.entity.*;
+import com.server.back.domain.stock.repository.*;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.domain.user.service.UserService;
@@ -32,6 +28,8 @@ public class StockServiceImpl implements StockService {
     private final ChartRepository chartRepository;
     private final UserRepository userRepository;
     private final DealStockRepository dealStockRepository;
+    private final MaterialRepository materialRepository;
+    private final ExchangeRepository exchangeRepository;
     private final AuthService authService;
     private final UserService userService;
 
@@ -42,9 +40,15 @@ public class StockServiceImpl implements StockService {
      * @return 현재 시즌 종목 list ( stockId, kind )
      */
 
-    public List<StockListResDto> getStockList() {
+    public StockInfoResDto getStockList() {
         List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
-        return StockListResDto.fromEntityList(stockList);
+        List<MaterialEntity> oil = materialRepository.findAllByStandardTypeAndDateBetween("유가", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
+        List<MaterialEntity> gold = materialRepository.findAllByStandardTypeAndDateBetween("금", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
+        List<ExchangeEntity> usd = exchangeRepository.findAllByNationalCodeAndDateBetween("미국", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
+        List<ExchangeEntity> jyp = exchangeRepository.findAllByNationalCodeAndDateBetween("일본", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
+        List<ExchangeEntity> euro = exchangeRepository.findAllByNationalCodeAndDateBetween("유럽 연합", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
+
+        return StockInfoResDto.fromEntity(stockList, oil,gold, usd, jyp, euro);
     }
 
     @Override
@@ -58,12 +62,12 @@ public class StockServiceImpl implements StockService {
         Long companyId = stock.getCompany().getId();
 
         // 주식 chart
-        List<ChartEntity> stockChartList = chartRepository.findTop360ByCompanyIdAndDateAfter(companyId, date);
+        List<ChartEntity> stockChartList = chartRepository.findTop360ByCompanyIdAndDateGreaterThanEqual(companyId, date);
 
         // 유저 보유 주식
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockId).get();
+        Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
 
-        return StockResDto.fromEntity(stockId,userDeal, stockChartList);
+        return StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
     }
 
     @Override

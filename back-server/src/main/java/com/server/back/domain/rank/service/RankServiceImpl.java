@@ -65,7 +65,7 @@ public class RankServiceImpl implements  RankService{
         List<UserEntity> everyUser=userRepository.findAllByIsDeleted(IsDeleted.N);
         for (UserEntity user: everyUser) {
             //로직 구현
-            Long totalMoney=0L;
+            Long totalMoney = 0L;
 
             //현금
             totalMoney+=user.getCurrentMoney();
@@ -87,7 +87,7 @@ public class RankServiceImpl implements  RankService{
             }
 
             //예금에 있는 거
-            Integer bankMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(user.getId(), IsCompleted.N).orElse(0);
+            Long bankMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(user.getId(), IsCompleted.N).orElse(0L);
             totalMoney+=bankMoney;
 
             RankEntity rank=RankEntity.builder()

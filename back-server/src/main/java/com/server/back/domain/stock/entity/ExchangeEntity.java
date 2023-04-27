@@ -25,5 +25,5 @@ public class ExchangeEntity {
     private LocalDate date;
 
     @Column(nullable = false)
-    private Integer price;
+    private Long price;
 }

@@ -7,17 +7,21 @@ import Intro from './Components/Intro/Intro';
 import Chatting from './Components/Chatting/Chatting';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Mypage from 'Components/Mypage/Mypage';
+import Exchange from 'Components/Exchange/Exchange';
 
 function App() {
   return (
     <>
-      <ToastContainer />
+      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} />
       <Routes>
         <Route path="" element={<Layout />}>
-          <Route path="/intro" element={<Intro />} />
+          <Route path="/" element={<Intro />} />
           <Route path="/chatting" element={<Chatting />} />
-          <Route path="/" element={<Main />} />
+          <Route path="/main" element={<Main />} />
           <Route path="/bank" element={<Bank />} />
+          <Route path="/mypage" element={<Mypage />} />
+          <Route path="/exchange" element={<Exchange />} />
         </Route>
       </Routes>
     </>

@@ -13,8 +13,8 @@ public class StockResDto {
     private Float average;
     private List<StockChartResDto> stockChartResDto;
 
-    public static StockResDto fromEntity(Long stockId, UserDealEntity userDeal, List<ChartEntity> stockChartList) {
-        if (userDeal == null) {
+    public static StockResDto fromEntity(Long stockId, Optional<UserDealEntity> userDeal, List<ChartEntity> stockChartList) {
+        if (!userDeal.isPresent()) {
             return StockResDto.builder()
                     .stockId(stockId)
                     .amount(0)
@@ -22,9 +22,9 @@ public class StockResDto {
                     .stockChartResDto(StockChartResDto.fromEntityList(stockChartList))
                     .build();
         }
-        return StockResDto.builder().stockId(userDeal.getStock().getId())
-               .amount(userDeal.getTotalAmount())
-               .average(userDeal.getAverage())
+        return StockResDto.builder().stockId(userDeal.get().getStock().getId())
+               .amount(userDeal.get().getTotalAmount())
+               .average(userDeal.get().getAverage())
                .stockChartResDto(StockChartResDto.fromEntityList(stockChartList)).build();
     }
 }
