@@ -109,7 +109,7 @@ function Exchange(): JSX.Element {
             </div>
           </div>
           {/* 모바일 */}
-          <div className="flex flex-col justify-center px-2 w-[69%] lg:hidden">
+          <div className="flex flex-col justify-center px-2 w-[68%] lg:hidden">
             <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
               <div className="flex items-end justify-between w-full pt-2 font-bold">
                 <div className="flex items-end space-x-1">
@@ -249,7 +249,7 @@ function Exchange(): JSX.Element {
             </div>
           </div>
           {/* 모바일 */}
-          <div className="flex flex-col w-[31%] space-y-3 justify-end items-start lg:hidden">
+          <div className="flex flex-col w-[32%] space-y-3 justify-end items-start lg:hidden">
             {/* 회사 정보, 뉴스, 정보 */}
             <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
               <div className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
