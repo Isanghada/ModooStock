@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -97,6 +98,7 @@ public class StockServiceImpl implements StockService {
     return emitter;
 }
 
+    @Transactional
     @Override
     public void buyStock(StockReqDto stockReqDto) {
         // 로그인한 유저 가져오기
@@ -105,6 +107,11 @@ public class StockServiceImpl implements StockService {
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
         // 종가 가져오기
         Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
+
+        // 에러처리 : 돈 부족
+        if(user.getCurrentMoney() < chartPrice * stockReqDto.getStockAmount()){
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
+        }
 
         // 매수
         // 1. 주식 산 만큼 돈 빼내기
@@ -126,6 +133,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
+    @Transactional
     @Override
     public void sellStock(StockReqDto stockReqDto) {
         // 로그인한 유저 가져오기
@@ -151,7 +159,7 @@ public class StockServiceImpl implements StockService {
         userDealRepository.save(userDeal);
     }
 
-
+    @Transactional
     // 수익률 계산하는 함수
     public void calRate(){
         // 현재 주식 종목 가져오기.

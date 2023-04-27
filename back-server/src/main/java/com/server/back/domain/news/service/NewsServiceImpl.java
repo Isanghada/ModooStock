@@ -14,10 +14,13 @@ import com.server.back.domain.stock.repository.ChartRepository;
 import com.server.back.domain.stock.repository.StockRepository;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.service.UserService;
+import com.server.back.exception.CustomException;
+import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -33,19 +36,26 @@ public class NewsServiceImpl implements NewsService {
     private final AuthService authService;
     private final UserService userService;
 
+    @Transactional
     @Override
     public NewsResDto buyNews(NewsReqDto newsReqDto) {
 
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(newsReqDto.getStockId()).get();
+        Long price = (long) (stock.getAverage()*(1.75));
+
+        // 에러처리 : 돈 부족
+        if(user.getCurrentMoney() < price ){
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
+        }
 
         // 산 만큼 돈 빼내기
-        user.decreaseCurrentMoney(newsReqDto.getPrice());
+        user.decreaseCurrentMoney(price);
 
         // 해당 월, 종목 기사 하나 랜덤 가져오기.
-        int year = newsReqDto.getDate().getYear();
-        int month = newsReqDto.getDate().getMonthValue();
+        int year = stock.getMarket().getGameDate().getYear();
+        int month = stock.getMarket().getGameDate().getMonthValue();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         List<NewsEntity> news = newsRepository.findAllByCompanyIdAndDateBetween(stock.getCompany().getId(),startDate,endDate);
