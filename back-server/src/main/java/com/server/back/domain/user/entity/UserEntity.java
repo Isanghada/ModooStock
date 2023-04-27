@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -31,9 +32,11 @@ public class UserEntity extends CommonEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(min = 2, max = 15)
     @Column(nullable = false, unique = true, length = 15)
     private String account;
 
+    @Size(min = 2, max = 6)
     @Column(nullable = false, unique = true, length = 6)
     private String nickname;
 
@@ -55,7 +58,7 @@ public class UserEntity extends CommonEntity implements UserDetails {
 
     @Column(nullable = false)
     @Builder.Default
-    private Long currentMoney = 10000_0000L;
+    private Long currentMoney = 10_000_000L;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
