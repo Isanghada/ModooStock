@@ -4,9 +4,9 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 function Exchange(): JSX.Element {
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full h-full pt-[10vh]">
+      <div className="flex flex-col items-center justify-center w-full h-full pt-[12vh] md:pt-[10vh]">
         <div className="flex justify-between w-full border-b-4">
-          <div className="flex justify-start items-end w-3/5 text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
+          <div className="flex justify-start items-end w-3/5 text-[1rem] md:text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
             <div className="px-3 transition-all duration-300 hover:scale-105">
               <span>A 전자</span>
             </div>
@@ -21,7 +21,7 @@ function Exchange(): JSX.Element {
             </div>
           </div>
           <div className="flex items-end justify-end w-2/5">
-            <div className="relative flex flex-col items-center pr-2 transition-all duration-300 hover:scale-105">
+            <div className="relative flex-col items-center hidden pr-2 transition-all duration-300 lg:flex hover:scale-105">
               <span className="pb-5 lg:pb-9 text-[0.8rem] lg:text-[1.1rem] text-[#FF4F4F] font-bold">신문 스크랩</span>
               <img className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem]" src="/images/icons/news.png" alt="" />
             </div>
@@ -127,7 +127,7 @@ function Exchange(): JSX.Element {
                   <span className="text-[1rem]">- 48,424</span>
                   <span className="text-[0.7rem]">(6.74 %)</span>
                 </div>
-                <div className="flex space-x-3 items-end  text-[1rem]">
+                <div className="flex space-x-2 md:space-x-3 items-end text-[0.8rem] md:text-[1rem]">
                   <div className="flex items-center space-x-1">
                     <span className="text-[0.7rem]">보유수량</span>
                     <span className="text-black">10</span>
@@ -143,7 +143,7 @@ function Exchange(): JSX.Element {
                 </div>
               </div>
               {/* 차트 */}
-              <div className="w-full h-[12.7rem] flex justify-start text-[0.7rem] bg-white">
+              <div className="w-full h-[12rem] md:h-[12.7rem] flex justify-start text-[0.7rem] bg-white">
                 <Example />
               </div>
             </div>
@@ -252,13 +252,13 @@ function Exchange(): JSX.Element {
           <div className="flex flex-col w-[31%] space-y-3 justify-end items-start lg:hidden">
             {/* 회사 정보, 뉴스, 정보 */}
             <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
-              <div className="w-[40%] border-r-2 text-[1rem]">
+              <div className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
                 <span>기업활동</span>
               </div>
-              <div className="w-[30%] border-r-2 text-[1rem]">
+              <div className="w-[30%] border-r-2 text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
                 <span>신문</span>
               </div>
-              <div className="w-[30%] text-[1rem]">
+              <div className="w-[30%] text-[0.9rem] md:text-[1rem] hover:scale-105 transition-all duration-300">
                 <span>정보</span>
               </div>
             </div>
@@ -312,7 +312,7 @@ function Exchange(): JSX.Element {
                     placeholder="거래량을 입력하세요."
                   />
                 </div>
-                <div className="flex items-center w-full text-center justify-evenly text-[0.935rem] pt-2 text-[#464646]">
+                <div className="flex items-center w-full text-center justify-evenly text-[0.761rem] md:text-[0.935rem] pt-2 text-[#464646]">
                   <div className="w-[21%] pr-1 transition-all duration-300 border-r-2 hover:scale-105">
                     <span>+1개</span>
                   </div>
@@ -326,7 +326,7 @@ function Exchange(): JSX.Element {
                     <span>+1000개</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between w-full text-center text-[1.3rem] text-white font-semibold pt-2">
+                <div className="flex items-center justify-between w-full text-center text-[1.1rem] md:text-[1.3rem] text-white font-semibold pt-2">
                   <div className="w-[45%] py-1 bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매도</span>
                   </div>
