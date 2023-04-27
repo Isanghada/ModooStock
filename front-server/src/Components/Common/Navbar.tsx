@@ -5,6 +5,7 @@ import Chatting from 'Components/Chatting/Chatting';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeChattingStatus } from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
+import SystemChatting from 'Components/Chatting/SystemChatting';
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate();
@@ -169,11 +170,11 @@ function Navbar(): JSX.Element {
             }}
             className={`fixed bottom-0 right-0 z-50 h-[85vh]  flex`}>
             <div className="w-[5vw] h-full bg-transparent flex flex-col justify-end text-[#FB6B9F]">
-              <div onClick={click} aria-label="투자알림" className={`flex justify-center items-start w-full border-[1px] lg:border-2 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "bg-gray-200 border-b-0 border-gray-400 border-r-[#FB6B9F]" : "border-r-0 border-b-2 bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F]"}`}>투자</div>
-              <div onClick={click} aria-label="공개채팅" className={`flex justify-center items-start w-full border-[1px] lg:border-2 border-b-0 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "border-r-0 bg-white font-semibold border-[#FB6B9F] " : "bg-gray-200 border-t-0 border-gray-400 border-r-[#FB6B9F]"}`}>토론</div>
+              <div onClick={click} aria-label="투자알림" className={`flex justify-center items-start w-full border-[1px] lg:border-2 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "bg-gray-200 border-b-transparent border-gray-400 border-r-[#FB6B9F]" : "border-r-transparent border-b-2 bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F]"}`}>투자</div>
+              <div onClick={click} aria-label="공개채팅" className={`flex justify-center items-start w-full border-[1px] lg:border-2 border-b-0 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "border-r-transparent bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F] " : "bg-gray-200 border-t-transparent border-gray-400 border-r-[#FB6B9F]"}`}>토론</div>
             </div>
             <div className="w-[50vw] lg:w-[30vw] h-full bg-white bg-opacity-95">
-              <Chatting />
+              {isSelectChat ? <Chatting /> : <SystemChatting />}
             </div>
           </motion.div>
         </AnimatePresence>
