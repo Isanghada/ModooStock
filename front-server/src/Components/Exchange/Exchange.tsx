@@ -330,7 +330,7 @@ function Exchange(): JSX.Element {
                   <div className="w-[45%] py-1 bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매도</span>
                   </div>
-                  <div className="w-[45%] py-1 bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                  <div className="w-[45%] py-1  bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
                     <span>매수</span>
                   </div>
                 </div>
