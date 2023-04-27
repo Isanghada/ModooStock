@@ -21,7 +21,7 @@ public class RankEntity {
     private String nickname;
 
     @Column(nullable = false)
-    private Integer totalMoney;
+    private Long totalMoney;
 
     @Column(nullable = false)
     private String profileImagePath;

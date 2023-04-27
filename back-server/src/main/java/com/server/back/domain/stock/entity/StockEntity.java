@@ -26,5 +26,5 @@ public class StockEntity {
     private CompanyEntity company;
 
     @Column(nullable = false)
-    private Integer average;
+    private Long average;
 }

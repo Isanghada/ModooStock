@@ -10,9 +10,9 @@ public class UserInfoResDto {
     private String nickname;
     private String profileImagePath;
     private String introduction;
-    private Integer totalCash;
+    private Long totalCash;
 
-    public static UserInfoResDto fromEntity(UserEntity user, Integer totalCash) {
+    public static UserInfoResDto fromEntity(UserEntity user, Long totalCash) {
         return UserInfoResDto.builder()
                 .nickname(user.getNickname())
                 .profileImagePath(user.getProfileImagePath())
