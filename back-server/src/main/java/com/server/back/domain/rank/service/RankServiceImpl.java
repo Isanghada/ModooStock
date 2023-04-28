@@ -10,7 +10,6 @@ import com.server.back.domain.rank.entity.RankEntity;
 import com.server.back.domain.rank.repository.RankRepository;
 import com.server.back.domain.stock.entity.MarketEntity;
 import com.server.back.domain.stock.entity.UserDealEntity;
-import com.server.back.domain.stock.repository.ChartRepository;
 import com.server.back.domain.stock.repository.MarketRepository;
 import com.server.back.domain.stock.repository.UserDealRepository;
 import com.server.back.domain.store.repository.AssetPriceRepository;
@@ -22,16 +21,13 @@ import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springfox.documentation.annotations.Cacheable;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -42,22 +38,32 @@ public class RankServiceImpl implements  RankService{
     private final RankRepository rankRepository;
     private final UserDealRepository userDealRepository;
     private final MarketRepository marketRepository;
-    private final ChartRepository chartRepository;
     private final BankRepository bankRepository;
     private final UserAssetRepository userAssetRepository;
     private final AssetPriceRepository assetPriceRepository;
-    private final RedisTemplate<String, String> redisTemplate;
-    private final String key="ranking";
+
+    /**
+     * 랭킹 가져오기
+     *
+     * @return
+     */
+    @Override
+    @Cacheable(value = "rank")
+    public List<RankResDto> getRanking() {
+        List<RankEntity>list=rankRepository.findTop10ByOrderByTotalMoneyDesc();
+        return RankResDto.fromEntityList(list);
+    }
+
 
     /**
      * 랭킹 세우는 로직
-     *
+     * 한 시간에 한 번 계산
      *
      */
     @Transactional
     @CachePut(value = "rank")
-    @Scheduled(fixedRate = 240000)
-    public List<RankResDto> getRanking(){
+    @Scheduled(cron = "0 0/4 10-22 * * 1-6",zone = "Asia/Seoul")
+    public void calRanking(){
 
         //랭킹 레퍼지토리 전체 삭제
         rankRepository.deleteAll();
@@ -117,17 +123,8 @@ public class RankServiceImpl implements  RankService{
                     .build();
 
             rankRepository.save(rank);
-            redisTemplate.opsForZSet().remove(key,user.getNickname());
-            redisTemplate.opsForZSet().incrementScore(key,user.getNickname(),totalMoney.longValue());
-        }
 
-        Set<ZSetOperations.TypedTuple<String>> rankedMembers = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 10);
-        List<RankResDto> rankList = new ArrayList<>();
-        for (ZSetOperations.TypedTuple<String> member : rankedMembers) {
-            UserEntity user=userRepository.findByNicknameAndIsDeleted(member.getValue(),IsDeleted.N).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-            rankList.add(new RankResDto(member.getValue(),user.getProfileImagePath(), member.getScore().longValue()));
         }
-        return rankList;
 
     }
 }
