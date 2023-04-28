@@ -1,5 +1,8 @@
 package com.server.back.domain.news.service;
 
+import com.server.back.common.code.commonCode.DealType;
+import com.server.back.common.entity.DealEntity;
+import com.server.back.common.repository.DealRepository;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.news.dto.NewsReqDto;
 import com.server.back.domain.news.dto.NewsResDto;
@@ -32,6 +35,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final StockRepository stockRepository;
     private final ChartRepository chartRepository;
+    private final DealRepository dealRepository;
     private final UserNewsRepository userNewsRepository;
     private final AuthService authService;
     private final UserService userService;
@@ -52,6 +56,10 @@ public class NewsServiceImpl implements NewsService {
 
         // 산 만큼 돈 빼내기
         user.decreaseCurrentMoney(price);
+
+        // 거래 내역 생성
+        DealEntity deal = new DealEntity(user, DealType.LOSE_MONEY_FOR_INFO, price);
+        dealRepository.save(deal);
 
         // 해당 월, 종목 기사 하나 랜덤 가져오기.
         int year = stock.getMarket().getGameDate().getYear();
@@ -86,7 +94,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<NewsResDto> getNewsList() {
         Long userId = authService.getUserId();
-        List<UserNewsEntity> userNews = userNewsRepository.findAllByUserId(userId);
+        List<UserNewsEntity> userNews = userNewsRepository.findAllByUserIdOrderByNews_DateDesc(userId);
         return NewsResDto.fromEntityList(userNews);
     }
 }
