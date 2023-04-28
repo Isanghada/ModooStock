@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetUsersInfoQuery } from 'Store/api';
-import Chatting from 'Components/Chatting/Chatting';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeChattingStatus } from 'Store/store';
+import { changeChattingStatus, changeMenuStatus } from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
-import SystemChatting from 'Components/Chatting/SystemChatting';
+import Chat from 'Components/Chatting/Chat';
+import Menu from 'Components/Menu/Menu';
+
+const tabList = ['투자', '전체', '전자', '화학', '생명', 'IT'];
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ function Navbar(): JSX.Element {
   const [myNickName, setMyNickName] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
+
   // 내 정보 API
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
   // 전체 스크린 높이
@@ -20,12 +23,17 @@ function Navbar(): JSX.Element {
 
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
+
   // 채팅 창 탭 선택
-  const [isSelectChat, setIsSelectChat] = useState<boolean>(true);
+  const [isSelectChat, setIsSelectChat] = useState<string | null>('전체');
 
   // 채팅 창 상태
   const chattingStatus = useAppSelector((state) => {
     return state.chattingStatus;
+  });
+  // 메뉴 창 상태
+  const menuStatus = useAppSelector((state) => {
+    return state.menuStatus;
   });
 
   // 채팅 창 띄우기
@@ -35,6 +43,10 @@ function Navbar(): JSX.Element {
     } else {
       dispatch(changeChattingStatus(true));
     }
+  };
+  // 메뉴 창 띄우기
+  const showMenu = () => {
+    dispatch(changeMenuStatus(true));
   };
 
   useEffect(() => {
@@ -85,13 +97,14 @@ function Navbar(): JSX.Element {
       case '채팅':
         showChatting();
         break;
-      case '투자알림':
-        setIsSelectChat(false);
-        break;
-      case '공개채팅':
-        setIsSelectChat(true);
+      case '메뉴':
+        // 채팅 켜져있으면 끄기
+        dispatch(changeChattingStatus(false));
+        showMenu();
         break;
       default:
+        // 채팅 탭 선택
+        setIsSelectChat(target.ariaLabel);
         break;
     }
   };
@@ -139,8 +152,8 @@ function Navbar(): JSX.Element {
               />
             </div>
             <div
-              className={`bg-[#cfc8b1] grow h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
-                totalStockReturn >= 0 ? 'text-red-600' : 'text-blue-600'
+              className={`bg-[#e9fcff] grow h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
+                totalStockReturn >= 0 ? 'text-red-400' : 'text-blue-400'
               } ${screenHeight >= 800 ? 'min-w-fit max-w-[20vw]' : ''}`}>
               {totalStockReturn}%
             </div>
@@ -153,11 +166,13 @@ function Navbar(): JSX.Element {
           <div aria-label="홈" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/home.png" alt="home" />
           </div>
-          <div className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
+          <div aria-label="메뉴" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
             <img className="w-full" src="/images/icons/setting.png" alt="setting" />
           </div>
         </div>
       </div>
+      {menuStatus && <Menu />}
+      {/* 채팅 관련 */}
       {chattingStatus && (
         <AnimatePresence>
           <motion.div
@@ -170,11 +185,24 @@ function Navbar(): JSX.Element {
             }}
             className={`fixed bottom-0 right-0 z-50 h-[85vh]  flex`}>
             <div className="w-[5vw] h-full bg-transparent flex flex-col justify-end text-[#FB6B9F]">
-              <div onClick={click} aria-label="투자알림" className={`flex justify-center items-start w-full border-[1px] lg:border-2 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "bg-gray-200 border-b-transparent border-gray-400 border-r-[#FB6B9F]" : "border-r-transparent border-b-2 bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F]"}`}>투자</div>
-              <div onClick={click} aria-label="공개채팅" className={`flex justify-center items-start w-full border-[1px] lg:border-2 border-b-0 rounded-l-lg h-1/6 pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${isSelectChat ? "border-r-transparent bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F] " : "bg-gray-200 border-t-transparent border-gray-400 border-r-[#FB6B9F]"}`}>토론</div>
+              {tabList.map((tab) => {
+                return (
+                  <div
+                    key={tab}
+                    onClick={click}
+                    aria-label={tab}
+                    className={`flex justify-center items-start w-full border-[1px] lg:border-2 border-b-0 rounded-l-lg h-[calc(94%/6)] pt-1 text-[0.5rem] lg:text-base  cursor-pointer hover:shadow-inner hover:shadow-slate-400 ${
+                      isSelectChat === tab
+                        ? 'border-r-transparent bg-white font-semibold border-l-[#FB6B9F] border-t-[#FB6B9F] border-b-[#FB6B9F] '
+                        : 'bg-gray-200 border-b-transparent border-gray-400 border-r-[#FB6B9F]'
+                    }`}>
+                    {tab}
+                  </div>
+                );
+              })}
             </div>
             <div className="w-[50vw] lg:w-[30vw] h-full bg-white bg-opacity-95">
-              {isSelectChat ? <Chatting /> : <SystemChatting />}
+              {isSelectChat && <Chat data={isSelectChat} />}
             </div>
           </motion.div>
         </AnimatePresence>

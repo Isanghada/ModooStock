@@ -5,18 +5,7 @@ import { UserApi } from "./api"
 import { NonAuthApi } from './NonAuthApi';
 
 
-
-// 한페이지에 나타나는 단어 리스트
-// const dictList = createSlice({
-//   name: "dictList",
-//   initialState: '',
-//   reducers: {
-//     changeDictList(state, action) {
-//       return state = action.payload
-//     }
-//   }
-// })
-
+// ------------- 유저 -------------
 // 로그인 상태관리
 const loginStatus = createSlice({
   name: "loginStatus",
@@ -37,12 +26,24 @@ const signUpStatus = createSlice({
     }
   }
 })
+
+// ------------- 네브바 -------------
 // 채팅 상태관리
 const chattingStatus = createSlice({
   name: "chattingStatus",
   initialState: false,
   reducers: {
     changeChattingStatus(state, action) {
+      return state = action.payload
+    }
+  }
+})
+// 메뉴 상태관리
+const menuStatus = createSlice({
+  name: "menuStatus",
+  initialState: false,
+  reducers: {
+    changeMenuStatus(state, action) {
       return state = action.payload
     }
   }
@@ -58,6 +59,7 @@ export const store = configureStore({
     loginStatus: loginStatus.reducer,
     signUpStatus: signUpStatus.reducer,
     chattingStatus: chattingStatus.reducer,
+    menuStatus: menuStatus.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(UserApi.middleware).concat(NonAuthApi.middleware),
 
@@ -70,6 +72,7 @@ setupListeners(store.dispatch)
 export const { changeLoginStatus } = loginStatus.actions;
 export const { changeSignUpStatus } = signUpStatus.actions;
 export const { changeChattingStatus } = chattingStatus.actions;
+export const { changeMenuStatus } = menuStatus.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

@@ -17,7 +17,6 @@ function App() {
       <Routes>
         <Route path="" element={<Layout />}>
           <Route path="/" element={<Intro />} />
-          <Route path="/chatting" element={<Chatting />} />
           <Route path="/main" element={<Main />} />
           <Route path="/bank" element={<Bank />} />
           <Route path="/mypage" element={<Mypage />} />
