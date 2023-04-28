@@ -126,7 +126,7 @@ function Modal({ clickNum, setIsClick }: ModalType): JSX.Element {
     <>
       <div
         ref={ref}
-        className="fixed flex items-center justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0"
+        className="fixed flex items-center justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0 z-50"
         onClick={(e) => {
           if (e.target === ref.current) {
             setIsClick((pre) => !pre);

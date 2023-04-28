@@ -67,7 +67,7 @@ function Mypage(): JSX.Element {
             }
           }}>
           <div className="bg-[#FEF3F3] border-[#D9D9D9] border-2 flex flex-col max-w-[32rem] min-w-[32rem] lg:max-w-[32rem] lg:min-w-[32rem] w-[33%] rounded-lg px-10 py-4">
-            <div className="flex flex-col items-center w-full py-2 border-b-2">
+            <div className="flex flex-col items-center w-full py-2 border-b-2 border-white">
               <span className="text-[1rem] lg:text-[1.2rem] font-semibold">경매장</span>
               <span aria-label="모달" className="font-bold text-[1.2rem] lg:text-[1.5rem]" onClick={click}>
                 판매 아이템 등록
@@ -86,19 +86,19 @@ function Mypage(): JSX.Element {
                   <span>유니크</span>
                 </div>
                 <div className="flex flex-col w-full space-y-1">
-                  <div className="text-[0.9rem] lg:text-[1rem] font-semibold">
+                  <div className="text-[0.9rem] lg:text-[1.3rem] font-semibold">
                     <span>가격</span>
                   </div>
                   <div>
                     <input
-                      className="border-[#FDE2E2] py-[2px] lg:py-1 border-2 rounded-md outline-none pl-2 text-[0.8rem] lg:text-[0.9rem]"
+                      className="border-[#FDE2E2] py-[2px] lg:py-2 border-2 rounded-md outline-none pl-2 text-[0.8rem] lg:text-[0.9rem]"
                       type="text"
                       placeholder="판매 가격"
                     />
                   </div>
-                  <div className="w-full flex flex-col text-[0.7rem] space-y-1 lg:text-[0.85em] text-[#8A8A8A] leading-4">
+                  <div className="w-full flex flex-col text-[0.7rem] space-y-1 lg:text-[0.85em] text-[#8A8A8A] leading-4 py-2">
                     <span>등록시간은 6시간입니다.</span>
-                    <span>미판매시 자도응로 창고에 저장됩니다.</span>
+                    <span>미판매시 자동으로 창고에 저장됩니다.</span>
                   </div>
                 </div>
                 <div className="flex w-full space-x-2 text-[0.9rem] lg:text-[1.1rem] text-center font-bold text-white">
