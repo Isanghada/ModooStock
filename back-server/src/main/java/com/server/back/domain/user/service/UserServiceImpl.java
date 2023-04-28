@@ -2,9 +2,12 @@ package com.server.back.domain.user.service;
 
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
-import com.server.back.domain.bank.repository.BankRepository;
 import com.server.back.domain.rank.entity.RankEntity;
 import com.server.back.domain.rank.repository.RankRepository;
+import com.server.back.domain.stock.entity.StockEntity;
+import com.server.back.domain.stock.entity.UserDealEntity;
+import com.server.back.domain.stock.repository.StockRepository;
+import com.server.back.domain.stock.repository.UserDealRepository;
 import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,8 +29,10 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final BankRepository bankRepository;
+    private final StockRepository stockRepository;
     private final RankRepository rankRepository;
+
+    private final UserDealRepository userDealRepository;
 
     @Override
     public UserEntity getUserById(Long id) {
@@ -71,9 +77,27 @@ public class UserServiceImpl implements UserService{
         Long userId = authService.getUserId();
         UserEntity user = getUserById(userId);
 
-        // TODO 수익률 계산
         // 주식 넣었던 종목별 수익률 평균
+        
+        // 초기화
         Float totalStockReturn = 0.0f;
+        Integer count = 0;
+
+        // 장 정보 가져오기
+        List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
+
+        for ( StockEntity stock : stockList ) {
+            // 유저 보유 주식
+            Optional<UserDealEntity> userDeal = userDealRepository.findByUserIdAndStockId(userId, stock.getId());
+
+            if (userDeal.isPresent() && userDeal.get().getTotalAmount() != 0L) {
+                totalStockReturn += userDeal.get().getRate();
+                count++;
+            }
+        }
+
+        totalStockReturn /= count;
+
         return UserInfoLoginResDto.fromEntity(user, totalStockReturn);
     }
 
@@ -174,8 +198,9 @@ public class UserServiceImpl implements UserService{
     public UserInfoResDto getUser(String nickname) {
         UserEntity user = getUserByNickname(nickname);
 
-        RankEntity userRank = rankRepository.findByNickname(user.getNickname()).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        Optional<RankEntity> userRank = rankRepository.findByNickname(user.getNickname());
+        Long Total = userRank.isPresent() ? userRank.get().getTotalMoney() : user.getCurrentMoney();
 
-        return UserInfoResDto.fromEntity(user, userRank.getTotalMoney());
+        return UserInfoResDto.fromEntity(user, Total);
     }
 }
