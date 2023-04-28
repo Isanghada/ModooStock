@@ -2,10 +2,7 @@ package com.server.back.domain.stock.service;
 
 import com.server.back.common.code.commonCode.DealType;
 import com.server.back.common.service.AuthService;
-import com.server.back.domain.stock.dto.StockInfoResDto;
-import com.server.back.domain.stock.dto.StockListResDto;
-import com.server.back.domain.stock.dto.StockReqDto;
-import com.server.back.domain.stock.dto.StockResDto;
+import com.server.back.domain.stock.dto.*;
 import com.server.back.domain.stock.entity.*;
 import com.server.back.domain.stock.repository.*;
 import com.server.back.domain.user.entity.UserEntity;
@@ -100,9 +97,9 @@ public class StockServiceImpl implements StockService {
 
     @Transactional
     @Override
-    public void buyStock(StockReqDto stockReqDto) {
-        // 0 값을 보냈을 때 error 처리 & stockId 유효하지 않음 처리
-        if(stockReqDto.getStockAmount() == 0){
+    public DealResDto buyStock(StockReqDto stockReqDto) {
+        // 0 값을 보냈을 때 error 처리
+        if(stockReqDto.getStockAmount() == 0 ){
             throw new CustomException(ErrorCode.MISMATCH_REQUEST);
         }
 
@@ -151,16 +148,26 @@ public class StockServiceImpl implements StockService {
             UserDealEntity newDeal = new UserDealEntity(user, stockReqDto, stock , chartPrice);
             userDealRepository.save(newDeal);
         }
+
+        return DealResDto.fromEntity("매수", chartPrice, stockReqDto.getStockAmount(), stock.getCompany().getKind() );
     }
+    
+    
 
     @Transactional
     @Override
-    public void sellStock(StockReqDto stockReqDto) {
+    public DealResDto sellStock(StockReqDto stockReqDto) {
+
+        // 거래량이 0일 때 예외처리
+        if(stockReqDto.getStockAmount() == 0){
+            throw new CustomException(ErrorCode.MISMATCH_REQUEST);
+        }
+
         // 로그인한 유저 가져오기
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
-        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId()).get();
+        UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId()).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
         // 종가 가져오기
         // 원본 종가
@@ -180,6 +187,11 @@ public class StockServiceImpl implements StockService {
         if(userDeal.getTotalAmount() < stockReqDto.getStockAmount()){
             stockReqDto.setStockAmount(userDeal.getTotalAmount());
         }
+
+        if(userDeal.getTotalAmount() == 0) {
+            throw new CustomException(ErrorCode.LACK_OF_STOCK);
+        }
+
         user.increaseCurrentMoney(chartPrice * stockReqDto.getStockAmount());
         userRepository.save(user);
 
@@ -194,6 +206,8 @@ public class StockServiceImpl implements StockService {
         // 3. user_deal 수정
         userDeal.decrease(stockReqDto.getStockAmount(), chartPrice);
         userDealRepository.save(userDeal);
+
+        return DealResDto.fromEntity("매도", chartPrice,  stockReqDto.getStockAmount(), stock.getCompany().getKind());
     }
 
     @Transactional
