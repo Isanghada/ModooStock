@@ -96,7 +96,9 @@ public class UserServiceImpl implements UserService{
             }
         }
 
-        totalStockReturn /= count;
+        if (count != 0) {
+            totalStockReturn /= count;
+        }
 
         return UserInfoLoginResDto.fromEntity(user, totalStockReturn);
     }
