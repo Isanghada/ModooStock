@@ -57,9 +57,9 @@ public class StoreServiceImpl implements StoreService {
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             Random random=new Random();
             int rd=random.nextInt(100);
-            if(rd<=10){
+            if(rd<10){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=11&&rd<=40){
+            }else if(rd>=10&&rd<40){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset=assetRepository.findByAssetLevelAndLimit("RARE");
@@ -69,9 +69,9 @@ public class StoreServiceImpl implements StoreService {
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             Random random=new Random();
             int rd=random.nextInt(100);
-            if(rd<=3){
+            if(rd<3){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=4&&rd<=30){
+            }else if(rd>=3&&rd<30){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset=assetRepository.findByAssetLevelAndLimit("RARE");
@@ -82,9 +82,9 @@ public class StoreServiceImpl implements StoreService {
 
             Random random=new Random();
             int rd=random.nextInt(100);
-            if(rd<=1){
+            if(rd<1){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=2&&rd<=15){
+            }else if(rd>=1&&rd<15){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset = assetRepository.findByAssetLevelAndLimit("RARE");
