@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import {  motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
-import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { query, orderBy, onSnapshot, collection } from 'firebase/firestore';
 
 // 컴포넌트
-import Message from './Message';
 import { useAppDispatch } from 'Store/hooks';
 import { changeChattingStatus } from 'Store/store';
 
@@ -92,7 +91,7 @@ const SystemChatting = () => {
           <div className="flex flex-col items-center justify-center">
             {messageDatas.map((msg, index) => {
               if (index === 0) {
-                return;
+                return (<></>);
               }
               // 시간, 분 세팅
               let date = '';

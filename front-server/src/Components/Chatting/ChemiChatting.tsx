@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
 import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -129,7 +129,7 @@ const ChemiChatting = () => {
           </div>
           {messageDatas.map((msg, index) => {
             if (index === 0) {
-              return;
+              return (<></>);
             }
             // 상대방의 닉네임 처음 한번만
             let checkSameNick = true;
@@ -218,7 +218,6 @@ const ChemiChatting = () => {
               value={message}
               onChange={onChangeMessage}
               maxLength={50}
-              autoFocus
             />
             {/* 메시지 전송 */}
             <label htmlFor="sendMsg">
