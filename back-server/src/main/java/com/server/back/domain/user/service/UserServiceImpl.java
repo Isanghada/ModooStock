@@ -198,8 +198,9 @@ public class UserServiceImpl implements UserService{
     public UserInfoResDto getUser(String nickname) {
         UserEntity user = getUserByNickname(nickname);
 
-        RankEntity userRank = rankRepository.findByNickname(user.getNickname()).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        Optional<RankEntity> userRank = rankRepository.findByNickname(user.getNickname());
+        Long Total = userRank.isPresent() ? userRank.get().getTotalMoney() : user.getCurrentMoney();
 
-        return UserInfoResDto.fromEntity(user, userRank.getTotalMoney());
+        return UserInfoResDto.fromEntity(user, Total);
     }
 }
