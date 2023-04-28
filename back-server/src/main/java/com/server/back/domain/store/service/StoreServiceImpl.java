@@ -18,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static com.server.back.domain.store.dto.AssetResDto.fromEntity;
@@ -51,35 +49,47 @@ public class StoreServiceImpl implements StoreService {
 
         Long price=0L;
 
-        List<AssetEntity>list=new ArrayList<>();
+        AssetEntity asset;
 
         //gotcha 레벨에 따라 비율이 달라짐
         if(level.equals(GotchaLevel.HIGH)) {
             price=2000000L;
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 10));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 40));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 50));
+            Random random=new Random();
+            int rd=random.nextInt(100);
+            if(rd<=10){
+                asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
+            }else if(rd>=11&&rd<=40){
+                asset=assetRepository.findByAssetLevelAndLimit("EPIC");
+            }else {
+                asset=assetRepository.findByAssetLevelAndLimit("RARE");
+            }
         }else if(level.equals(GotchaLevel.MIDDLE)) {
             price=1000000L;
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 3));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 27));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 70));
-        }else if(level.equals(GotchaLevel.LOW)){
+            Random random=new Random();
+            int rd=random.nextInt(100);
+            if(rd<=3){
+                asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
+            }else if(rd>=4&&rd<=30){
+                asset=assetRepository.findByAssetLevelAndLimit("EPIC");
+            }else {
+                asset=assetRepository.findByAssetLevelAndLimit("RARE");
+            }
+        }else{
             price=500000L;
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("UNIQUE", 1));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("EPIC", 14));
-            list.addAll( assetRepository.findAllByAssetLevelAndLimit("RARE", 85));
+
+            Random random=new Random();
+            int rd=random.nextInt(100);
+            if(rd<=1){
+                asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
+            }else if(rd>=2&&rd<=15){
+                asset=assetRepository.findByAssetLevelAndLimit("EPIC");
+            }else {
+                asset = assetRepository.findByAssetLevelAndLimit("RARE");
+            }
         }
-
-        //랜덤으로 하나 고름
-        Random random=new Random();
-        int randomIdx= random.nextInt(list.size());
-
-        //asset
-        AssetEntity asset=list.get(randomIdx);
 
         //userAsset에 user와 asset 조합해서 삽임
         UserAssetLocation userAssetLocation=UserAssetLocation.builder()
