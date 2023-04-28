@@ -37,6 +37,11 @@ interface ReturnUsersRandomInterFace {
   result: string;
 }
 
+interface ReturnUsersLogoutInterFace {
+  data: boolean;
+  result: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -106,7 +111,7 @@ export const UserApi = createApi({
   }),
 
   endpoints: (builder) => ({
-    // // 1. 나의 로그인 정보
+    // 1. 나의 로그인 정보
     getUsersInfo: builder.query<ReturnMyInfoInterFace, string>({
       query: () => '/users',
       providesTags: (result, error, arg) => {
@@ -125,6 +130,14 @@ export const UserApi = createApi({
     // 3.랜덤 유저 방문
     getUsersRandom: builder.query<ReturnUsersRandomInterFace, string>({
       query: () => `/users/random`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
+    // 4. 로그아웃
+    getUsersLogout: builder.query<ReturnUsersLogoutInterFace, string>({
+      query: () => `/logout/redirect`,
       providesTags: (result, error, arg) => {
         return [{ type: 'UserApi' }];
       }
@@ -152,7 +165,8 @@ export const UserApi = createApi({
 export const {
   useLazyGetUsersInfoQuery,
   useLazyGetUsersSearchQuery,
-  useLazyGetUsersRandomQuery
+  useLazyGetUsersRandomQuery,
+  useLazyGetUsersLogoutQuery,
   // useLazyGetAdminUserListQuery,
   // usePutAdminUserDeleteMutation,
 } = UserApi;

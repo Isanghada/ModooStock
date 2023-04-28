@@ -48,6 +48,16 @@ const menuStatus = createSlice({
     }
   }
 })
+// 정보수정 상태관리
+const updateStatus = createSlice({
+  name: "updateStatus",
+  initialState: false,
+  reducers: {
+    changeUpdateStatus(state, action) {
+      return state = action.payload
+    }
+  }
+})
 
 
 export const store = configureStore({
@@ -60,6 +70,7 @@ export const store = configureStore({
     signUpStatus: signUpStatus.reducer,
     chattingStatus: chattingStatus.reducer,
     menuStatus: menuStatus.reducer,
+    updateStatus: updateStatus.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(UserApi.middleware).concat(NonAuthApi.middleware),
 
@@ -73,6 +84,7 @@ export const { changeLoginStatus } = loginStatus.actions;
 export const { changeSignUpStatus } = signUpStatus.actions;
 export const { changeChattingStatus } = chattingStatus.actions;
 export const { changeMenuStatus } = menuStatus.actions;
+export const { changeUpdateStatus } = updateStatus.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;
