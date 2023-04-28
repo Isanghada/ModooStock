@@ -6,6 +6,8 @@ import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 
 
 // 컴포넌트
 import Message from './Message';
+import { useAppDispatch } from 'Store/hooks';
+import { changeChattingStatus } from 'Store/store';
 
 // interface ChatPropsInterFace {
 //   usersNickName: string | string[] | undefined;
@@ -22,7 +24,7 @@ const options = {
 };
 const Chatting = () => {
   const roomName = 'chatting';
-
+  const dispatch = useAppDispatch();
   // 채팅 div
   const chatDiv = useRef<HTMLDivElement>(null);
   // 유저 프로필 데이터
@@ -123,11 +125,7 @@ const Chatting = () => {
     // 채팅 스크롤 젤 밑으로
     setTimeout(() => {
       chatDiv.current!.scrollTop = chatDiv.current!.scrollHeight;
-    }, 50);
-    // 이미지 올라올때를 위한 채팅 스크롤 젤 밑으로
-    setTimeout(() => {
-      chatDiv.current!.scrollTop = chatDiv.current!.scrollHeight;
-    }, 300);
+    }, 30);
   }, [messageDatas, fileUpload]);
 
   return (
@@ -136,12 +134,24 @@ const Chatting = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{
-        delay: 0.4,
-        duration: 0.7,
+        delay: 0.3,
+        duration: 0.5,
         ease: 'easeInOut'
       }}
-      className="flex flex-col justify-center w-full h-full text-white ">
-      <div className="flex flex-col items-center justify-center w-full h-full rounded-lg">
+      className="flex flex-col justify-center w-full h-full text-white">
+      <div className="w-full h-[6%] bg-[#FB6B9F] flex items-center justify-between px-3">
+        <div className="flex items-center h-full text-xs font-medium lg:font-semibold lg:text-lg ">공개토론방</div>
+        <img
+          onClick={() => {
+            // 채팅창끄기
+            dispatch(changeChattingStatus(false));
+          }}
+          className={`w-3 h-3 lg:min-w-6 lg:min-h-6 lg:w-6 lg:h-6 cursor-pointer hover:scale-105`}
+          src="chatting/cancel.png"
+          alt="cancel"
+        />
+      </div>
+      <div className="flex flex-col items-center justify-center w-full h-[94%] rounded-lg">
         {/* 메시지들 보이는 곳 */}
         <div ref={chatDiv} className="w-11/12 h-full overflow-y-auto">
           {/* 대화 시작 시간 */}
@@ -178,6 +188,28 @@ const Chatting = () => {
               checkSameTime = false;
             }
 
+            // 전날과 같은지 체크
+            // const prevDate = messageDatas[index - 1].createdAt.toDate().toLocaleDateString('ko-KR', options);
+            // const currentDate = msg.createdAt.toDate().toLocaleDateString('ko-KR', options);
+            // if (prevDate !== currentDate) {
+            //   return (
+            //     <>
+            //       <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
+            //         <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
+            //           {currentDate}
+            //         </span>
+            //       </div>
+            //       <Message
+            //         key={msg.createdAt}
+            //         data={msg}
+            //         myEmail={myEmail}
+            //         checkSameNick={checkSameNick}
+            //         checkLastTime={checkLastTime}
+            //         checkSameTime={checkSameTime}
+            //       />
+            //     </>
+            //   );
+            // }
             return (
               <Message
                 key={msg.createdAt}
