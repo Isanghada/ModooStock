@@ -8,11 +8,8 @@ import com.server.back.domain.bank.repository.BankRepository;
 import com.server.back.domain.rank.dto.RankResDto;
 import com.server.back.domain.rank.entity.RankEntity;
 import com.server.back.domain.rank.repository.RankRepository;
-import com.server.back.domain.stock.entity.ChartEntity;
-import com.server.back.domain.stock.entity.CompanyEntity;
 import com.server.back.domain.stock.entity.MarketEntity;
 import com.server.back.domain.stock.entity.UserDealEntity;
-import com.server.back.domain.stock.repository.ChartRepository;
 import com.server.back.domain.stock.repository.MarketRepository;
 import com.server.back.domain.stock.repository.UserDealRepository;
 import com.server.back.domain.store.repository.AssetPriceRepository;
@@ -41,7 +38,6 @@ public class RankServiceImpl implements  RankService{
     private final RankRepository rankRepository;
     private final UserDealRepository userDealRepository;
     private final MarketRepository marketRepository;
-    private final ChartRepository chartRepository;
     private final BankRepository bankRepository;
     private final UserAssetRepository userAssetRepository;
     private final AssetPriceRepository assetPriceRepository;
@@ -66,7 +62,7 @@ public class RankServiceImpl implements  RankService{
      */
     @Transactional
     @CachePut(value = "rank")
-    @Scheduled(cron = "0 55 10-22 * * 1-6",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0/4 10-22 * * 1-6",zone = "Asia/Seoul")
     public void calRanking(){
 
         //랭킹 레퍼지토리 전체 삭제
@@ -91,10 +87,11 @@ public class RankServiceImpl implements  RankService{
 
             for (UserDealEntity userDeal:stockList) {
                 int amount=userDeal.getTotalAmount();
-                CompanyEntity company =userDeal.getStock().getCompany();
-                ChartEntity chart=chartRepository.findByCompanyIdAndDate(company.getId(),date).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND
-                ));
-                totalMoney+=(chart.getPriceEnd()*amount);
+                Float average=userDeal.getAverage();
+                Float rate=userDeal.getRate();
+                Float plusMoney=(1L+rate)*average*amount;
+                totalMoney+=plusMoney.longValue();
+
             }
 
             //예금에 있는 거
