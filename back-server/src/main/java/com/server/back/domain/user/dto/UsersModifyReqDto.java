@@ -17,6 +17,7 @@ public class UsersModifyReqDto {
     private String nickname;
     private String password;
     private String introduction;
+    private String profileImagePath;
 
     public UserEntity toEntity(UserEntity user) {
         return UserEntity.builder()
@@ -24,7 +25,7 @@ public class UsersModifyReqDto {
                 .account(user.getAccount())
                 .nickname(nickname)
                 .password(password)
-                .profileImagePath(user.getProfileImagePath())
+                .profileImagePath(profileImagePath)
                 .introduction(introduction)
                 .isDeleted(user.getIsDeleted())
                 .currentMoney(user.getCurrentMoney())

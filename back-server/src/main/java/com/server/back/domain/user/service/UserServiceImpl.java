@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -64,7 +65,17 @@ public class UserServiceImpl implements UserService{
 
         // 비밀번호 암호화
         usersRegisterReqDto.setPassword(passwordEncoder.encode(usersRegisterReqDto.getPassword()));
-        userRepository.save(usersRegisterReqDto.toEntity());
+        
+        // 프로필 이미지 랜덤으로 넣기
+
+        //확률
+        Random random=new Random();
+        int rd =random.nextInt(6);
+
+        String[] imageArray = {"f1.png", "f6.png", "f7.png", "m3.png", "m4.png", "m9.png"};
+        String profileImagePath = "https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/";
+
+        userRepository.save(usersRegisterReqDto.toEntity(profileImagePath + imageArray[rd]));
     }
 
     /**
