@@ -301,7 +301,7 @@ function Mypage(): JSX.Element {
                 </>
               ) : (
                 // 경매장에 등록했을 때
-                <div className="flex flex-col w-full px-5 py-4 mb-2 space-y-4 font-extrabold text-black">
+                <div className="flex flex-col w-full px-5 pt-[1.1rem] pb-4 mb-2 space-y-4 font-extrabold text-black">
                   <div className="flex flex-col w-full space-y-2 text-[#707070]">
                     <div className="justify-center w-full text-center">
                       <span>경매장에서 판매중인 아이템입니다.</span>
@@ -384,7 +384,7 @@ function Mypage(): JSX.Element {
             </div>
             {isAuction ? (
               // 경매장에 등록했을 때
-              <div className="flex flex-col w-full px-[1.2rem] pt-[0.68rem] pb-4 mb-1 space-y-2 font-extrabold text-black">
+              <div className="flex flex-col w-full px-[1.2rem] pt-[0.68] pb-4 mb-1 space-y-2 font-extrabold text-black">
                 <div className="flex flex-col w-full space-y-2 text-[#707070] text-[0.825rem]">
                   <div className="justify-center w-full text-center ">
                     <span>경매장에서 판매중인 아이템입니다.</span>
