@@ -54,6 +54,11 @@ public class RedisRepositoryConfig extends CachingConfigurerSupport {
 		return redisTemplate;
 	}
 
+//	@Bean
+//	public LettuceConnectionFactory lettuceConnectionFactory() {
+//		return new LettuceConnectionFactory(redisHost, redisPort);
+//	}
+
 
 	//레디스 캐시
 	@Bean

@@ -23,6 +23,7 @@ public enum ErrorCode {
 	PASSWORD_NOT_MATCH(BAD_REQUEST, "패스워드가 일치하지 않습니다."),
 	LACK_OF_MONEY(BAD_REQUEST, "잔액이 부족합니다."),
 	FULL_OF_MONEY(BAD_REQUEST,"지갑이 꽉찼습니다."),
+	LACK_OF_STOCK(BAD_REQUEST,"매도할 주식이 없습니다."),
 
 
 	/* 401 UNAUTHORIZED : 권한 인증 문제. JWT 토큰과 관련된 에러 */

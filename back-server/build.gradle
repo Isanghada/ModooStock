@@ -41,6 +41,7 @@ dependencies {
 
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
 
 	// jjwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'

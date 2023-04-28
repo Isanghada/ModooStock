@@ -25,7 +25,6 @@ import java.util.Collection;
 @Table(name = "user_table")
 public class UserEntity extends CommonEntity implements UserDetails {
 
-    private static String PROFILE_IMAGE_PATH_DEFAULT = "/user/default.jpg";
     private static String INTRODUCTION_DEFAULT= "때가 올때까지 기다리는 사람이 성공한다!";
 
     @Id
@@ -44,8 +43,7 @@ public class UserEntity extends CommonEntity implements UserDetails {
     private String password;
 
     @Column(nullable = false)
-    @Builder.Default
-    private String profileImagePath= PROFILE_IMAGE_PATH_DEFAULT;
+    private String profileImagePath;
 
     @Column(nullable = false)
     @Builder.Default
