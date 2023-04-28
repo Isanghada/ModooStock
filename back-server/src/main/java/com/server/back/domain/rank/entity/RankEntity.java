@@ -24,4 +24,8 @@ public class RankEntity {
     @Column(nullable = false)
     private String profileImagePath;
 
+    public void update(Long money){
+        this.totalMoney+=money;
+    }
+
 }

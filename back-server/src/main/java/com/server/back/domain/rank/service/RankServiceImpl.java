@@ -8,8 +8,6 @@ import com.server.back.domain.bank.repository.BankRepository;
 import com.server.back.domain.rank.dto.RankResDto;
 import com.server.back.domain.rank.entity.RankEntity;
 import com.server.back.domain.rank.repository.RankRepository;
-import com.server.back.domain.stock.entity.ChartEntity;
-import com.server.back.domain.stock.entity.CompanyEntity;
 import com.server.back.domain.stock.entity.MarketEntity;
 import com.server.back.domain.stock.entity.UserDealEntity;
 import com.server.back.domain.stock.repository.ChartRepository;
@@ -24,13 +22,16 @@ import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.annotations.Cacheable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -45,29 +46,18 @@ public class RankServiceImpl implements  RankService{
     private final BankRepository bankRepository;
     private final UserAssetRepository userAssetRepository;
     private final AssetPriceRepository assetPriceRepository;
-
-    /**
-     * 랭킹 가져오기
-     *
-     * @return
-     */
-    @Override
-    @Cacheable(value = "rank")
-    public List<RankResDto> getRanking() {
-        List<RankEntity>list=rankRepository.findTop10ByOrderByTotalMoneyDesc();
-        return RankResDto.fromEntityList(list);
-    }
-
+    private final RedisTemplate<String, String> redisTemplate;
+    private final String key="ranking";
 
     /**
      * 랭킹 세우는 로직
-     * 한 시간에 한 번 계산
+     *
      *
      */
     @Transactional
     @CachePut(value = "rank")
-    @Scheduled(cron = "0 55 10-22 * * 1-6",zone = "Asia/Seoul")
-    public void calRanking(){
+    @Scheduled(fixedRate = 240000)
+    public List<RankResDto> getRanking(){
 
         //랭킹 레퍼지토리 전체 삭제
         rankRepository.deleteAll();
@@ -91,10 +81,11 @@ public class RankServiceImpl implements  RankService{
 
             for (UserDealEntity userDeal:stockList) {
                 int amount=userDeal.getTotalAmount();
-                CompanyEntity company =userDeal.getStock().getCompany();
-                ChartEntity chart=chartRepository.findByCompanyIdAndDate(company.getId(),date).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND
-                ));
-                totalMoney+=(chart.getPriceEnd()*amount);
+                Float average=userDeal.getAverage();
+                Float rate=userDeal.getRate();
+                Float plusMoney=(1L+rate)*average*amount;
+                totalMoney+=plusMoney.longValue();
+
             }
 
             //예금에 있는 거
@@ -126,8 +117,17 @@ public class RankServiceImpl implements  RankService{
                     .build();
 
             rankRepository.save(rank);
-
+            redisTemplate.opsForZSet().remove(key,user.getNickname());
+            redisTemplate.opsForZSet().incrementScore(key,user.getNickname(),totalMoney.longValue());
         }
+
+        Set<ZSetOperations.TypedTuple<String>> rankedMembers = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 10);
+        List<RankResDto> rankList = new ArrayList<>();
+        for (ZSetOperations.TypedTuple<String> member : rankedMembers) {
+            UserEntity user=userRepository.findByNicknameAndIsDeleted(member.getValue(),IsDeleted.N).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+            rankList.add(new RankResDto(member.getValue(),user.getProfileImagePath(), member.getScore().longValue()));
+        }
+        return rankList;
 
     }
 }
