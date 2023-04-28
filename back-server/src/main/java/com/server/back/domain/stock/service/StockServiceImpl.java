@@ -101,24 +101,44 @@ public class StockServiceImpl implements StockService {
     @Transactional
     @Override
     public void buyStock(StockReqDto stockReqDto) {
+        // 0 값을 보냈을 때 error 처리 & stockId 유효하지 않음 처리
+        if(stockReqDto.getStockAmount() == 0){
+            throw new CustomException(ErrorCode.MISMATCH_REQUEST);
+        }
+
         // 로그인한 유저 가져오기
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
+
+
         // 종가 가져오기
-        Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
+        ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+                .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        Long chartPrice = chart.getPriceEnd();
+
+        // 변화율 * 종가
+        Optional<ChartEntity> change = chartRepository.findById(chart.getId()-1);
+        if(change.isPresent() && change.get().getChangeRate() != 0){
+            chartPrice = (long) (chartPrice * change.get().getChangeRate());
+        }
+
 
         // 에러처리 : 돈 부족
         if(user.getCurrentMoney() < chartPrice * stockReqDto.getStockAmount()){
             throw new CustomException(ErrorCode.LACK_OF_MONEY);
         }
 
+
         // 매수
+        chart.buy(stockReqDto.getStockAmount());
+        chartRepository.save(chart);
         // 1. 주식 산 만큼 돈 빼내기
         user.decreaseCurrentMoney(chartPrice * stockReqDto.getStockAmount());
+
         userRepository.save(user);
         // 2. 거래내역 남기기
-        dealStockRepository.save(stockReqDto.toEntity(user, DealType.LOSE_MONEY_FOR_STOCK, stock, chartPrice));
+        dealStockRepository.save(stockReqDto.toEntity(user, DealType.LOSE_MONEY_FOR_STOCK, stock, chartPrice * stockReqDto.getStockAmount()));
 
 
         // 보유 주식 data 수정
@@ -141,8 +161,18 @@ public class StockServiceImpl implements StockService {
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(stockReqDto.getStockId()).get();
         UserDealEntity userDeal = userDealRepository.findByUserIdAndStockId(userId, stockReqDto.getStockId()).get();
+
         // 종가 가져오기
-        Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId() , stock.getMarket().getGameDate()).get().getPriceEnd();
+        // 원본 종가
+        ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+                .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        Long chartPrice = chart.getPriceEnd();
+
+        // 변화율 * 종가
+        Optional<ChartEntity> change = chartRepository.findById(chart.getId()-1);
+        if(change.isPresent() && change.get().getChangeRate() != 0){
+            chartPrice = (long) (chartPrice * change.get().getChangeRate());
+        }
 
 
         // 매도
@@ -152,8 +182,15 @@ public class StockServiceImpl implements StockService {
         }
         user.increaseCurrentMoney(chartPrice * stockReqDto.getStockAmount());
         userRepository.save(user);
+
+        chart.sell(stockReqDto.getStockAmount());
+        chartRepository.save(chart);
+
         // 2. 거래내역 남기기
-        dealStockRepository.save(stockReqDto.toEntity(user, DealType.GET_MONEY_FOR_STOCK, stock, chartPrice));
+        if(stockReqDto.getStockAmount() > 0 ){
+            dealStockRepository.save(stockReqDto.toEntity(user, DealType.GET_MONEY_FOR_STOCK, stock, chartPrice * stockReqDto.getStockAmount()));
+        }
+
         // 3. user_deal 수정
         userDeal.decrease(stockReqDto.getStockAmount(), chartPrice);
         userDealRepository.save(userDeal);
@@ -167,12 +204,21 @@ public class StockServiceImpl implements StockService {
 
         // 종목마다 종가 들고온 후 계산
         stockList.forEach(stock -> {
-            Long chartPrice = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
-                    .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND)).getPriceEnd();
+            // 원본 종가
+            ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+                    .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+            Long chartPrice = chart.getPriceEnd();
 
+            // 변화율
+           Optional<ChartEntity> change = chartRepository.findById(chart.getId()-1);
+           if(change.isPresent() && change.get().getChangeRate() != 0){
+               chartPrice = (long) (chartPrice * change.get().getChangeRate());
+           }
+
+            final Long finalChartPrice = chartPrice;
             List<UserDealEntity> usersDeal = userDealRepository.findAllById(Collections.singleton(stock.getId()));
             usersDeal.forEach(user -> {
-                user.calRate(chartPrice);
+                user.calRate(finalChartPrice);
                 userDealRepository.save(user);
             });
         });
