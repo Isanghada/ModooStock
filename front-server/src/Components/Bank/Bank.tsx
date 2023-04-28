@@ -53,7 +53,7 @@ function Bank(): JSX.Element {
           {/* 2. 출금 */}
           <div className="flex flex-col w-[25%] md:w-[23%] md:min-w-[23%] lg:min-w-[20%] lg:w-1/5 mx-2 text-center border-2 rounded-[2rem] bg-[#FFDCA9]/60 border-[#FD9653]/60">
             <div className="py-2 lg:py-5">
-              <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#F0A633] ">출금</span>
+              <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#FD9653] ">출금</span>
             </div>
             <div className="font-medium leading-5 text-[#707070] text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem]">
               <span>통장에 있는 </span> <br />
@@ -78,7 +78,7 @@ function Bank(): JSX.Element {
           {/* 3. 송금 */}
           <div className="flex flex-col w-[25%] md:w-[23%] md:min-w-[23%] lg:min-w-[20%] lg:w-1/5 mx-2 text-center border-2 rounded-[2rem] bg-[#D7E9F7]/60 border-[#748DA6]/60">
             <div className="py-2 lg:py-5">
-              <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#F0A633] ">송금</span>
+              <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#748DA6] ">송금</span>
             </div>
             <div className="font-medium leading-5 text-[#707070] text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem]">
               <span>다른 사용자에게</span> <br />
@@ -126,7 +126,7 @@ function Modal({ clickNum, setIsClick }: ModalType): JSX.Element {
     <>
       <div
         ref={ref}
-        className="fixed flex items-center justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0"
+        className="fixed flex items-center justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0 z-50"
         onClick={(e) => {
           if (e.target === ref.current) {
             setIsClick((pre) => !pre);
@@ -175,7 +175,7 @@ function Section1({ setIsClick }: SetIsClickType): JSX.Element {
                 <span>원</span>
               </div>
             </div>
-            <div className="flex w-full justify-end py-2 px-2 bg-[#FDEDC0] text-[#464646] text-[0.7rem] lg:text-[0.8rem] rounded-bl-lg rounded-br-lg">
+            <div className="flex w-full justify-end py-[0.75rem] lg:py-[0.79rem] px-2 bg-[#FDEDC0] text-[#464646] text-[0.7rem] lg:text-[0.8rem] rounded-bl-lg rounded-br-lg">
               <div className="transition-all duration-150 cursor-pointer hover:scale-105">
                 <span className="px-2 border-r-2">+1만원</span>
               </div>
@@ -194,7 +194,7 @@ function Section1({ setIsClick }: SetIsClickType): JSX.Element {
             </div>
           </div>
         </div>
-        <div className="flex justify-center pb-4 space-x-3 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0">
+        <div className="flex justify-center pb-4 space-x-3 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0 mt-1">
           <div className="bg-[#B2B9C2] px-8 lg:px-10 rounded-full drop-shadow-lg py-1 hover:scale-105 transition-all duration-300 cursor-pointer">
             <span onClick={() => setIsClick((pre) => !pre)}>닫기</span>
           </div>
@@ -209,20 +209,23 @@ function Section1({ setIsClick }: SetIsClickType): JSX.Element {
 
 // 출금
 function Section2({ setIsClick }: SetIsClickType): JSX.Element {
-
-  const passbookList = [0,0,0,0,0,0].map((passbook) => {
+  const passbookList = [0, 0, 0, 0, 0, 0].map((passbook) => {
     return (
-      <div className='flex justify-start items-end w-full border-b-[#FFE4CC] border-b-2 py-2 lg:py-3 text-[0.7rem] lg:text-[0.8rem]'>
-        <div className='w-[23%] pl-2'>2023-04-14 12:19 </div>
-        <div className='w-[23%] pl-2'>2023-04-14 12:19 </div>
-        <div className='w-[28%] pl-2 text-[0.9rem] lg:text-[1rem] font-extrabold text-black'>555,555,555,555원</div>
-        <div className='flex justify-start lg:justify-between space-x-2 lg:space-x-0 w-[26%] pl-2 lg:px-4 pb-[2px]'>
-          <div className='text-[#117D00] bg-[#F1FFDB] px-3 drop-shadow-md rounded-lg cursor-pointer hover:scale-105 transition-all duration-150'>완료</div>
-          <div className='text-white bg-[#FFC34F] px-3 drop-shadow-md rounded-full cursor-pointer hover:scale-105 transition-all duration-150'>출금하기</div>
+      <div className="flex justify-start items-end w-full border-b-[#FFE4CC] border-b-2 py-2 lg:py-3 text-[0.7rem] lg:text-[0.8rem]">
+        <div className="w-[23%] pl-2">2023-04-14 12:19 </div>
+        <div className="w-[23%] pl-2">2023-04-14 12:19 </div>
+        <div className="w-[28%] pl-2 text-[0.9rem] lg:text-[1rem] font-extrabold text-black">555,555,555,555원</div>
+        <div className="flex justify-start lg:justify-between space-x-2 lg:space-x-0 w-[26%] pl-2 lg:px-4 pb-[2px]">
+          <div className="text-[#117D00] bg-[#F1FFDB] px-3 drop-shadow-md rounded-lg cursor-pointer hover:scale-105 transition-all duration-150">
+            완료
+          </div>
+          <div className="text-white bg-[#FFC34F] px-3 drop-shadow-md rounded-full cursor-pointer hover:scale-105 transition-all duration-150">
+            출금하기
+          </div>
         </div>
       </div>
-    )
-  })
+    );
+  });
 
   return (
     <>
@@ -236,23 +239,23 @@ function Section2({ setIsClick }: SetIsClickType): JSX.Element {
             <div className="flex items-end space-x-2">
               <span className="text-[1.2rem] lg:text-[1.5rem] font-extrabold">통장 조회</span>
               <span className="font-medium pb-[2px] text-[#282828] text-[0.75rem] lg:text-[0.8rem] xl:text-[0.9rem] cursor-pointer hover:scale-105 transition-all duration-150">
-              최신순↓
+                최신순↓
               </span>
             </div>
             <div className="flex items-end space-x-2">
-            <span className="font-medium pb-[2px] text-[#282828] text-[0.75rem] lg:text-[0.8rem] xl:text-[0.9rem]">
+              <span className="font-medium pb-[2px] text-[#282828] text-[0.75rem] lg:text-[0.8rem] xl:text-[0.9rem]">
                 잔여 금액: 999,999,999,999원
               </span>
             </div>
           </div>
-          <div className='flex flex-col items-start justify-start w-full'>
-            <div className='flex justify-start w-full py-2 bg-[#FFF5EC] text-[0.8rem] lg:text-[1rem] text-[#717171] font-bold rounded-lg'>
-              <div className='w-[23%] pl-2'>개설일</div>
-              <div className='w-[23%] pl-2'>만기일</div>
-              <div className='w-[28%] pl-2'>통장 금액</div>
-              <div className='w-[26%] pl-2'>이자 지급</div>
+          <div className="flex flex-col items-start justify-start w-full">
+            <div className="flex justify-start w-full py-2 bg-[#FFF5EC] text-[0.8rem] lg:text-[1rem] text-[#717171] font-bold rounded-lg">
+              <div className="w-[23%] pl-2">개설일</div>
+              <div className="w-[23%] pl-2">만기일</div>
+              <div className="w-[28%] pl-2">통장 금액</div>
+              <div className="w-[26%] pl-2">이자 지급</div>
             </div>
-            <div className='flex flex-col flex-nowrap w-full overflow-y-auto bg-white max-h-[7rem] lg:max-h-[15rem]'>
+            <div className="flex flex-col flex-nowrap w-full overflow-y-auto bg-white max-h-[7rem] lg:max-h-[15rem]">
               {passbookList}
             </div>
           </div>
