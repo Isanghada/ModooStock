@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetUsersInfoQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeChattingStatus, changeMenuStatus } from 'Store/store';
+import { changeChattingStatus, changeCurrentMoneyStatusStatus, changeMenuStatus } from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
@@ -35,6 +35,10 @@ function Navbar(): JSX.Element {
   const menuStatus = useAppSelector((state) => {
     return state.menuStatus;
   });
+  // 현재 잔액 상태
+  const currentMoneyStatus = useAppSelector((state) => {
+    return state.currentMoneyStatus;
+  });
 
   // 채팅 창 띄우기
   const showChatting = () => {
@@ -58,12 +62,14 @@ function Navbar(): JSX.Element {
         const { nickname, currentMoney, totalStockReturn } = data.data;
         setMyNickName(nickname);
         setCurrentMoney(currentMoney.toLocaleString());
+        dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
         setTotalStockReturn(totalStockReturn);
         localStorage.setItem('nickname', nickname);
       }
     };
     getMyInfo();
-  }, []);
+    // 현재 잔액 변경될 때 실행되도록 추가
+  }, [currentMoneyStatus]);
 
   useEffect(() => {
     // 창 높이 변할떄마다 실행
