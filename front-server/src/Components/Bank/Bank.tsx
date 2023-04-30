@@ -232,18 +232,29 @@ function Section1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     }
   };
 
-  const change = (e: ChangeEvent<HTMLInputElement>) => {
+  const isValidInput = async (input: string) => {
+    const regex = await /^[0-9,]*$/;
+    console.log('regex: ', regex);
+    return regex.test(input);
+  };
+
+  const change = async (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     switch (target.ariaLabel) {
       case '입력':
         if (target.value !== '' && ref.current) {
-          const intValue = parseInt(ref.current.value.replaceAll(',', ''));
-          const checkMoney: number = IntAfterCurrentMoney - intValue;
-          const inputMoney: string = checkMoney.toLocaleString();
-          compareMoney(checkMoney);
-          setAfterMoney(inputMoney);
-
-          ref.current.value = intValue.toLocaleString();
+          await isValidInput(ref.current.value).then((r) => {
+            if (r === true && ref.current) {
+              const intValue = parseInt(ref.current.value.replaceAll(',', ''));
+              const checkMoney: number = IntAfterCurrentMoney - intValue;
+              const inputMoney: string = checkMoney.toLocaleString();
+              compareMoney(checkMoney);
+              setAfterMoney(inputMoney);
+              ref.current.value = intValue.toLocaleString();
+            } else if (r === false && ref.current) {
+              ref.current.value = Math.abs(parseInt(afterMoney.replaceAll(',', ''))).toLocaleString();
+            }
+          });
         } else {
           setAfterMoney(currentMoney);
         }
@@ -262,7 +273,9 @@ function Section1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
           if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
             ref.current.value.split(',').map((liMoney) => (inputvalueMoney += liMoney));
+            const floorMoney = Math.floor(parseInt(inputvalueMoney) / 10);
             ref.current.value = Math.floor(parseInt(inputvalueMoney) / 10).toLocaleString();
+            setAfterMoney((IntAfterCurrentMoney - floorMoney).toLocaleString());
           }
         }
         break;
@@ -562,17 +575,29 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     setAfterMoney(inputMoney);
   };
 
-  const change = (e: ChangeEvent<HTMLInputElement>) => {
+  const isValidInput = async (input: string) => {
+    const regex = await /^[0-9,]*$/;
+    console.log('regex: ', regex);
+    return regex.test(input);
+  };
+
+  const change = async (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     switch (target.ariaLabel) {
       case '입력':
         if (target.value !== '' && ref.current) {
-          const intValue = parseInt(ref.current.value.replaceAll(',', ''));
-          const checkMoney: number = IntAfterCurrentMoney - intValue;
-          const inputMoney: string = checkMoney.toLocaleString();
-          compareMoney(checkMoney);
-          setAfterMoney(inputMoney);
-          ref.current.value = intValue.toLocaleString();
+          await isValidInput(ref.current.value).then((r) => {
+            if (r === true && ref.current) {
+              const intValue = parseInt(ref.current.value.replaceAll(',', ''));
+              const checkMoney: number = IntAfterCurrentMoney - intValue;
+              const inputMoney: string = checkMoney.toLocaleString();
+              compareMoney(checkMoney);
+              setAfterMoney(inputMoney);
+              ref.current.value = intValue.toLocaleString();
+            } else if (r === false && ref.current) {
+              ref.current.value = Math.abs(parseInt(afterMoney.replaceAll(',', ''))).toLocaleString();
+            }
+          });
         } else {
           setAfterMoney(currentMoney);
         }
@@ -634,7 +659,9 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
           if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
             ref.current.value.split(',').map((liMoney) => (inputvalueMoney += liMoney));
+            const floorMoney = Math.floor(parseInt(inputvalueMoney) / 10);
             ref.current.value = Math.floor(parseInt(inputvalueMoney) / 10).toLocaleString();
+            setAfterMoney((IntAfterCurrentMoney - floorMoney).toLocaleString());
           }
         }
         break;
