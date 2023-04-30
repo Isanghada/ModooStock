@@ -166,6 +166,14 @@ export const Api = createApi({
       }
     }),
 
+    // 5. 닉네임 중복확인
+    getUsersNickname: builder.query<ReturnBasicInterFace, string>({
+      query: (nickname) => `/users/nickname/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
     // ------------- 은행 -------------
 
     // 1. 내 통장 잔고
@@ -230,6 +238,7 @@ export const {
   useLazyGetUsersSearchQuery,
   useLazyGetUsersRandomQuery,
   useLazyGetUsersLogoutQuery,
+  useLazyGetUsersNicknameQuery,
 
   // ------------- 은행 -------------
   useGetBankQuery,
