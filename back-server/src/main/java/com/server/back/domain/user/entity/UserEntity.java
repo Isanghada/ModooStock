@@ -154,4 +154,6 @@ public class UserEntity extends CommonEntity implements UserDetails {
     public void decreaseCurrentMoney(Long money) {
         this.currentMoney -= money;
     }
+
+    public void updateNicknameByAdmin(String nickname) {this.nickname = nickname;}
 }
