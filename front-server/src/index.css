@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @media screen and (orientation: portrait) {
   body {
     transform: rotate(90deg);
@@ -16,7 +15,6 @@
   }
 }
 
-
 /* 후보 1  */
 @font-face {
   font-family: 'IBMPlexSansKR-Regular';
@@ -26,9 +24,28 @@
 }
 
 * {
-  font-family : 'IBMPlexSansKR-Regular';
-  -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  user-select:none
+  font-family: 'IBMPlexSansKR-Regular';
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 1024px) {
+  div::-webkit-scrollbar {
+    width: 0.5rem; /* 스크롤바의 너비 */
+  }
+  div::-webkit-scrollbar-thumb {
+    height: 20%;
+    background: #ffa3c5; /* 스크롤바의 색상 */
+
+    border-radius: 10px;
+  }
+  div::-webkit-scrollbar-track {
+    background: #ffffff;
+  }
+}
+
+* {
+  -webkit-user-drag: none;
 }

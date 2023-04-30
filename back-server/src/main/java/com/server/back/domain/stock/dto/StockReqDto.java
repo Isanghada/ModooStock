@@ -13,13 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StockReqDto {
     Long stockId;
-    Integer price;
     Integer stockAmount;
 
-    public DealStockEntity toEntity(UserEntity user, DealType dealType, StockEntity stock){
+    public DealStockEntity toEntity(UserEntity user, DealType dealType, StockEntity stock, Long chartPrice){
         return DealStockEntity.builder()
                 .user(user)
-                .price(price)
+                .price(chartPrice)
                 .dealType(dealType)
                 .stockAmount(stockAmount)
                 .stock(stock)

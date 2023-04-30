@@ -27,13 +27,13 @@ public class DealEntity extends CommonEntity {
 	private UserEntity user;
 
 	@Column(nullable = false)
-	private Integer price;
+	private Long price;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private DealType dealType;
 
-	public DealEntity(UserEntity user, DealType dealType,int price){
+	public DealEntity(UserEntity user, DealType dealType, Long price){
 		this.user=user;
 		this.dealType=dealType;
 		this.price=price;

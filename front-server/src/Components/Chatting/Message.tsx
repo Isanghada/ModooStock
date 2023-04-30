@@ -52,7 +52,7 @@ function Message({
       {init ? (
         isMe ? (
           <div className="flex justify-end w-full px-2 text-xs h-fit lg:text-base">
-            <div className="flex justify-end items-end max-w-md lg:w-3/5 my-[0.1rem] lg:my-[0.3rem]">
+            <div className="flex justify-end items-end max-w-md lg:w-4/5 my-[0.1rem] lg:my-[0.3rem]">
               <div
                 className={`mr-2 text-[0.5rem] lg:text-sm text-slate-400 min-w-fit ${
                   // 시간이 보이고 말고 세팅 하지만 date값은 유지해서 크기유지
@@ -61,7 +61,7 @@ function Message({
                 {date}
               </div>
               {date && (
-                <div className="flex flex-col items-center px-2 py-1 break-words bg-gray-800 rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
+                <div className="flex flex-col items-center px-2 py-1 break-words bg-[#FB6B9F] rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
                   {data.downLoadUrl && (
                     <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                   )}
@@ -73,7 +73,7 @@ function Message({
         ) : (
           // 상대방 채팅
           <div className="w-full px-2 text-xs lg:text-base">
-            <div className="flex flex-col max-w-md lg:w-3/5 h-fit">
+            <div className="flex flex-col max-w-md lg:w-4/5 h-fit">
               {checkSameNick ? (
                 <div className="flex items-center w-fit">
                   {data.profilePath && (

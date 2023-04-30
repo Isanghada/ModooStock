@@ -1,18 +1,22 @@
 package com.server.back.domain.rank.dto;
 
 import com.server.back.domain.rank.entity.RankEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RankResDto {
     private String nickname;
     private String profileImagePath;
-    private Integer totalMoney;
+    private Long totalMoney;
 
     public static RankResDto fromEntity(RankEntity rank){
         return RankResDto.builder()

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class MaterialResDto {
     String standardType;
     LocalDate date;
-    Integer price;
+    Long price;
 
     public static MaterialResDto fromEntity(MaterialEntity material) {
         return MaterialResDto.builder()

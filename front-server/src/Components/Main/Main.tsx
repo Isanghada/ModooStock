@@ -17,8 +17,6 @@ function Main(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(window.screen.width);
-    console.log(window.innerWidth);
 
     // console.log(window.screen.width - 1024);
 

@@ -72,6 +72,10 @@ public class AuctionServiceImpl implements AuctionService {
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         AuctionEntity auction=auctionRepository.findByIdAndIsDeletedAndIsCompleted(auctionId,IsDeleted.N,IsCompleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        //잔액 부족
+        if(auction.getAuctionPrice()>user.getCurrentMoney())throw new CustomException(ErrorCode.LACK_OF_MONEY);
+
         UserEntity saler=auction.getUserAsset().getUser();
         UserAssetEntity userAsset=auction.getUserAsset();
         UserAssetLocation userAssetLocation=userAssetLocationRepository.findById(userAsset.getId()).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));

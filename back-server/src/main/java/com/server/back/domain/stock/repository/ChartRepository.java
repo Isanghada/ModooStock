@@ -20,4 +20,6 @@ public interface ChartRepository extends JpaRepository<ChartEntity, Long> {
     // 뉴스 정보 구매를 위해 해당 종목의 평균가 계산
     @Query(value = "SELECT AVG(c.price_end) FROM chart c WHERE c.date >= :start AND c.date <= :end AND c.company_id = :comapny", nativeQuery = true)
     Optional<Integer> getAvgPriceEndByDateGreaterThanEqualAndDateLessThanEqualAndCompany(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("comapny") Long company_id);
+
+    List<ChartEntity> findAllByCompanyIdAndDateBetween(Long companyId, LocalDate startDate, LocalDate date);
 }

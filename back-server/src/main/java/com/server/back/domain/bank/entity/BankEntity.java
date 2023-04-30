@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class BankEntity extends DealEntity {
 
     @Column(nullable = false)
-    private Integer interest;
+    private Long interest;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

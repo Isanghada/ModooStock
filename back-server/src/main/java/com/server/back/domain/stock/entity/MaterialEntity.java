@@ -25,6 +25,6 @@ public class MaterialEntity {
     private LocalDate date;
 
     @Column(nullable = false)
-    private Integer price;
+    private Long price;
 
 }
