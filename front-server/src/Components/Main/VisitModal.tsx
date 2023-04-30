@@ -31,7 +31,7 @@ const Description: React.FC<{ description: string }> = ({ description }) => (
 const SearchBar: React.FC<{ children: React.ReactNode, handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void }> = ({ children, handleSubmit }) => (
     <form className="w-full lg:w-[35rem] h-12 lg:h-14 rounded-t-xl flex flex-row items-center justify-center bg-[#fde2e2]" onSubmit={handleSubmit}>
       {children}
-      <button type="submit" className="px-4 py-1 text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] ml-3 lg:ml-5 font-bold text-center text-white bg-[#F99F9F]/80 rounded-md hover:scale-105 hover:bg-[##F99F9F] transition-all duration-300">검색</button>
+      <button type="submit" className="px-4 py-1 text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] ml-3 lg:ml-5 font-bold text-center text-white bg-[#F99F9F] rounded-md hover:scale-105 drop-shadow-lg transition-all duration-300">검색</button>
     </form>
 );
 
@@ -46,7 +46,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => (
     value={value}
     onChange={onChange}
     className="w-[70%] lg:w-[25.25rem] h-[2rem] lg:h-[2.125rem] font-medium text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] outline-none px-2 rounded-md"
-    placeholder="다른 사용자의 계정 및 닉네임을 검색해보세요"
+    placeholder="사용자의 계정 및 닉네임을 검색해보세요"
   />
 );
 
@@ -73,9 +73,9 @@ const User: React.FC<UserInfo> = ({ nickname, profileImagePath, account }) => {
     <div className='lg:h-[2.875rem] rounded-[5px] bg-white m-2 p-2 flex justify-between items-center'>
       <div className="flex items-center">
         <img
-          src={profileImagePath} alt={nickname} style={{ backgroundColor: '#ffc1b7' }}
-          className="w-[1.5rem] md:w-[1.7rem] lg:w-[2.25rem] md:h-[1.7rem] lg:h-[2.25rem] rounded-full object-contain mr-4 p-1"
-          />
+          src={profileImagePath} alt={nickname}
+          className="w-[1.5rem] md:w-[1.7rem] lg:w-[2.25rem] md:h-[1.7rem] lg:h-[2.25rem] rounded-full object-contain mr-4 p-1 bg-[#ffc1b7]"
+        />
         <div className='flex flex-col w-[12rem] lg:w-full'>
           <p className="text-[0.3rem] md:text-[0.4rem] lg:text-[0.6rem] font-medium text-left text-black items-center">
             {account}
@@ -85,7 +85,7 @@ const User: React.FC<UserInfo> = ({ nickname, profileImagePath, account }) => {
           </p>
         </div>
       </div>
-      <button className="px-4 py-1 font-medium text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] rounded-[5px] bg-[#ffc1b7] font-bold text-center text-white hover:scale-105 transition-all duration-300" onClick={() => navigate(`/travel/${nickname}`)}>
+      <button className="px-4 py-1 font-medium text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] rounded-[5px] bg-[#ffc1b7] font-bold text-center text-white hover:scale-105 transition-all duration-300 drop-shadow-md" onClick={() => navigate(`/travel/${nickname}`)}>
         방문
       </button>
     </div>
@@ -159,9 +159,9 @@ const VisitModal = ({ onClose }: Props) => {
         <Box>
           <UserList users={users} />
         </Box>
-        <div className='flex mt-4 lg:mt-6'>
-          <button className="w-[5rem] md:w-[6.2rem] lg:w-[7.5rem] py-1 rounded-3xl bg-[#969696]/80 font-bold text-[0.8rem] md:text-[0.9rem] lg:text-[1rem] text-center text-white hover:scale-105 hover:bg-[#969696] transition-all duration-300 mr-7" onClick={onClose}>닫기</button>
-          <button className="w-[5rem] md:w-[6.2rem] lg:w-[7.5rem] py-1 rounded-3xl bg-[#ff7b7b]/80 font-bold text-[0.8rem] md:text-[0.9rem] lg:text-[1rem] text-center text-white hover:scale-105 hover:bg-[#ff7b7b] transition-all duration-300 " onClick={handleRandomVisit}>랜덤 방문</button>
+        <div className='flex mt-4 lg:mt-6 text-center text-white space-x-3font-bold text-[0.8rem] md:text-[0.9rem] lg:text-[1rem] space-x-7'>
+          <button className="w-[5rem] md:w-[6.2rem] lg:w-[7.5rem] py-1 rounded-full bg-[#969696] drop-shadow-lg hover:scale-105 hover:bg-[#969696] transition-all duration-300" onClick={onClose}>닫기</button>
+          <button className="w-[5rem] md:w-[6.2rem] lg:w-[7.5rem] py-1 rounded-full bg-[#ff7b7b]  drop-shadow-lg hover:scale-105 transition-all duration-300 " onClick={handleRandomVisit}>랜덤 방문</button>
         </div>
       </Container>
     </div>

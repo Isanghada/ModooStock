@@ -61,7 +61,7 @@ function Message({
                 {date}
               </div>
               {date && (
-                <div className="flex flex-col items-center px-2 py-1 break-words bg-gray-800 rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
+                <div className="flex flex-col items-center px-2 py-1 break-words bg-[#FB6B9F] rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
                   {data.downLoadUrl && (
                     <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                   )}

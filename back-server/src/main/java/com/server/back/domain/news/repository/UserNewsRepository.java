@@ -11,5 +11,6 @@ public interface UserNewsRepository extends JpaRepository<UserNewsEntity, Long> 
 
     Optional<UserNewsEntity> findByNewsId(Long id);
 
-    List<UserNewsEntity> findAllByUserId(Long userId);
+
+    List<UserNewsEntity> findAllByUserIdOrderByNews_DateDesc(Long userId);
 }

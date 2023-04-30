@@ -17,9 +17,9 @@ const options = {
   weekday: 'long',
   day: 'numeric'
 };
-const Chatting = () => {
+const ITChatting = () => {
   // const roomName = 'chatting';
-  const roomName = "전체";
+  const roomName = "IT";
   const dispatch = useAppDispatch();
   // 채팅 div
   const chatDiv = useRef<HTMLDivElement>(null);
@@ -107,7 +107,7 @@ const Chatting = () => {
       }}
       className="flex flex-col justify-center w-full h-full text-white">
       <div className="w-full h-[6%] bg-[#FB6B9F] flex items-center justify-between px-3">
-        <div className="flex items-center h-full text-xs font-medium lg:font-semibold lg:text-lg ">공개토론방</div>
+        <div className="flex items-center h-full text-xs font-medium lg:font-semibold lg:text-lg ">{roomName}토론방</div>
         <img
           onClick={() => {
             // 채팅창끄기
@@ -235,4 +235,4 @@ const Chatting = () => {
   );
 };
 
-export default Chatting;
+export default ITChatting;

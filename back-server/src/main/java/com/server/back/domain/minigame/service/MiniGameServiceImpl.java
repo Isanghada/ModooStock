@@ -71,7 +71,7 @@ public class MiniGameServiceImpl implements MiniGameService{
             ranking=3;
             money=500_000L;
         }
-        else if(rd>=31&&rd<=530){
+        else if(rd>=30&&rd<530){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 10_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000L);

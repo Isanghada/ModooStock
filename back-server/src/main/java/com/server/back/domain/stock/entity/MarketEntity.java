@@ -27,4 +27,7 @@ public class MarketEntity extends CommonEntity {
     @Column(nullable = false)
     private LocalDate gameDate;
 
+    public void updateGameDate(LocalDate nextDate) {
+        this.gameDate = nextDate;
+    }
 }
