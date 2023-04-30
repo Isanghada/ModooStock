@@ -2,6 +2,7 @@ import {
   useDeleteBankMutation,
   useGetBankListQuery,
   useGetBankQuery,
+  useLazyGetUsersNicknameQuery,
   usePostBankMutation,
   usePostBankTransferMutation
 } from 'Store/api';
@@ -216,6 +217,21 @@ function Section1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     setAfterMoney(inputMoney);
   };
 
+  const postDeposit = async (price: number) => {
+    if (price > 0) {
+      const { data, result } = await postBank(price).unwrap();
+      if (data) {
+        dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - price).toLocaleString()));
+        toast.success('개설에 성공했습니다!');
+        setIsClick((pre) => !pre);
+      } else {
+        toast.error('요청에 실패했습니다...');
+      }
+    } else {
+      toast.error('금액을 입력해주세요!');
+    }
+  };
+
   const change = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     switch (target.ariaLabel) {
@@ -235,21 +251,6 @@ function Section1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     }
   };
 
-  const postDeposit = async (price: number) => {
-    if (price > 0) {
-      const { data, result } = await postBank(price).unwrap();
-      if (data) {
-        dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - price).toLocaleString()));
-        toast.success('개설에 성공했습니다!');
-        setIsClick((pre) => !pre);
-      } else {
-        toast.error('요청에 실패했습니다...');
-      }
-    } else {
-      toast.error('금액을 입력해주세요!');
-    }
-  };
-
   const click = (e: React.MouseEvent) => {
     const target = e.currentTarget;
     let money: string = '';
@@ -258,7 +259,7 @@ function Section1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     switch (target.ariaLabel) {
       case '지우기':
         if (ref.current) {
-          if (ref.current.value !== '0') {
+          if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
             ref.current.value.split(',').map((liMoney) => (inputvalueMoney += liMoney));
             ref.current.value = Math.floor(parseInt(inputvalueMoney) / 10).toLocaleString();
@@ -524,9 +525,11 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
   const ref2 = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const [afterMoney, setAfterMoney] = useState<string>('0');
+  const [nicknameCheck, setNicknameCheck] = useState<boolean>(false);
   const [checkMoneyState, setCheckMoneyState] = useState<boolean>(false);
 
   const [postBankTransfer, { isLoading: isLoading1, isError: isError1 }] = usePostBankTransferMutation();
+  const [getUsersNickname, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUsersNicknameQuery();
 
   useEffect(() => {
     if (IntAfterCurrentMoney > 0) {
@@ -584,15 +587,39 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
         receiver: receiver
       };
       const { data, result } = await postBankTransfer(body).unwrap();
-      if (result === 'SUCCESS') {
+      console.log('data', data);
+      console.log('result', result);
+      console.log('nicknameCheck', nicknameCheck);
+
+      if (result === 'SUCCESS' && nicknameCheck) {
+        console.log(IntAfterCurrentMoney);
+        console.log(money);
         dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
         toast.success('송금을 성공했습니다!');
-        setIsClick((pre) => !pre);
+        setIsClick(false);
+      } else if (nicknameCheck === false) {
+        toast.error('닉네임을 확인해주세요!');
       } else {
-        toast.error('요청에 실패했습니다...');
+        toast.error('요청에 실패했습니다!');
       }
     } else {
       toast.error('금액을 입력해주세요!');
+    }
+  };
+
+  const niceknameCheck = async () => {
+    if (ref2.current) {
+      const { data } = await getUsersNickname(ref2.current.value).unwrap();
+      // 현재 닉네임이 바뀔 수 있는 경우 -> 즉 해당 닉네임의 유저가 없다면
+      if (data) {
+        setNicknameCheck(false);
+        toast.error('전송할 수 없는 닉네임입니다.');
+      } else {
+        setNicknameCheck(true);
+        toast.success('전송 가능한 닉네임입니다.');
+      }
+    } else {
+      toast.error('요청에 문제가 생겼습니다.');
     }
   };
 
@@ -604,12 +631,15 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
     switch (target.ariaLabel) {
       case '지우기':
         if (ref.current) {
-          if (ref.current.value !== '0') {
+          if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
             ref.current.value.split(',').map((liMoney) => (inputvalueMoney += liMoney));
             ref.current.value = Math.floor(parseInt(inputvalueMoney) / 10).toLocaleString();
           }
         }
+        break;
+      case '확인':
+        niceknameCheck();
         break;
       case '1만원':
         clickTransfer(intMoney, 10000);
@@ -630,29 +660,35 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
         clickTransfer(intMoney, intMoney);
         break;
       case '송금 하기':
-        let price: string = '';
-        const receiver: string = '하이루';
-        ref.current?.value.split(',').map((liMoney) => {
-          price += liMoney;
-        });
-        postTransfer(parseInt(price), receiver);
+        if (ref2.current && nicknameCheck) {
+          let price: string = '';
+          const receiver: string = ref2.current.value;
+          ref.current?.value.split(',').map((liMoney) => {
+            price += liMoney;
+            postTransfer(parseInt(price), receiver);
+          });
+        } else {
+          toast.error('닉네임을 입력 후 확인 해주세요!');
+        }
         break;
     }
   };
   return (
     <>
-      {isError1 && toast.error('요청에 실패했습니다!')}
       <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[29rem] lg:w-[42%] lg:max-w-[35rem] px-7 rounded-xl">
         <div className="flex flex-col items-center w-full pt-3 ">
           <span className="font-extrabold text-[1.8rem] lg:text-[2.5rem] text-[#3A78B7]">송금</span>
-          <span className="lg:text-[1rem] text-[0.8rem]">받는사람 닉네임과 보낼금액을 작성해주세요.</span>
+          <span className="lg:text-[1rem] text-[0.8rem]">받는사람 닉네임과 전송 금액을 작성해주세요.</span>
         </div>
         <div className="flex flex-col w-full py-4">
           <div className="flex items-end justify-between pb-3">
             <div className="flex items-end w-full space-x-2">
               <span className="text-[1.2rem] lg:text-[1.5rem] font-extrabold">송금 금액</span>
-              <span className="font-medium pb-[2px] text-[0.75rem] lg:text-[0.8rem] xl:text-[0.9rem]">
-                잔여 금액: {currentMoney}원
+              <span
+                className={`font-medium pb-[2px] text-[0.75rem] lg:text-[0.8rem] xl:text-[0.9rem]  ${
+                  checkMoneyState ? 'text-[#282828]' : 'text-[#FF0000] font-extrabold'
+                }`}>
+                잔여 금액: {afterMoney}원
               </span>
             </div>
             <div className="flex justify-center space-x-2 w-[45%] pb-[2px]">
@@ -664,7 +700,7 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
                   placeholder="받는사람 닉네임"
                 />
               </div>
-              <div className="w-[35%] flex  text-center my-auto text-white">
+              <div aria-label="확인" className="w-[35%] flex  text-center my-auto text-white" onClick={click}>
                 <span className="w-full h-[70%] px-2 text-[0.7rem] lg:text-[0.8rem] py-[1px] hover:scale-105 transition-all duration-300 rounded-full bg-[#2C94EA]">
                   확인
                 </span>
@@ -673,7 +709,15 @@ function Section3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClick
           </div>
           <div className="flex flex-col w-full pb-2">
             <div className="flex flex-col w-full py-2 bg-[#EEF8FF] rounded-tl-lg rounded-tr-lg">
-              <div className="text-[#707070] text-[0.7rem] lg:text-[0.8rem] px-2">보낼금액</div>
+              <div className="text-[#707070] text-[0.7rem] lg:text-[0.8rem] px-2 flex justify-between items-center">
+                <span>전송 금액</span>
+                <div
+                  aria-label="지우기"
+                  className="cursor-pointer hover:scale-110 transition-all duration-300 active:scale-110"
+                  onClick={click}>
+                  ◀️
+                </div>
+              </div>
               {/* 송금할 금액 */}
               <div className="flex w-full justify-end pr-2 font-extrabold text-[1.2rem] lg:text-[1.4rem] py-1 space-x-1">
                 <input
