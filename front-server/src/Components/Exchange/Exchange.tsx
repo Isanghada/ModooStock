@@ -882,40 +882,46 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                 <option value="사업 보고서">사업 보고서</option>
               </select>
             </div>
-            <div className="flex flex-col items-start justify-start w-full">
+            <div className="flex flex-col items-start justify-start w-full font-bold">
               <div className="w-full">
                 <span>1분기 보고서</span>
               </div>
               <div className="flex items-center w-full justify-evenly">
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>
-                    <span>5173억</span>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">영업 수익</span>
                   </div>
-                  <div></div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">영업 이익</span>
+                  </div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">총자본</span>
+                  </div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">총부채</span>
+                  </div>
                 </div>
               </div>
               <div className="w-full"></div>
