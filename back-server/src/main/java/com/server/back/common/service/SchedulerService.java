@@ -54,6 +54,10 @@ public class SchedulerService {
 
         // java.sql.Date 타입으로 반환되므로 LocalDate로 변환하여 사용
         List<Date> marketDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(pivotDate, 360);
+        log.info(pivotDate+", "+marketDate.toString());
+        if(marketDate.size() == 0){
+            return;
+        }
         LocalDate start = marketDate.get(0).toLocalDate();
         LocalDate end = marketDate.get(359).toLocalDate();
 
@@ -78,7 +82,7 @@ public class SchedulerService {
             // 생성할 회사
             CompanyEntity company = companyList.get(index);
             // 게임 기간 동안의 평균가
-            Optional<Integer> avgPrice = chartRepository.getAvgPriceEndByDateGreaterThanEqualAndDateLessThanEqualAndCompany(start, end, company.getId());
+            Optional<Long> avgPrice = chartRepository.getAvgPriceEndByDateGreaterThanEqualAndDateLessThanEqualAndCompany(start, end, company.getId());
 
             if(avgPrice.isPresent()){
                 // 게임에 사용할 주식(종목) 생성
@@ -98,7 +102,7 @@ public class SchedulerService {
     }
 
     // 장 마감 : 화, 목, 토 오후 10시 10분에 모든 주식 처분
-    @Scheduled(cron = "* 10 22 * * 2,4,6")
+    @Scheduled(cron = "0 10 22 * * 2,4,6")
     public void market_end() {
         log.info("[schedulerService] market(시즌) 마감 - 가지고 있는 모든 주식 판매");
         MarketEntity marketEntity = marketRepository.findTopByOrderByCreatedAtDesc().orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -114,7 +118,7 @@ public class SchedulerService {
         // 각 종목의 마지막 종가 검색
         // - key : stock_id
         // - value : price_end
-        Map<Long, Integer> chartPriceEndMap = new HashMap<>();
+        Map<Long, Long> chartPriceEndMap = new HashMap<>();
         for(StockEntity stockEntity : stockEntityList){
             Long companyId = stockEntity.getCompany().getId();
             ChartEntity chartEntity = chartRepository.findTop360ByCompanyIdAndDateGreaterThanEqual(companyId, startDate).get(359);
@@ -147,12 +151,29 @@ public class SchedulerService {
                             .stock(stockEntity)
                             .build());
                     // 3. user_deal 수정
-                    userDeal.decrease(userDeal.getTotalAmount());
+                    userDeal.decrease(userDeal.getTotalAmount(), chartPriceEndMap.get(stockId));
                     userDealRepository.save(userDeal);
                 }
             }
         }
     }
 
-    // 매수, 매도에 따라 종가 변경 추가하기
+    // 날짜 변경 : 월~토 10시 ~ 22시까지 4분마다 게임 날자 변경
+    @Scheduled(cron = "0 0/4 10-21 * * 1-6")
+    public void chart_change(){
+        log.info("[schedulerService] market(시즌) gameDate 변경");
+        // 현재 진행중인 market 획득
+        MarketEntity market = marketRepository.findTopByOrderByCreatedAtDesc().orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 처음 시작에는 바꾸지 않음.
+        if(Period.between(LocalDate.now(), market.getCreatedAt().toLocalDate()).getDays() == 0){
+            return;
+        }
+
+        // 현재 날짜 이후의 획득
+        LocalDate nextDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(market.getGameDate(), 2).get(1).toLocalDate();
+        // gameDate 업데이트
+        market.updateGameDate(nextDate);
+        marketRepository.save(market);
+    }
 }
