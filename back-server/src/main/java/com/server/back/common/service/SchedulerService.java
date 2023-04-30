@@ -2,6 +2,7 @@ package com.server.back.common.service;
 
 import com.server.back.common.code.commonCode.DealType;
 import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.domain.news.repository.UserNewsRepository;
 import com.server.back.domain.stock.entity.*;
 import com.server.back.domain.stock.repository.*;
 import com.server.back.domain.user.entity.UserEntity;
@@ -32,6 +33,7 @@ public class SchedulerService {
     private final UserRepository userRepository;
     private final UserDealRepository userDealRepository;
     private final UserService userService;
+    private final UserNewsRepository userNewsRepository;
 
     // 새로운 장(시즌) 생성 : 월, 수, 금 오전 9시에 새로운 장(시즌) 선택
     // - 주식 분할 시기가 있을 경우의 처리 필요
@@ -156,6 +158,8 @@ public class SchedulerService {
                 }
             }
         }
+        // 유저가 구매한 뉴스 정보 삭제
+        userNewsRepository.deleteAll();
     }
 
     // 날짜 변경 : 월~토 10시 ~ 22시까지 4분마다 게임 날자 변경
