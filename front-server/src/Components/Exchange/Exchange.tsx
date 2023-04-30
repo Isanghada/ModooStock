@@ -2,6 +2,7 @@ import React, { PureComponent, useRef, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
+import styled from './Exchange.module.css';
 
 function Exchange(): JSX.Element {
   const [tradingVolume, setTradingVolume] = useState<number>(0);
@@ -492,6 +493,11 @@ interface IRModalType {
 
 function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
   const ref = useRef(null);
+  const containerRef = useRef<any>(null);
+  const containerRef2 = useRef<any>(null);
+  const [dragging, setDragging] = useState<boolean>(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const iRData: any = {
     'G IT': {
       '2011': [
@@ -837,11 +843,40 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
     }
   };
 
-  for (const iterator in iRData) {
-    for (const year in iRData[iterator]) {
-      console.log(iRData[iterator][year]);
-    }
-  }
+  const keyService = [
+    '인터넷 포털 서비스',
+    '온라인 게임 서비스',
+    '뮤직 및 부동산 서비스',
+    '인터넷 포털 서비스',
+    '온라인 게임 서비스',
+    '뮤직 및 부동산 서비스'
+  ].map((service: string, idx: number) => {
+    return (
+      <span
+        key={idx}
+        className="bg-[#FFC34F] text-center text-white text-[1rem] w-[10rem] px-2 mx-2 py-[2px] rounded-md">
+        {service}
+      </span>
+    );
+  });
+
+  const plan = [
+    '친환경 IDC(인터넷데이터센터)를 건립',
+    '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
+    '일본검색 사업 강화',
+    '오픈마켓형 서비스 투자',
+    '벤처기업 투자 증가'
+  ].map((service: string, idx: number) => {
+    return (
+      <div
+        key={idx}
+        className="flex justify-center w-[24rem] rounded-md overflow-x-hidden bg-black text-center text-white text-[1rem] px-2 mx-2 py-[2px]">
+        {/* <span  className=""> */}
+        {service}
+        {/* </span> */}
+      </div>
+    );
+  });
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
@@ -854,6 +889,43 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
     }
   };
 
+  // key service
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragging) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const dx = x - startX;
+    containerRef.current.scrollLeft = scrollLeft - dx;
+  };
+
+  // plan
+  const handleMouseDown2 = (e: React.MouseEvent) => {
+    setDragging(true);
+    setStartX(e.pageX - containerRef2.current.offsetLeft);
+    setScrollLeft(containerRef2.current.scrollLeft);
+  };
+
+  const handleMouseUp2 = () => {
+    setDragging(false);
+  };
+
+  const handleMouseMove2 = (e: React.MouseEvent) => {
+    if (!dragging) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef2.current.offsetLeft;
+    const dx = x - startX;
+    containerRef2.current.scrollLeft = scrollLeft - dx;
+  };
   return (
     <>
       {isIRClick ? (
@@ -882,50 +954,69 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                 <option value="사업 보고서">사업 보고서</option>
               </select>
             </div>
-            <div className="flex flex-col items-start justify-start w-full">
-              <div className="w-full">
+            <div className="flex flex-col items-start justify-start w-full font-bold border-b-2 pb-10">
+              <div className="w-full px-2">
                 <span>1분기 보고서</span>
               </div>
-              <div className="flex items-center w-full justify-evenly">
-                <div className="w-[24%] flex flex-col justify-center items-center">
+              <div className="flex items-center w-full justify-evenly mb-4">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>
-                    <span>5173억</span>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">영업 수익</span>
                   </div>
-                  <div></div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">영업 이익</span>
+                  </div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">총자본</span>
+                  </div>
                 </div>
-                <div className="w-[24%] flex flex-col justify-center items-center">
+                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
                   <div>
-                    <img src="" alt="" />
+                    <img className="w-[2rem] h-[2rem]" src="/images/icons/IRImage.png" alt="IR" />
                   </div>
-                  <div>5173억</div>
-                  <div></div>
+                  <div className="flex flex-col justify-start items-center">
+                    <span className="text-[1.7rem] leading-8">5173억</span>
+                    <span className="text-[#DB0000]">총부채</span>
+                  </div>
                 </div>
               </div>
-              <div className="w-full"></div>
+              <div
+                ref={containerRef}
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
+                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll} mb-2`}>
+                <div className="flex flex-nowrap">{keyService}</div>
+                <div></div>
+              </div>
+              <div
+                ref={containerRef2}
+                onMouseDown={handleMouseDown2}
+                onMouseUp={handleMouseUp2}
+                onMouseMove={handleMouseMove2}
+                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
+                <div className="flex flex-nowrap">{plan}</div>
+                <div></div>
+              </div>
             </div>
-            <div className="flex items-end justify-between w-full px-2">
-              <div className="flex flex-col justify-start items-start text-[#9B9B9B] text-[0.6rem] lg:text-[0.8rem]">
-                <span>정보상에서 구입한 뉴스 소식을 볼 수 있습니다.</span>
-                <span>종목이 갱신될 때 마다 보유 기업 정보는 초기화 됩니다.</span>
-              </div>
-              <div className="flex justify-end items-end text-white w-[40%] space-x-2 text-center font-medium text-[0.8rem] lg:text-[1.1rem]">
+            <div className="flex items-end justify-end w-full px-2">
+              <div className="flex justify-end items-end text-white w-[40%] space-x-2 text-center font-medium text-[0.8rem] lg:text-[1.1rem] ">
                 <div
                   className="bg-[#A5A5A5] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md"
                   aria-label="닫기"
