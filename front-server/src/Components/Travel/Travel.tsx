@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import Bathroom from 'Components/Main/Bathroom';
+import Error from 'Components/Common/Error';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 
@@ -83,12 +84,14 @@ function BottomButtons(): JSX.Element {
 function Travel(): JSX.Element {
 
   const { nickname } = useParams() as { nickname: string };
-  const { data: user, isLoading: isLoading1, isError: isError1 } = useGetUsersTravelInfoQuery(nickname);
+  const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
+
+  if (isError)
+    return <Error />
 
   return (
     <>
-      {isLoading1 && <div>로딩</div>}
-      {isError1 && <div>에러</div>}
+      {isLoading && <div>로딩</div>}
       {/* 데스크탑 */}
         <>
           <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
