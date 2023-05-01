@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGetNewsInfoQuery } from 'Store/api';
+import { useAppSelector } from 'Store/hooks';
 import InfoModal from './InfoModal';
 
 const infoList = [
@@ -14,7 +15,20 @@ interface infoDataInterFace {
   color: string;
   price: string;
 }
-
+interface newsInterFace {
+  dateList: [
+    {
+      date: string;
+    }
+  ];
+  stockList: [
+    {
+      kind: string;
+      price: number;
+      stockId: number;
+    }
+  ];
+}
 
 function InfoShop(): JSX.Element {
   // 모달 전달 데이터
@@ -25,9 +39,16 @@ function InfoShop(): JSX.Element {
   function closeModal() {
     setModalOpen(false);
   }
+
   // 뉴스 데이터 API
   const { data: dataNewsInfo } = useGetNewsInfoQuery('');
+  // 뉴스 데이터
+  const [newsData, setNewsData] = useState<newsInterFace | undefined>();
 
+  // 현재 데이터 인덱스
+  const currentDataIndex = useAppSelector((state) => {
+    return state.getCurrentDataIndex;
+  });
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
@@ -60,11 +81,9 @@ function InfoShop(): JSX.Element {
   useEffect(() => {
     if (dataNewsInfo) {
       const { data } = dataNewsInfo;
-      console.log(data, "데이터!!!")
+      setNewsData(data);
     }
-    const date = new Date();
-    console.log(date, "시간");
-  }, [dataNewsInfo]);
+  }, [dataNewsInfo, currentDataIndex]);
 
   return (
     <>
@@ -81,7 +100,7 @@ function InfoShop(): JSX.Element {
         <div className="w-[30%] h-[90%] border-r-4 border-white flex flex-col items-center justify-between">
           <div className="flex flex-col items-start justify-end w-[70%] h-1/6">
             <div className="text-xs lg:text-base">게임 속 시간</div>
-            <div className="text-sm font-bold lg:text-xl">2023.05.01</div>
+            <div className="text-sm font-bold lg:text-xl">{newsData && newsData.dateList[currentDataIndex].date}</div>
           </div>
           <div className="flex justify-center w-[70%] h-[10%] bg-white shadow-md shadow-gray-400 cursor-pointer hover:bg-slate-100">
             <img className="w-auto h-full" src="/images/icons/news.png" alt="news" />
@@ -104,8 +123,8 @@ function InfoShop(): JSX.Element {
             <div className="text-sm font-bold text-red-500 lg:text-lg">중복된 뉴스가 나올 수 있습니다</div>
           </div>
           <div className="flex flex-col items-center justify-evenly h-5/6">
-            {infoList &&
-              infoList.map((info) => {
+            {/* {newsData?.stockList &&
+              newsData?.stockList.map((info) => {
                 return (
                   <div
                     onClick={onClick}
@@ -118,11 +137,11 @@ function InfoShop(): JSX.Element {
                     </div>
                     <div
                       className={`w-full ${info.color} bg-[#F2EDED] h-3/4 flex items-center justify-center text-lg lg:text-3xl font-bold shadow-md shadow-gray-400 cursor-pointer hover:bg-[#fbe2e2]`}>
-                      {info.name}&nbsp;<span className="text-black">소식입니다</span>
+                      {info.kind}&nbsp;<span className="text-black">소식입니다</span>
                     </div>
                   </div>
                 );
-              })}
+              })} */}
           </div>
         </div>
       </div>
