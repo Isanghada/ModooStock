@@ -3,6 +3,7 @@ import Bathroom from 'Components/Main/Bathroom';
 import Error from 'Components/Common/Error';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
+import Loading from 'Components/Common/Loading';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -86,12 +87,16 @@ function Travel(): JSX.Element {
   const { nickname } = useParams() as { nickname: string };
   const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
 
+  const navigate = useNavigate();
+
   if (isError)
-    return <Error />
+    navigate("/error");
+  
+  if (isLoading)
+    return <Loading />;
 
   return (
     <>
-      {isLoading && <div>로딩</div>}
       {/* 데스크탑 */}
         <>
           <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
