@@ -25,18 +25,18 @@ import java.util.Collection;
 @Table(name = "user_table")
 public class UserEntity extends CommonEntity implements UserDetails {
 
-    private static String INTRODUCTION_DEFAULT= "때가 올때까지 기다리는 사람이 성공한다!";
+    private static String INTRODUCTION_DEFAULT= "인생 한방";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(min = 2, max = 15)
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(nullable = false, length = 15)
     private String account;
 
     @Size(min = 2, max = 6)
-    @Column(nullable = false, unique = true, length = 6)
+    @Column(nullable = false, length = 6)
     private String nickname;
 
     @Column(nullable = false)
