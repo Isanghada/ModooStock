@@ -153,7 +153,7 @@ const VisitModal = ({ onClose }: Props) => {
   const navigate = useNavigate();
 
   // TODO 랜덤 방문 API 호출
-  const handleRandomVisit = async () => {
+  const handleRandomVisit = async () => { 
     // 랜덤 유저 API
     const { data } = await getUsersRandom('');
 
