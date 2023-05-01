@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
 import { useLazyGetUsersLogoutQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
-import Modal from 'Components/Common/ConfirmModal';
+import ConfirmModal from 'Components/Common/ConfirmModal';
 import { toast } from 'react-toastify';
 
 const screenHeight = window.screen.height;
@@ -64,7 +64,7 @@ function Menu(): JSX.Element {
 
   return (
     <>
-      <Modal
+      <ConfirmModal
         isOpen={modalOpen}
         msg={'정말 나가실건가요? o(TヘTo)'}
         propsFunction={logout}

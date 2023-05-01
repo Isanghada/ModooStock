@@ -71,6 +71,57 @@ interface UpdateStateInterFace {
   introduction: string;
   profileImagePath: string;
 }
+interface ReturnInfoInterFace {
+  data: {
+    dateList: [
+      {
+        date: string;
+      }
+    ],
+    stockList: [
+      {
+        kind: string;
+        price: number;
+        stockId: number;
+      }
+    ]
+  },
+}
+interface ReturnStockListInterFace {
+  data: {
+    euro: Array<{
+      nationalCode: string;
+      date: string;
+      price: number;
+    }>;
+    gold: Array<{
+      standardType: string;
+      date: string;
+      price: number;
+    }>;
+    jyp: Array<{
+      nationalCode: string;
+      date: string;
+      price: number;
+    }>;
+    oil: Array<{
+      standardType: string;
+      date: string;
+      price: number;
+    }>;
+    stockList: Array<{
+      stockId: number;
+      kind: string;
+      price: number;
+    }>;
+    usd: Array<{
+      nationalCode: string;
+      date: string;
+      price: number;
+    }>;
+  };
+  result: string;
+}
 
 // export const everyStock = createApi({
 //   reducerPath: 'api',
@@ -125,7 +176,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', "NewsApi"],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -200,7 +251,7 @@ export const Api = createApi({
     getBank: builder.query<ReturnBankInterFace, string>({
       query: () => `/bank`,
       providesTags: (result, error, arg) => {
-        return [{ type: 'BankApi' }, {type: 'UserApi'}];
+        return [{ type: 'BankApi' }, { type: 'UserApi' }];
       }
     }),
 
@@ -215,14 +266,14 @@ export const Api = createApi({
           }
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, { type: 'UserApi' }]
     }),
 
     // 3. 예금 리스트
     getBankList: builder.query<ReturnBankListInterFace, string>({
       query: () => `/bank/list`,
       providesTags: (result, error, arg) => {
-        return [{ type: 'BankApi' }, {type: 'UserApi'}];
+        return [{ type: 'BankApi' }, { type: 'UserApi' }];
       }
     }),
 
@@ -234,7 +285,7 @@ export const Api = createApi({
           method: 'Delete'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, { type: 'UserApi' }]
     }),
 
     // 5. 송금 하기
@@ -246,10 +297,38 @@ export const Api = createApi({
           body: body
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, { type: 'UserApi' }]
+    }),
+
+    // ------------- 뉴스 -------------
+    // 1. 현재 뉴스 목록
+    getNewsInfo: builder.query<ReturnInfoInterFace, string>({
+      query: () => `/info`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'NewsApi' }];
+      }
+    }),   
+    // ------------- 주식 -------------
+
+    // 1. 현재 주식 정보 리스트
+    getStock: builder.query<ReturnStockListInterFace, string>({
+      query: () => `/stock`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'StockApi' }];
+      }
+    }),
+
+    // 2. 선택한 주식 차트 및 나의 주식 정보
+    getStockSelect: builder.query<ReturnStockListInterFace, number>({
+      query: (stockId) => `/stock/${stockId}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'StockApi' }];
+      }
     })
   })
 });
+
+
 
 // 임시저장
 export const {
@@ -266,5 +345,12 @@ export const {
   usePostBankMutation,
   useGetBankListQuery,
   useDeleteBankMutation,
-  usePostBankTransferMutation
+  usePostBankTransferMutation,
+
+  // ------------- 뉴스 -------------
+  useGetNewsInfoQuery,
+  
+  // ------------- 주식 -------------
+  useGetStockQuery,
+  useLazyGetStockSelectQuery
 } = Api;
