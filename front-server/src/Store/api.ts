@@ -200,7 +200,7 @@ export const Api = createApi({
     getBank: builder.query<ReturnBankInterFace, string>({
       query: () => `/bank`,
       providesTags: (result, error, arg) => {
-        return [{ type: 'BankApi' }];
+        return [{ type: 'BankApi' }, {type: 'UserApi'}];
       }
     }),
 
@@ -215,14 +215,14 @@ export const Api = createApi({
           }
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
     }),
 
     // 3. 예금 리스트
     getBankList: builder.query<ReturnBankListInterFace, string>({
       query: () => `/bank/list`,
       providesTags: (result, error, arg) => {
-        return [{ type: 'BankApi' }];
+        return [{ type: 'BankApi' }, {type: 'UserApi'}];
       }
     }),
 
@@ -234,7 +234,7 @@ export const Api = createApi({
           method: 'Delete'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
     }),
 
     // 5. 송금 하기
@@ -246,7 +246,7 @@ export const Api = createApi({
           body: body
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
     })
   })
 });
@@ -254,7 +254,7 @@ export const Api = createApi({
 // 임시저장
 export const {
   // ------------- 유저 -------------
-  useLazyGetUsersInfoQuery,
+  useGetUsersInfoQuery,
   useLazyGetUsersSearchQuery,
   useLazyGetUsersRandomQuery,
   useLazyGetUsersLogoutQuery,
