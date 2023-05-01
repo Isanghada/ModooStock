@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface UserDealRepository extends JpaRepository<UserDealEntity, Long> {
 
-    List<UserDealEntity> findByUserId(Long userId);
     Optional<UserDealEntity> findByUserIdAndStockId(Long userId, Long stockId);
 
     List<UserDealEntity>findAllByUserAndStockMarketId(UserEntity user, Long marketId);
