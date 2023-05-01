@@ -72,6 +72,24 @@ interface UpdateStateInterFace {
   profileImagePath: string;
 }
 
+interface ReturnInfoInterFace {
+  data: {
+    dateList: [
+      {
+        date: string;
+      }
+    ],
+    stockList: [
+      {
+        kind: string;
+        price: number;
+        stockId: number;
+      }
+    ]
+  },
+  result: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -125,7 +143,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi'],
+  tagTypes: ['UserApi', 'BankApi', 'NewsApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -247,9 +265,21 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, {type: 'UserApi'}]
-    })
+    }),
+
+
+    // ------------- 뉴스 -------------
+    // 1. 현재 뉴스 목록
+    getNewsInfo: builder.query<ReturnInfoInterFace, string>({
+      query: () => `/info`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'NewsApi' }];
+      }
+    }),    
   })
 });
+
+
 
 // 임시저장
 export const {
@@ -266,5 +296,8 @@ export const {
   usePostBankMutation,
   useGetBankListQuery,
   useDeleteBankMutation,
-  usePostBankTransferMutation
+  usePostBankTransferMutation,
+
+  // ------------- 은행 -------------
+  useGetNewsInfoQuery,
 } = Api;
