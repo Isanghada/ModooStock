@@ -10,7 +10,7 @@ interface ModalInterFace {
   isOpen: boolean;
 }
 
-export default function Modal({ propsFunction, closeModal, isOpen, msg, accept, cancel }: ModalInterFace) {
+export default function ConfirmModal({ propsFunction, closeModal, isOpen, msg, accept, cancel }: ModalInterFace) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
