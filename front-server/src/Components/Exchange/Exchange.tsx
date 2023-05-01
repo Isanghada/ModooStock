@@ -69,10 +69,11 @@ function Exchange(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    // const firstLogin = async () => {
-    //   await selectStockData(4);
-    // };
-    // firstLogin();
+    const firstLogin = async () => {
+      const { data, result } = await lazyGetStock('').unwrap();
+      await selectStockData(data.stockList[0].stockId);
+    };
+    firstLogin();
   }, []);
 
   // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
