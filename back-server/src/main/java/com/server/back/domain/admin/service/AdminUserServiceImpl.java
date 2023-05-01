@@ -1,10 +1,28 @@
 package com.server.back.domain.admin.service;
 
+import com.server.back.common.code.commonCode.DealType;
+import com.server.back.common.code.commonCode.IsAuctioned;
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.admin.dto.AdminUserInfoResDto;
 import com.server.back.domain.admin.dto.AdminUserModifyReqDto;
 import com.server.back.domain.admin.dto.AdminUserResDto;
+import com.server.back.domain.auction.entity.AuctionEntity;
+import com.server.back.domain.auction.repository.AuctionRepository;
+import com.server.back.domain.bank.entity.BankEntity;
+import com.server.back.domain.bank.repository.BankRepository;
+import com.server.back.domain.news.repository.UserNewsRepository;
+import com.server.back.domain.stock.entity.ChartEntity;
+import com.server.back.domain.stock.entity.DealStockEntity;
+import com.server.back.domain.stock.entity.StockEntity;
+import com.server.back.domain.stock.entity.UserDealEntity;
+import com.server.back.domain.stock.repository.ChartRepository;
+import com.server.back.domain.stock.repository.DealStockRepository;
+import com.server.back.domain.stock.repository.StockRepository;
+import com.server.back.domain.stock.repository.UserDealRepository;
+import com.server.back.domain.store.entity.UserAssetEntity;
+import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
@@ -13,7 +31,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.sql.rowset.CachedRowSet;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,6 +41,15 @@ import java.util.List;
 public class AdminUserServiceImpl implements AdminUserService{
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final UserAssetRepository userAssetRepository;
+    private final UserNewsRepository userNewsRepository;
+    private final UserDealRepository userDealRepository;
+    private final BankRepository bankRepository;
+    private final AuctionRepository auctionRepository;
+    private final StockRepository stockRepository;
+    private final ChartRepository chartRepository;
+    private final DealStockRepository dealStockRepository;
+
 
     /**
      * 모든 회원을 검색합니다.
@@ -93,8 +122,84 @@ public class AdminUserServiceImpl implements AdminUserService{
          */
         Long userId = authService.getUserId();
         UserEntity user = userRepository.findByAccountAndIsDeleted(account, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        if(user.getIsDeleted().equals(IsDeleted.N) || userId == user.getId())
+        if(userId == user.getId())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        // 회원 에셋 모두 가져오기
+        List<UserAssetEntity> userAssetList = userAssetRepository.findByUserAndIsDeleted(user, IsDeleted.N);
+
+        // 회원 에셋 모두 삭제
+        for (UserAssetEntity userAsset : userAssetList) {
+
+            // 회원 경매 모두 삭제
+            if (userAsset.getIsAuctioned().equals(IsAuctioned.Y)) {
+                Optional<AuctionEntity> auctionAsset = auctionRepository.findById(userAsset.getId());
+                if (auctionAsset.isPresent()) {
+                    auctionAsset.get().update(IsDeleted.Y);
+                    auctionRepository.save(auctionAsset.get());
+                }
+                userAsset.update(IsAuctioned.N);
+            }
+            userAsset.update();
+        }
+
+        // 회원 보유 뉴스 모두 삭제
+        userNewsRepository.deleteAllByUserId(userId);
+
+        // 회원의 보유 주식 모두 팔기
+        List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
+
+        for (StockEntity stock : stockList) {
+            Optional<UserDealEntity> optionalUserDeal = userDealRepository.findByUserIdAndStockId(userId, stock.getId());
+            if (optionalUserDeal.isPresent() && optionalUserDeal.get().getTotalAmount() > 0) {
+
+                UserDealEntity userDeal = optionalUserDeal.get();
+
+                // 종가 가져오기
+                // 원본 종가
+                ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+                        .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+                Long chartPrice = chart.getPriceEnd();
+
+                // 변화율 * 종가
+                Optional<ChartEntity> change = chartRepository.findById(chart.getId()-1);
+                if(change.isPresent() && change.get().getChangeRate() != 0){
+                    chartPrice = (long) (chartPrice * change.get().getChangeRate());
+                }
+
+                // 매도
+                // 1. 주식 판 만큼 돈 더하기
+                user.increaseCurrentMoney(chartPrice * userDeal.getTotalAmount());
+                userRepository.save(user);
+
+                chart.sell(userDeal.getTotalAmount());
+                chartRepository.save(chart);
+
+                DealStockEntity dealStock = DealStockEntity.builder()
+                        .user(user)
+                        .price( chartPrice * userDeal.getTotalAmount())
+                        .dealType(DealType.GET_MONEY_FOR_STOCK)
+                        .stockAmount(userDeal.getTotalAmount())
+                        .stock(stock)
+                        .build();
+
+                // 2. 거래내역 남기기
+                dealStockRepository.save(dealStock);
+
+                // 3. user_deal 수정
+                userDeal.decrease(userDeal.getTotalAmount(), chartPrice);
+                userDealRepository.save(userDeal);
+            }
+        }
+
+        // 은행 예금 삭제 (모두 완료로)
+        List<BankEntity> userBankList = bankRepository.findByUserIdAndIsCompleted(userId, IsCompleted.N);
+
+        for ( BankEntity userBank : userBankList ) {
+            userBank.setIsCompleted(IsCompleted.Y);
+        }
+
+        // 회원 삭제
         user.setIsDeleted(IsDeleted.Y);
 
         userRepository.save(user);
