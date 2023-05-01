@@ -8,6 +8,7 @@ import lombok.Data;
 @Builder
 public class AdminUserInfoResDto {
     private Long userId;
+    private String account;
     private String nickname;
     private String introduction;
     private String profileImagePath;
@@ -16,6 +17,7 @@ public class AdminUserInfoResDto {
     public static AdminUserInfoResDto fromEntity(UserEntity user){
         return AdminUserInfoResDto.builder()
                 .userId(user.getId())
+                .account(user.getAccount())
                 .nickname(user.getNickname())
                 .introduction(user.getIntroduction())
                 .profileImagePath(user.getProfileImagePath())

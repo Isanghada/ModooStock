@@ -4,7 +4,6 @@ import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.admin.dto.AdminAssetModifyReqDto;
 import com.server.back.domain.admin.dto.AdminAssetResDto;
-import com.server.back.domain.admin.dto.AdminDealResDto;
 import com.server.back.domain.admin.service.AdminAssetService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +19,9 @@ import java.util.List;
 @Api(tags="관리자 에셋 API")
 public class AdminAssetController {
     private final AdminAssetService adminAssetService;
-    @GetMapping(params = {"assetLevel", "category"})
+    @GetMapping
     @ApiOperation(value = "검색한 에셋 정보를 반환합니다.", notes = "")
-    public ResponseEntity<ResultDto<List<AdminAssetResDto>>> getAssetList(@RequestParam(name = "assetLevel", required = false)AssetLevelType assetLevel, @RequestParam(name = "category", required = false)String category){
+    public ResponseEntity<ResultDto<List<AdminAssetResDto>>> getAssetList(@RequestParam(required = false, name = "assetLevel")AssetLevelType assetLevel, @RequestParam(required = false, name = "category")String category){
         List<AdminAssetResDto> assetList= adminAssetService.getAssetList(assetLevel, category);
         return ResponseEntity.ok(ResultDto.of(assetList));
     }

@@ -29,7 +29,7 @@ public class AdminDealResDto
     private Long interest;
     private IsCompleted isCompleted;
     private static AdminDealResDto fromEntity(DealEntity dealEntity) {
-        if(dealEntity.getClass().isInstance(DealStockEntity.class)){
+        if(DealStockEntity.class.isInstance(dealEntity)){
             DealStockEntity dealStockEntity = (DealStockEntity) dealEntity;
             return AdminDealResDto.builder()
                     .dealId(dealStockEntity.getId())
@@ -42,7 +42,7 @@ public class AdminDealResDto
                     .stockAmount(dealStockEntity.getStockAmount())
                     .build();
 
-        }else if(dealEntity.getClass().isInstance(BankEntity.class)){
+        }else if(BankEntity.class.isInstance(dealEntity)){
             BankEntity bankEntity = (BankEntity) dealEntity;
             return AdminDealResDto.builder()
                     .dealId(bankEntity.getId())

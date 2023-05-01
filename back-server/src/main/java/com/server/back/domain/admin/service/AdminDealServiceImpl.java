@@ -3,6 +3,7 @@ package com.server.back.domain.admin.service;
 import com.server.back.common.entity.DealEntity;
 import com.server.back.common.repository.DealRepository;
 import com.server.back.domain.admin.dto.AdminDealResDto;
+import com.server.back.domain.stock.entity.DealStockEntity;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;

@@ -26,12 +26,12 @@ public class AdminAssetServiceImpl implements AdminAssetService{
     @Override
     public List<AdminAssetResDto> getAssetList(AssetLevelType assetLevel, String category) {
         List<AssetEntity> assetEntityList;
-        if(!assetLevel.equals(null) && !category.equals(null)){
+        if((assetLevel != null) && (category != null)){
             assetEntityList = assetRepository.findByAssetLevelAndCategory(assetLevel, category);
-        }else if(!assetLevel.equals(null)){
+        }else if(assetLevel != null){
             assetEntityList = assetRepository.findByAssetLevel(assetLevel);
         }
-        else if(!assetLevel.equals(null)){
+        else if(category != null){
             assetEntityList = assetRepository.findByCategory(category);
         }
         else assetEntityList = assetRepository.findAll();

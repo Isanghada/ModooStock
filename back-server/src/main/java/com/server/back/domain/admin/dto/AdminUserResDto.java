@@ -11,12 +11,14 @@ import java.util.stream.Collectors;
 @Builder
 public class AdminUserResDto {
     private Long userId;
+    private String account;
     private String nickname;
     private String introduction;
 
     public static AdminUserResDto fromEntity(UserEntity user) {
         return AdminUserResDto.builder()
                 .userId(user.getId())
+                .account(user.getAccount())
                 .nickname(user.getNickname())
                 .introduction(user.getIntroduction())
                 .build();

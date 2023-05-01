@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 @Builder
 public class AdminStockResDto {
     private String companyName;
+    private String companyKind;
     private Long average;
     public static AdminStockResDto fromEntity(StockEntity stockEntity){
         return AdminStockResDto.builder()
                 .companyName(stockEntity.getCompany().getName())
+                .companyKind(stockEntity.getCompany().getKind())
                 .average(stockEntity.getAverage())
                 .build();
     }
