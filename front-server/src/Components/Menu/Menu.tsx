@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
 import { useLazyGetUsersLogoutQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
-import Modal from 'Components/Common/Modal';
+import Modal from 'Components/Common/ConfirmModal';
 import { toast } from 'react-toastify';
 
 const screenHeight = window.screen.height;
@@ -19,7 +19,7 @@ function Menu(): JSX.Element {
   function closeModal() {
     setModalOpen(false);
   }
-  // 백 그라운드 
+  // 백 그라운드
   const menuRef = useRef<HTMLDivElement>(null);
   // 로그아웃 API
   const [getUsersLogout] = useLazyGetUsersLogoutQuery();
@@ -35,24 +35,27 @@ function Menu(): JSX.Element {
       dispatch(changeMenuStatus(false));
     }
   };
-  // 로그아웃 
+  // 로그아웃
   const logout = async () => {
     await getUsersLogout('');
     // 메뉴 닫기
     dispatch(changeMenuStatus(false));
     localStorage.clear();
-    toast.info("로그아웃 하셨습니다")
+    toast.info('로그아웃 하셨습니다');
     navigate('/');
-  } 
+  };
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     switch (target.ariaLabel) {
+      case '나가기':
+        dispatch(changeMenuStatus(false));
+        break;
       case '정보수정':
         dispatch(changeUpdateStatus(true));
         break;
       case '로그아웃':
-        setModalOpen(true)
+        setModalOpen(true);
         break;
       default:
         break;
@@ -61,7 +64,14 @@ function Menu(): JSX.Element {
 
   return (
     <>
-      <Modal isOpen={modalOpen} msg={"정말 나가실건가요? o(TヘTo)"} propsFunction={logout} closeModal={closeModal} accept={"나가기"} cancel={"돌아가기"} />
+      <Modal
+        isOpen={modalOpen}
+        msg={'정말 나가실건가요? o(TヘTo)'}
+        propsFunction={logout}
+        closeModal={closeModal}
+        accept={'나가기'}
+        cancel={'남아있기'}
+      />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -77,9 +87,16 @@ function Menu(): JSX.Element {
           <UpdateInfo />
         ) : (
           <div
-            className={`flex flex-col items-center justify-center w-[30vw] h-[60vh] bg-white rounded-md ${
+            className={`relative flex flex-col items-center justify-center w-[30vw] h-[60vh] bg-white rounded-md ${
               screenHeight >= 800 ? 'lg:min-h-[24rem] min-h-[10rem]' : ''
             }`}>
+            <img
+              aria-label='나가기'
+              onClick={onClick}
+              src="/chatting/cancelBlack.png"
+              className="absolute cursor-pointer opacity-60 lg:w-8 lg:h-8 top-2 right-2 hover:opacity-80"
+              alt="cancelBlack"
+            />
             <div className="w-1/2">
               <img className="w-full" src="/images/logos/LogoEarth.png" alt="logo" />
             </div>
