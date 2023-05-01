@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public Boolean checkAccount(String account) {
-        return userRepository.findByAccount(account).isEmpty();
+        return userRepository.findByAccountAndIsDeleted(account, IsDeleted.N).isEmpty();
     }
 
     /**
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public Boolean checkNickname(String nickname) {
-        return userRepository.findByNickname(nickname).isEmpty();
+        return userRepository.findByNicknameAndIsDeleted(nickname, IsDeleted.N).isEmpty();
     }
 
     /**
