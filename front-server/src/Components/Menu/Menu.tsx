@@ -94,7 +94,7 @@ function Menu(): JSX.Element {
               aria-label='나가기'
               onClick={onClick}
               src="/chatting/cancelBlack.png"
-              className="absolute cursor-pointer opacity-60 lg:w-8 lg:h-8 top-2 right-2 hover:opacity-80"
+              className="absolute w-2 h-2 cursor-pointer opacity-60 lg:w-8 lg:h-8 top-2 right-2 hover:opacity-80"
               alt="cancelBlack"
             />
             <div className="w-1/2">

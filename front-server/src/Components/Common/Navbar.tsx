@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetUsersInfoQuery } from 'Store/api';
+import { useGetUsersInfoQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeChattingStatus, changeCurrentMoneyStatusStatus, changeMenuStatus } from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -17,7 +17,8 @@ function Navbar(): JSX.Element {
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
 
   // 내 정보 API
-  const [getUsersInfo] = useLazyGetUsersInfoQuery();
+  const { data: dataUserInfo } = useGetUsersInfoQuery('');
+
   // 전체 스크린 높이
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
@@ -54,22 +55,16 @@ function Navbar(): JSX.Element {
   };
 
   useEffect(() => {
-    const getMyInfo = async () => {
-      // 내 정보 가져오기 API
-      const { data } = await getUsersInfo('');
-      // 닉네임 세팅
-      if (data) {
-        const { nickname, currentMoney, totalStockReturn } = data.data;
-        setMyNickName(nickname);
-        setCurrentMoney(currentMoney.toLocaleString());
-        dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
-        setTotalStockReturn(totalStockReturn);
-        localStorage.setItem('nickname', nickname);
-      }
-    };
-    getMyInfo();
+    if (dataUserInfo) {
+      const { nickname, currentMoney, totalStockReturn } = dataUserInfo.data;
+      setMyNickName(nickname);
+      setCurrentMoney(currentMoney.toLocaleString());
+      dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
+      setTotalStockReturn(totalStockReturn);
+      localStorage.setItem('nickname', nickname);
+    }
     // 현재 잔액 변경될 때 실행되도록 추가
-  }, [currentMoneyStatus]);
+  }, [currentMoneyStatus, dataUserInfo]);
 
   useEffect(() => {
     // 창 높이 변할떄마다 실행
