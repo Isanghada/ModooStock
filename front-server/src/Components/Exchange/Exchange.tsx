@@ -3,7 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
 import styled from './Exchange.module.css';
-import { useGetStockQuery, useLazyGetStockSelectQuery } from 'Store/api';
+import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazyGetStockSelectQuery } from 'Store/api';
 import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 
@@ -12,16 +12,20 @@ function Exchange(): JSX.Element {
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
+  const [isEnterpriseClick, setsEnterpriseClick] = useState<string>('');
   const nowDate = new Date();
   const { data: getStock, isLoading: isLoading1, isError: isError1 } = useGetStockQuery('');
-  const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
+  const [lazyGetStock, { isLoading: isLoading3, isError: isError3 }] = useLazyGetStockQuery();
+  const [lazyGetStockData, setLazyGetStockData] = useState<any>();
 
+  // const { data: getStockSelectDefault, isLoading: isLoading2, isError: isError2 } = useGetStockSelectQuery();
+  const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
   // sse 적용하는 코드?
   const [eventList, setEventList] = useState<any>();
   const [listening, setListening] = useState<boolean>(false);
   const [respon, setRespon] = useState<boolean>(false);
   const [sseData, setSseData] = useState({});
-  let eventSource: EventSourcePolyfill | undefined;
+  let eventSource: EventSource | null = null;
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
@@ -49,6 +53,28 @@ function Exchange(): JSX.Element {
     }
   };
 
+  useEffect(() => {
+    // 최초 연결
+    if (eventSource !== null) {
+      eventSource.onopen = (event) => {
+        setListening(true);
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+        setListening(false);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // const firstLogin = async () => {
+    //   await selectStockData(4);
+    // };
+    // firstLogin();
+  }, []);
+
   // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
   //   setTimeout(() => {
   //     const currentDate = nowDate.toLocaleString('ko-kr')
@@ -65,9 +91,10 @@ function Exchange(): JSX.Element {
     let listening = false;
 
     // 이전 요청 취소
-    if (eventSource) {
+    if (eventSource !== null) {
+      console.log('이전 요청 취소 실행?');
+
       eventSource.close();
-      eventSource = undefined;
       setListening(false);
     }
 
@@ -83,10 +110,6 @@ function Exchange(): JSX.Element {
         withCredentials: true
       });
 
-      // 최초 연결
-      eventSource.onopen = (event) => {
-        setListening(true);
-      };
       // 서버에서 메시지 날릴 때
       eventSource.onmessage = (event) => {
         setSseData(event.data);
@@ -98,18 +121,14 @@ function Exchange(): JSX.Element {
   };
 
   const clickStock = async (e: React.MouseEvent) => {
+    setsEnterpriseClick(e.currentTarget.innerHTML);
+
     if (e.currentTarget.ariaLabel !== null) {
       console.log(e.currentTarget.ariaLabel);
 
       await selectStockData(parseInt(e.currentTarget.ariaLabel));
-      // setTimeout(() => {
-      if (eventSource !== undefined) {
-        // eventSource.close();
-
-        setListening(false);
-        console.log('요청 마무리');
-      }
-      // }, 100);
+      setListening(false);
+      console.log('eventSource: ', eventSource);
     }
   };
 
@@ -127,25 +146,25 @@ function Exchange(): JSX.Element {
               aria-label={`${getStock?.data.stockList[0].stockId}`}
               className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
               onClick={clickStock}>
-              <span>{getStock?.data.stockList[0].kind}</span>
+              {getStock?.data.stockList[0].kind}
             </div>
             <div
               aria-label={`${getStock?.data.stockList[1].stockId}`}
               className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
               onClick={clickStock}>
-              <span>{getStock?.data.stockList[1].kind}</span>
+              {getStock?.data.stockList[1].kind}
             </div>
             <div
               aria-label={`${getStock?.data.stockList[2].stockId}`}
               className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
               onClick={clickStock}>
-              <span>{getStock?.data.stockList[2].kind}</span>
+              {getStock?.data.stockList[2].kind}
             </div>
             <div
               aria-label={`${getStock?.data.stockList[3].stockId}`}
               className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
               onClick={clickStock}>
-              <span>{getStock?.data.stockList[3].kind}</span>
+              {getStock?.data.stockList[3].kind}
             </div>
           </div>
           <div className="flex items-end justify-end w-2/5">
@@ -175,7 +194,7 @@ function Exchange(): JSX.Element {
               <div className="flex items-end justify-between w-full pt-2 font-bold">
                 <div className="flex items-end space-x-1">
                   <span className="text-[1.7rem]">나의 투자 현황</span>
-                  <span className="text-[1rem] font-semibold">A 전자</span>
+                  <span className="text-[1rem] font-semibold">{getStock?.data.stockList[0].kind}</span>
                 </div>
                 <div
                   aria-label="기업활동"

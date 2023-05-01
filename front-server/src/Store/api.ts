@@ -47,6 +47,15 @@ interface ReturnUsersLogoutInterFace {
   result: string;
 }
 
+interface ReturnTravelInfoInterFace {
+  data: {
+    profileImagePath: string;
+    nickname: string;
+    introduction: string;
+    totalCash: number;
+  };
+}
+
 interface ReturnBankInterFace {
   data: {
     currentMoney: number;
@@ -77,15 +86,15 @@ interface ReturnInfoInterFace {
       {
         date: string;
       }
-    ],
+    ];
     stockList: [
       {
         kind: string;
         price: number;
         stockId: number;
       }
-    ]
-  },
+    ];
+  };
 }
 interface ReturnStockListInterFace {
   data: {
@@ -176,7 +185,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', "NewsApi"],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -245,6 +254,13 @@ export const Api = createApi({
       }
     }),
 
+    getUsersTravelInfo: builder.query<ReturnTravelInfoInterFace, string>({
+      query: (nickname) => `/users/info/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
     // ------------- 은행 -------------
 
     // 1. 내 통장 잔고
@@ -307,7 +323,7 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'NewsApi' }];
       }
-    }),   
+    }),
     // ------------- 주식 -------------
 
     // 1. 현재 주식 정보 리스트
@@ -328,8 +344,6 @@ export const Api = createApi({
   })
 });
 
-
-
 // 임시저장
 export const {
   // ------------- 유저 -------------
@@ -339,6 +353,7 @@ export const {
   useLazyGetUsersLogoutQuery,
   useLazyGetUsersNicknameQuery,
   usePutUsersInfoMutation,
+  useGetUsersTravelInfoQuery,
 
   // ------------- 은행 -------------
   useGetBankQuery,
@@ -349,8 +364,10 @@ export const {
 
   // ------------- 뉴스 -------------
   useGetNewsInfoQuery,
-  
+
   // ------------- 주식 -------------
   useGetStockQuery,
+  useLazyGetStockQuery,
+  useGetStockSelectQuery,
   useLazyGetStockSelectQuery
 } = Api;
