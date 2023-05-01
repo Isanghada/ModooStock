@@ -57,7 +57,7 @@ public class AdminUserServiceImpl implements AdminUserService{
      */
     @Override
     public AdminUserInfoResDto getUserInfo(String account) {
-        UserEntity user = userRepository.findByAccount(account).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserEntity user = userRepository.findByAccountAndIsDeleted(account, IsDeleted.N).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         return AdminUserInfoResDto.fromEntity(user);
     }
 
@@ -72,7 +72,7 @@ public class AdminUserServiceImpl implements AdminUserService{
 
         // 본인 닉네임을 수정 시 이미 존재하는 경우 에러 발생
         if (!reqDto.getNickname().equals(user.getNickname())
-                && userRepository.findByNickname(reqDto.getNickname()).isPresent()) {
+                && userRepository.findByNicknameAndIsDeleted(reqDto.getNickname(), IsDeleted.N).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
@@ -92,7 +92,7 @@ public class AdminUserServiceImpl implements AdminUserService{
         - isDeleted.Y: 회원에셋, 회원
          */
         Long userId = authService.getUserId();
-        UserEntity user = userRepository.findByAccount(account).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserEntity user = userRepository.findByAccountAndIsDeleted(account, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         if(user.getIsDeleted().equals(IsDeleted.N) || userId == user.getId())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         user.setIsDeleted(IsDeleted.Y);
