@@ -1,6 +1,7 @@
 package com.server.back.domain.admin.dto;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
+import com.server.back.domain.store.entity.AssetEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,13 @@ public class AdminAssetModifyReqDto {
     private Long assetId;
     private String category;
     private AssetLevelType assetLevel;
+
+    public AssetEntity toEntity(AssetEntity asset) {
+        return AssetEntity.builder()
+                .id(asset.getId())
+                .assetImagePath(asset.getAssetImagePath())
+                .assetLevel(this.assetLevel)
+                .category((this.category))
+                .build();
+    }
 }

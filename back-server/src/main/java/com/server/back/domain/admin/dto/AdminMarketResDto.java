@@ -28,7 +28,7 @@ public class AdminMarketResDto {
                 .build();
     }
 
-    public static List<AdminMarketResDto> fromEntity(List<MarketEntity> marketEntityList){
+    public static List<AdminMarketResDto> fromEntityList(List<MarketEntity> marketEntityList){
         return marketEntityList.stream().map(AdminMarketResDto::fromEntity).collect(Collectors.toList());
     }
 }
