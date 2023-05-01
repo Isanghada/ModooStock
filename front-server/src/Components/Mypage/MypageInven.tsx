@@ -24,8 +24,6 @@ function MypageInven(): JSX.Element {
   });
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    console.log('마우스 다운', e);
-
     setDragging(true);
     setStartX(e.pageX - containerRef.current.offsetLeft);
     setScrollLeft(containerRef.current.scrollLeft);
@@ -68,7 +66,7 @@ function MypageInven(): JSX.Element {
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
-          className={`flex scroll-container justify-start w-[84%] h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
+          className={`flex justify-start w-[84%] h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
           <div className="flex justify-start">{funitureList}</div>
         </div>
       </div>
