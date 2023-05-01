@@ -25,6 +25,7 @@ public class AdminDealResDto
     private LocalDateTime createAt;
     private Long marketId;
     private String companyName;
+    private String companyKind;
     private Integer stockAmount;
     private Long interest;
     private IsCompleted isCompleted;
@@ -38,7 +39,8 @@ public class AdminDealResDto
                     .dealType(dealStockEntity.getDealType())
                     .price(dealStockEntity.getPrice())
                     .createAt(dealStockEntity.getCreatedAt())
-                    .companyName(dealStockEntity.getStock().getCompany().getKind())
+                    .companyName(dealStockEntity.getStock().getCompany().getName())
+                    .companyKind(dealStockEntity.getStock().getCompany().getKind())
                     .stockAmount(dealStockEntity.getStockAmount())
                     .build();
 
