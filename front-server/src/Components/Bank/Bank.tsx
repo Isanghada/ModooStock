@@ -1,15 +1,6 @@
-import {
-  useDeleteBankMutation,
-  useGetBankListQuery,
-  useGetBankQuery,
-  useLazyGetUsersNicknameQuery,
-  usePostBankMutation,
-  usePostBankTransferMutation
-} from 'Store/api';
-import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeCurrentMoneyStatusStatus } from 'Store/store';
-import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
-import { toast } from 'react-toastify';
+import { useGetBankQuery } from 'Store/api';
+import { useAppSelector } from 'Store/hooks';
+import React, { useState } from 'react';
 import BankModal from './BankModal';
 
 function Bank(): JSX.Element {
@@ -136,9 +127,3 @@ function Bank(): JSX.Element {
   );
 }
 export default Bank;
-
-interface SetIsClickType {
-  setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
-  currentMoney: string;
-  IntAfterCurrentMoney: number;
-}
