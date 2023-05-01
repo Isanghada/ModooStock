@@ -71,7 +71,22 @@ interface UpdateStateInterFace {
   introduction: string;
   profileImagePath: string;
 }
-
+interface ReturnInfoInterFace {
+  data: {
+    dateList: [
+      {
+        date: string;
+      }
+    ],
+    stockList: [
+      {
+        kind: string;
+        price: number;
+        stockId: number;
+      }
+    ]
+  },
+}
 interface ReturnStockListInterFace {
   data: {
     euro: Array<{
@@ -161,7 +176,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', "NewsApi"],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -285,6 +300,14 @@ export const Api = createApi({
       invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }, { type: 'UserApi' }]
     }),
 
+    // ------------- 뉴스 -------------
+    // 1. 현재 뉴스 목록
+    getNewsInfo: builder.query<ReturnInfoInterFace, string>({
+      query: () => `/info`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'NewsApi' }];
+      }
+    }),   
     // ------------- 주식 -------------
 
     // 1. 현재 주식 정보 리스트
@@ -305,6 +328,8 @@ export const Api = createApi({
   })
 });
 
+
+
 // 임시저장
 export const {
   // ------------- 유저 -------------
@@ -322,6 +347,9 @@ export const {
   useDeleteBankMutation,
   usePostBankTransferMutation,
 
+  // ------------- 뉴스 -------------
+  useGetNewsInfoQuery,
+  
   // ------------- 주식 -------------
   useGetStockQuery,
   useLazyGetStockSelectQuery

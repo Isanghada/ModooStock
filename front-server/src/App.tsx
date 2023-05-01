@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Mypage from 'Components/Mypage/Mypage';
 import Exchange from 'Components/Exchange/Exchange';
 import Travel from 'Components/Travel/Travel';
+import InfoShop from 'Components/InfoShop/InfoShop';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/mypage" element={<Mypage />} />
           <Route path="/exchange" element={<Exchange />} />
           <Route path="/travel/:nickname" element={<Travel />} />
+          <Route path="/infoshop" element={<InfoShop />} />
         </Route>
       </Routes>
     </>
