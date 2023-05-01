@@ -1,9 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetUsersInfoQuery } from 'Store/api';
+import { useGetUsersInfoQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeChattingStatus, changeCurrentMoneyStatusStatus, changeMenuStatus } from 'Store/store';
+import {
+  changeChattingStatus,
+  changeCurrentMoneyStatusStatus,
+  changeMenuStatus,
+  getCurrentDataIndex
+} from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
+import schedule from 'node-schedule';
+import { toast } from 'react-toastify';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
 
@@ -17,7 +24,8 @@ function Navbar(): JSX.Element {
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
 
   // 내 정보 API
-  const [getUsersInfo] = useLazyGetUsersInfoQuery();
+  const { data: dataUserInfo } = useGetUsersInfoQuery('');
+
   // 전체 스크린 높이
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
@@ -54,22 +62,16 @@ function Navbar(): JSX.Element {
   };
 
   useEffect(() => {
-    const getMyInfo = async () => {
-      // 내 정보 가져오기 API
-      const { data } = await getUsersInfo('');
-      // 닉네임 세팅
-      if (data) {
-        const { nickname, currentMoney, totalStockReturn } = data.data;
-        setMyNickName(nickname);
-        setCurrentMoney(currentMoney.toLocaleString());
-        dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
-        setTotalStockReturn(totalStockReturn);
-        localStorage.setItem('nickname', nickname);
-      }
-    };
-    getMyInfo();
+    if (dataUserInfo) {
+      const { nickname, currentMoney, totalStockReturn } = dataUserInfo.data;
+      setMyNickName(nickname);
+      setCurrentMoney(currentMoney.toLocaleString());
+      dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
+      setTotalStockReturn(totalStockReturn);
+      localStorage.setItem('nickname', nickname);
+    }
     // 현재 잔액 변경될 때 실행되도록 추가
-  }, [currentMoneyStatus]);
+  }, [currentMoneyStatus, dataUserInfo]);
 
   useEffect(() => {
     // 창 높이 변할떄마다 실행
@@ -114,6 +116,30 @@ function Navbar(): JSX.Element {
         break;
     }
   };
+  // 인덱스 구하는 함수
+  const getIndex = () => {
+    const now = new Date();
+    // 10시 시작 시간
+    const start = new Date();
+    start.setHours(10, 0, 0, 0);
+    // 계산
+    const diff = now.getTime() - start.getTime();
+    const index = Math.floor(diff / (4 * 60 * 1000));
+
+    // 받아온 데이터 세팅
+    dispatch(getCurrentDataIndex(index));
+  }
+
+  useEffect(() => {
+    getIndex();
+    // 스케쥴러 4분마다 실행
+    const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
+      getIndex();
+      const currentDate = new Date().toLocaleString('ko-kr');
+      console.log(currentDate, "4분마다?");
+      toast.info('새로운 정보가 들어왔습니다');
+    });
+  }, []);
 
   return (
     <>

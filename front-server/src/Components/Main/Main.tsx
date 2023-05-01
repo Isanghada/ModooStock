@@ -50,6 +50,9 @@ function Main(): JSX.Element {
       case '주식 거래소':
         navigate('/exchange');
         break;
+      case '정보상':
+        navigate('/infoshop');
+        break;
 
       default:
         break;
@@ -239,6 +242,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/info.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[6%]"></div>

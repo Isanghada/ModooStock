@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
 import { useLazyGetUsersLogoutQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
-import Modal from 'Components/Common/ConfirmModal';
+import ConfirmModal from 'Components/Common/ConfirmModal';
 import { toast } from 'react-toastify';
 
 const screenHeight = window.screen.height;
@@ -64,7 +64,7 @@ function Menu(): JSX.Element {
 
   return (
     <>
-      <Modal
+      <ConfirmModal
         isOpen={modalOpen}
         msg={'정말 나가실건가요? o(TヘTo)'}
         propsFunction={logout}
@@ -94,7 +94,7 @@ function Menu(): JSX.Element {
               aria-label='나가기'
               onClick={onClick}
               src="/chatting/cancelBlack.png"
-              className="absolute cursor-pointer opacity-60 lg:w-8 lg:h-8 top-2 right-2 hover:opacity-80"
+              className="absolute w-2 h-2 cursor-pointer opacity-60 lg:w-8 lg:h-8 top-2 right-2 hover:opacity-80"
               alt="cancelBlack"
             />
             <div className="w-1/2">

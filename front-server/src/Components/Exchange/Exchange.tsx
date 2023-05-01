@@ -1,14 +1,31 @@
-import React, { PureComponent, useRef, useState } from 'react';
+import React, { PureComponent, useEffect, useRef, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
 import styled from './Exchange.module.css';
+import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazyGetStockSelectQuery } from 'Store/api';
+import schedule from 'node-schedule';
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 
 function Exchange(): JSX.Element {
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
+  const [isEnterpriseClick, setsEnterpriseClick] = useState<string>('');
+  const nowDate = new Date();
+  const { data: getStock, isLoading: isLoading1, isError: isError1 } = useGetStockQuery('');
+  const [lazyGetStock, { isLoading: isLoading3, isError: isError3 }] = useLazyGetStockQuery();
+  const [lazyGetStockData, setLazyGetStockData] = useState<any>();
+
+  // const { data: getStockSelectDefault, isLoading: isLoading2, isError: isError2 } = useGetStockSelectQuery();
+  const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
+  // sse 적용하는 코드?
+  const [eventList, setEventList] = useState<any>();
+  const [listening, setListening] = useState<boolean>(false);
+  const [respon, setRespon] = useState<boolean>(false);
+  const [sseData, setSseData] = useState({});
+  let eventSource: EventSource | null = null;
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
@@ -36,25 +53,118 @@ function Exchange(): JSX.Element {
     }
   };
 
+  useEffect(() => {
+    // 최초 연결
+    if (eventSource !== null) {
+      eventSource.onopen = (event) => {
+        setListening(true);
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+        setListening(false);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // const firstLogin = async () => {
+    //   await selectStockData(4);
+    // };
+    // firstLogin();
+  }, []);
+
+  // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
+  //   setTimeout(() => {
+  //     const currentDate = nowDate.toLocaleString('ko-kr')
+  //     console.log(nowDate.getTime());
+  //   }, 1000);
+  //   job.cancel(true);
+  // });
+
+  const selectStockData = async (stockId: number) => {
+    const token = localStorage.getItem('accessToken');
+    console.log('여기까지 오는가??');
+
+    // 함수가 호출될 때마다 listening 값을 초기화합니다.
+    let listening = false;
+
+    // 이전 요청 취소
+    if (eventSource !== null) {
+      console.log('이전 요청 취소 실행?');
+
+      eventSource.close();
+      setListening(false);
+    }
+
+    if (!listening && token && !eventSource) {
+      eventSource = await new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/${stockId}`, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
+        // heartbeatTimeout: 8700,
+        withCredentials: true
+      });
+
+      // 서버에서 메시지 날릴 때
+      eventSource.onmessage = (event) => {
+        setSseData(event.data);
+        setRespon(true);
+        console.log('event.data: ', event.data);
+        console.log('onmessage로 메세지 받았다!!');
+      };
+    }
+  };
+
+  const clickStock = async (e: React.MouseEvent) => {
+    setsEnterpriseClick(e.currentTarget.innerHTML);
+
+    if (e.currentTarget.ariaLabel !== null) {
+      console.log(e.currentTarget.ariaLabel);
+
+      await selectStockData(parseInt(e.currentTarget.ariaLabel));
+      setListening(false);
+      console.log('eventSource: ', eventSource);
+    }
+  };
+
   return (
     <>
+      {isLoading1 && isLoading2 && <div>로딩</div>}
+      {isError1 && isError2 && <div>에러</div>}
       <IRModal isIRClick={isIRClick} setIsIRClick={setIsIRClick} />
       <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
       <MobileInfo isMobileInfo={isMobileInfo} setIsMobileInfo={setIsMobileInfo} />
       <div className="flex flex-col items-center justify-center w-full h-full pt-[12vh] md:pt-[10vh]">
         <div className="flex justify-between w-full border-b-4">
           <div className="flex justify-start items-end w-3/5 text-[1rem] md:text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
-            <div className="px-3 transition-all duration-300 cursor-pointer hover:scale-105">
-              <span>A 전자</span>
+            <div
+              aria-label={`${getStock?.data.stockList[0].stockId}`}
+              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+              onClick={clickStock}>
+              {getStock?.data.stockList[0].kind}
             </div>
-            <div className="px-3 transition-all duration-300 cursor-pointer hover:scale-105">
-              <span>B 화학</span>
+            <div
+              aria-label={`${getStock?.data.stockList[1].stockId}`}
+              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+              onClick={clickStock}>
+              {getStock?.data.stockList[1].kind}
             </div>
-            <div className="px-3 transition-all duration-300 cursor-pointer hover:scale-105">
-              <span>C 생명</span>
+            <div
+              aria-label={`${getStock?.data.stockList[2].stockId}`}
+              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+              onClick={clickStock}>
+              {getStock?.data.stockList[2].kind}
             </div>
-            <div className="px-3 transition-all duration-300 cursor-pointer hover:scale-105">
-              <span>G IT</span>
+            <div
+              aria-label={`${getStock?.data.stockList[3].stockId}`}
+              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+              onClick={clickStock}>
+              {getStock?.data.stockList[3].kind}
             </div>
           </div>
           <div className="flex items-end justify-end w-2/5">
@@ -70,7 +180,7 @@ function Exchange(): JSX.Element {
               />
             </div>
             <div className="flex flex-col items-end text-[0.68rem] lg:text-[1rem]">
-              <span className="font-semibold leading-[0.6rem]">시간</span>
+              <span className="font-semibold leading-[0.6rem]">날짜</span>
               <span className="text-[0.9rem] lg:text-[1.5rem] font-bold">20XX.03.17</span>
             </div>
           </div>
@@ -84,7 +194,7 @@ function Exchange(): JSX.Element {
               <div className="flex items-end justify-between w-full pt-2 font-bold">
                 <div className="flex items-end space-x-1">
                   <span className="text-[1.7rem]">나의 투자 현황</span>
-                  <span className="text-[1rem] font-semibold">A 전자</span>
+                  <span className="text-[1rem] font-semibold">{getStock?.data.stockList[0].kind}</span>
                 </div>
                 <div
                   aria-label="기업활동"
@@ -953,11 +1063,11 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                 <option value="사업 보고서">사업 보고서</option>
               </select>
             </div>
-            <div className="flex flex-col items-start justify-start w-full font-bold border-b-2 pb-3 lg:pb-10">
+            <div className="flex flex-col items-start justify-start w-full pb-3 font-bold border-b-2 lg:pb-10">
               <div className="w-full px-2">
                 <span>1분기 보고서</span>
               </div>
-              <div className="flex items-center w-full justify-evenly mb-2 lg:mb-4">
+              <div className="flex items-center w-full mb-2 justify-evenly lg:mb-4">
                 <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
                   <div>
                     <img
@@ -966,7 +1076,7 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                       alt="IR"
                     />
                   </div>
-                  <div className="flex flex-col justify-start items-center">
+                  <div className="flex flex-col items-center justify-start">
                     <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 수익</span>
                   </div>
@@ -979,7 +1089,7 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                       alt="IR"
                     />
                   </div>
-                  <div className="flex flex-col justify-start items-center">
+                  <div className="flex flex-col items-center justify-start">
                     <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 이익</span>
                   </div>
@@ -992,7 +1102,7 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                       alt="IR"
                     />
                   </div>
-                  <div className="flex flex-col justify-start items-center">
+                  <div className="flex flex-col items-center justify-start">
                     <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총자본</span>
                   </div>
@@ -1005,7 +1115,7 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                       alt="IR"
                     />
                   </div>
-                  <div className="flex flex-col justify-start items-center">
+                  <div className="flex flex-col items-center justify-start">
                     <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총부채</span>
                   </div>
