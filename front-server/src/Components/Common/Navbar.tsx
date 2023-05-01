@@ -2,8 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersInfoQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeChattingStatus, changeCurrentMoneyStatusStatus, changeMenuStatus } from 'Store/store';
+import {
+  changeChattingStatus,
+  changeCurrentMoneyStatusStatus,
+  changeMenuStatus,
+  getCurrentDataIndex
+} from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
+import schedule from 'node-schedule';
+import { toast } from 'react-toastify';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
 
@@ -109,6 +116,30 @@ function Navbar(): JSX.Element {
         break;
     }
   };
+  // 인덱스 구하는 함수
+  const getIndex = () => {
+    const now = new Date();
+    // 10시 시작 시간
+    const start = new Date();
+    start.setHours(10, 0, 0, 0);
+    // 계산
+    const diff = now.getTime() - start.getTime();
+    const index = Math.floor(diff / (4 * 60 * 1000));
+
+    // 받아온 데이터 세팅
+    dispatch(getCurrentDataIndex(index));
+  }
+
+  useEffect(() => {
+    getIndex();
+    // 스케쥴러 4분마다 실행
+    const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
+      getIndex();
+      const currentDate = new Date().toLocaleString('ko-kr');
+      console.log(currentDate, "4분마다?");
+      toast.info('새로운 정보가 들어왔습니다');
+    });
+  }, []);
 
   return (
     <>
