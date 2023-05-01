@@ -65,6 +65,13 @@ interface ReturnBankListInterFace {
   result: string;
 }
 
+interface UpdateStateInterFace {
+  nickname: string;
+  password: string;
+  introduction: string;
+  profileImagePath: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -173,6 +180,19 @@ export const Api = createApi({
         return [{ type: 'UserApi' }];
       }
     }),
+    // 6. 회원정보수정
+    putUsersInfo: builder.mutation<ReturnBasicInterFace, UpdateStateInterFace>({
+      query: (data) => {
+        return {
+          url: `/users`,
+          method: 'PUT',
+          body: data
+        };
+      },
+      invalidatesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
 
     // ------------- 은행 -------------
 
@@ -239,6 +259,7 @@ export const {
   useLazyGetUsersRandomQuery,
   useLazyGetUsersLogoutQuery,
   useLazyGetUsersNicknameQuery,
+  usePutUsersInfoMutation,
 
   // ------------- 은행 -------------
   useGetBankQuery,
