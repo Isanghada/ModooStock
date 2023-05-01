@@ -47,6 +47,15 @@ interface ReturnUsersLogoutInterFace {
   result: string;
 }
 
+interface ReturnTravelInfoInterFace { 
+  data: {
+    profileImagePath: string,
+    nickname:  string,
+    introduction: string,
+    totalCash: number,
+  };
+}
+
 interface ReturnBankInterFace {
   data: {
     currentMoney: number;
@@ -194,6 +203,13 @@ export const Api = createApi({
       }
     }),
 
+    getUsersTravelInfo: builder.query<ReturnTravelInfoInterFace, string>({
+      query: (nickname) => `/users/info/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
     // ------------- 은행 -------------
 
     // 1. 내 통장 잔고
@@ -260,6 +276,7 @@ export const {
   useLazyGetUsersLogoutQuery,
   useLazyGetUsersNicknameQuery,
   usePutUsersInfoMutation,
+  useGetUsersTravelInfoQuery,
 
   // ------------- 은행 -------------
   useGetBankQuery,

@@ -138,7 +138,7 @@ const VisitModal = ({ onClose }: Props) => {
   const [getUsersRandom] = useLazyGetUsersRandomQuery();
   const navigate = useNavigate();
 
-  // TODO 랜덤 방문 API 호출
+  // 랜덤 방문 API 호출
   const handleRandomVisit = async() => { 
     // 랜덤 유저 API
     const { data } = await getUsersRandom('');
