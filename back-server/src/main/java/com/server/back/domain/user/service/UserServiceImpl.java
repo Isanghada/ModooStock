@@ -296,7 +296,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserResDto getUserRandom() {
         Long userId = authService.getUserId(); // 로그인한 유저인 본인 제외
-        UserEntity user = userRepository.findRandomUserExcluding(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        
+        // 본인과 탈퇴 회원 제외 랜덤 회원 1명 반환
+        UserEntity user = userRepository.findRandomUserExcludingAndIsDeleted(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return UserResDto.fromEntity(user);
     }
 
