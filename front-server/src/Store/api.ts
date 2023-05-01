@@ -47,12 +47,12 @@ interface ReturnUsersLogoutInterFace {
   result: string;
 }
 
-interface ReturnTravelInfoInterFace { 
+interface ReturnTravelInfoInterFace {
   data: {
-    profileImagePath: string,
-    nickname:  string,
-    introduction: string,
-    totalCash: number,
+    profileImagePath: string;
+    nickname: string;
+    introduction: string;
+    totalCash: number;
   };
 }
 
@@ -86,15 +86,15 @@ interface ReturnInfoInterFace {
       {
         date: string;
       }
-    ],
+    ];
     stockList: [
       {
         kind: string;
         price: number;
         stockId: number;
       }
-    ]
-  },
+    ];
+  };
 }
 interface ReturnStockListInterFace {
   data: {
@@ -185,7 +185,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', "NewsApi"],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -323,7 +323,7 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'NewsApi' }];
       }
-    }),   
+    }),
     // ------------- 주식 -------------
 
     // 1. 현재 주식 정보 리스트
@@ -343,8 +343,6 @@ export const Api = createApi({
     })
   })
 });
-
-
 
 // 임시저장
 export const {
@@ -366,8 +364,10 @@ export const {
 
   // ------------- 뉴스 -------------
   useGetNewsInfoQuery,
-  
+
   // ------------- 주식 -------------
   useGetStockQuery,
+  useLazyGetStockQuery,
+  useGetStockSelectQuery,
   useLazyGetStockSelectQuery
 } = Api;
