@@ -31,9 +31,11 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full  overflow-auto bg-gray-800 bg-opacity-50">
-      <div ref={modalRef} className="relative p-6 lg:p-8 bg-white rounded-[25px] shadow-2xl"
+      <div
+        ref={modalRef}
+        className="relative p-6 lg:p-8 bg-white rounded-[25px] shadow-2xl"
         style={{
-          filter: "drop-shadow(4px 4px 10px rgba(0,0,0,0.25))",
+          filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
         }}>
         {children}
       </div>

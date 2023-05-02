@@ -14,6 +14,7 @@ import Rank from 'Components/Rank/Rank';
 import Error from 'Components/Common/Error';
 import InfoShop from 'Components/InfoShop/InfoShop';
 import Loading from 'Components/Common/Loading';
+import Lottery from 'Components/MiniGame/Lottery';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/travel/:nickname" element={<Travel />} />
           <Route path="/rank" element={<Rank />} />
           <Route path="/infoshop" element={<InfoShop />} />
+          <Route path="/lottery" element={<Lottery />} />
         </Route>
         <Route path="/error" element={<Error />} />
         <Route path="/loading" element={<Loading />} />
