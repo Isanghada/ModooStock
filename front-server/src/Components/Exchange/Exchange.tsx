@@ -1,30 +1,105 @@
 import React, { PureComponent, useEffect, useRef, useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
 import styled from './Exchange.module.css';
 import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazyGetStockSelectQuery } from 'Store/api';
 import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import Chart from './Chart';
+
+interface CahrtDataType {
+  일자: string;
+  종가: number;
+}
+
+interface SelectDataType {
+  changeRate: number;
+  companyId: number;
+  date: string;
+  id: number;
+  priceBefore: number;
+  priceEnd: number;
+}
+
+interface StandardType {
+  standardType: string;
+  date: string;
+  price: number;
+}
+
+interface NationalType {
+  nationalCode: string;
+  date: string;
+  price: number;
+}
 
 function Exchange(): JSX.Element {
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
-  const [isEnterpriseClick, setsEnterpriseClick] = useState<string>('');
   const nowDate = new Date();
-  const { data: getStock, isLoading: isLoading1, isError: isError1 } = useGetStockQuery('');
-  const [lazyGetStock, { isLoading: isLoading3, isError: isError3 }] = useLazyGetStockQuery();
+  const [lazyGetStock, { isLoading: isLoading1, isError: isError1 }] = useLazyGetStockQuery();
   const [lazyGetStockData, setLazyGetStockData] = useState<any>();
+  const [selectCurrentData, setSelectCurrentData] = useState<SelectDataType>({
+    changeRate: 0,
+    companyId: 0,
+    date: '',
+    id: 0,
+    priceBefore: 0,
+    priceEnd: 0
+  });
+  // 선택한 종목의 차트를 위한 데이터
+  const [selectChartData, setSelectChartData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 유가
+  const [oilData, setOilData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 금
+  const [goldData, setGoldData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 유로
+  const [euroData, setEuroData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 엔화
+  const [jypData, setJypData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 달러
+  const [usdData, setUsdData] = useState<CahrtDataType[]>([
+    {
+      일자: '',
+      종가: 0
+    }
+  ]);
+  // 국제시장 환율 클릭 0:미국, 1:일본, 2:유럽연합
+  const [clickNational, setClickNational] = useState<number>(0);
+  const [clickNationalName, setClickNationalName] = useState<string>('');
 
-  // const { data: getStockSelectDefault, isLoading: isLoading2, isError: isError2 } = useGetStockSelectQuery();
-  const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
   // sse 적용하는 코드?
   const [eventList, setEventList] = useState<any>();
   const [listening, setListening] = useState<boolean>(false);
   const [respon, setRespon] = useState<boolean>(false);
-  const [sseData, setSseData] = useState({});
+  const [sseData, setSseData] = useState<any>();
   let eventSource: EventSource | null = null;
 
   const click = (e: React.MouseEvent) => {
@@ -50,6 +125,15 @@ function Exchange(): JSX.Element {
       case '기업활동':
         setIsIRClick((pre) => !pre);
         break;
+      case '미국':
+        setClickNational(0);
+        break;
+      case '일본':
+        setClickNational(1);
+        break;
+      case '유럽연합':
+        setClickNational(2);
+        break;
     }
   };
 
@@ -71,11 +155,14 @@ function Exchange(): JSX.Element {
   useEffect(() => {
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
+      setLazyGetStockData(data);
+
       await selectStockData(data.stockList[0].stockId);
     };
     firstLogin();
   }, []);
 
+  // 스케줄러
   // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
   //   setTimeout(() => {
   //     const currentDate = nowDate.toLocaleString('ko-kr')
@@ -83,6 +170,100 @@ function Exchange(): JSX.Element {
   //   }, 1000);
   //   job.cancel(true);
   // });
+
+  useEffect(() => {
+    if (sseData) {
+      const { stockId, amount, average, rate, stockChartResDto } = sseData;
+      // 선택한 데이터의 마지막 날에 대한 데이터
+      setSelectCurrentData(stockChartResDto[stockChartResDto.length - 1]);
+      // 선택한 데이터의 차트 데이터
+      const SelectChartdata = stockChartResDto.map((data: SelectDataType) => {
+        return {
+          일자: data.date,
+          종가: data.priceEnd
+        };
+      });
+      setSelectChartData(SelectChartdata);
+
+      // 오일, 금, 환율 데이터
+      const startDate = new Date(stockChartResDto[0].date);
+      const endDate = new Date(stockChartResDto[stockChartResDto.length - 1].date);
+      const { euro, gold, jyp, oil, stockList, usd } = lazyGetStockData;
+      // 주식 이름 변경
+      if (clickNationalName === '') {
+        setClickNationalName(stockList[0].kind);
+      }
+      // 오일 주식
+      const oilData = oil
+        .filter((data: StandardType) => {
+          const date = new Date(data.date);
+          return startDate <= date && date <= endDate;
+        })
+        .map((data: StandardType) => {
+          return {
+            일자: data.date,
+            종가: data.price
+          };
+        });
+      setOilData(oilData);
+
+      // 금 주식
+      const goldData = gold
+        .filter((data: StandardType) => {
+          const date = new Date(data.date);
+          return startDate <= date && date <= endDate;
+        })
+        .map((data: StandardType) => {
+          return {
+            일자: data.date,
+            종가: data.price
+          };
+        });
+      setGoldData(goldData);
+
+      // 유로 주식
+      const euroData = euro
+        .filter((data: StandardType) => {
+          const date = new Date(data.date);
+          return startDate <= date && date <= endDate;
+        })
+        .map((data: StandardType) => {
+          return {
+            일자: data.date,
+            종가: data.price
+          };
+        });
+      setEuroData(euroData);
+
+      // 엔화 주식
+      const jypData = jyp
+        .filter((data: StandardType) => {
+          const date = new Date(data.date);
+          return startDate <= date && date <= endDate;
+        })
+        .map((data: StandardType) => {
+          return {
+            일자: data.date,
+            종가: data.price
+          };
+        });
+      setJypData(jypData);
+
+      // 달러 주식
+      const usdData = usd
+        .filter((data: StandardType) => {
+          const date = new Date(data.date);
+          return startDate <= date && date <= endDate;
+        })
+        .map((data: StandardType) => {
+          return {
+            일자: data.date,
+            종가: data.price
+          };
+        });
+      setUsdData(usdData);
+    }
+  }, [sseData]);
 
   const selectStockData = async (stockId: number) => {
     const token = localStorage.getItem('accessToken');
@@ -113,16 +294,19 @@ function Exchange(): JSX.Element {
 
       // 서버에서 메시지 날릴 때
       eventSource.onmessage = (event) => {
-        setSseData(event.data);
+        setSseData(JSON.parse(event.data));
         setRespon(true);
-        console.log('event.data: ', event.data);
+        // console.log('event.data: ', event.data);
         console.log('onmessage로 메세지 받았다!!');
       };
     }
   };
 
   const clickStock = async (e: React.MouseEvent) => {
-    setsEnterpriseClick(e.currentTarget.innerHTML);
+    e.stopPropagation();
+    console.log('e.currentTarget.innerHTML: ', e.currentTarget.innerHTML);
+
+    setClickNationalName(e.currentTarget.innerHTML);
 
     if (e.currentTarget.ariaLabel !== null) {
       console.log(e.currentTarget.ariaLabel);
@@ -135,467 +319,437 @@ function Exchange(): JSX.Element {
 
   return (
     <>
-      {isLoading1 && isLoading2 && <div>로딩</div>}
-      {isError1 && isError2 && <div>에러</div>}
-      <IRModal isIRClick={isIRClick} setIsIRClick={setIsIRClick} />
-      <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
-      <MobileInfo isMobileInfo={isMobileInfo} setIsMobileInfo={setIsMobileInfo} />
-      <div className="flex flex-col items-center justify-center w-full h-full pt-[12vh] md:pt-[10vh]">
-        <div className="flex justify-between w-full border-b-4">
-          <div className="flex justify-start items-end w-3/5 text-[1rem] md:text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
-            <div
-              aria-label={`${getStock?.data.stockList[0].stockId}`}
-              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
-              onClick={clickStock}>
-              {getStock?.data.stockList[0].kind}
-            </div>
-            <div
-              aria-label={`${getStock?.data.stockList[1].stockId}`}
-              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
-              onClick={clickStock}>
-              {getStock?.data.stockList[1].kind}
-            </div>
-            <div
-              aria-label={`${getStock?.data.stockList[2].stockId}`}
-              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
-              onClick={clickStock}>
-              {getStock?.data.stockList[2].kind}
-            </div>
-            <div
-              aria-label={`${getStock?.data.stockList[3].stockId}`}
-              className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
-              onClick={clickStock}>
-              {getStock?.data.stockList[3].kind}
-            </div>
-          </div>
-          <div className="flex items-end justify-end w-2/5">
-            <div
-              aria-label="신문"
-              className="relative flex-col items-center hidden pr-2 transition-all duration-300 lg:flex hover:scale-105"
-              onClick={click}>
-              <span className="pb-5 lg:pb-9 text-[0.8rem] lg:text-[1.1rem] text-[#FF4F4F] font-bold">신문 스크랩</span>
-              <img
-                className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem] cursor-pointer"
-                src="/images/icons/news.png"
-                alt=""
-              />
-            </div>
-            <div className="flex flex-col items-end text-[0.68rem] lg:text-[1rem]">
-              <span className="font-semibold leading-[0.6rem]">날짜</span>
-              <span className="text-[0.9rem] lg:text-[1.5rem] font-bold">20XX.03.17</span>
-            </div>
-          </div>
-        </div>
-        {/* 클릭한 주식 데이터 */}
-        <div className="flex items-start justify-between w-full pt-2 lg:pt-5">
-          {/* 왼쪽 차트 */}
-          {/* 데스크탑 */}
-          <div className="hidden flex-col justify-center px-2 w-[70%] lg:flex">
-            <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
-              <div className="flex items-end justify-between w-full pt-2 font-bold">
-                <div className="flex items-end space-x-1">
-                  <span className="text-[1.7rem]">나의 투자 현황</span>
-                  <span className="text-[1rem] font-semibold">{getStock?.data.stockList[0].kind}</span>
+      {isLoading1 ? (
+        <div>로딩</div>
+      ) : (
+        <>
+          <IRModal isIRClick={isIRClick} setIsIRClick={setIsIRClick} />
+          <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
+          {isMobileInfo && (
+            <MobileInfo
+              isMobileInfo={isMobileInfo}
+              setIsMobileInfo={setIsMobileInfo}
+              oilData={oilData}
+              goldData={goldData}
+              usdData={usdData}
+              jypData={jypData}
+              euroData={euroData}
+            />
+          )}
+
+          <div className="flex flex-col items-center justify-center w-full h-full pt-[12vh] md:pt-[10vh]">
+            <div className="flex justify-between w-full border-b-4">
+              <div className="flex justify-start items-end w-3/5 text-[1rem] md:text-[1.2rem] lg:text-[1.7rem] space-x-3 font-black">
+                <div
+                  aria-label={`${lazyGetStockData?.stockList[0].stockId}`}
+                  className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+                  onClick={clickStock}>
+                  {lazyGetStockData?.stockList[0].kind}
                 </div>
                 <div
-                  aria-label="기업활동"
-                  className="flex items-center space-x-1 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-105"
+                  aria-label={`${lazyGetStockData?.stockList[1].stockId}`}
+                  className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+                  onClick={clickStock}>
+                  {lazyGetStockData?.stockList[1].kind}
+                </div>
+                <div
+                  aria-label={`${lazyGetStockData?.stockList[2].stockId}`}
+                  className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+                  onClick={clickStock}>
+                  {lazyGetStockData?.stockList[2].kind}
+                </div>
+                <div
+                  aria-label={`${lazyGetStockData?.stockList[3].stockId}`}
+                  className="px-3 transition-all duration-300 cursor-pointer hover:scale-105"
+                  onClick={clickStock}>
+                  {lazyGetStockData?.stockList[3].kind}
+                </div>
+              </div>
+              <div className="flex items-end justify-end w-2/5">
+                <div
+                  aria-label="신문"
+                  className="relative flex-col items-center hidden pr-2 transition-all duration-300 lg:flex hover:scale-105"
                   onClick={click}>
-                  <span className="text-[#707070] text-[1.3rem]">기업활동</span>
-                  <span>🍳</span>
-                </div>
-              </div>
-              {/* 데이터 */}
-              <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold">
-                <div className="flex items-end space-x-1 text-[#006EC9]">
-                  <span className="text-[1.5rem]">- 48,424</span>
-                  <span className="text-[1rem]">(6.74 %)</span>
-                </div>
-                <div className="flex space-x-3 items-end  text-[1.5rem]">
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[1rem]">보유수량</span>
-                    <span className="text-black">10</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <span className=" items-end text-[1rem]">평균단가</span>
-                    <span className="text-black">70,250</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[1rem]">현재가</span>
-                    <span className="text-[#006EC9]">65,800</span>
-                  </div>
-                </div>
-              </div>
-              {/* 차트 */}
-              <div className="w-full h-[15rem] bg-white">
-                <Chart />
-              </div>
-            </div>
-            <div className="flex justify-between w-full mt-3">
-              {/* 유가 시세 */}
-              <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
-                <div className="flex items-end justify-between w-full pt-2">
-                  <div>
-                    <span>유가 시세</span>
-                  </div>
-                  <div>
-                    <span className="text-[#006EC9]">82.16</span>
-                    <span>원</span>
-                    <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
-                  </div>
-                </div>
-                <div className="w-full h-[9rem] text-[0.8rem]">
-                  <Chart />
-                </div>
-              </div>
-              {/* 금 시세 */}
-              <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
-                <div className="flex items-end justify-between w-full pt-2">
-                  <div>
-                    <span>금 시세</span>
-                  </div>
-                  <div>
-                    <span className="text-[#006EC9]">82.16</span>
-                    <span>원</span>
-                    <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
-                  </div>
-                </div>
-                <div className="w-full h-[9rem] text-[0.8rem]">
-                  <Chart />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* 모바일 */}
-          <div className="flex flex-col justify-center px-2 w-[68%] lg:hidden">
-            <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
-              <div className="flex items-end justify-between w-full pt-2 font-bold">
-                <div className="flex items-end space-x-1">
-                  <span className="text-[1rem]">나의 투자 현황</span>
-                  <span className="text-[0.7rem] font-semibold">A 전자</span>
-                </div>
-                {/* <div className="flex items-center space-x-1">
-                  <span className="text-[#707070] text-[0.7rem]">기업활동</span>
-                  <span className="">🍳</span>
-                </div> */}
-              </div>
-              {/* 데이터 */}
-              <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold pt-1 pb-2 ">
-                <div className="flex items-end space-x-1 text-[#006EC9]">
-                  <span className="text-[1rem]">- 48,424</span>
-                  <span className="text-[0.7rem]">(6.74 %)</span>
-                </div>
-                <div className="flex space-x-2 md:space-x-3 items-end text-[0.8rem] md:text-[1rem]">
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[0.7rem]">보유수량</span>
-                    <span className="text-black">10</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <span className=" items-end text-[0.7rem]">평균단가</span>
-                    <span className="text-black">70,250</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[0.7rem]">현재가</span>
-                    <span className="text-[#006EC9]">65,800</span>
-                  </div>
-                </div>
-              </div>
-              {/* 차트 */}
-              <div className="w-full h-[12rem] md:h-[12.7rem] flex justify-start text-[0.7rem] bg-white">
-                <Chart />
-              </div>
-            </div>
-          </div>
-          {/* 오른쪽 주식 거래 및 차트 */}
-          {/* 데스크탑 */}
-          <div className="hidden flex-col w-[28%] space-y-3 justify-end items-start lg:flex">
-            {/* 갱신 시간 */}
-            <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
-              <div className="flex justify-between w-full text-[1.2rem] px-[5%] font-semibold">
-                <div className="w-[55%] text-center">
-                  <span className="text-[#FF5151]">종목 갱신</span>
-                </div>
-                <div className="w-2/5 text-center">
-                  <span className="text-[#00A3FF]">날짜 갱신</span>
-                </div>
-              </div>
-              <div className="flex justify-between w-full text-[1.6rem] font-bold  px-[5%]">
-                <div className="flex items-start justify-center w-[55%]">
-                  <div className="flex flex-col items-center">
-                    <span>24 :</span>
-                    <span className="text-[0.8rem] font-medium">시간&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>27 :</span>
-                    <span className="text-[0.8rem] font-medium">분&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>54</span>
-                    <span className="text-[0.8rem] font-medium">초</span>
-                  </div>
-                </div>
-                <div className="flex items-start justify-center w-2/5">
-                  <div className="flex flex-col items-center">
-                    <span>02 :</span>
-                    <span className="text-[0.8rem] font-medium">분&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>17</span>
-                    <span className="text-[0.8rem] font-medium">초</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* 주식 거래 */}
-            <div className="w-full bg-white rounded-lg">
-              <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-2">
-                <div className="w-full">
-                  <span className="text-[1.5rem] font-extrabold">주식 거래</span>
-                </div>
-                <div className="w-full">
-                  <input
-                    className="bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3 py-2 text-end w-full outline-[#e2a2a7] placeholder:text-[0.8rem]"
-                    type="text"
-                    placeholder={tradingVolume === 0 ? '거래량을 입력하세요.' : ''}
-                    value={tradingVolume === 0 ? '' : `${tradingVolume}개`}
+                  <span className="pb-5 lg:pb-9 text-[0.8rem] lg:text-[1.1rem] text-[#FF4F4F] font-bold">
+                    신문 스크랩
+                  </span>
+                  <img
+                    className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem] cursor-pointer"
+                    src="/images/icons/news.png"
+                    alt=""
                   />
                 </div>
-                <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
-                  <div
-                    aria-label="1개"
-                    className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                    onClick={click}>
-                    <span>+1개</span>
-                  </div>
-                  <div
-                    aria-label="10개"
-                    className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                    onClick={click}>
-                    <span>+10개</span>
-                  </div>
-                  <div
-                    aria-label="100개"
-                    className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                    onClick={click}>
-                    <span>+100개</span>
-                  </div>
-                  <div
-                    aria-label="1000개"
-                    className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                    onClick={click}>
-                    <span>+1000개</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
-                  <div className="w-[45%] py-1 cursor-pointer hover:bg-[#1860ef] bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
-                    <span>매도</span>
-                  </div>
-                  <div className="w-[45%] py-1 cursor-pointer hover:bg-[#f90025fd] bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
-                    <span>매수</span>
-                  </div>
+                <div className="flex flex-col items-end text-[0.68rem] lg:text-[1rem]">
+                  <span className="font-semibold leading-[0.6rem]">날짜</span>
+                  <span className="text-[0.9rem] lg:text-[1.5rem] font-bold">{selectCurrentData.date}</span>
                 </div>
               </div>
             </div>
-            {/* 국제시장환율 */}
-            <div className="flex flex-col items-start w-full text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
-              <div className="flex flex-col items-end justify-between w-full py-2">
-                <div className="w-full">
-                  <span>국제시장 환율</span>
+            {/* 클릭한 주식 데이터 */}
+            <div className="flex items-start justify-between w-full pt-2 lg:pt-5">
+              {/* 왼쪽 차트 */}
+              {/* 데스크탑 */}
+              <div className="hidden flex-col justify-center px-2 w-[70%] lg:flex">
+                <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
+                  <div className="flex items-end justify-between w-full pt-2 font-bold">
+                    <div className="flex items-end space-x-1">
+                      <span className="text-[1.7rem]">나의 투자 현황</span>
+                      <span className="text-[1rem] font-semibold">{clickNationalName}</span>
+                    </div>
+                    <div
+                      aria-label="기업활동"
+                      className="flex items-center space-x-1 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-105"
+                      onClick={click}>
+                      <span className="text-[#707070] text-[1.3rem]">기업활동</span>
+                      <span>🍳</span>
+                    </div>
+                  </div>
+                  {/* 데이터 */}
+                  <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold">
+                    <div className="flex items-end space-x-1 text-[#006EC9]">
+                      <span className="text-[1.5rem]">- 48,424</span>
+                      <span className="text-[1rem]">(6.74 %)</span>
+                    </div>
+                    <div className="flex space-x-3 items-end  text-[1.5rem]">
+                      <div className="flex items-center space-x-1">
+                        <span className="text-[1rem]">보유수량</span>
+                        <span className="text-black">10</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className=" items-end text-[1rem]">평균단가</span>
+                        <span className="text-black">70,250</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-[1rem]">현재가</span>
+                        <span className="text-[#006EC9]">{selectCurrentData.priceEnd.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 차트 */}
+                  <div className="w-full h-[15rem] text-[0.8rem] bg-white">
+                    <Chart data={selectChartData} />
+                  </div>
                 </div>
-                <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1">
-                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
-                    <span>미국</span>
+                <div className="flex justify-between w-full mt-3">
+                  {/* 유가 시세 */}
+                  <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
+                    <div className="flex items-end justify-between w-full pt-2">
+                      <div>
+                        <span>유가 시세</span>
+                      </div>
+                      <div>
+                        <span className="text-[#006EC9]">{oilData[oilData.length - 1].종가.toLocaleString()}</span>
+                        <span>원</span>
+                        <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
+                      </div>
+                    </div>
+                    <div className="w-full h-[9rem] font-normal text-[0.8rem]">
+                      <Chart data={oilData} />
+                    </div>
                   </div>
-                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
-                    <span>일본</span>
-                  </div>
-                  <div className="w-1/3 transition-all duration-300 rounded-md border-2 hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]">
-                    <span>유럽연합</span>
+                  {/* 금 시세 */}
+                  <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
+                    <div className="flex items-end justify-between w-full pt-2">
+                      <div>
+                        <span>금 시세</span>
+                      </div>
+                      <div>
+                        <span className="text-[#006EC9]">{goldData[goldData.length - 1].종가.toLocaleString()}</span>
+                        <span>원</span>
+                        <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
+                      </div>
+                    </div>
+                    <div className="w-full h-[9rem] text-[0.8rem]">
+                      <Chart data={goldData} />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="w-full h-[9rem] text-[0.8rem]">
-                <Chart />
+              {/* 모바일 */}
+              <div className="flex flex-col justify-center px-2 w-[68%] lg:hidden">
+                <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
+                  <div className="flex items-end justify-between w-full pt-2 font-bold">
+                    <div className="flex items-end space-x-1">
+                      <span className="text-[1rem]">나의 투자 현황</span>
+                      <span className="text-[0.7rem] font-semibold">A 전자</span>
+                    </div>
+                  </div>
+                  {/* 데이터 */}
+                  <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold pt-1 pb-2 ">
+                    <div className="flex items-end space-x-1 text-[#006EC9]">
+                      <span className="text-[1rem]">- 48,424</span>
+                      <span className="text-[0.7rem]">(6.74 %)</span>
+                    </div>
+                    <div className="flex space-x-2 md:space-x-3 items-end text-[0.8rem] md:text-[1rem]">
+                      <div className="flex items-center space-x-1">
+                        <span className="text-[0.7rem]">보유수량</span>
+                        <span className="text-black">10</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className=" items-end text-[0.7rem]">평균단가</span>
+                        <span className="text-black">70,250</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-[0.7rem]">현재가</span>
+                        <span className="text-[#006EC9]">65,800</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 차트 */}
+                  <div className="w-full h-[12rem] md:h-[12.7rem] flex justify-start text-[0.7rem] bg-white">
+                    <Chart data={selectChartData} />
+                  </div>
+                </div>
+              </div>
+              {/* 오른쪽 주식 거래 및 차트 */}
+              {/* 데스크탑 */}
+              <div className="hidden flex-col w-[28%] space-y-3 justify-end items-start lg:flex">
+                {/* 갱신 시간 */}
+                <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
+                  <div className="flex justify-between w-full text-[1.2rem] px-[5%] font-semibold">
+                    <div className="w-[55%] text-center">
+                      <span className="text-[#FF5151]">종목 갱신</span>
+                    </div>
+                    <div className="w-2/5 text-center">
+                      <span className="text-[#00A3FF]">날짜 갱신</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between w-full text-[1.6rem] font-bold  px-[5%]">
+                    <div className="flex items-start justify-center w-[55%]">
+                      <div className="flex flex-col items-center">
+                        <span>24 :</span>
+                        <span className="text-[0.8rem] font-medium">시간&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>27 :</span>
+                        <span className="text-[0.8rem] font-medium">분&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>54</span>
+                        <span className="text-[0.8rem] font-medium">초</span>
+                      </div>
+                    </div>
+                    <div className="flex items-start justify-center w-2/5">
+                      <div className="flex flex-col items-center">
+                        <span>02 :</span>
+                        <span className="text-[0.8rem] font-medium">분&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>17</span>
+                        <span className="text-[0.8rem] font-medium">초</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* 주식 거래 */}
+                <div className="w-full bg-white rounded-lg">
+                  <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-2">
+                    <div className="w-full">
+                      <span className="text-[1.5rem] font-extrabold">주식 거래</span>
+                    </div>
+                    <div className="w-full">
+                      <input
+                        className="bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3 py-2 text-end w-full outline-[#e2a2a7] placeholder:text-[0.8rem]"
+                        type="text"
+                        placeholder={tradingVolume === 0 ? '거래량을 입력하세요.' : ''}
+                        value={tradingVolume === 0 ? '' : `${tradingVolume}개`}
+                      />
+                    </div>
+                    <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
+                      <div
+                        aria-label="1개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1개</span>
+                      </div>
+                      <div
+                        aria-label="10개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+10개</span>
+                      </div>
+                      <div
+                        aria-label="100개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+100개</span>
+                      </div>
+                      <div
+                        aria-label="1000개"
+                        className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1000개</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
+                      <div className="w-[45%] py-1 cursor-pointer hover:bg-[#1860ef] bg-[#2C94EA] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                        <span>매도</span>
+                      </div>
+                      <div className="w-[45%] py-1 cursor-pointer hover:bg-[#f90025fd] bg-[#EA455D] shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                        <span>매수</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* 국제시장환율 */}
+                <div className="flex flex-col items-start w-full text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
+                  <div className="flex flex-col items-end justify-between w-full py-2">
+                    <div className="flex justify-between w-full">
+                      <span>국제시장 환율</span>
+
+                      {clickNational === 0 && <span>{usdData[usdData.length - 1].종가.toLocaleString()}$</span>}
+                      {clickNational === 1 && <span>{jypData[jypData.length - 1].종가.toLocaleString()}￥</span>}
+                      {clickNational === 2 && <span>{euroData[euroData.length - 1].종가.toLocaleString()}€</span>}
+                    </div>
+                    <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1">
+                      <div
+                        aria-label="미국"
+                        className={`w-1/3 transition-all duration-300 rounded-md border-2 ${
+                          clickNational === 0 ? 'bg-white scale-105' : 'bg-[#EDEDED] scale-100'
+                        } hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]`}
+                        onClick={click}>
+                        <span>미국</span>
+                      </div>
+                      <div
+                        aria-label="일본"
+                        className={`w-1/3 transition-all duration-300 rounded-md border-2 ${
+                          clickNational === 1 ? 'bg-white scale-105' : 'bg-[#EDEDED] scale-100'
+                        } hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]`}
+                        onClick={click}>
+                        <span>일본</span>
+                      </div>
+                      <div
+                        aria-label="유럽연합"
+                        className={`w-1/3 transition-all duration-300 rounded-md border-2 ${
+                          clickNational === 2 ? 'bg-white scale-105' : 'bg-[#EDEDED] scale-100'
+                        } hover:bg-white hover:scale-105 cursor-pointer border-[#EDEDED] hover:border-[#EDEDED]`}
+                        onClick={click}>
+                        <span>유럽연합</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full h-[9rem] text-[0.8rem]">
+                    {clickNational === 0 && <Chart data={usdData} />}
+                    {clickNational === 1 && <Chart data={jypData} />}
+                    {clickNational === 2 && <Chart data={euroData} />}
+                  </div>
+                </div>
+              </div>
+              {/* 모바일 */}
+              <div className="flex flex-col w-[32%] space-y-3 justify-end items-start lg:hidden">
+                {/* 회사 정보, 뉴스, 정보 */}
+                <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
+                  <div
+                    aria-label="기업활동"
+                    className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
+                    onClick={click}>
+                    <span>기업활동</span>
+                  </div>
+                  <div
+                    aria-label="신문"
+                    className="w-[30%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
+                    onClick={click}>
+                    <span>신문</span>
+                  </div>
+                  <div
+                    aria-label="정보"
+                    className="w-[30%] text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
+                    onClick={click}>
+                    <span>정보</span>
+                  </div>
+                </div>
+                {/* 종목 갱신, 날짜 갱신 */}
+                <div className="flex flex-col w-full py-1 text-white bg-black rounded-lg">
+                  <div className="flex justify-between w-full text-[0.85rem] px-[5%] font-semibold">
+                    <div className="w-[50%] text-center">
+                      <span className="text-[#FF5151]">종목 갱신</span>
+                    </div>
+                    <div className="w-[45%] text-center">
+                      <span className="text-[#00A3FF]">날짜 갱신</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between w-full text-[1rem] font-bold px-[5%]">
+                    <div className="flex items-start justify-center w-[50%]">
+                      <div className="flex flex-col items-center">
+                        <span>24 :</span>
+                        <span className="text-[0.6rem] font-medium">시간&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>27 :</span>
+                        <span className="text-[0.6rem] font-medium">분&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>54</span>
+                        <span className="text-[0.6rem] font-medium">초</span>
+                      </div>
+                    </div>
+                    <div className="flex items-start justify-center w-[45%]">
+                      <div className="flex flex-col items-center">
+                        <span>02 :</span>
+                        <span className="text-[0.6rem] font-medium">분&ensp;</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span>17</span>
+                        <span className="text-[0.6rem] font-medium">초</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* 주식 거래 */}
+                <div className="w-full bg-white rounded-lg">
+                  <div className="flex flex-col items-start justify-start w-full px-1 py-1 space-y-1">
+                    <div className="w-full">
+                      <span className="text-[1.2rem] font-extrabold">주식 거래</span>
+                    </div>
+                    <div className="w-full">
+                      <input
+                        className="bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-2 py-1 w-full outline-[#e2a2a7] text-end placeholder:text-[0.8rem]"
+                        type="text"
+                        placeholder={tradingVolume === 0 ? '거래량을 입력하세요.' : ''}
+                        value={tradingVolume === 0 ? '' : `${tradingVolume}개`}
+                      />
+                    </div>
+                    <div className="flex items-center w-full text-center justify-evenly text-[0.761rem] md:text-[0.935rem] pt-2 text-[#464646]">
+                      <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
+                        <span aria-label="1개" onClick={click}>
+                          +1개
+                        </span>
+                      </div>
+                      <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
+                        <span aria-label="10개" onClick={click}>
+                          +10개
+                        </span>
+                      </div>
+                      <div className="w-[24%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
+                        <span aria-label="100개" onClick={click}>
+                          +100개
+                        </span>
+                      </div>
+                      <div className="w-[35%%] hover:transition duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
+                        <span aria-label="1000개" onClick={click}>
+                          +1000개
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between w-full text-center text-[1.1rem] md:text-[1.3rem] text-white font-semibold pt-2">
+                      <div className="w-[45%] py-1 active:bg-[#1860ef] bg-[#2C94EA] cursor-pointer shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                        <span>매도</span>
+                      </div>
+                      <div className="w-[45%] py-1 active:bg-[#f90025fd] bg-[#EA455D] cursor-pointer shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
+                        <span>매수</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          {/* 모바일 */}
-          <div className="flex flex-col w-[32%] space-y-3 justify-end items-start lg:hidden">
-            {/* 회사 정보, 뉴스, 정보 */}
-            <div className="flex items-center w-full font-bold text-center bg-white border-2 rounded-md justify-evenly">
-              <div
-                aria-label="기업활동"
-                className="w-[40%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
-                onClick={click}>
-                <span>기업활동</span>
-              </div>
-              <div
-                aria-label="신문"
-                className="w-[30%] border-r-2 text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
-                onClick={click}>
-                <span>신문</span>
-              </div>
-              <div
-                aria-label="정보"
-                className="w-[30%] text-[0.9rem] md:text-[1rem] transition-all duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:bg-[#EA455D] cursor-pointer hover:text-white hover:rounded-md"
-                onClick={click}>
-                <span>정보</span>
-              </div>
-            </div>
-            {/* 종목 갱신, 날짜 갱신 */}
-            <div className="flex flex-col w-full py-1 text-white bg-black rounded-lg">
-              <div className="flex justify-between w-full text-[0.85rem] px-[5%] font-semibold">
-                <div className="w-[50%] text-center">
-                  <span className="text-[#FF5151]">종목 갱신</span>
-                </div>
-                <div className="w-[45%] text-center">
-                  <span className="text-[#00A3FF]">날짜 갱신</span>
-                </div>
-              </div>
-              <div className="flex justify-between w-full text-[1rem] font-bold px-[5%]">
-                <div className="flex items-start justify-center w-[50%]">
-                  <div className="flex flex-col items-center">
-                    <span>24 :</span>
-                    <span className="text-[0.6rem] font-medium">시간&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>27 :</span>
-                    <span className="text-[0.6rem] font-medium">분&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>54</span>
-                    <span className="text-[0.6rem] font-medium">초</span>
-                  </div>
-                </div>
-                <div className="flex items-start justify-center w-[45%]">
-                  <div className="flex flex-col items-center">
-                    <span>02 :</span>
-                    <span className="text-[0.6rem] font-medium">분&ensp;</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>17</span>
-                    <span className="text-[0.6rem] font-medium">초</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* 주식 거래 */}
-            <div className="w-full bg-white rounded-lg">
-              <div className="flex flex-col items-start justify-start w-full px-1 py-1 space-y-1">
-                <div className="w-full">
-                  <span className="text-[1.2rem] font-extrabold">주식 거래</span>
-                </div>
-                <div className="w-full">
-                  <input
-                    className="bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-2 py-1 w-full outline-[#e2a2a7] text-end placeholder:text-[0.8rem]"
-                    type="text"
-                    placeholder={tradingVolume === 0 ? '거래량을 입력하세요.' : ''}
-                    value={tradingVolume === 0 ? '' : `${tradingVolume}개`}
-                  />
-                </div>
-                <div className="flex items-center w-full text-center justify-evenly text-[0.761rem] md:text-[0.935rem] pt-2 text-[#464646]">
-                  <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
-                    <span aria-label="1개" onClick={click}>
-                      +1개
-                    </span>
-                  </div>
-                  <div className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
-                    <span aria-label="10개" onClick={click}>
-                      +10개
-                    </span>
-                  </div>
-                  <div className="w-[24%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
-                    <span aria-label="100개" onClick={click}>
-                      +100개
-                    </span>
-                  </div>
-                  <div className="w-[35%%] hover:transition duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md">
-                    <span aria-label="1000개" onClick={click}>
-                      +1000개
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between w-full text-center text-[1.1rem] md:text-[1.3rem] text-white font-semibold pt-2">
-                  <div className="w-[45%] py-1 active:bg-[#1860ef] bg-[#2C94EA] cursor-pointer shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
-                    <span>매도</span>
-                  </div>
-                  <div className="w-[45%] py-1 active:bg-[#f90025fd] bg-[#EA455D] cursor-pointer shadow-md shadow-gray-400 rounded-xl hover:scale-105 transition-all duration-300">
-                    <span>매수</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 }
 export default Exchange;
-
-class Chart extends PureComponent {
-  static demoUrl = 'https://codesandbox.io/s/simple-area-chart-4ujxw';
-  render() {
-    const data = [
-      {
-        name: '1월',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400
-      },
-      {
-        name: '2월',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210
-      },
-      {
-        name: '3월',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290
-      },
-      {
-        name: '4월',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000
-      },
-      {
-        name: '5월',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181
-      },
-      {
-        name: '6월',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500
-      }
-    ];
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0
-          }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="pv" stroke="#33D03D" fill="#c2eec5" />
-        </AreaChart>
-      </ResponsiveContainer>
-    );
-  }
-}
 
 interface IRModalType {
   isIRClick: boolean;
