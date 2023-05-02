@@ -6,6 +6,7 @@ import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazy
 import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import Chart from './Chart';
+import { useAppDispatch } from 'Store/hooks';
 
 interface CahrtDataType {
   일자: string;
