@@ -15,11 +15,12 @@ public class UsersRegisterReqDto {
     private String nickname;
     private String password;
 
-    public UserEntity toEntity() {
+    public UserEntity toEntity(String profileImagePath) {
         return UserEntity.builder()
                 .account(account)
                 .nickname(nickname)
                 .password(password)
+                .profileImagePath(profileImagePath)
                 .build();
     }
 }

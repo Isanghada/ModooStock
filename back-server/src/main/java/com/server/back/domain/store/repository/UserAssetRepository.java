@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public interface UserAssetRepository extends JpaRepository<UserAssetEntity,Long> {
     List<UserAssetEntity>findByUserAndIsInRepositoryAndIsDeleted(UserEntity user, IsInRespository isInRespository, IsDeleted isDeleted);
+    List<UserAssetEntity> findByUserAndIsDeleted(UserEntity user, IsDeleted isDeleted);
+
     @Query("SELECT COUNT(u) FROM UserAssetEntity u WHERE u.user.id = :userId AND u.isDeleted = :isDeleted AND u.asset.assetLevel = :assetLevel")
     Optional<Integer> countByUserIdAndIsDeletedAndAssetLevel(@Param("userId") Long userId, @Param("isDeleted") IsDeleted isDeleted, @Param("assetLevel") AssetLevelType assetLevel);
 

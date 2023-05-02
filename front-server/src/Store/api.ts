@@ -3,6 +3,11 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
+interface ReturnBasicInterFace {
+  data: boolean;
+  result: string;
+}
+
 interface DecodedInfoInterFace {
   sub: string;
   exp: number; //유효시간
@@ -37,6 +42,36 @@ interface ReturnUsersRandomInterFace {
   result: string;
 }
 
+interface ReturnUsersLogoutInterFace {
+  data: boolean;
+  result: string;
+}
+
+interface ReturnBankInterFace {
+  data: {
+    currentMoney: number;
+  };
+  result: string;
+}
+
+interface ReturnBankListInterFace {
+  data: Array<{
+    bankId: number;
+    endDate: string;
+    isPaid: true;
+    price: number;
+    startDate: string;
+  }>;
+  result: string;
+}
+
+interface UpdateStateInterFace {
+  nickname: string;
+  password: string;
+  introduction: string;
+  profileImagePath: string;
+}
+
 // export const everyStock = createApi({
 //   reducerPath: 'api',
 //   tagTypes: ['Api'],
@@ -59,8 +94,7 @@ interface ReturnUsersRandomInterFace {
 //   }),
 
 const fetchAccessToken = async () => {
-  
-  const accessToken: string | null = localStorage.getItem("accessToken");
+  const accessToken: string | null = localStorage.getItem('accessToken');
 
   if (accessToken != null) {
     // 토큰 만료상태 확인
@@ -71,42 +105,43 @@ const fetchAccessToken = async () => {
       // 리프레쉬 토큰 발급 서버 요청
       const { data } = await axios({
         url: `${process.env.REACT_APP_API_URL}refresh`,
-        method: "POST",
+        method: 'POST',
         headers: {
-          "x-refresh-token": localStorage.getItem("refreshToken"),
+          'x-refresh-token': localStorage.getItem('refreshToken')
         }
-      })
+      });
       // 엑세스 토큰 갱신 로컬스토리지 넣어주기
-      localStorage.setItem("accessToken", data.data.accessToken);
+      localStorage.setItem('accessToken', data.data.accessToken);
       return data.data.accessToken;
     } else {
       // 유효기간이 싱싱할때
-      return localStorage.getItem("accessToken");
+      return localStorage.getItem('accessToken');
     }
   } else {
     // 토큰이 null 일때
-    return
+    return;
   }
 };
 
-
-export const UserApi = createApi({
-  reducerPath: 'UserApi',
-  tagTypes: ['UserApi'],
+export const Api = createApi({
+  reducerPath: 'Api',
+  tagTypes: ['UserApi', 'BankApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
       // By default, if we have a token in the store, let's use that for authenticated requests
       const token = await fetchAccessToken();
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      } 
+        headers.set('authorization', `Bearer ${token}`);
+      }
       return headers;
     }
   }),
 
   endpoints: (builder) => ({
-    // // 1. 나의 로그인 정보
+    // ------------- 유저 -------------
+
+    // 1. 나의 로그인 정보
     getUsersInfo: builder.query<ReturnMyInfoInterFace, string>({
       query: () => '/users',
       providesTags: (result, error, arg) => {
@@ -118,10 +153,10 @@ export const UserApi = createApi({
     getUsersSearch: builder.query<ReturnUsersSearchInterFace, string>({
       query: (keyword) => `/users?search=${keyword}`,
       providesTags: (result, error, arg) => {
-        return [{ type: "UserApi" }]
+        return [{ type: 'UserApi' }];
       }
     }),
-    
+
     // 3.랜덤 유저 방문
     getUsersRandom: builder.query<ReturnUsersRandomInterFace, string>({
       query: () => `/users/random`,
@@ -130,29 +165,106 @@ export const UserApi = createApi({
       }
     }),
 
+    // 4. 로그아웃
+    getUsersLogout: builder.query<ReturnUsersLogoutInterFace, string>({
+      query: () => `/logout/redirect`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
 
-    // // 3. 회원 삭제
-    // putAdminUserDelete: builder.mutation({
-    //   query: (data) => {
-    //     let [delete_id, my_id] = data
-    //     my_id = parseInt(my_id)
-    //     return {
-    //       url: `/admin/user/${my_id}/${delete_id}`,
-    //       method: 'put'
-    //     }
-    //   },
-    //   invalidatesTags: (result, error, arg) => [{ type: "adminUser" }]
-    // }),
+    // 5. 닉네임 중복확인
+    getUsersNickname: builder.query<ReturnBasicInterFace, string>({
+      query: (nickname) => `/users/nickname/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+    // 6. 회원정보수정
+    putUsersInfo: builder.mutation<ReturnBasicInterFace, UpdateStateInterFace>({
+      query: (data) => {
+        return {
+          url: `/users`,
+          method: 'PUT',
+          body: data
+        };
+      },
+      invalidatesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+
+    // ------------- 은행 -------------
+
+    // 1. 내 통장 잔고
+    getBank: builder.query<ReturnBankInterFace, string>({
+      query: () => `/bank`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'BankApi' }];
+      }
+    }),
+
+    // 2. 예금 하기
+    postBank: builder.mutation<ReturnBasicInterFace, number>({
+      query: (price) => {
+        return {
+          url: `/bank`,
+          method: 'POST',
+          body: {
+            price: price
+          }
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+    }),
+
+    // 3. 예금 리스트
+    getBankList: builder.query<ReturnBankListInterFace, string>({
+      query: () => `/bank/list`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'BankApi' }];
+      }
+    }),
+
+    // 4. 출금 하기
+    deleteBank: builder.mutation<ReturnBasicInterFace, number>({
+      query: (bankId) => {
+        return {
+          url: `/bank/${bankId}`,
+          method: 'Delete'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+    }),
+
+    // 5. 송금 하기
+    postBankTransfer: builder.mutation<ReturnBasicInterFace, { money: number; receiver: string }>({
+      query: (body) => {
+        return {
+          url: `/bank/transfer`,
+          method: 'Post',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'BankApi' }]
+    })
   })
 });
 
-
-
 // 임시저장
 export const {
+  // ------------- 유저 -------------
   useLazyGetUsersInfoQuery,
   useLazyGetUsersSearchQuery,
-  useLazyGetUsersRandomQuery
-  // useLazyGetAdminUserListQuery,
-  // usePutAdminUserDeleteMutation,
-} = UserApi;
+  useLazyGetUsersRandomQuery,
+  useLazyGetUsersLogoutQuery,
+  useLazyGetUsersNicknameQuery,
+  usePutUsersInfoMutation,
+
+  // ------------- 은행 -------------
+  useGetBankQuery,
+  usePostBankMutation,
+  useGetBankListQuery,
+  useDeleteBankMutation,
+  usePostBankTransferMutation
+} = Api;

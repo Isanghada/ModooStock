@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import {  motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
-import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { query, orderBy, onSnapshot, collection } from 'firebase/firestore';
 
 // 컴포넌트
-import Message from './Message';
 import { useAppDispatch } from 'Store/hooks';
 import { changeChattingStatus } from 'Store/store';
 
@@ -85,40 +84,42 @@ const SystemChatting = () => {
         <div ref={chatDiv} className="w-11/12 h-full overflow-y-auto">
           {/* 대화 시작 시간 */}
           <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
-            <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
+            <span className="px-5 py-1 text-xs text-center bg-black lg:text-base w-fit h-fit rounded-3xl">
               {messageDatas[0]?.createdAt.toDate().toLocaleDateString('ko-KR', options)}
             </span>
           </div>
           <div className="flex flex-col items-center justify-center">
             {messageDatas.map((msg, index) => {
               if (index === 0) {
-                return;
+                return (<></>);
               }
               // 시간, 분 세팅
               let date = '';
               if (msg.createdAt) {
                 date = msg.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
               }
-              // 전날과 같은지 체크
-              const prevDate = messageDatas[index - 1].createdAt.toDate().toLocaleDateString('ko-KR', options);
-              const currentDate = msg.createdAt.toDate().toLocaleDateString('ko-KR', options);
-              if (prevDate !== currentDate) {
-                return (
-                  <>
-                    <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
-                      <span className="px-5 py-1 text-xs text-center lg:text-base w-fit h-fit bg-slate-800 rounded-3xl">
-                        {currentDate}
-                      </span>
-                    </div>
-                    <div className="flex items-end justify-center lg:w-11/12">
-                      <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
-                        {msg.nickname}
-                        {msg.content}
+              if (msg.createdAt) {
+                // 전날과 같은지 체크
+                const prevDate = messageDatas[index - 1].createdAt.toDate().toLocaleDateString('ko-KR', options);
+                const currentDate = msg.createdAt.toDate().toLocaleDateString('ko-KR', options);
+                if (prevDate !== currentDate) {
+                  return (
+                    <>
+                      <div className="flex items-center justify-center w-full pr-5 my-2 h-fit ">
+                        <span className="px-5 py-1 text-xs text-center bg-black lg:text-base w-fit h-fit rounded-3xl">
+                          {currentDate}
+                        </span>
                       </div>
-                      <div className="text-black h-fit grow">{date}</div>
-                    </div>
-                  </>
-                );
+                      <div className="flex items-end justify-center lg:w-11/12">
+                        <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
+                          {msg.nickname}
+                          {msg.content}
+                        </div>
+                        <div className="text-xs text-slate-500 min-w-fit grow">{date}</div>
+                      </div>
+                    </>
+                  );
+                }
               }
               // 전날과 같지 않으면
               return (
@@ -127,7 +128,7 @@ const SystemChatting = () => {
                     {msg.nickname}
                     {msg.content}
                   </div>
-                  <div className="text-black h-fit grow">{date}</div>
+                  <div className="text-xs text-slate-500 min-w-fit grow">{date}</div>
                 </div>
               );
             })}
