@@ -17,4 +17,6 @@ public interface StockService {
     DealResDto sellStock(StockReqDto stockReqDto);
 
     SseEmitter subscribe();
+
+    void calRate();
 }
