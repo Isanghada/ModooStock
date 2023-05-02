@@ -73,12 +73,11 @@ const currentDataIndex = createSlice({
   initialState: 0,
   reducers: {
     getCurrentDataIndex(state, action) {
-      console.log(action.payload, "페이로드")
+      console.log(action.payload, "인덱스")
       return (state = action.payload);
     }
   }
 })
-
 
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
@@ -94,7 +93,8 @@ export const store = configureStore({
     menuStatus: menuStatus.reducer,
     updateStatus: updateStatus.reducer,
     currentMoneyStatus: currentMoneyStatus.reducer,
-    getCurrentDataIndex: currentDataIndex.reducer
+    getCurrentDataIndex: currentDataIndex.reducer,
+
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });

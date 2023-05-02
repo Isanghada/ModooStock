@@ -18,7 +18,7 @@ import Loading from 'Components/Common/Loading';
 function App() {
   return (
     <>
-      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} />
+      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} limit={1}/>
       <Routes>
         <Route path="" element={<Layout />}>
           <Route path="/" element={<Intro />} />
