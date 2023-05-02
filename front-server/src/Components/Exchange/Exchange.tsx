@@ -6,6 +6,7 @@ import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazy
 import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import Chart from './Chart';
+import { useAppDispatch } from 'Store/hooks';
 
 interface CahrtDataType {
   일자: string;
@@ -49,7 +50,7 @@ interface SseDataType {
 }
 
 function Exchange(): JSX.Element {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch ();
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
