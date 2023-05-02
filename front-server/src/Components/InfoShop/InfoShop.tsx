@@ -106,7 +106,7 @@ function InfoShop(): JSX.Element {
         <div className="w-[30%] h-[90%] border-r-4 border-white flex flex-col items-center justify-between">
           <div className="flex flex-col items-start justify-end w-[70%] h-1/6">
             <div className="text-xs lg:text-base">게임 속 시간</div>
-            <div className="text-sm font-bold lg:text-xl">{newsData && newsData.dateList[currentDataIndex].date}</div>
+            <div className="text-sm font-bold lg:text-xl">{newsData.dateList[currentDataIndex] ? newsData.dateList[currentDataIndex].date : "오늘 장 종료하였습니다."}</div>
           </div>
           <div onClick={onClick} aria-label="뉴스스크랩" className="flex justify-center w-[70%] h-[10%] bg-white shadow-md shadow-gray-400 cursor-pointer hover:bg-slate-100">
             <img className="w-auto h-full" src="/images/icons/news.png" alt="news" />
