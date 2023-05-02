@@ -5,6 +5,7 @@ import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.domain.news.repository.UserNewsRepository;
 import com.server.back.domain.stock.entity.*;
 import com.server.back.domain.stock.repository.*;
+import com.server.back.domain.stock.service.StockService;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.domain.user.service.UserService;
@@ -33,6 +34,7 @@ public class SchedulerService {
     private final UserRepository userRepository;
     private final UserDealRepository userDealRepository;
     private final UserService userService;
+    private final StockService stockService;
     private final UserNewsRepository userNewsRepository;
 
     // 새로운 장(시즌) 생성 : 월, 수, 금 오전 9시에 새로운 장(시즌) 선택
@@ -178,6 +180,8 @@ public class SchedulerService {
         LocalDate nextDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(market.getGameDate(), 2).get(1).toLocalDate();
         // gameDate 업데이트
         market.updateGameDate(nextDate);
+
+        stockService.calRate();
         marketRepository.save(market);
     }
 }
