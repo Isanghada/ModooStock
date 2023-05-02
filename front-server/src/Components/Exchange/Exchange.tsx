@@ -49,7 +49,6 @@ interface SseDataType {
 }
 
 function Exchange(): JSX.Element {
-  const dispatch = useAppDispatch();
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
@@ -158,7 +157,7 @@ function Exchange(): JSX.Element {
       withCredentials: true
     });
 
-    newEventSource.addEventListener('connect', (e) => {
+    newEventSource.addEventListener('connect', (e: any) => {
       // console.log(e);
     });
     setEventSource(newEventSource);
@@ -332,7 +331,7 @@ function Exchange(): JSX.Element {
   };
 
   if (eventSource) {
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = (event: any) => {
       console.log(JSON.parse(event.data));
 
       setSseData(JSON.parse(event.data));
