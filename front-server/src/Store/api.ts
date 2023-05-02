@@ -131,6 +131,24 @@ interface ReturnStockListInterFace {
   };
   result: string;
 }
+interface ReturnBuyNewsInterFace {
+  data: {
+    content: string;
+    date: string;
+    kind: string;
+  };
+  result: string;
+}
+interface ReturnNewsListInterFace {
+  data: [
+    {
+      content: string;
+      date: string;
+      kind: string;
+    }
+  ];
+  result: string;
+}
 
 // export const everyStock = createApi({
 //   reducerPath: 'api',
@@ -317,9 +335,34 @@ export const Api = createApi({
     }),
 
     // ------------- 뉴스 -------------
-    // 1. 현재 뉴스 목록
+    // 1. 현재 뉴스 리스트 및 날짜
     getNewsInfo: builder.query<ReturnInfoInterFace, string>({
       query: () => `/info`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'NewsApi' }];
+      }
+    }),
+    // 2. 선택한 뉴스 구입
+    postNewsBuy: builder.mutation<ReturnBuyNewsInterFace, number>({
+      query: (stockId) => {
+        return {
+          url: `/info/buy`,
+          method: 'POST',
+          body: {
+            stockId
+          }
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'NewsApi' }, { type: 'UserApi' }]
+    }),
+    // 3. 보유한 뉴스 리스트
+    getNewsList: builder.query<ReturnNewsListInterFace, string>({
+      query: () => {
+        return {
+          url: `/info/mine`,
+          method: 'GET'
+        };
+      },
       providesTags: (result, error, arg) => {
         return [{ type: 'NewsApi' }];
       }
@@ -364,6 +407,8 @@ export const {
 
   // ------------- 뉴스 -------------
   useGetNewsInfoQuery,
+  usePostNewsBuyMutation,
+  useGetNewsListQuery,
 
   // ------------- 주식 -------------
   useGetStockQuery,
