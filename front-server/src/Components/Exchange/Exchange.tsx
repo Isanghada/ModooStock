@@ -33,6 +33,21 @@ interface NationalType {
   price: number;
 }
 
+interface SseDataType {
+  stockId: number;
+  amount: number;
+  average: number;
+  rate: number;
+  stockChartResDto: Array<{
+    priceBefore: number;
+    priceEnd: number;
+    date: string;
+    id: number;
+    companyId: number;
+    changeRate: number;
+  }>;
+}
+
 function Exchange(): JSX.Element {
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
@@ -40,7 +55,12 @@ function Exchange(): JSX.Element {
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
   const nowDate = new Date();
   const [lazyGetStock, { isLoading: isLoading1, isError: isError1 }] = useLazyGetStockQuery();
+  const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
+
   const [lazyGetStockData, setLazyGetStockData] = useState<any>();
+  // 첫번째 인덱스면 현재 데이터의 PriceEnd or 아닐 경우엔 마지막 전 데이터의 PriceEnd
+  const [selectBeforPriceEnd, setSelectBeforPriceEnd] = useState<number>(0);
+  // 가장 마지막 인덱스의 데이터
   const [selectCurrentData, setSelectCurrentData] = useState<SelectDataType>({
     changeRate: 0,
     companyId: 0,
@@ -99,8 +119,56 @@ function Exchange(): JSX.Element {
   const [eventList, setEventList] = useState<any>();
   const [listening, setListening] = useState<boolean>(false);
   const [respon, setRespon] = useState<boolean>(false);
-  const [sseData, setSseData] = useState<any>();
-  let eventSource: EventSource | null = null;
+  const [sseData, setSseData] = useState<SseDataType>();
+  // const [sseData, setSseData] = useState<SseDataType>({
+  //   stockId: 0,
+  //   amount: 0,
+  //   average: 0,
+  //   rate: 0,
+  //   stockChartResDto: [
+  //     {
+  //       priceBefore: 0,
+  //       priceEnd: 0,
+  //       date: '',
+  //       id: 0,
+  //       companyId: 0,
+  //       changeRate: 0
+  //     }
+  //   ]
+  // });
+  // SSE를 저장하는 변수 eventSource가 있으면 SSE 연결 중.
+  const [eventSource, setEventSource] = useState<EventSourcePolyfill | undefined>(undefined);
+
+  useEffect(() => {
+    if (eventSource) {
+      eventSource.close();
+      setEventSource(undefined);
+    }
+    const token = localStorage.getItem('accessToken');
+
+    const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache'
+      },
+      // heartbeatTimeout: 8700,
+      withCredentials: true
+    });
+
+    newEventSource.addEventListener('connect', (e) => {
+      // console.log(e);
+    });
+    setEventSource(newEventSource);
+
+    return () => {
+      // console.log('연결끊기');
+      eventSource?.close();
+      newEventSource?.close();
+      setEventSource(undefined);
+    };
+  }, []);
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
@@ -138,21 +206,6 @@ function Exchange(): JSX.Element {
   };
 
   useEffect(() => {
-    // 최초 연결
-    if (eventSource !== null) {
-      eventSource.onopen = (event) => {
-        setListening(true);
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-        setListening(false);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
@@ -174,7 +227,15 @@ function Exchange(): JSX.Element {
   useEffect(() => {
     if (sseData) {
       const { stockId, amount, average, rate, stockChartResDto } = sseData;
-      // 선택한 데이터의 마지막 날에 대한 데이터
+
+      console.log(typeof amount);
+
+      // 수익, 손익 계산을 위한 데이터 추가
+      if (stockChartResDto.length >= 1) {
+        setSelectBeforPriceEnd(stockChartResDto[stockChartResDto.length - 2].priceEnd);
+      } else {
+        setSelectBeforPriceEnd(stockChartResDto[stockChartResDto.length - 1].priceBefore);
+      }
       setSelectCurrentData(stockChartResDto[stockChartResDto.length - 1]);
       // 선택한 데이터의 차트 데이터
       const SelectChartdata = stockChartResDto.map((data: SelectDataType) => {
@@ -265,61 +326,36 @@ function Exchange(): JSX.Element {
     }
   }, [sseData]);
 
-  const selectStockData = async (stockId: number) => {
-    const token = localStorage.getItem('accessToken');
-    console.log('여기까지 오는가??');
-
-    // 함수가 호출될 때마다 listening 값을 초기화합니다.
-    let listening = false;
-
-    // 이전 요청 취소
-    if (eventSource !== null) {
-      console.log('이전 요청 취소 실행?');
-
-      eventSource.close();
-      setListening(false);
-    }
-
-    if (!listening && token && !eventSource) {
-      eventSource = await new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/${stockId}`, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache'
-        },
-        // heartbeatTimeout: 8700,
-        withCredentials: true
-      });
-
-      // 서버에서 메시지 날릴 때
-      eventSource.onmessage = (event) => {
-        setSseData(JSON.parse(event.data));
-        setRespon(true);
-        // console.log('event.data: ', event.data);
-        console.log('onmessage로 메세지 받았다!!');
-      };
-    }
+  const selectStockData = (stockId: number) => {
+    getStockSelect(stockId);
   };
+
+  if (eventSource) {
+    eventSource.onmessage = (event) => {
+      console.log(JSON.parse(event.data));
+
+      setSseData(JSON.parse(event.data));
+    };
+  }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('e.currentTarget.innerHTML: ', e.currentTarget.innerHTML);
+    // console.log('e.currentTarget.innerHTML: ', e.currentTarget.innerHTML);
 
     setClickNationalName(e.currentTarget.innerHTML);
 
     if (e.currentTarget.ariaLabel !== null) {
-      console.log(e.currentTarget.ariaLabel);
+      // console.log(e.currentTarget.ariaLabel);
 
       await selectStockData(parseInt(e.currentTarget.ariaLabel));
       setListening(false);
-      console.log('eventSource: ', eventSource);
+      // console.log('eventSource: ', eventSource);
     }
   };
 
   return (
     <>
-      {isLoading1 ? (
+      {isLoading1 && isLoading2 ? (
         <div>로딩</div>
       ) : (
         <>
@@ -392,9 +428,9 @@ function Exchange(): JSX.Element {
               <div className="hidden flex-col justify-center px-2 w-[70%] lg:flex">
                 <div className="flex flex-col w-full px-5 transition-all duration-300 bg-white rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 shadow-md shadow-gray-300">
                   <div className="flex items-end justify-between w-full pt-2 font-bold">
-                    <div className="flex items-end space-x-1">
+                    <div className="flex items-end space-x-3">
                       <span className="text-[1.7rem]">나의 투자 현황</span>
-                      <span className="text-[1rem] font-semibold">{clickNationalName}</span>
+                      <span className="text-[1.3rem]">{clickNationalName}</span>
                     </div>
                     <div
                       aria-label="기업활동"
@@ -407,7 +443,10 @@ function Exchange(): JSX.Element {
                   {/* 데이터 */}
                   <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold">
                     <div className="flex items-end space-x-1 text-[#006EC9]">
-                      <span className="text-[1.5rem]">- 48,424</span>
+                      <span className={`text-[1.5rem]`}>
+                        10,000
+                        {/* {(selectCurrentData.priceEnd - selectBeforPriceEnd) * sseData?.amount} */}
+                      </span>
                       <span className="text-[1rem]">(6.74 %)</span>
                     </div>
                     <div className="flex space-x-3 items-end  text-[1.5rem]">
@@ -426,7 +465,7 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                   {/* 차트 */}
-                  <div className="w-full h-[15rem] text-[0.8rem] bg-white">
+                  <div className="w-full h-[15rem] text-[0.6rem] bg-white">
                     <Chart data={selectChartData} />
                   </div>
                 </div>
@@ -443,7 +482,7 @@ function Exchange(): JSX.Element {
                         <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
                       </div>
                     </div>
-                    <div className="w-full h-[9rem] font-normal text-[0.8rem]">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
                       <Chart data={oilData} />
                     </div>
                   </div>
@@ -459,7 +498,7 @@ function Exchange(): JSX.Element {
                         <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
                       </div>
                     </div>
-                    <div className="w-full h-[9rem] text-[0.8rem]">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
                       <Chart data={goldData} />
                     </div>
                   </div>
@@ -597,9 +636,35 @@ function Exchange(): JSX.Element {
                     <div className="flex justify-between w-full">
                       <span>국제시장 환율</span>
 
-                      {clickNational === 0 && <span>{usdData[usdData.length - 1].종가.toLocaleString()}$</span>}
-                      {clickNational === 1 && <span>{jypData[jypData.length - 1].종가.toLocaleString()}￥</span>}
-                      {clickNational === 2 && <span>{euroData[euroData.length - 1].종가.toLocaleString()}€</span>}
+                      {clickNational === 0 && (
+                        <div className="flex items-center justify-between space-x-2">
+                          <span className="text-[1.2rem]">미국</span>
+                          <div>
+                            <span className="text-[#006EC9]">{usdData[usdData.length - 1].종가.toLocaleString()}</span>
+                            <span>원</span>
+                          </div>
+                        </div>
+                      )}
+                      {clickNational === 1 && (
+                        <div className="flex items-center justify-between space-x-2">
+                          <span className="text-[1.2rem]">일본</span>
+                          <div>
+                            <span className="text-[#006EC9]">{jypData[jypData.length - 1].종가.toLocaleString()}</span>
+                            <span>원</span>
+                          </div>
+                        </div>
+                      )}
+                      {clickNational === 2 && (
+                        <div className="flex items-center justify-between space-x-2">
+                          <span className="text-[1.2rem]">유럽연합</span>
+                          <div>
+                            <span className="text-[#006EC9]">
+                              {euroData[euroData.length - 1].종가.toLocaleString()}
+                            </span>
+                            <span>원</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1">
                       <div
@@ -628,7 +693,7 @@ function Exchange(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-[9rem] text-[0.8rem]">
+                  <div className="w-full h-[9rem] text-[0.75rem] font-normal">
                     {clickNational === 0 && <Chart data={usdData} />}
                     {clickNational === 1 && <Chart data={jypData} />}
                     {clickNational === 2 && <Chart data={euroData} />}

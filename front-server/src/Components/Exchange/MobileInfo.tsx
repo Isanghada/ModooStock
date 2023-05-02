@@ -108,7 +108,7 @@ function MobileInfo({
               setIsMobileInfo((pre) => !pre);
             }
           }}>
-          <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[29rem] lg:w-[42%] lg:max-w-[40rem] px-7 rounded-xl space-y-2 lg:space-y-4 py-3 lg:py-6">
+          <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[29rem] lg:w-[42%] lg:max-w-[40rem] px-7 rounded-xl space-y-1 lg:space-y-4 py-3 lg:py-6">
             <div className="w-full flex justify-center items-center text-[1.5rem] lg:text-[2rem] font-black">
               <span>정보</span>
             </div>
@@ -145,15 +145,52 @@ function MobileInfo({
                 </select>
               </div>
             </div>
-            <div className="flex items-center justify-end w-full px-2">
-              {isExchange === 0 && (
+            <div className="flex items-center justify-end w-full px-2 space-x-2 font-extrabold pr-7">
+              {isClickInfo === 0 && (
                 <>
-                  <span className="text-[#006EC9]">{usdData[usdData.length - 1].종가.toLocaleString()}</span>
+                  <span>유가</span>
+                  <div>
+                    <span className="text-[#006EC9]">{oilData[oilData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
                 </>
               )}
-
-              {/* <span>{isExchange===1&&1}</span>
-              <span>{isExchange===2&&2}</span> */}
+              {isClickInfo === 1 && (
+                <>
+                  <span>금</span>
+                  <div>
+                    <span className="text-[#006EC9]">{goldData[goldData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 0 && (
+                <>
+                  <span>미국</span>
+                  <div>
+                    <span className="text-[#006EC9]">{usdData[usdData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 1 && (
+                <>
+                  <span>일본</span>
+                  <div>
+                    <span className="text-[#006EC9]">{jypData[jypData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 2 && (
+                <>
+                  <span>유럽연합</span>
+                  <div>
+                    <span className="text-[#006EC9]">{euroData[euroData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
             </div>
             {/* 선택한 것에 대한 차트 변경 */}
             <div className="w-full h-[11rem] text-[0.8rem]">
