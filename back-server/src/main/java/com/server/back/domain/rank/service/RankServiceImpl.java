@@ -91,7 +91,6 @@ public class RankServiceImpl implements  RankService{
                 Float rate=userDeal.getRate();
                 Float plusMoney=(1L+rate)*average*amount;
                 totalMoney+=plusMoney.longValue();
-
             }
 
             //예금에 있는 거
