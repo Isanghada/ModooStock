@@ -6,8 +6,10 @@ import styled from './Exchange.module.css';
 import { useGetStockQuery, useGetStockSelectQuery, useLazyGetStockQuery, useLazyGetStockSelectQuery } from 'Store/api';
 import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 
 function Exchange(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
