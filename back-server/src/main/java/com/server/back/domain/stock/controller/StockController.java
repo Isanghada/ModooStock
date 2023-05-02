@@ -28,14 +28,21 @@ public class StockController {
         return ResponseEntity.ok().body(ResultDto.of(stockInfo));
     }
 
-    @GetMapping(value="/{stockId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @ApiOperation(value="선택한 주식 차트 및 나의 주식 정보")
-    public ResponseEntity<SseEmitter> getStock(@PathVariable("stockId") Long stockId, HttpServletResponse response){
+
+    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> subscribe(HttpServletResponse response) {
         response.setHeader("Connection", "keep-alive");
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("X-Accel-Buffering", "no");
+        return ResponseEntity.ok().body(stockService.subscribe());
+    }
 
-        return ResponseEntity.ok().body(stockService.getStockChart(stockId));
+    @GetMapping(value="/{stockId}")
+    @ApiOperation(value="선택한 주식 차트 및 나의 주식 정보")
+    public  ResponseEntity<ResultDto<Boolean>>  getStock(@PathVariable("stockId") Long stockId){
+        System.out.println("here");
+        stockService.getStockChart(stockId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
     @PostMapping()

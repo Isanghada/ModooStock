@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 @Service
@@ -35,14 +36,31 @@ public class StockServiceImpl implements StockService {
     private final ExchangeRepository exchangeRepository;
     private final AuthService authService;
     private final UserService userService;
+    SseEmitter emitter;
 
+    public SseEmitter subscribe(){
+        // SSE 구독
+        emitter =  new SseEmitter();
+
+        // SSE 연결이 종료될 때 리스트에서 해당 emitter를 삭제
+        emitter.onCompletion(() -> {
+            emitter.complete();
+        });
+        emitter.onTimeout(() -> {
+            emitter.complete();
+        });
+
+        // 연결
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("connected!"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return emitter;
+    }
     @Override
-    /*
-     * 현재 시즌(장)의 종목 list를 조회합니다.
-     *
-     * @return 현재 시즌 종목 list ( stockId, kind )
-     */
-
     public StockInfoResDto getStockList() {
         List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
         List<MaterialEntity> oil = materialRepository.findAllByStandardTypeAndDateBetween("유가", stockList.get(0).getMarket().getStartAt() , stockList.get(0).getMarket().getEndAt());
@@ -55,20 +73,9 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public SseEmitter getStockChart(Long stockId) {
+    public void getStockChart(Long stockId) {
     // 로그인한 유저 가져오기
     Long userId = authService.getUserId();
-
-    SseEmitter emitter = new SseEmitter();
-
-    // SSE 연결이 설정되면, 해당 사용자에게 데이터를 전송
-    emitter.onCompletion(() -> {
-        log.info("SSE connection completed");
-    });
-
-    emitter.onTimeout(() -> {
-        log.info("SSE connection timed out");
-    });
 
     // 장 정보 가져오기
     StockEntity stock = stockRepository.findById(stockId).get();
@@ -85,15 +92,13 @@ public class StockServiceImpl implements StockService {
 
     StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
 
-    // SSE 응답 생성
-    try {
-        emitter.send(SseEmitter.event().data(stockResDto));
-    } catch (IOException e) {
-        log.error("SSE send error: {}", e.getMessage());
-    }
-
-    return emitter;
+        try {
+            emitter.send(SseEmitter.event().data(stockResDto));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 }
+
 
     @Transactional
     @Override
