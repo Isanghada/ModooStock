@@ -14,10 +14,15 @@ import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,6 +32,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final UserAssetLocationRepository userAssetLocationRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final RedisTemplate<String,Object> redisTemplate;
 
 
     /**
@@ -104,5 +110,56 @@ public class MyPageServiceImpl implements MyPageService{
         List<UserAssetLocation> userAssetLocationList=userAssetLocationRepository.findAllByUserAndIsDeletedAndIsAuctionedAndIsInRepository(user,IsDeleted.N,IsAuctioned.N,IsInRespository.N);
 
         return HomeResDto.fromEntityList(userAssetLocationList);
+    }
+
+    /**
+     * IP주소에 맞게 방문자 수 반환 (쿠키 & redis 사용)
+     *
+     * @param nickname
+     * @param request
+     * @param response
+     * @return
+     */
+    @Override
+    public Long getVisitorCount(String nickname,HttpServletRequest request, HttpServletResponse response) {
+
+        if(userRepository.findByNicknameAndIsDeleted(nickname,IsDeleted.N).isEmpty())throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        //ip 주소로 홈피마다 방문자수 체크
+        String ip = request.getHeader("X-Forwarded-For");
+
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        // 쿠키 이름 생성을 위해 IP 주소의 ':' 제거 '_'로 변환
+        String ipStr = "visitor_id_" + ip.replaceAll(":", "_");
+
+        log.info(ipStr);
+
+        Integer visitorCount=0;
+        Cookie[] cookies= request.getCookies();
+
+        if(cookies!=null){
+            for(Cookie cookie:cookies){
+                log.info(cookie.getName());
+                if(cookie.getName().equals(ipStr)){
+                    //이미 쿠키가 발급되어 있음
+                    visitorCount=1; //새로운 방문자가 아니니깐 방문자 수를 1로
+                    break;
+                }
+            }
+        }
+
+        log.info(String.valueOf(visitorCount));
+        if(visitorCount==0){//새로운 방문자
+            Cookie visitorIdCookie=new Cookie(ipStr, UUID.randomUUID().toString());
+            visitorIdCookie.setMaxAge(90*24*60*60);//쿠키 만료 시간 : 90일
+            response.addCookie(visitorIdCookie);//쿠키에 응답을 추가합니다.
+            //방문자 수 증가
+            redisTemplate.opsForValue().increment("visitors"+ipStr,1);
+        }
+        //총 방문자 수 조회
+        return Long.parseLong(String.valueOf(redisTemplate.opsForValue().get("visitors"+ipStr)));
     }
 }
