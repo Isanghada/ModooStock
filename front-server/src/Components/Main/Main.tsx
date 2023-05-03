@@ -1,6 +1,7 @@
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Bathroom from './Bathroom';
 import MyHomeAsset from './MyHomeAsset';
@@ -77,7 +78,15 @@ function Main(): JSX.Element {
   return (
     <>
       {/* 데스크탑 */}
-      <div className="items-center justify-between hidden w-full h-full max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: 1,
+          ease: 'easeInOut'
+        }}
+        className="items-center justify-between hidden w-full h-full max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
         {/* 1번 구역 */}
         <div className="flex justify-start items-center w-[28%] h-full">
           <div className="w-[10%]"></div>
@@ -273,7 +282,7 @@ function Main(): JSX.Element {
             <div className="h-[13%]"></div>
           </div>
         </div>
-      </div>
+      </motion.div>
       {/* 모바일 */}
       <div className="relative flex flex-col items-center justify-center w-full h-full overflow-y-hidden max-w-[41.6rem] max-h-[23.4rem] lg:hidden mx-auto my-auto">
         {/* 메인 */}
@@ -383,6 +392,7 @@ function Main(): JSX.Element {
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/info.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[7%]"></div>
