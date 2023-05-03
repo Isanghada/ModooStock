@@ -7,6 +7,7 @@ import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import Chart from './Chart';
 import { useAppDispatch } from 'Store/hooks';
+import { useNavigate } from 'react-router-dom';
 
 interface CahrtDataType {
   일자: string;
@@ -906,6 +907,7 @@ interface IRModalType {
 }
 
 function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): JSX.Element {
+  const navigate = useNavigate();
   const ref = useRef(null);
   const quarterRef = useRef<HTMLSelectElement>(null);
   const containerRef = useRef<any>(null);
@@ -995,6 +997,8 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
       case '닫기':
         setIsIRClick((pre) => !pre);
         break;
+      case '정보상':
+        navigate('/infoshop');
     }
   };
 
@@ -1251,7 +1255,10 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                   onClick={click}>
                   <span>닫기</span>
                 </div>
-                <div className="bg-black w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
+                <div
+                  aria-label="정보상"
+                  className="bg-black w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md"
+                  onClick={click}>
                   <span>정보상 가기</span>
                 </div>
               </div>
