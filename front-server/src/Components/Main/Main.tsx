@@ -17,7 +17,6 @@ function Main(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
-
     // console.log(window.screen.width - 1024);
 
     window.addEventListener('resize', handleResize);
@@ -69,7 +68,6 @@ function Main(): JSX.Element {
     setIsOpen(false);
   };
 
-
   return (
     <>
       {/* 데스크탑 */}
@@ -100,7 +98,7 @@ function Main(): JSX.Element {
                 onClick={handleOpenModal}
               />
               <Modal isOpen={isOpen} onClose={handleCloseModal}>
-                <VisitModal onClose={handleCloseModal}/>
+                <VisitModal onClose={handleCloseModal} />
               </Modal>
             </div>
             <div className="h-[5%]"></div>
