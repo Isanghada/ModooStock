@@ -1,8 +1,7 @@
 package com.server.back.domain.storage.dto;
 
 import com.server.back.domain.auction.entity.AuctionEntity;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,8 +11,8 @@ import java.util.stream.Collectors;
 @Builder
 public class AuctionHistoryResDto {
 
-    private final Long price;
-    private final LocalDate dealDate;
+    private Long price;
+    private LocalDate dealDate;
 
     public static AuctionHistoryResDto fromEntity(AuctionEntity auction){
         return AuctionHistoryResDto.builder()
