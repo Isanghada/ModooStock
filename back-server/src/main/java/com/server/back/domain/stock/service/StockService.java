@@ -3,8 +3,7 @@ package com.server.back.domain.stock.service;
 import com.server.back.domain.stock.dto.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
-import java.util.List;
+import java.time.LocalDate;
 
 public interface StockService {
 
@@ -18,5 +17,5 @@ public interface StockService {
 
     SseEmitter subscribe();
 
-    void calRate();
+    void calRate(LocalDate gameDate);
 }

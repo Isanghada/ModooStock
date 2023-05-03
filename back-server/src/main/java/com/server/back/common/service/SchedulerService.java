@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 
@@ -171,8 +172,12 @@ public class SchedulerService {
         // 현재 진행중인 market 획득
         MarketEntity market = marketRepository.findTopByOrderByCreatedAtDesc().orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
+        LocalDateTime now = LocalDateTime.now();
+
         // 처음 시작에는 바꾸지 않음.
-        if(Period.between(LocalDate.now(), market.getCreatedAt().toLocalDate()).getDays() == 0){
+        if(Period.between(now.toLocalDate(), market.getCreatedAt().toLocalDate()).getDays() == 0
+                && now.getHour() == 10
+                && now.getMinute() == 0){
             return;
         }
 
@@ -181,7 +186,7 @@ public class SchedulerService {
         // gameDate 업데이트
         market.updateGameDate(nextDate);
 
-        stockService.calRate();
         marketRepository.save(market);
+        stockService.calRate(nextDate);
     }
 }

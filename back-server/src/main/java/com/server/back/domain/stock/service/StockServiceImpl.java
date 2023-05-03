@@ -18,10 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 @Service
@@ -217,14 +215,14 @@ public class StockServiceImpl implements StockService {
 
     @Transactional
     // 수익률 계산하는 함수
-    public void calRate(){
+    public void calRate(LocalDate gameDate){
         // 현재 주식 종목 가져오기.
         List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
 
         // 종목마다 종가 들고온 후 계산
         stockList.forEach(stock -> {
             // 원본 종가
-            ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+            ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), gameDate)
                     .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
             Long chartPrice = chart.getPriceEnd();
 
@@ -234,7 +232,7 @@ public class StockServiceImpl implements StockService {
                chartPrice = (long) (chartPrice * change.get().getChangeRate());
            }
 
-           System.out.println("변화율" + chartPrice);
+           log.info("[StockService-calRate] 변화율 : " + chartPrice);
 
             final Long finalChartPrice = chartPrice;
             List<UserDealEntity> usersDeal = userDealRepository.findAllByStockId(stock.getId());
