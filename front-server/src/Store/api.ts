@@ -74,6 +74,15 @@ interface ReturnBankListInterFace {
   result: string;
 }
 
+interface ReturnRankListInterFace {
+  data: Array<{
+    nickname: string;
+    profileImagePath: string;
+    totalMoney: number;
+  }>;
+  result: string;
+}
+
 interface UpdateStateInterFace {
   nickname: string;
   password: string;
@@ -383,6 +392,14 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'StockApi' }];
       }
+    }),
+
+    // ------------- 랭킹 -------------------
+    getRank: builder.query<ReturnRankListInterFace, string>({
+      query: () => `/rank`,
+      providesTags: (result, error, arg) => {
+        return[];
+      }
     })
   })
 });
@@ -414,5 +431,8 @@ export const {
   useGetStockQuery,
   useLazyGetStockQuery,
   useGetStockSelectQuery,
-  useLazyGetStockSelectQuery
+  useLazyGetStockSelectQuery,
+
+  // ------------- 랭킹 -------------
+  useGetRankQuery,
 } = Api;
