@@ -52,11 +52,9 @@ function Layout(): JSX.Element {
   }, [location.pathname]);
 
   useEffect(() => {
-    // 창 높이 변할떄마다 실행
+    // 레이아웃 최소값 세팅
     const height = window.screen.height;
-    // const minHeight = `min-h-[${height}px]`
-    // console.log(minHeight)
-    setScreenHeight(`${height/2}px`);
+    setScreenHeight(`${height * 7/10}px`);
   }, [screenHeight]);
 
   return (

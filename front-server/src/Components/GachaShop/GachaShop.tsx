@@ -81,8 +81,8 @@ function GachaShop(): JSX.Element {
             duration: 1,
             ease: 'easeInOut'
           }}
-          className="flex flex-col justify-evnely items-center w-full h-[90vh] mt-[10vh]">
-          <div className="w-1/3 h-[20%] flex items-end">
+          className="flex flex-col items-center w-full h-full justify-evnely">
+          <div className="w-1/3 h-[30%] flex items-end">
             <img className="w-full h-auto" src="/images/logos/gacha.png" alt="gacha" />
           </div>
           <div className="flex justify-evenly items-center w-full h-[80%]">
