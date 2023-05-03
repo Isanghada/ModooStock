@@ -1,10 +1,10 @@
 import Loading from 'Components/Common/Loading';
 import NewsModal from 'Components/Exchange/NewsModal';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useGetNewsInfoQuery } from 'Store/api';
 import { useAppSelector } from 'Store/hooks';
 import InfoModal from './InfoModal';
-import InfoNewsDetailModal from './InfoNewsDetailModal';
 
 interface infoDataInterFace {
   name: string;
@@ -37,8 +37,6 @@ function InfoShop(): JSX.Element {
   function closeModal() {
     setModalOpen(false);
   }
-  // 뉴스모달 상태
-  const [newsModalOpen, setNewsModalOpen] = useState(false)
 
   // 뉴스 창 모달
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
@@ -107,8 +105,15 @@ function InfoShop(): JSX.Element {
         cancel={'취소'}
       />
       <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
-      {newsData ? <div className="flex items-center w-full h-[90vh] mt-[10vh]">
-        <div className="w-[30%] h-[90%] border-r-4 border-white flex flex-col items-center justify-between">
+      {newsData ?       <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: 1,
+          ease: 'easeInOut'
+        }} className="flex items-center w-full h-full">
+        <div className="w-[30%] h-[80%] border-r-4 border-white flex flex-col items-center justify-between">
           <div className="flex flex-col items-start justify-end w-[70%] h-1/6">
             <div className="text-xs lg:text-base">게임 속 시간</div>
             <div className="text-sm font-bold lg:text-xl">{newsData.dateList[currentDataIndex] ? newsData.dateList[currentDataIndex].date : "오늘 장 종료하였습니다."}</div>
@@ -123,12 +128,12 @@ function InfoShop(): JSX.Element {
             구매한 뉴스는 뉴스 스크랩에서 확인 가능합니다
           </div>
           <div className="flex flex-col items-center justify-end h-[60%]">
-            <div className="text-2xl font-bold lg:text-3xl">3월</div>
+            <div className="text-2xl font-bold lg:text-3xl">{newsData?.dateList[currentDataIndex].date.slice(5, 7)}월</div>
             <div className="text-xs font-semibold lg:text-base">뉴스를 구매하실 수 있습니다</div>
             <div className="text-xs font-semibold text-red-500 lg:text-base">"날짜를 주의깊게 확인해주세요"</div>
           </div>
         </div>
-        <div className="w-[70%]  h-[90%]">
+        <div className="w-[70%]  h-[80%]">
           <div className="flex items-end justify-start h-1/6">
             <div className="px-2 text-xl font-bold lg:px-4 lg:text-5xl ">뉴스</div>
             <div className="text-sm font-bold text-red-500 lg:text-lg">중복된 뉴스가 나올 수 있습니다</div>
@@ -159,7 +164,7 @@ function InfoShop(): JSX.Element {
                     data-price={stock.price}
                     data-key={stock.stockId}
                     key={stock.stockId}
-                    className="h-1/6 w-[90%]">
+                    className="h-1/6 w-[80%]">
                     <div className="flex items-center justify-center w-1/4 text-xs text-white bg-red-700 lg:text-lg lg:font-semibold h-fit lg:h-1/4">
                       속보
                     </div>
@@ -172,7 +177,7 @@ function InfoShop(): JSX.Element {
               })}
           </div>
         </div>
-      </div> : <Loading />}
+      </motion.div> : <Loading />}
     </>
   );
 }
