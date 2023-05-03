@@ -49,7 +49,7 @@ interface SseDataType {
 }
 
 function Exchange(): JSX.Element {
-  const dispatch = useAppDispatch();
+  
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
