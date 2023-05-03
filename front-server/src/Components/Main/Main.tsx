@@ -53,6 +53,9 @@ function Main(): JSX.Element {
       case '정보상':
         navigate('/infoshop');
         break;
+      case '랭킹':
+        navigate('/rank');
+        break;
       case '뽑기 상점':
         navigate('/gachashop');
         break;

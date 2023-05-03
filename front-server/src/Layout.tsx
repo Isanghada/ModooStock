@@ -61,7 +61,7 @@ function Layout(): JSX.Element {
 
   return (
     <>
-      <div className="bg-[#FEF9F9] w-screen relative flex">
+      <div className="bg-[#FEF3F3] w-screen relative flex">
         <div
           style={{ minHeight: screenHeight }}
           className={`${
