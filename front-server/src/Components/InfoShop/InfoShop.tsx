@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetNewsInfoQuery } from 'Store/api';
 import { useAppSelector } from 'Store/hooks';
 import InfoModal from './InfoModal';
+import InfoNewsDetailModal from './InfoNewsDetailModal';
 
 interface infoDataInterFace {
   name: string;
@@ -26,6 +27,7 @@ interface newsInterFace {
   ];
 }
 
+
 function InfoShop(): JSX.Element {
   // 모달 전달 데이터
   const [modalData, setModalData] = useState<infoDataInterFace>({ name: '', color: '', price: 0, id: 0 });
@@ -35,6 +37,9 @@ function InfoShop(): JSX.Element {
   function closeModal() {
     setModalOpen(false);
   }
+  // 뉴스모달 상태
+  const [newsModalOpen, setNewsModalOpen] = useState(false)
+
   // 뉴스 창 모달
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
 
@@ -59,20 +64,20 @@ function InfoShop(): JSX.Element {
       setIsNewsClick(true);
     }
     if (name && color) {
-      switch (name) {
-        case 'A 전자':
+      switch (color) {
+        case 'text-red-600':
           setModalData({ name, color, price, id });
           setModalOpen(true);
           break;
-        case 'B 화학':
+        case 'text-blue-600':
           setModalData({ name, color, price, id });
           setModalOpen(true);
           break;
-        case 'C 생명':
+        case 'text-green-600':
           setModalData({ name, color, price, id });
           setModalOpen(true);
           break;
-        case 'G IT':
+        case 'text-orange-600':
           setModalData({ name, color, price, id });
           setModalOpen(true);
           break;
@@ -130,19 +135,19 @@ function InfoShop(): JSX.Element {
           </div>
           <div className="flex flex-col items-center justify-evenly h-5/6">
             {newsData.stockList &&
-              newsData.stockList.map((stock) => {
+              newsData.stockList.map((stock, index) => {
                 let color;
-                switch (stock.kind) {
-                  case "A 전자":
+                switch (index) {
+                  case 0:
                     color = 'text-red-600';
                     break
-                  case "B 화학":
+                  case 1:
                     color = 'text-blue-600';
                     break
-                  case "C 생명":
+                  case 2:
                     color = 'text-green-600';
                     break
-                  case "G IT":
+                  case 3:
                     color = 'text-orange-600';
                     break
                 }

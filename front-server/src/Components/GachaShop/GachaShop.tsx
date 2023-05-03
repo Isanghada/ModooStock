@@ -68,11 +68,12 @@ function GachaShop(): JSX.Element {
     }
   }, [giftOpenStatus]);
 
+  const test = true
   return (
     <>
       <></>
       <div className="flex flex-col justify-evnely items-center w-full h-[90vh] mt-[10vh]">
-        <div className="w-1/3 lg:w-1/2 h-[20%] flex items-end">
+        <div className="w-1/3 h-[20%] flex items-end">
           <img className="w-full h-auto" src="/images/logos/gacha.png" alt="gacha" />
         </div>
         <div className="flex justify-evenly items-center w-full h-[80%]">
@@ -82,7 +83,7 @@ function GachaShop(): JSX.Element {
             onMouseEnter={hoverOn}
             onMouseLeave={hoverOut}
             className="border-2 lg:border-4 border-[#b3dcf8] rounded-3xl w-1/4 h-[75%] flex flex-col justify-evenly items-center bg-[#e4f4ff] hover:border-[#75c5fa]  shadow-md shadow-gray-400 cursor-pointer">
-            <div className="text-lg lg:text-5xl font-extrabold text-[#748DA6]">일반상자</div>
+            <div className="text-lg lg:text-4xl font-extrabold text-[#748DA6]">일반상자</div>
             <div className="w-[60%] lg:w-[70%]">
               <img
                 className={`w-full h-auto ${isHover === '일반' && `animate-[ring_3s_infinite]`}`}
@@ -101,7 +102,7 @@ function GachaShop(): JSX.Element {
             onMouseEnter={hoverOn}
             onMouseLeave={hoverOut}
             className="border-2 lg:border-4 border-[#ffa9ff] rounded-3xl w-1/4 h-[75%] flex flex-col justify-evenly items-center bg-[#ffdaf9] hover:border-[#ff70cf]  shadow-md shadow-gray-400 cursor-pointer">
-            <div className="text-lg lg:text-5xl font-extrabold text-[#c73fa5]">고급상자</div>
+            <div className="text-lg lg:text-4xl font-extrabold text-[#c73fa5]">고급상자</div>
             <div className="w-[60%] lg:w-[70%]">
               <img
                 className={`w-full h-auto ${isHover === '고급' && `animate-[ring_3s_infinite]`}`}
@@ -120,7 +121,7 @@ function GachaShop(): JSX.Element {
             onMouseEnter={hoverOn}
             onMouseLeave={hoverOut}
             className="border-2 lg:border-4 border-[#ffde7a] rounded-3xl w-1/4 h-[75%] flex flex-col justify-evenly items-center bg-[#FFF2CC] hover:border-[#fdba3d]  shadow-md shadow-gray-400 cursor-pointer">
-            <div className="text-lg lg:text-5xl font-extrabold text-[#F0A633]">전설상자</div>
+            <div className="text-lg lg:text-4xl font-extrabold text-[#F0A633]">전설상자</div>
             <div className="w-[60%] lg:w-[70%]">
               <img
                 className={`w-full h-auto ${isHover === '전설' && `animate-[ring_3s_infinite]`}`}
@@ -149,9 +150,9 @@ function GachaShop(): JSX.Element {
       <Transition show={giftOpenStatus}>
         <div className="fixed inset-0 z-50 flex flex-col justify-center w-full h-screen text-center transition-all duration-150 bg-black bg-opacity-80 ">
           <Transition.Child
-            enter="ease-out duration-3000"
+            enter="ease-in-out duration-[3.5s]"
             enterFrom="drop-shadow-[0_10px_10px_rgba(255,255,255)]"
-            enterTo="drop-shadow-[0_30px_100px_rgba(255,255,255)]">
+            enterTo={test ? `drop-shadow-[0_20px_70px_rgba(255,255,000)]` : `drop-shadow-[0_20px_70px_rgba(255,255,255)]`}>
             <Lottie
               animationData={giftOpenData}
               className="w-1/2 mx-auto transition-all duration-300 cursor-pointer drop-shadow-[0_10px_20px_rgba(255,255,255)]"
