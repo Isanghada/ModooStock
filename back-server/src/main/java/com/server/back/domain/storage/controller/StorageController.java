@@ -2,6 +2,7 @@ package com.server.back.domain.storage.controller;
 
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.mypage.dto.MyAssetResDto;
+import com.server.back.domain.storage.dto.AuctionHistoryResDto;
 import com.server.back.domain.storage.service.StorageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +40,13 @@ public class StorageController {
     public ResponseEntity<ResultDto<List<Long>>> getQuote(@PathVariable Long myAssetId){
         List<Long> quoteList=storageService.getQuote(myAssetId);
         return ResponseEntity.ok(ResultDto.of(quoteList));
+    }
+
+    @GetMapping("/auction/history/{myAssetId}")
+    @ApiOperation(value = "해당 물품 과거 경매 반환")
+    public ResponseEntity<ResultDto<List<AuctionHistoryResDto>>> getAuctionHistory(@PathVariable Long myAssetId){
+        List<AuctionHistoryResDto> historyList=storageService.getAuctionHistory(myAssetId);
+        return ResponseEntity.ok(ResultDto.of(historyList));
     }
 
 }
