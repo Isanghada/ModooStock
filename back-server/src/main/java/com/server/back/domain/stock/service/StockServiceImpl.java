@@ -234,6 +234,8 @@ public class StockServiceImpl implements StockService {
                chartPrice = (long) (chartPrice * change.get().getChangeRate());
            }
 
+           System.out.println("변화율" + chartPrice);
+
             final Long finalChartPrice = chartPrice;
             List<UserDealEntity> usersDeal = userDealRepository.findAllById(Collections.singleton(stock.getId()));
             usersDeal.forEach(user -> {

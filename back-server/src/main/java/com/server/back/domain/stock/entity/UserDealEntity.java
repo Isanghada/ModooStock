@@ -67,14 +67,14 @@ public class UserDealEntity {
             this.rate = (float) 0;
         }
         else {
-            this.rate = (chartPrice - average) / (float) average;
+            this.rate = (float)((chartPrice - average) * 100 / average);
         }
     }
 
     // 수익률 변경
     public void calRate(Long chartPrice){
         if(totalAmount > 0){
-            this.rate = (chartPrice - average) / (float) average;
+            this.rate = (float)((chartPrice - average) * 100 / average);
         }
     }
 }
