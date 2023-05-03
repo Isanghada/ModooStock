@@ -17,12 +17,11 @@ const result = {
 
 function LeftDescription(): JSX.Element {
   return (
-    <div
-      className={`absolute top-0 left-0 flex items-center flex-col justify-center w-[150px] h-[200px] bg-white rounded-lg`}></div>
+    <div className={`flex items-center flex-col justify-center w-[200px] h-[300px] bg-white rounded-lg`}>왼쪽 그림</div>
   );
 }
 
-function LotteryModal(): JSX.Element {
+const LotteryModal = () => {
   const WIDTH = 400;
   const HEIGHT = 200;
   const ERASE_RADIUS = 30;
@@ -134,29 +133,31 @@ function LotteryModal(): JSX.Element {
 
   return (
     <>
-      <div className={`max-w-screen-xl w-11/12 mx-auto md:mt-[7rem] mt-[5rem] rounded-lg h-fit border-4`}>
-        <h2>스피드 복권</h2>
+      <div className={`flex max-w-screen-xl mx-auto rounded-lg h-fit border-4`}>
         <LeftDescription />
-        <div className="relative">
-          <div
-            className={`absolute top-0 left-0 flex items-center flex-col justify-center w-[${WIDTH}px] h-[${HEIGHT}px] bg-white rounded-lg`}>
-            <span className={`${styles.font} text-3xl font-bold`}>{result.data.ranking}등 당첨!</span>
-            <br />
-            <span className={`${styles.font} text-xl font-medium`}>{result.data.money}원를 획득하셨습니다.</span>
+        <div className="flex items-center flex-col justify-center w-[466px] h-[300px] bg-white rounded-lg">
+          <div className="w-11/12 text-right">발행일시 : </div>
+          <div className="relative">
+            <div
+              className={`absolute top-0 left-0 flex items-center flex-col justify-center w-full h-[${HEIGHT}px] bg-white rounded-lg`}>
+              <span className={`${styles.font} text-3xl font-bold`}>{result.data.ranking}등 당첨!</span>
+              <br />
+              <span className={`${styles.font} text-xl font-medium`}>{result.data.money}원를 획득하셨습니다.</span>
+            </div>
+            <canvas
+              className="relative"
+              ref={canvasRef}
+              onMouseDown={handleDrawingStart}
+              onTouchStart={handleDrawingStart}
+              onMouseMove={handleMouseMove}
+              onTouchMove={handleTouchMove}
+              onMouseUp={handleDrawingEnd}
+            />
           </div>
-          <canvas
-            className="relative"
-            ref={canvasRef}
-            onMouseDown={handleDrawingStart}
-            onTouchStart={handleDrawingStart}
-            onMouseMove={handleMouseMove}
-            onTouchMove={handleTouchMove}
-            onMouseUp={handleDrawingEnd}
-          />
         </div>
       </div>
     </>
   );
-}
+};
 
 export default LotteryModal;

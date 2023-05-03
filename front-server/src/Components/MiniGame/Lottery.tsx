@@ -1,6 +1,9 @@
 // import Error from 'Components/Common/Error';
-import { useParams, useNavigate } from 'react-router-dom';
+// import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 // import Loading from 'Components/Common/Loading';
+import Modal from 'Components/Main/Modal';
+import LotteryModal from './LotteryModal';
 
 function Test(): JSX.Element {
   return (
@@ -41,16 +44,22 @@ function Lottery(): JSX.Element {
 
   // if (isLoading) return <Loading />;
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* 데스크탑 */}
       <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
-        <Test />
         {/* 1. 스피드 복권 */}
         <div className="flex flex-col w-[25%] md:w-[23%] md:min-w-[23%] lg:min-w-[20%] lg:w-1/5 mx-2 text-center border-2 rounded-[2rem] bg-[#FFF2CC]/60 border-[#F0A633]/60">
-          <div
-            className="absolute mx-2 h-full border-2 rounded-[2rem] "
-            style={{ backgroundImage: `url(images/logos/IntroBG.png)`, opacity: 0.4 }}></div>
           <div className="py-2 lg:py-5">
             <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#F0A633] ">
               스피드 복권
@@ -64,8 +73,8 @@ function Lottery(): JSX.Element {
           <div className="pb-4 lg:pb-5">
             <div
               aria-label="스피드 복권 구매"
-              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#FFC24E]/60 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#FFC24E]/80 hover:scale-110 transition-all duration-300"
-              onClick={() => {}}>
+              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#FFC24E]/80 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#FFC24E] hover:scale-110 transition-all duration-300"
+              onClick={handleOpenModal}>
               구매 하기
             </div>
           </div>
@@ -84,8 +93,8 @@ function Lottery(): JSX.Element {
           <div className="py-4 mx-auto lg:py-8 h-[4rem] md:h-[5rem] lg:h-[7rem]"></div>
           <div className="pb-4 lg:pb-5">
             <div
-              aria-label="송금"
-              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#2C94EA]/60 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#2C94EA]/80 hover:scale-110 transition-all duration-300"
+              aria-label="어둠의 복권"
+              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#2C94EA]/80 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#2C94EA] hover:scale-110 transition-all duration-300"
               onClick={() => {}}>
               구매 하기
             </div>
@@ -96,6 +105,9 @@ function Lottery(): JSX.Element {
       <div className="relative flex items-center justify-between w-full h-full overflow-y-hidden max-w-[41.6rem] md:max-w-[50rem] max-h-[23.4rem] lg:hidden mx-auto my-auto">
         <div className="flex w-full h-full"></div>
       </div>
+      <Modal isOpen={isOpen} onClose={handleCloseModal}>
+        <LotteryModal />
+      </Modal>
     </>
   );
 }

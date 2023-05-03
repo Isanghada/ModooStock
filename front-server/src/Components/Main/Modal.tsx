@@ -5,11 +5,14 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  padding?: string;
 };
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const el = document.getElementById('modal-root');
+
+  if (padding === undefined) padding = '';
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,7 +36,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full  overflow-auto bg-gray-800 bg-opacity-50">
       <div
         ref={modalRef}
-        className="relative p-6 lg:p-8 bg-white rounded-[25px] shadow-2xl"
+        className={`relative ${padding} bg-white rounded-xl shadow-2xl`}
         style={{
           filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
         }}>
