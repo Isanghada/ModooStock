@@ -15,5 +15,5 @@ public interface UserDealRepository extends JpaRepository<UserDealEntity, Long> 
 
     List<UserDealEntity>findAllByUserAndStockMarketId(UserEntity user, Long marketId);
 
-    List<UserDealEntity> findAllStockId(Long stockId);
+    List<UserDealEntity> findAllByStockId(Long stockId);
 }
