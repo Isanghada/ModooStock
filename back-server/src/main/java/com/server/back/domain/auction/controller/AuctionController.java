@@ -55,4 +55,10 @@ public class AuctionController {
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
+    @GetMapping("/my")
+    @ApiOperation(value = "내가 올린 경매 물품리스트를 반환합니다.")
+    public ResponseEntity<ResultDto<List<AuctionResDto>>> getMyAuctionList(){
+        List<AuctionResDto> auctionListResDto=auctionService.getMyAuctionList();
+        return ResponseEntity.ok(ResultDto.of(auctionListResDto));
+    }
 }
