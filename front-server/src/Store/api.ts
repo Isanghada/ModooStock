@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
 
 interface ReturnBasicInterFace {
   data: boolean;
@@ -128,6 +127,14 @@ interface ReturnStockListInterFace {
       date: string;
       price: number;
     }>;
+  };
+  result: string;
+}
+
+interface ReturnLotteryInterFace {
+  data: {
+    ranking: number,
+    money: number
   };
   result: string;
 }
@@ -340,6 +347,31 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'StockApi' }];
       }
+    }),
+
+    // ----------- 미니게임 ------------
+    // 1. 스피드 복권 버전
+    postMiniGameBright: builder.mutation<ReturnLotteryInterFace, string>({
+      query: (body) => {
+        return {
+          url: `/mini/bright`,
+          method: 'Post',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
+    }),
+
+    // 2. 어둠의 복권 버전
+    postMiniGameDark: builder.mutation<ReturnLotteryInterFace, string>({
+      query: (body) => {
+        return {
+          url: `/mini/dark`,
+          method: 'Post',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
     })
   })
 });
@@ -369,5 +401,9 @@ export const {
   useGetStockQuery,
   useLazyGetStockQuery,
   useGetStockSelectQuery,
-  useLazyGetStockSelectQuery
+  useLazyGetStockSelectQuery,
+
+  // ----------- 미니게임 ------------
+  usePostMiniGameBrightMutation,
+  usePostMiniGameDarkMutation
 } = Api;

@@ -6,22 +6,81 @@ interface ErasedPoint {
   y: number;
 }
 
-// 임시 목업 data
-const result = {
-  data: {
-    ranking: 4,
-    money: 10000
-  },
-  result: 'SUCCESS'
+interface Props {
+  isDark: boolean;
+  result: {
+    ranking: number;
+    money: number;
+  };
+  timestamp: number;
+}
+
+type DateType = Date | string | number;
+const zero = (value: number | string) => (value.toString().length === 1 ? `0${value}` : value);
+
+let dateFormater = (format: string, date: DateType): string => {
+  const _date = new Date(date);
+
+  return format.replace(/(yyyy|mm|dd|MM|DD|H|i|s)/g, (t: string): any => {
+    switch (t) {
+      case 'yyyy':
+        return _date.getFullYear();
+      case 'mm':
+        return _date.getMonth() + 1;
+      case 'dd':
+        return _date.getDate();
+      case 'MM':
+        return zero(_date.getMonth() + 1);
+      case 'DD':
+        return zero(_date.getDate());
+      case 'H':
+        return zero(_date.getHours());
+      case 'i':
+        return zero(_date.getMinutes());
+      case 's':
+        return zero(_date.getSeconds());
+      default:
+        return '';
+    }
+  });
 };
 
-function LeftDescription(): JSX.Element {
+function LeftDescriptionBright(): JSX.Element {
   return (
-    <div className={`flex items-center flex-col justify-center w-[200px] h-[300px] bg-white rounded-lg`}>왼쪽 그림</div>
+    <div className={`flex flex-col items-center justify-center w-[200px] h-[300px] rounded-lg bg-sky-100 px-2 pt-4`}>
+      <span className={`${styles.font2} text-2xl text-center`}>최대 당첨금</span>
+      <span className={`${styles.font2} text-2xl text-center`}>5천만원!</span>
+      <div className={`${styles.font2} flex flex-col text-xs text-start mt-4 text-[#707070]`}>
+        <span>1등 : 오천만원 ( 0.1 % )</span>
+        <span>2등 : 3백만원 ( 0.9% )</span>
+        <span>3등 : 50만원 ( 2% )</span>
+        <span>4등 : 만원 ( 50% )</span>
+        <span>5등 : 꽝 ( 47% )</span>
+      </div>
+      <img className="w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
+    </div>
   );
 }
 
-const LotteryModal = () => {
+function LeftDescriptionDark(): JSX.Element {
+  return (
+    <div className={`flex flex-col items-center justify-center w-[200px] h-[300px] rounded-lg bg-pink-100 px-2 pt-4`}>
+      <span className={`${styles.font2} text-2xl text-center`}>최대 당첨금</span>
+      <span className={`${styles.font2} text-2xl text-center`}>10억원!</span>
+      <div className={`${styles.font2} flex flex-col text-xs text-start mt-4 text-[#707070]`}>
+        <span>1등 : 10억 ( 0.1% )</span>
+        <span>2등 : 꽝 ( 99.9% )</span>
+      </div>
+      <img className="w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
+    </div>
+  );
+}
+
+function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
+  // 발행 일자
+  const curTime = dateFormater('yyyy. MM. DD H:i:s', timestamp);
+
+  // ------- 캔버스 부분 설정 -------
   const WIDTH = 400;
   const HEIGHT = 200;
   const ERASE_RADIUS = 30;
@@ -131,18 +190,25 @@ const LotteryModal = () => {
     setThresholdOfEraseCount(col * row);
   }, [dpr, ERASE_DISTANCE]);
 
+  // ------- (끝) 캔버스 부분 설정 -------
+
   return (
     <>
       <div className={`flex max-w-screen-xl mx-auto rounded-lg h-fit border-4`}>
-        <LeftDescription />
+        {!isDark && <LeftDescriptionBright />}
+        {isDark && <LeftDescriptionDark />}
         <div className="flex items-center flex-col justify-center w-[466px] h-[300px] bg-white rounded-lg">
-          <div className="w-11/12 text-right">발행일시 : </div>
-          <div className="relative">
+          <div className="w-11/12 text-right pr-5 text-xs text-[#707070]">발행일시 : {curTime}</div>
+          <div className="relative my-2">
             <div
-              className={`absolute top-0 left-0 flex items-center flex-col justify-center w-full h-[${HEIGHT}px] bg-white rounded-lg`}>
-              <span className={`${styles.font} text-3xl font-bold`}>{result.data.ranking}등 당첨!</span>
+              className={`absolute top-0 left-0 flex items-center flex-col justify-center w-full h-full bg-white rounded-lg border-4 border-[#999]`}>
+              <span className={`${styles.font} text-5xl font-bold`}>
+                {result.money === 0 ? '꽝' : result.ranking + '등 당첨!'}
+              </span>
               <br />
-              <span className={`${styles.font} text-xl font-medium`}>{result.data.money}원를 획득하셨습니다.</span>
+              <span className={`${styles.font} text-xl font-medium`}>
+                {result.money === 0 ? '다음 기회에...' : result.money + '원을 획득하셨습니다.'}
+              </span>
             </div>
             <canvas
               className="relative"
@@ -154,10 +220,15 @@ const LotteryModal = () => {
               onMouseUp={handleDrawingEnd}
             />
           </div>
+          <div className="text-center text-xs font-medium text-[#707070]">
+            <span>발행된 복권은 재발급이 불가능합니다.</span>
+            <br />
+            <span>꼭 화면에서 당첨 여부를 확인하시기 바랍니다.</span>
+          </div>
         </div>
       </div>
     </>
   );
-};
+}
 
 export default LotteryModal;
