@@ -83,6 +83,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     }
   };
 
+  // 송금
   const postTransfer = async (money: number, receiver: string) => {
     if (money > 0) {
       const body = {
