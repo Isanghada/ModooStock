@@ -1,11 +1,14 @@
 package com.server.back.domain.storage.service;
 
 import com.server.back.common.code.commonCode.DealType;
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.common.entity.DealEntity;
 import com.server.back.common.repository.DealRepository;
 import com.server.back.common.service.AuthService;
+import com.server.back.domain.auction.entity.AuctionEntity;
+import com.server.back.domain.auction.repository.AuctionRepository;
 import com.server.back.domain.mypage.dto.MyAssetResDto;
 import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.repository.AssetPriceRepository;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,6 +35,7 @@ public class StorageServiceImpl implements StorageService {
     private final UserAssetRepository userAssetRepository;
     private final DealRepository dealRepository;
     private final AssetPriceRepository assetPriceRepository;
+    private final AuctionRepository auctionRepository;
 
     /**
      * 본인 inventory 리스트 반환
@@ -75,4 +80,28 @@ public class StorageServiceImpl implements StorageService {
         //현재 돈에서 더하기
         user.increaseCurrentMoney(resalePrice);
     }
+
+    /**
+     * 지금 판매 시세 알려주기
+     *
+     * @param myAssetId
+     * @return
+     */
+    @Override
+    public List<Long> getQuote(Long myAssetId) {
+        //현재 유저
+        Long userId=authService.getUserId();
+        UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        UserAssetEntity userAsset=userAssetRepository.findByIdAndIsDeleted(myAssetId,IsDeleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        if(!userAsset.getUser().equals(user)) throw new CustomException(ErrorCode.NO_ACCESS);
+
+        Long AssetId =userAsset.getAsset().getId();
+
+        List<AuctionEntity> auctionEntityList=auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(AssetId, IsCompleted.N,IsDeleted.N);
+
+        return auctionEntityList.stream().map(AuctionEntity::getAuctionPrice).collect(Collectors.toList());
+    }
+
 }
