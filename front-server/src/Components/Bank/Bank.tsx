@@ -116,7 +116,7 @@ function Bank(): JSX.Element {
           <div>
             <span> 총 예금 금액 &nbsp;</span>
             <span className="font-black text-[#3F3F3F] text-[1.3rem] lg:text-[2rem]">
-              {getBank?.data.currentMoney.toLocaleString()}
+              {getBank && getBank?.data.currentMoney > 0 ? getBank?.data.currentMoney.toLocaleString() : 0}
             </span>
             <span> 원</span>
           </div>

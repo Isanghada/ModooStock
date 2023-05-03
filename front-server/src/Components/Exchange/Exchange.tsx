@@ -1,4 +1,4 @@
-import React, { PureComponent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, PureComponent, useEffect, useRef, useState } from 'react';
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
 import styled from './Exchange.module.css';
@@ -7,6 +7,7 @@ import schedule from 'node-schedule';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import Chart from './Chart';
 import { useAppDispatch } from 'Store/hooks';
+import { useNavigate } from 'react-router-dom';
 
 interface CahrtDataType {
   일자: string;
@@ -34,6 +35,17 @@ interface NationalType {
   price: number;
 }
 
+interface SelectIRDataTYpe {
+  'key services': string[];
+  name: string;
+  'operating gain': number;
+  'operating revenue': number;
+  plan: string[];
+  'total equity': number;
+  'total liabilities': number;
+}
+
+// 아래 타입 수정해야함
 interface SseDataType {
   stockId: number;
   amount: number;
@@ -50,6 +62,7 @@ interface SseDataType {
 }
 
 function Exchange(): JSX.Element {
+  const irData = require('./ir_data.json');
   const [tradingVolume, setTradingVolume] = useState<number>(0);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
@@ -57,10 +70,9 @@ function Exchange(): JSX.Element {
   const nowDate = new Date();
   const [lazyGetStock, { isLoading: isLoading1, isError: isError1 }] = useLazyGetStockQuery();
   const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
-
   const [lazyGetStockData, setLazyGetStockData] = useState<any>();
-  // 첫번째 인덱스면 현재 데이터의 PriceEnd or 아닐 경우엔 마지막 전 데이터의 PriceEnd
-  const [selectBeforPriceEnd, setSelectBeforPriceEnd] = useState<number>(0);
+  // 첫번째 인덱스면 현재 데이터의 PriceBefore or 아닐 경우엔 Average 값에 대한 수익
+  const [selectRevenueData, setSelectRevenueData] = useState<number>(0);
   // 가장 마지막 인덱스의 데이터
   const [selectCurrentData, setSelectCurrentData] = useState<SelectDataType>({
     changeRate: 0,
@@ -112,34 +124,32 @@ function Exchange(): JSX.Element {
       종가: 0
     }
   ]);
+
   // 국제시장 환율 클릭 0:미국, 1:일본, 2:유럽연합
   const [clickNational, setClickNational] = useState<number>(0);
   const [clickNationalName, setClickNationalName] = useState<string>('');
 
   // sse 적용하는 코드?
-  const [eventList, setEventList] = useState<any>();
+  // const [eventList, setEventList] = useState<any>();
   const [listening, setListening] = useState<boolean>(false);
-  const [respon, setRespon] = useState<boolean>(false);
+  // const [respon, setRespon] = useState<boolean>(false);
   const [sseData, setSseData] = useState<SseDataType>();
-  // const [sseData, setSseData] = useState<SseDataType>({
-  //   stockId: 0,
-  //   amount: 0,
-  //   average: 0,
-  //   rate: 0,
-  //   stockChartResDto: [
-  //     {
-  //       priceBefore: 0,
-  //       priceEnd: 0,
-  //       date: '',
-  //       id: 0,
-  //       companyId: 0,
-  //       changeRate: 0
-  //     }
-  //   ]
-  // });
+
   // SSE를 저장하는 변수 eventSource가 있으면 SSE 연결 중.
   const [eventSource, setEventSource] = useState<EventSourcePolyfill | undefined>(undefined);
 
+  // 선택한 주식에 대한 IRData
+  const [selectIRData, SetSelectIRData] = useState<SelectIRDataTYpe>({
+    'key services': [''],
+    name: '',
+    'operating gain': 0,
+    'operating revenue': 0,
+    plan: [''],
+    'total equity': 0,
+    'total liabilities': 0
+  });
+
+  // SSE
   useEffect(() => {
     if (eventSource) {
       eventSource.close();
@@ -171,6 +181,7 @@ function Exchange(): JSX.Element {
     };
   }, []);
 
+  // 클릭 이벤트
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '1개':
@@ -206,36 +217,31 @@ function Exchange(): JSX.Element {
     }
   };
 
+  // 차트 데이터
   useEffect(() => {
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
-
       await selectStockData(data.stockList[0].stockId);
+      // console.log('data.stockList[0].kind: ', typeof data.stockList[0].kind);
+      const firstDataName = data.stockList[0].kind;
+      SetSelectIRData(irData[firstDataName]);
     };
     firstLogin();
   }, []);
 
-  // 스케줄러
-  // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
-  //   setTimeout(() => {
-  //     const currentDate = nowDate.toLocaleString('ko-kr')
-  //     console.log(nowDate.getTime());
-  //   }, 1000);
-  //   job.cancel(true);
-  // });
-
+  // 차트 데이터 변경될때마다 실행
   useEffect(() => {
     if (sseData) {
       const { stockId, amount, average, rate, stockChartResDto } = sseData;
-
-      console.log(typeof amount);
-
+      if (clickNationalName !== '') {
+        SetSelectIRData(irData[clickNationalName]);
+      }
       // 수익, 손익 계산을 위한 데이터 추가
-      if (stockChartResDto.length >= 1) {
-        setSelectBeforPriceEnd(stockChartResDto[stockChartResDto.length - 2].priceEnd);
+      if (stockChartResDto.length > 1) {
+        setSelectRevenueData((stockChartResDto[stockChartResDto.length - 1].priceEnd - average) * amount);
       } else {
-        setSelectBeforPriceEnd(stockChartResDto[stockChartResDto.length - 1].priceBefore);
+        setSelectRevenueData((stockChartResDto[stockChartResDto.length - 1].priceBefore - average) * amount);
       }
       setSelectCurrentData(stockChartResDto[stockChartResDto.length - 1]);
       // 선택한 데이터의 차트 데이터
@@ -327,12 +333,22 @@ function Exchange(): JSX.Element {
     }
   }, [sseData]);
 
+  // 스케줄러
+  // const job = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
+  //   setTimeout(() => {
+  //     const currentDate = nowDate.toLocaleString('ko-kr')
+  //     console.log(nowDate.getTime());
+  //   }, 1000);
+  //   job.cancel(true);
+  // });
+
   const selectStockData = (stockId: number) => {
     getStockSelect(stockId);
   };
 
   if (eventSource) {
     eventSource.onmessage = (event: any) => {
+      // console.log(JSON.parse(event.data));
       console.log(JSON.parse(event.data));
 
       setSseData(JSON.parse(event.data));
@@ -341,7 +357,7 @@ function Exchange(): JSX.Element {
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    // console.log('e.currentTarget.innerHTML: ', e.currentTarget.innerHTML);
+    console.log('innerHTML: ', e.currentTarget.innerHTML);
 
     setClickNationalName(e.currentTarget.innerHTML);
 
@@ -354,14 +370,42 @@ function Exchange(): JSX.Element {
     }
   };
 
+  const TagSetting = (e: any) => {
+    return (
+      <div>
+        <span>{e[e.length - 1].종가.toLocaleString()}</span>
+        <span>원</span>
+        <span
+          className={`text-[1rem] ${
+            e[e.length - 1] && e[e.length - 2] && e[e.length - 1].종가 - e[e.length - 2].종가 > 0
+              ? 'text-red-500'
+              : 'text-blue-500'
+          }`}>
+          &nbsp;(
+          {e[e.length - 1] && e[e.length - 2]
+            ? (e[e.length - 1].종가 - e[e.length - 2].종가).toLocaleString()
+            : e[e.length - 1].종가.toLocaleString()}
+          )
+        </span>
+      </div>
+    );
+  };
+
   return (
     <>
       {isLoading1 && isLoading2 ? (
         <div>로딩</div>
       ) : (
         <>
-          <IRModal isIRClick={isIRClick} setIsIRClick={setIsIRClick} />
-          <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
+          {isIRClick && (
+            <IRModal
+              isIRClick={isIRClick}
+              setIsIRClick={setIsIRClick}
+              selectIRData={selectIRData}
+              date={selectCurrentData.date.split('-')}
+            />
+          )}
+          {isNewsClick && <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />}
           {isMobileInfo && (
             <MobileInfo
               isMobileInfo={isMobileInfo}
@@ -443,25 +487,48 @@ function Exchange(): JSX.Element {
                   </div>
                   {/* 데이터 */}
                   <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold">
-                    <div className="flex items-end space-x-1 text-[#006EC9]">
-                      <span className={`text-[1.5rem]`}>
-                        10,000
-                        {/* {(selectCurrentData.priceEnd - selectBeforPriceEnd) * sseData?.amount} */}
-                      </span>
-                      <span className="text-[1rem]">(6.74 %)</span>
+                    <div
+                      className={`flex items-end space-x-1 ${
+                        selectRevenueData > 0 ? 'text-red-500' : 'text-blue-500'
+                      }`}>
+                      <span className={`text-[1.5rem]`}>{selectRevenueData.toLocaleString()}원</span>
+                      <span className="text-[1rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
                     <div className="flex space-x-3 items-end  text-[1.5rem]">
-                      <div className="flex items-center space-x-1">
-                        <span className="text-[1rem]">보유수량</span>
-                        <span className="text-black">10</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span className=" items-end text-[1rem]">평균단가</span>
-                        <span className="text-black">70,250</span>
-                      </div>
+                      {sseData && sseData?.amount > 0 && (
+                        <>
+                          <div className="flex items-center space-x-1">
+                            <span className="text-[1rem]">보유수량</span>
+                            <span className="text-black">{sseData?.amount.toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <span className=" items-end text-[1rem]">평균단가</span>
+                            <span className="text-black">{sseData?.average?.toLocaleString()}</span>
+                          </div>
+                        </>
+                      )}
+
                       <div className="flex items-center space-x-1">
                         <span className="text-[1rem]">현재가</span>
-                        <span className="text-[#006EC9]">{selectCurrentData.priceEnd.toLocaleString()}</span>
+                        <span className={`text-black`}>{selectCurrentData.priceEnd.toLocaleString()}</span>
+                        <span className="text-black">원</span>
+                        <span
+                          className={`text-[1rem] flex pt-2 items-end ${
+                            sseData &&
+                            selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                              0
+                              ? 'text-red-500'
+                              : 'text-blue-500'
+                          }`}>
+                          (
+                          {sseData &&
+                            (
+                              selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                            ).toLocaleString()}
+                          )
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -473,15 +540,11 @@ function Exchange(): JSX.Element {
                 <div className="flex justify-between w-full mt-3">
                   {/* 유가 시세 */}
                   <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
-                    <div className="flex items-end justify-between w-full pt-2">
+                    <div className="flex items-end justify-between w-full pt-2 pb-1">
                       <div>
                         <span>유가 시세</span>
                       </div>
-                      <div>
-                        <span className="text-[#006EC9]">{oilData[oilData.length - 1].종가.toLocaleString()}</span>
-                        <span>원</span>
-                        <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
-                      </div>
+                      {TagSetting(oilData)}
                     </div>
                     <div className="w-full h-[9rem] text-[0.7rem] font-normal">
                       <Chart data={oilData} />
@@ -489,15 +552,11 @@ function Exchange(): JSX.Element {
                   </div>
                   {/* 금 시세 */}
                   <div className="flex flex-col items-start w-[49%] text-[1.4rem] bg-white px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
-                    <div className="flex items-end justify-between w-full pt-2">
+                    <div className="flex items-end justify-between w-full pt-2 pb-1">
                       <div>
                         <span>금 시세</span>
                       </div>
-                      <div>
-                        <span className="text-[#006EC9]">{goldData[goldData.length - 1].종가.toLocaleString()}</span>
-                        <span>원</span>
-                        <span className="text-[1rem] text-[#006EC9]">&nbsp;(-1.10)</span>
-                      </div>
+                      {TagSetting(goldData)}
                     </div>
                     <div className="w-full h-[9rem] text-[0.7rem] font-normal">
                       <Chart data={goldData} />
@@ -511,28 +570,61 @@ function Exchange(): JSX.Element {
                   <div className="flex items-end justify-between w-full pt-2 font-bold">
                     <div className="flex items-end space-x-1">
                       <span className="text-[1rem]">나의 투자 현황</span>
-                      <span className="text-[0.7rem] font-semibold">A 전자</span>
+                      <span className="text-[0.7rem] font-semibold">{clickNationalName}</span>
                     </div>
+                    {sseData && sseData?.amount > 0 && (
+                      <div className="flex items-end space-x-1">
+                        <div className="flex items-center space-x-1">
+                          <span className="text-[0.7rem]">보유수량</span>
+                          <span className="text-black">{sseData?.amount.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <span className=" items-end text-[0.7rem]">평균단가</span>
+                          <span className="text-black">{sseData?.average?.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {/* 데이터 */}
-                  <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold pt-1 pb-2 ">
-                    <div className="flex items-end space-x-1 text-[#006EC9]">
-                      <span className="text-[1rem]">- 48,424</span>
-                      <span className="text-[0.7rem]">(6.74 %)</span>
+                  <div className="flex items-end justify-between w-full text-[#9B9B9B] font-bold pb-1 ">
+                    <div
+                      className={`flex items-end space-x-1 ${
+                        selectRevenueData > 0 ? 'text-red-500' : 'text-blue-500'
+                      }`}>
+                      <span className={`text-[1rem]`}>{selectRevenueData.toLocaleString()}원</span>
+                      <span className="text-[0.7rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
-                    <div className="flex space-x-2 md:space-x-3 items-end text-[0.8rem] md:text-[1rem]">
-                      <div className="flex items-center space-x-1">
-                        <span className="text-[0.7rem]">보유수량</span>
-                        <span className="text-black">10</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span className=" items-end text-[0.7rem]">평균단가</span>
-                        <span className="text-black">70,250</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
+                    <div className="flex space-x-1 items-center text-[0.8rem] md:text-[1rem]">
+                      {sseData && sseData?.amount > 0 && (
+                        <>
+                          <div className="flex items-center">
+                            <span className=" items-end text-[0.7rem] pr-1">현재가</span>
+                            <span className="text-black">{selectCurrentData.priceEnd.toLocaleString()}</span>
+                            <span className="text-black text-[0.7rem]">원</span>
+                          </div>
+                          <span
+                            className={`text-[0.6rem] flex  items-end  ${
+                              sseData &&
+                              selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                                0
+                                ? 'text-red-500'
+                                : 'text-blue-500'
+                            }`}>
+                            (
+                            {sseData &&
+                              (
+                                selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                              ).toLocaleString()}
+                            )
+                          </span>
+                        </>
+                      )}
+                      {/* <div className="flex items-center space-x-1">
                         <span className="text-[0.7rem]">현재가</span>
                         <span className="text-[#006EC9]">65,800</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   {/* 차트 */}
@@ -640,34 +732,23 @@ function Exchange(): JSX.Element {
                       {clickNational === 0 && (
                         <div className="flex items-center justify-between space-x-2">
                           <span className="text-[1.2rem]">미국</span>
-                          <div>
-                            <span className="text-[#006EC9]">{usdData[usdData.length - 1].종가.toLocaleString()}</span>
-                            <span>원</span>
-                          </div>
+                          {TagSetting(usdData)}
                         </div>
                       )}
                       {clickNational === 1 && (
                         <div className="flex items-center justify-between space-x-2">
                           <span className="text-[1.2rem]">일본</span>
-                          <div>
-                            <span className="text-[#006EC9]">{jypData[jypData.length - 1].종가.toLocaleString()}</span>
-                            <span>원</span>
-                          </div>
+                          {TagSetting(jypData)}
                         </div>
                       )}
                       {clickNational === 2 && (
                         <div className="flex items-center justify-between space-x-2">
                           <span className="text-[1.2rem]">유럽연합</span>
-                          <div>
-                            <span className="text-[#006EC9]">
-                              {euroData[euroData.length - 1].종가.toLocaleString()}
-                            </span>
-                            <span>원</span>
-                          </div>
+                          {TagSetting(euroData)}
                         </div>
                       )}
                     </div>
-                    <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1">
+                    <div className="flex justify-evenly w-full text-center border-2 rounded-md bg-[#EDEDED] text-[1.1rem] space-x-1 mt-1">
                       <div
                         aria-label="미국"
                         className={`w-1/3 transition-all duration-300 rounded-md border-2 ${
@@ -820,404 +901,140 @@ export default Exchange;
 interface IRModalType {
   isIRClick: boolean;
   setIsIRClick: React.Dispatch<React.SetStateAction<boolean>>;
+  selectIRData: any;
+  // 날짜는 parse() 해서 보냄
+  date: string[];
 }
 
-function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
+function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): JSX.Element {
+  const navigate = useNavigate();
   const ref = useRef(null);
+  const quarterRef = useRef<HTMLSelectElement>(null);
   const containerRef = useRef<any>(null);
   const containerRef2 = useRef<any>(null);
   const [dragging, setDragging] = useState<boolean>(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const iRData: any = {
-    'G IT': {
-      '2011': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 517300000000,
-          'operating gain': 168500000000,
-          'total equity': 1422150556000,
-          'total liabilities': 723797899000,
-          'key services': ['인터넷 포털 서비스', '온라인 게임 서비스', '뮤직 및 부동산 서비스'],
-          plan: [
-            '스마트 디바이스용 게임 개발사',
-            '일본 검색, 모바일 서비스, 퍼블리싱 게임 등에 투자',
-            '오픈마켓 서비스에 투자'
-          ]
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 1028400000000,
-          'operating gain': 318800000000,
-          'total equity': 1468748800000,
-          'total liabilities': 730183708000,
-          'key services': ['인터넷 포털 서비스', '온라인 게임 서비스', '뮤직 및 부동산 서비스'],
-          plan: ['디지털 지역광고 합작사를 설립', "실무형 우수 SW 인재 양성을 위해 'SW 아카데미'의 직접 설립"]
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 1557700000000,
-          'operating gain': 468900000000,
-          'total equity': 1468748800000,
-          'total liabilities': 730183708000,
-          'key services': ['인터넷 포털 서비스', '온라인 게임 서비스', '뮤직 및 부동산 서비스'],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 2147400000000,
-          'operating gain': 620400000000,
-          'total equity': 1577862030000,
-          'total liabilities': 794843246000,
-          'key services': ['인터넷 포털 서비스', '온라인 게임 서비스', '뮤직 및 부동산 서비스'],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '오픈마켓형 서비스 투자',
-            '벤처기업 투자 증가'
-          ]
-        }
-      ],
-      '2012': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 576100000000,
-          'operating gain': 161700000000,
-          'total equity': 1687782561000,
-          'total liabilities': 812007088000,
-          'key services': [
-            '인터넷 포털 서비스',
-            '온라인 게임 서비스',
-            '소셜 네트워크 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 1150800000000,
-          'operating gain': 311300000000,
-          'total equity': 1812931611000,
-          'total liabilities': 955079790000,
-          'key services': [
-            '인터넷 포털 서비스',
-            '온라인 게임 서비스',
-            '글로벌 메신저',
-            '소셜 네트워크 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 1746400000000,
-          'operating gain': 467900000000,
-          'total equity': 1938447901000,
-          'total liabilities': 950867749000,
-          'key services': [
-            '인터넷 포털 서비스',
-            '온라인 게임 서비스',
-            '글로벌 메신저',
-            '소셜 네트워크 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 2389300000000,
-          'operating gain': 702200000000,
-          'total equity': 1903568275000,
-          'total liabilities': 1023748395000,
-          'key services': [
-            '인터넷 포털 서비스',
-            '온라인 게임 서비스',
-            '글로벌 메신저',
-            '소셜 네트워크 서비스',
-            '오픈마켓형 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        }
-      ],
-      '2013': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 673600000000,
-          'operating gain': 191100000000,
-          'total equity': 2026886064428,
-          'total liabilities': 1110595503434,
-          'key services': [
-            '인터넷 포털 서비스',
-            '온라인 게임 서비스',
-            '소셜 네트워크 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: [
-            '친환경 IDC(인터넷데이터센터)를 건립',
-            '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-            '일본검색 사업 강화',
-            '벤처기업 투자 증가'
-          ]
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 1097487267113,
-          'operating gain': 267129329608,
-          'total equity': 279039375764,
-          'total liabilities': 3618469293721,
-          'key services': [
-            '인터넷 포털 서비스',
-            '지인 기반 모바일 SNS 서비스',
-            '글로벌 메신저',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: ['친환경 IDC(인터넷데이터센터)를 건립', '일본검색 사업 강화', '벤처기업 투자 증가']
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 1670854088105,
-          'operating gain': 369828232067,
-          'total equity': 1428411734744,
-          'total liabilities': 1059246190519,
-          'key services': [
-            '인터넷 포털 서비스',
-            '지인 기반 SNS 서비스',
-            '글로벌 메신저',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: ['친환경 IDC(인터넷데이터센터)를 건립', '글로벌 메신저 사업 강화']
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 2311962798310,
-          'operating gain': 524138541849,
-          'total equity': 1475309016054,
-          'total liabilities': 1222437824188,
-          'key services': [
-            '인터넷 포털 서비스',
-            '지인 기반 SNS 서비스',
-            '글로벌 메신저',
-            '소셜 네트워크 서비스',
-            '오픈마켓형 서비스',
-            '뮤직 및 부동산 서비스',
-            '인프라 산업'
-          ],
-          plan: ['친환경 IDC(인터넷데이터센터)를 건립', '글로벌 메신저 사업 강화']
-        }
-      ]
-    },
-    'A 전자': {
-      '2011': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 36985017000000,
-          'operating gain': 2948536000000,
-          'total equity': 91498754000000,
-          'total liabilities': 45033401000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 76423871000000,
-          'operating gain': 6700416000000,
-          'total equity': 94608214000000,
-          'total liabilities': 43361485000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 117697836000000,
-          'operating gain': 10953312000000,
-          'total equity': 98664248000000,
-          'total liabilities': 49501637000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 165001771000000,
-          'operating gain': 16249717000000,
-          'total equity': 101845323000000,
-          'total liabilities': 53785931000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        }
-      ],
-      '2012': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 45270517000000,
-          'operating gain': 5850447000000,
-          'total equity': 105506693000000,
-          'total liabilities': 54649928000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 92867496000000,
-          'operating gain': 12574560000000,
-          'total equity': 110264109000000,
-          'total liabilities': 56035900000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 145044766000000,
-          'operating gain': 20699255000000,
-          'total equity': 116538834000000,
-          'total liabilities': 60188312000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 201103613000000,
-          'operating gain': 29049338000000,
-          'total equity': 121480206000000,
-          'total liabilities': 59591364000000,
-          'key services': ['완제품(DMC) 부문(디지털미디어 기기, 통신 기기)', '부품(DS) 부문(반도체, LCD)'],
-          plan: ['미래 대비 시설 투자(반도체, LCD, SMD 등)']
-        }
-      ],
-      '2013': [
-        {
-          name: '1분기 보고서',
-          'operating revenue': 52868095000000,
-          'operating gain': 8779458000000,
-          'total equity': 128805644000000,
-          'total liabilities': 62037027000000,
-          'key services': [
-            'CE 부문(모니터, 에어컨, 세탁기, 의료기기 등)',
-            'IM 부문(컴퓨터, 디지털 카메라 등)',
-            'DS 부문(반도체, DP)'
-          ],
-          plan: ['미래 대비 시설 투자(반도체, DP 등의 성능 개선)']
-        },
-        {
-          name: '반기 보고서',
-          'operating revenue': 110332543000000,
-          'operating gain': 18310141000000,
-          'total equity': 138379538000000,
-          'total liabilities': 65382074000000,
-          'key services': [
-            'CE 부문(모니터, 에어컨, 세탁기, 의료기기 등)',
-            'IM 부문(컴퓨터, 디지털 카메라 등)',
-            'DS 부문(반도체, DP)'
-          ],
-          plan: ['미래 대비 시설 투자(반도체, DP 등의 성능 개선)']
-        },
-        {
-          name: '3분기 보고서',
-          'operating revenue': 169416042000000,
-          'operating gain': 28473735000000,
-          'total equity': 144438803000000,
-          'total liabilities': 66374078000000,
-          'key services': [
-            'CE 부문(모니터, 에어컨, 세탁기, 의료기기 등)',
-            'IM 부문(컴퓨터, 디지털 카메라 등)',
-            'DS 부문(반도체, DP)'
-          ],
-          plan: ['미래 대비 시설 투자(반도체, DP 등의 성능 개선)']
-        },
-        {
-          name: '사업 보고서',
-          'operating revenue': 228692667000000,
-          'operating gain': 36785013000000,
-          'total equity': 150016010000000,
-          'total liabilities': 64059008000000,
-          'key services': [
-            'CE 부문(모니터, 에어컨, 세탁기, 의료기기 등)',
-            'IM 부문(컴퓨터, 디지털 카메라 등)',
-            'DS 부문(반도체, DP)'
-          ],
-          plan: ['미래 대비 시설 투자(반도체, DP 등의 성능 개선)']
-        }
-      ]
+
+  const [yearOption, setYearOption] = useState<any>();
+  const [selectYear, setSelectYear] = useState<string>('');
+  const [quarterOption, setQuarterOption] = useState<any>();
+  const [showQuarterData, setShowQuarterData] = useState<any>();
+  const [quarterClick, setQuarterClick] = useState<number>(0);
+
+  useEffect(() => {
+    const gameNowYear = parseInt(date[0]);
+    const yearLis = new Array(gameNowYear - 2010).fill(2011);
+    // 2011년부터 현재년도까지 만들어주기
+    setYearOption(
+      yearLis
+        .map((li, idx) => {
+          return (
+            <option key={idx} value={`${li + idx}`}>
+              {li + idx}
+            </option>
+          );
+        })
+        .reverse()
+    );
+  }, [selectIRData]);
+
+  // selectYear가 변경될때마다 실행
+  useEffect(() => {
+    if (selectYear === '') {
+      setSelectYear(date[0]);
     }
-  };
 
-  const keyService = [
-    '인터넷 포털 서비스',
-    '온라인 게임 서비스',
-    '뮤직 및 부동산 서비스',
-    '인터넷 포털 서비스',
-    '온라인 게임 서비스',
-    '지인 기반 모바일 SNS 서비스'
-  ].map((service: string, idx: number) => {
-    return (
-      <span
-        key={idx}
-        className="bg-[#FFC34F] text-center text-white text-[0.7rem] lg:text-[1rem] w-[10rem] lg:w-[13rem] px-2 mx-2 py-[2px] rounded-md">
-        {service}
-      </span>
-    );
-  });
-
-  const plan = [
-    '친환경 IDC(인터넷데이터센터)를 건립',
-    '스마트폰 게임 사업 강화를 위해 3년간 1,000억원을 투자',
-    '일본검색 사업 강화',
-    '오픈마켓형 서비스 투자',
-    '벤처기업 투자 증가'
-  ].map((service: string, idx: number) => {
-    return (
-      <div
-        key={idx}
-        className="flex justify-center w-[20rem] lg:w-[25rem] rounded-md overflow-x-hidden bg-black text-center text-white text-[0.7rem] lg:text-[1rem] px-2 mx-2 py-[2px]">
-        {/* <span  className=""> */}
-        {service}
-        {/* </span> */}
-      </div>
-    );
-  });
+    if (selectYear !== '') {
+      const gameNowYear = parseInt(selectYear);
+      let addMonthOptionCnt: number = 0;
+      if (gameNowYear === parseInt(date[0])) {
+        switch (date[1]) {
+          case '01':
+          case '02':
+          case '03':
+            addMonthOptionCnt = 1;
+            break;
+          case '04':
+          case '05':
+          case '06':
+            addMonthOptionCnt = 2;
+            break;
+          case '07':
+          case '08':
+          case '09':
+            addMonthOptionCnt = 3;
+            break;
+          case '10':
+          case '11':
+          case '12':
+            addMonthOptionCnt = 4;
+            break;
+        }
+      } else {
+        addMonthOptionCnt = 4;
+      }
+      const quarters = new Array(addMonthOptionCnt).fill('분기');
+      setQuarterOption(
+        quarters.map((quarter, idx) => {
+          return (
+            <option
+              aria-label={selectIRData[gameNowYear][idx].name}
+              key={idx}
+              value={`${selectIRData[gameNowYear][idx].name}`}>
+              {selectIRData[gameNowYear][idx].name}
+            </option>
+          );
+        })
+      );
+      // 가장 처음에 보여줄 데이터
+      setShowQuarterData(selectIRData[gameNowYear][0]);
+    }
+  }, [yearOption, selectYear]);
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
         setIsIRClick((pre) => !pre);
         break;
-
-      default:
-        break;
+      case '정보상':
+        navigate('/infoshop');
     }
+  };
+
+  const change = (e: ChangeEvent<HTMLSelectElement>) => {
+    if (e.currentTarget.ariaLabel === '연도') {
+      setSelectYear(e.currentTarget.value);
+      setQuarterClick(0);
+      if (quarterRef.current !== null) {
+        quarterRef.current.value = '1분기 보고서';
+      }
+    } else {
+      switch (e.currentTarget.value) {
+        case '1분기 보고서':
+          setQuarterClick(0);
+          changeQuarterData();
+          break;
+        case '반기 보고서':
+          setQuarterClick(1);
+          changeQuarterData();
+          break;
+        case '3분기 보고서':
+          setQuarterClick(2);
+          changeQuarterData();
+          break;
+        case '사업 보고서':
+          setQuarterClick(3);
+          changeQuarterData();
+          break;
+      }
+    }
+  };
+
+  const changeQuarterData = () => {
+    console.log(selectIRData[parseInt(selectYear)]);
+
+    setShowQuarterData(selectIRData[parseInt(selectYear)][quarterClick]);
   };
 
   // key service
@@ -1257,6 +1074,7 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
     const dx = x - startX;
     containerRef2.current.scrollLeft = scrollLeft - dx;
   };
+
   return (
     <>
       {isIRClick ? (
@@ -1273,20 +1091,27 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
               <span>기업 활동</span>
             </div>
             <div className="flex items-end justify-start w-full space-x-6 px-2 text-[0.9rem] lg:text-[1.3rem] border-b-2 py-[2px] lg:py-1 text-[#6F6F6F] font-extrabold">
-              <select name="연도" id="">
-                <option value="2011">2011</option>
-                <option value="2012">2012</option>
+              <select aria-label="연도" className="outline-none" name="연도" id="연도" onChange={change}>
+                {yearOption !== undefined && yearOption}
               </select>
-              <select name="보고서" id="">
-                <option value="1분기 보고서">1분기 보고서</option>
-                <option value="반기 보고서">반기 보고서</option>
-                <option value="3분기 보고서">3분기 보고서</option>
-                <option value="사업 보고서">사업 보고서</option>
+              <select
+                ref={quarterRef}
+                aria-label="보고서"
+                className="outline-none"
+                name="보고서"
+                id="보고서"
+                onChange={change}>
+                {quarterOption}
               </select>
             </div>
-            <div className="flex flex-col items-start justify-start w-full pb-3 font-bold border-b-2 lg:pb-10">
-              <div className="w-full px-2">
-                <span>1분기 보고서</span>
+            <div className="flex flex-col items-start justify-start w-full pb-3 font-bold border-b-2 lg:pb-5">
+              <div className="flex items-end justify-between w-full px-2 pb-2">
+                <span className="text-[1rem] lg:text-[1.2rem]">
+                  {selectYear !== '' && selectIRData[selectYear][quarterClick].name}
+                </span>
+                <span className="text-[0.6rem] text-[#9B9B9B] lg:text-[0.8rem]">
+                  실제 IR 공시 날짜와는 다를 수 있습니다.
+                </span>
               </div>
               <div className="flex items-center w-full mb-2 justify-evenly lg:mb-4">
                 <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
@@ -1298,7 +1123,17 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
+                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                      {selectYear !== '' &&
+                        (selectIRData[selectYear][quarterClick]['operating revenue'] / 100000000 > 0
+                          ? Math.floor(
+                              selectIRData[selectYear][quarterClick]['operating revenue'] / 100000000
+                            ).toLocaleString()
+                          : (
+                              Math.floor(selectIRData[selectYear][quarterClick]['operating revenue']) / 1000000
+                            ).toLocaleString())}
+                      억
+                    </span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 수익</span>
                   </div>
                 </div>
@@ -1311,7 +1146,17 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
+                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                      {selectYear !== '' &&
+                        (selectIRData[selectYear][quarterClick]['operating gain'] / 100000000 > 0
+                          ? Math.floor(
+                              selectIRData[selectYear][quarterClick]['operating gain'] / 100000000
+                            ).toLocaleString()
+                          : (
+                              Math.floor(selectIRData[selectYear][quarterClick]['operating gain']) / 1000000
+                            ).toLocaleString())}
+                      억
+                    </span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 이익</span>
                   </div>
                 </div>
@@ -1324,7 +1169,17 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
+                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                      {selectYear !== '' &&
+                        (selectIRData[selectYear][quarterClick]['total equity'] / 100000000 > 0
+                          ? Math.floor(
+                              selectIRData[selectYear][quarterClick]['total equity'] / 100000000
+                            ).toLocaleString()
+                          : (
+                              Math.floor(selectIRData[selectYear][quarterClick]['total equity']) / 1000000
+                            ).toLocaleString())}
+                      억
+                    </span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총자본</span>
                   </div>
                 </div>
@@ -1337,7 +1192,17 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.7rem] leading-5 lg:leading-8">5173억</span>
+                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                      {selectYear !== '' &&
+                        (selectIRData[selectYear][quarterClick]['total liabilities'] / 100000000 > 0
+                          ? Math.floor(
+                              selectIRData[selectYear][quarterClick]['total liabilities'] / 100000000
+                            ).toLocaleString()
+                          : (
+                              Math.floor(selectIRData[selectYear][quarterClick]['total liabilities']) / 1000000
+                            ).toLocaleString())}
+                      억
+                    </span>
                     <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총부채</span>
                   </div>
                 </div>
@@ -1347,8 +1212,19 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
                 onMouseMove={handleMouseMove}
-                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll} mb-2`}>
-                <div className="flex flex-nowrap">{keyService}</div>
+                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll} lg:mb-2`}>
+                <div className="flex flex-nowrap">
+                  {selectYear !== '' &&
+                    selectIRData[selectYear][quarterClick]['key services'].map((service: string, idx: number) => {
+                      return (
+                        <span
+                          key={idx}
+                          className="bg-[#FFC34F] min-w-fit text-center text-white text-[0.7rem] lg:text-[1rem] w-[10rem] lg:w-[13rem] px-5 lg:px-10 mx-2 py-1 lg:py-2 rounded-md">
+                          {service}
+                        </span>
+                      );
+                    })}
+                </div>
                 <div></div>
               </div>
               <div
@@ -1356,9 +1232,19 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                 onMouseDown={handleMouseDown2}
                 onMouseUp={handleMouseUp2}
                 onMouseMove={handleMouseMove2}
-                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
-                <div className="flex flex-nowrap">{plan}</div>
-                <div></div>
+                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto mt-2 ${styled.scroll}`}>
+                <div className="flex flex-nowrap">
+                  {selectYear !== '' &&
+                    selectIRData[selectYear][quarterClick]['plan'].map((service: string, idx: number) => {
+                      return (
+                        <div
+                          key={idx}
+                          className="flex justify-center min-w-fit rounded-md overflow-x-hidden bg-black text-center text-white text-[0.7rem] lg:text-[1rem] px-5 lg:px-10 mx-2 py-1 lg:py-2">
+                          {service}
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             </div>
             <div className="flex items-end justify-end w-full px-2">
@@ -1369,7 +1255,10 @@ function IRModal({ isIRClick, setIsIRClick }: IRModalType): JSX.Element {
                   onClick={click}>
                   <span>닫기</span>
                 </div>
-                <div className="bg-black w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
+                <div
+                  aria-label="정보상"
+                  className="bg-black w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md"
+                  onClick={click}>
                   <span>정보상 가기</span>
                 </div>
               </div>
