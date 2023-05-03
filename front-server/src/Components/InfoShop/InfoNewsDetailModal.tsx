@@ -56,7 +56,7 @@ export default function InfoNewsDetailModal({ closeModal, propsData, isOpen }: M
                       alt="cancelBlack"
                     />
                     <div className="flex items-end justify-between h-fit">
-                      <span className={`${propsData.color} text-white w-1/6`}>{propsData.kind}</span>
+                      <span className={`${propsData.color} text-white w-1/6 font-medium lg:font-bold`}>{propsData.kind}</span>
                       <span>{propsData.date}</span>
                     </div>
                     <div className="flex justify-center w-full">

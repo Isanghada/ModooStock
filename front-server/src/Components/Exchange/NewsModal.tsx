@@ -1,6 +1,7 @@
-import InfoNewsModal from 'Components/InfoShop/InfoNewsDetailModal';
-import { useRef, useState } from 'react';
-import { useGetNewsListQuery } from 'Store/api';
+import InfoNewsDetailModal from 'Components/InfoShop/InfoNewsDetailModal';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useGetNewsInfoQuery, useGetNewsListQuery } from 'Store/api';
 
 interface NewsModalType {
   isNewsClick: boolean;
@@ -12,24 +13,49 @@ interface NewsPropsInterFace {
   date: string;
   kind: string;
 }
+interface newsInterFace {
+  dateList: [
+    {
+      date: string;
+    }
+  ];
+  stockList: [
+    {
+      kind: string;
+      price: number;
+      stockId: number;
+    }
+  ];
+}
 
 function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element {
+  const navigate = useNavigate();
+  // 뉴스 데이터 API
+  const { data: dataNewsInfo } = useGetNewsInfoQuery('');
   // 내 뉴스정보 API
   const { data: newsListData } = useGetNewsListQuery('');
+
+  // 뉴스 데이터
+  const [newsData, setNewsData] = useState<newsInterFace | undefined>();
 
   const ref = useRef(null);
   const [isClickNum, setIsClickNum] = useState<number>(0);
 
   // 뉴스모달 전달 데이터
-  const [newsModalData, setNewsModalData] = useState<NewsPropsInterFace>({ color: '', content: "", date: "", kind: "" });
+  const [newsModalData, setNewsModalData] = useState<NewsPropsInterFace>({
+    color: '',
+    content: '',
+    date: '',
+    kind: ''
+  });
   // 뉴스모달 상태
   const [newsModalOpen, setNewsModalOpen] = useState(false);
   // 뉴스모달 창 닫기
   function closeModal() {
     setNewsModalOpen(false);
   }
-  // 디테일 모달창 
-  const showNewsDetail = (data : NewsPropsInterFace) => {
+  // 디테일 모달창
+  const showNewsDetail = (data: NewsPropsInterFace) => {
     setNewsModalData(data);
     setNewsModalOpen(true);
   };
@@ -38,32 +64,38 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
   let newsList;
   if (newsListData) {
     newsList = newsListData.data.map((news) => {
+      const stockNameList: any = newsData?.stockList;
+
       let color: string = '';
-      switch (news.kind) {
-        case 'A 전자':
-          if(isClickNum != 1 && isClickNum != 0) {
-            return
-          }
-          color = 'bg-red-600';
-          break;
-        case 'B 화학':
-          if(isClickNum != 2 && isClickNum != 0) {
-            return
-          }
-          color = 'bg-blue-600';
-          break;
-        case 'C 생명':
-          if(isClickNum != 3 && isClickNum != 0) {
-            return
-          }
-          color = 'bg-green-600';
-          break;
-        case 'G IT':
-          if(isClickNum != 4 && isClickNum != 0) {
-            return
-          }
-          color = 'bg-orange-600';
-          break;
+      if (stockNameList && stockNameList.length >= 4) {
+        switch (news.kind) {
+          case stockNameList[0]?.kind:
+            if (isClickNum != 1 && isClickNum != 0) {
+              return;
+            }
+            color = 'bg-red-600';
+            break;
+          case stockNameList[1]?.kind:
+            if (isClickNum != 2 && isClickNum != 0) {
+              return;
+            }
+            color = 'bg-blue-600';
+            break;
+          case stockNameList[2]?.kind:
+            if (isClickNum != 3 && isClickNum != 0) {
+              return;
+            }
+            color = 'bg-green-600';
+            break;
+          case stockNameList[3]?.kind:
+            if (isClickNum != 4 && isClickNum != 0) {
+              return;
+            }
+            color = 'bg-orange-600';
+            break;
+          default:
+            break;
+        }
       }
       const data = { ...news, color };
       return (
@@ -94,9 +126,8 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
   }
 
   const click = (e: React.MouseEvent) => {
-    // console.log(e.currentTarget.ariaLabel);
-    // console.log(isClickNum);
-
+    const target = e.currentTarget as HTMLElement;
+    const number = Number(target.dataset.number);
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
         setIsNewsClick((pre) => !pre);
@@ -104,23 +135,38 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
       case '전체':
         setIsClickNum(0);
         break;
-      case '전자':
+      case '정보상':
+        setIsNewsClick(false);
+        navigate('/infoshop')
+        break;
+    }
+    // 부득이하게 숫자로 구분
+    switch (number) {
+      case 0:
         setIsClickNum(1);
         break;
-      case '화학':
+      case 1:
         setIsClickNum(2);
         break;
-      case '생명':
+      case 2:
         setIsClickNum(3);
         break;
-      case 'IT':
+      case 3:
         setIsClickNum(4);
         break;
     }
   };
+
+  useEffect(() => {
+    // 뉴스 날짜들과 리스트 가져오기
+    if (dataNewsInfo) {
+      const { data } = dataNewsInfo;
+      setNewsData(data);
+    }
+  }, [dataNewsInfo]);
   return (
     <>
-      <InfoNewsModal isOpen={newsModalOpen} propsData={newsModalData} closeModal={closeModal} />
+      <InfoNewsDetailModal isOpen={newsModalOpen} propsData={newsModalData} closeModal={closeModal} />
       {isNewsClick ? (
         <div
           ref={ref}
@@ -142,34 +188,27 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
                 onClick={click}>
                 <span>&nbsp;전체&nbsp;</span>
               </div>
-              <div
-                aria-label="전자"
-                className={`transition-all duration-300 ${isClickNum === 1 && 'text-black scale-105'}`}
-                onClick={click}>
-                <span>A 전자</span>
-              </div>
-              <div
-                aria-label="화학"
-                className={`transition-all duration-300 ${isClickNum === 2 && 'text-black scale-105'}`}
-                onClick={click}>
-                <span>B 화학</span>
-              </div>
-              <div
-                aria-label="생명"
-                className={`transition-all duration-300 ${isClickNum === 3 && 'text-black scale-105'}`}
-                onClick={click}>
-                <span>C 생명</span>
-              </div>
-              <div
-                aria-label="IT"
-                className={`transition-all duration-300 ${isClickNum === 4 && 'text-black scale-110'}`}
-                onClick={click}>
-                <span>G IT</span>
-              </div>
+              {newsData?.stockList.map((stock, index) => {
+                return (
+                  <div
+                    aria-label={stock.kind}
+                    data-number={index}
+                    className={`transition-all duration-300 ${isClickNum === index + 1 && 'text-black scale-105'}`}
+                    onClick={click}>
+                    <span>{stock.kind}</span>
+                  </div>
+                );
+              })}
             </div>
             {/* 뉴스 구매 목록 */}
             <div className="flex flex-col items-start justify-start w-full px-2 h-[13rem] lg:h-[16rem] overflow-y-auto space-y-2 rounded-md">
-              {newsList}
+              {newsList && newsList.length === 0 ? (
+                <div className="flex justify-center w-full text-base font-bold lg:text-xl">
+                  스크랩한 기사가 없습니다
+                </div>
+              ) : (
+                newsList
+              )}
             </div>
             <div className="flex items-end justify-between w-full px-2">
               <div className="flex flex-col justify-start items-start text-[#9B9B9B] text-[0.6rem] lg:text-[0.8rem]">
@@ -183,7 +222,7 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
                   onClick={click}>
                   <span>닫기</span>
                 </div>
-                <div className="bg-[#ffafa2] hover:bg-[#ff9584] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
+                <div onClick={click} aria-label="정보상" className="bg-[#ffafa2] hover:bg-[#ff9584] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
                   <span>정보상</span>
                 </div>
               </div>
