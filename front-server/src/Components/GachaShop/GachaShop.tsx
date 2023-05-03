@@ -68,6 +68,7 @@ function GachaShop(): JSX.Element {
     }
   }, [giftOpenStatus]);
 
+  const test = true
   return (
     <>
       <></>
@@ -149,9 +150,9 @@ function GachaShop(): JSX.Element {
       <Transition show={giftOpenStatus}>
         <div className="fixed inset-0 z-50 flex flex-col justify-center w-full h-screen text-center transition-all duration-150 bg-black bg-opacity-80 ">
           <Transition.Child
-            enter="ease-out duration-3000"
+            enter="ease-in-out duration-[3.5s]"
             enterFrom="drop-shadow-[0_10px_10px_rgba(255,255,255)]"
-            enterTo="drop-shadow-[0_30px_100px_rgba(255,255,255)]">
+            enterTo={test ? `drop-shadow-[0_20px_70px_rgba(255,255,000)]` : `drop-shadow-[0_20px_70px_rgba(255,255,255)]`}>
             <Lottie
               animationData={giftOpenData}
               className="w-1/2 mx-auto transition-all duration-300 cursor-pointer drop-shadow-[0_10px_20px_rgba(255,255,255)]"

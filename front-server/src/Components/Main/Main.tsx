@@ -17,7 +17,6 @@ function Main(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
-
     // console.log(window.screen.width - 1024);
 
     window.addEventListener('resize', handleResize);
@@ -42,7 +41,7 @@ function Main(): JSX.Element {
   };
 
   const click = (e: React.MouseEvent) => {
-    const target = e.target as HTMLDivElement;
+    const target = e.target as HTMLElement;
     switch (target.ariaLabel) {
       case '은행':
         navigate('/bank');
@@ -52,6 +51,9 @@ function Main(): JSX.Element {
         break;
       case '정보상':
         navigate('/infoshop');
+        break;
+      case '뽑기 상점':
+        navigate('/gachashop');
         break;
 
       default:
@@ -68,7 +70,6 @@ function Main(): JSX.Element {
   const handleCloseModal = () => {
     setIsOpen(false);
   };
-
 
   return (
     <>
@@ -100,7 +101,7 @@ function Main(): JSX.Element {
                 onClick={handleOpenModal}
               />
               <Modal isOpen={isOpen} onClose={handleCloseModal}>
-                <VisitModal onClose={handleCloseModal}/>
+                <VisitModal onClose={handleCloseModal} />
               </Modal>
             </div>
             <div className="h-[5%]"></div>
@@ -142,6 +143,7 @@ function Main(): JSX.Element {
                   className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                   src="/images/toys/gatcha.png"
                   alt=""
+                  onClick={click}
                 />
               </div>
               <div className="w-full h-[11%]"></div>
@@ -334,6 +336,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/auction.png"
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[5%]"></div>
@@ -361,6 +364,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src="/images/toys/gatcha.png"
                 alt=""
+                onClick={click}
               />
             </div>
           </div>
