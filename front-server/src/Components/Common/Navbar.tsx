@@ -123,22 +123,39 @@ function Navbar(): JSX.Element {
     const start = new Date();
     start.setHours(10, 0, 0, 0);
     // 계산
+    let index = 0;
     const diff = now.getTime() - start.getTime();
-    const index = Math.floor(diff / (4 * 60 * 1000));
+    const dayOfWeek = now.getDate(); // 일요일 ~ 토요일
+    const hour = now.getHours();
+    // 짝수일때
+    const isEvenDay = dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6;
+    // 짝수와 시간체크
+    if (isEvenDay && hour >= 10 && hour <= 22) {
+      index = Math.floor(diff / (4 * 60 * 1000)) + 180;
+    }
+    if (!isEvenDay && hour >= 10 && hour <= 22) {
+      index = Math.floor(diff / (4 * 60 * 1000));
+    }
 
     // 받아온 데이터 세팅
     dispatch(getCurrentDataIndex(index));
-  }
+  };
 
   useEffect(() => {
-    getIndex();
+    const now = new Date();
+    const hour = now.getHours();
+    console.log(hour);
+
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
       const currentDate = new Date().toLocaleString('ko-kr');
-      console.log(currentDate, "4분마다?");
-      toast.info('새로운 정보가 들어왔습니다');
+      if (hour >= 10 && hour < 22) {
+        toast.info('새로운 정보가 들어왔습니다');
+      }
     });
+
+    getIndex();
   }, []);
 
   return (
@@ -187,7 +204,7 @@ function Navbar(): JSX.Element {
               className={`bg-[#e9fcff] grow h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 totalStockReturn >= 0 ? 'text-red-400' : 'text-blue-400'
               } ${screenHeight >= 800 ? 'min-w-fit max-w-[20vw]' : ''}`}>
-              {totalStockReturn}%
+              {totalStockReturn.toFixed(2)}%
             </div>
           </div>
         </div>

@@ -27,6 +27,7 @@ const screenHeight = window.screen.height;
 
 function UpdateInfo(): JSX.Element {
   const dispatch = useAppDispatch();
+  const myNickName = localStorage.getItem("nickname");
   // 빈값 체크
   const [emptyValue, setEmptyValue] = useState<ValueInterFace>({
     account: false,
@@ -66,6 +67,10 @@ function UpdateInfo(): JSX.Element {
       });
       switch (name) {
         case 'nickname':
+          // 정보수정때는 내 닉네임 한번더 입력해도 괜찮음
+          if(myNickName === value) {
+            break;
+          }
           const nickData = await getUsersNickCheck(value).unwrap();
           setCheckNickname(nickData.data);
           break;
