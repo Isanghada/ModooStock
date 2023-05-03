@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
     List<AuctionEntity> findAllByIsDeletedAndIsCompletedOrderByCreatedAtDesc(IsDeleted isDeleted,IsCompleted isCompleted);
     Optional<AuctionEntity> findByIdAndIsDeletedAndIsCompleted(Long auctionId, IsDeleted isDeleted, IsCompleted isCompleted);
+    List<AuctionEntity> findAllByUserAssetUserIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(Long userId,IsCompleted isCompleted,IsDeleted isDeleted);
 }

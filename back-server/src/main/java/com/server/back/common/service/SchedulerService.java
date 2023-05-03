@@ -5,6 +5,7 @@ import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.domain.news.repository.UserNewsRepository;
 import com.server.back.domain.stock.entity.*;
 import com.server.back.domain.stock.repository.*;
+import com.server.back.domain.stock.service.StockService;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.domain.user.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 
@@ -33,6 +35,7 @@ public class SchedulerService {
     private final UserRepository userRepository;
     private final UserDealRepository userDealRepository;
     private final UserService userService;
+    private final StockService stockService;
     private final UserNewsRepository userNewsRepository;
 
     // 새로운 장(시즌) 생성 : 월, 수, 금 오전 9시에 새로운 장(시즌) 선택
@@ -169,8 +172,12 @@ public class SchedulerService {
         // 현재 진행중인 market 획득
         MarketEntity market = marketRepository.findTopByOrderByCreatedAtDesc().orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
+        LocalDateTime now = LocalDateTime.now();
+
         // 처음 시작에는 바꾸지 않음.
-        if(Period.between(LocalDate.now(), market.getCreatedAt().toLocalDate()).getDays() == 0){
+        if(Period.between(now.toLocalDate(), market.getCreatedAt().toLocalDate()).getDays() == 0
+                && now.getHour() == 10
+                && now.getMinute() == 0){
             return;
         }
 
@@ -178,6 +185,8 @@ public class SchedulerService {
         LocalDate nextDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(market.getGameDate(), 2).get(1).toLocalDate();
         // gameDate 업데이트
         market.updateGameDate(nextDate);
+
         marketRepository.save(market);
+        stockService.calRate(nextDate);
     }
 }

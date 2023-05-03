@@ -145,4 +145,18 @@ public class AuctionServiceImpl implements AuctionService {
         auctionRepository.save(auction);
 
     }
+
+    /**
+     * 내가 올린 경매 리스트 반환
+     *
+     * @return
+     */
+    @Override
+    public List<AuctionResDto> getMyAuctionList() {
+     Long userId= authService.getUserId();
+     UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
+     List<AuctionEntity> auctionEntityList=auctionRepository.findAllByUserAssetUserIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(user.getId(),IsCompleted.N,IsDeleted.N);
+     return AuctionResDto.fromEntityList(auctionEntityList);
+    }
 }
