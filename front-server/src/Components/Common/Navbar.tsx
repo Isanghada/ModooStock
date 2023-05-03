@@ -142,13 +142,20 @@ function Navbar(): JSX.Element {
   };
 
   useEffect(() => {
-    getIndex();
+    const now = new Date();
+    const hour = now.getHours();
+    console.log(hour);
+
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
       const currentDate = new Date().toLocaleString('ko-kr');
-      toast.info('새로운 정보가 들어왔습니다');
+      if (hour >= 10 && hour < 22) {
+        toast.info('새로운 정보가 들어왔습니다');
+      }
     });
+
+    getIndex();
   }, []);
 
   return (
