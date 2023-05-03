@@ -16,9 +16,9 @@ function Rank(): JSX.Element {
 
     return(
         <> 
-            <div className={`${styles.font} max-w-screen-xl w-11/12 mx-auto md:mt-[12%] mt-[12%] lg:my-[15%] rounded-lg h-fit`}>
+            <div className={`${styles.font} max-w-screen-xl w-11/12 mx-auto my-auto rounded-lg h-fit`}>
                 <div className = "flex bg-[#FCCACA] rounded-t-lg">
-                    <div className="w-fit bg-[#F99F9F] rounded-t-lg md:py-2 py-1 md:px-16 px-10 md:text-[1.8rem] text-[1.4rem] font-bold text-[#ffffff]">
+                    <div className="w-fit bg-[#F99F9F] rounded-t-lg md:py-2 py-1 md:px-16 px-10 md:text-[1.6rem] text-[1.2rem] font-bold text-[#ffffff]">
                         랭킹
                     </div>
                     <div className="flex justify-center px-4 text-[0.8rem] my-auto text-[#7a7a7a]">
@@ -28,7 +28,7 @@ function Rank(): JSX.Element {
                         </svg>
                     </div>
                 </div>
-                <div className ="bg-[#FFF9F9] flex lg:flex-row flex-col overflow-auto p-2 lg:h-fit h-[60vh] w-full">
+                <div className ="bg-[#FFF9F9] flex lg:flex-row flex-col overflow-auto p-2 lg:h-fit h-[55vh] w-full">
                     
                     <div className='lg:w-1/2 w-full'>
                     {getStock?.data?.slice(0,5).map( (item,idx:number) => (
