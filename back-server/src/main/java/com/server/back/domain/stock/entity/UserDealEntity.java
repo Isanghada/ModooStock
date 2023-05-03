@@ -47,7 +47,7 @@ public class UserDealEntity {
         this.average = (float) chartPrice;
         this.totalPrice = (float) stockReqDto.getStockAmount() * chartPrice;
         this.stock = stock;
-        this.rate = (chartPrice - average) / (float) average;
+        this.rate = (float)((chartPrice - average) * 100 / average);
     }
 
     // 매수
@@ -55,7 +55,7 @@ public class UserDealEntity {
         this.totalPrice += (chartPrice * amount);
         this.totalAmount = this.totalAmount + amount;
         this.average = this.totalPrice / this.totalAmount;
-        this.rate = (chartPrice - average) / (float) average;
+        this.rate = (float)((chartPrice - average) * 100 / average);
     }
 
     // 매도
