@@ -90,6 +90,7 @@ function InfoShop(): JSX.Element {
     // 뉴스 날짜들과 리스트 가져오기
     if (dataNewsInfo) {
       const { data } = dataNewsInfo;
+      console.log(data,currentDataIndex,"데이터")
       setNewsData(data);
     }
   }, [dataNewsInfo, currentDataIndex]);
