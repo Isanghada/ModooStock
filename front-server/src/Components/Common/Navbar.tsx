@@ -49,6 +49,10 @@ function Navbar(): JSX.Element {
   const currentMoneyStatus = useAppSelector((state) => {
     return state.currentMoneyStatus;
   });
+  // 현재 잔역 보임 여부 상태
+  const currentMoneyHideStatus = useAppSelector((state) => {
+    return state.currentMoneyHideStatus;
+  });
 
   // 채팅 창 띄우기
   const showChatting = () => {
@@ -167,7 +171,7 @@ function Navbar(): JSX.Element {
             dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
             setTotalStockReturn(totalStockReturn);
           }
-        }, 1000)
+        }, 1000);
       }
     });
     getIndex();
@@ -204,7 +208,7 @@ function Navbar(): JSX.Element {
               className={`bg-[#FFBF4D] grow min-w-fit px-2 h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 screenHeight >= 800 ? 'max-w-[20vw]' : ''
               }`}>
-              {currentMoney}원
+              {currentMoneyHideStatus ? currentMoney : '??????'}원
             </div>
           </div>
           <div className={`flex items-center w-[18vw] h-full`}>
