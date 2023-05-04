@@ -67,6 +67,17 @@ const currentMoneyStatus = createSlice({
     }
   }
 });
+
+// 소지 금액 숨김 상태관리
+const currentMoneyHideStatus = createSlice({
+  name: 'currentMoneyHideStatus',
+  initialState: false,
+  reducers: {
+    changeCurrentMoneyHideStatus(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
 // ------------- 정보상 -------------
 const currentDataIndex = createSlice({
   name: 'currentDataIndex',
@@ -94,6 +105,7 @@ export const store = configureStore({
     updateStatus: updateStatus.reducer,
     currentMoneyStatus: currentMoneyStatus.reducer,
     getCurrentDataIndex: currentDataIndex.reducer,
+    currentMoneyHideStatus: currentMoneyHideStatus.reducer,
 
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
@@ -109,6 +121,7 @@ export const { changeChattingStatus } = chattingStatus.actions;
 export const { changeMenuStatus } = menuStatus.actions;
 export const { changeUpdateStatus } = updateStatus.actions;
 export const { changeCurrentMoneyStatusStatus } = currentMoneyStatus.actions;
+export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
 export const { getCurrentDataIndex } = currentDataIndex.actions;
 
