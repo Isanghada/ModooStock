@@ -10,6 +10,7 @@ function Layout(): JSX.Element {
   const navigate = useNavigate();
   // 현재 주소 가져올 useLocation
   const location = useLocation();
+  const [screenHeight, setScreenHeight] = useState<string>('');
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
   // 네브바 상태 체크
@@ -49,12 +50,18 @@ function Layout(): JSX.Element {
       navigate('/');
     }
   }, [location.pathname]);
-;
+
+  useEffect(() => {
+    // 레이아웃 최소값 세팅
+    const height = window.screen.height;
+    setScreenHeight(`${height * 7/10}px`);
+  }, [window.screen.height]);
 
   return (
     <>
-      <div className="bg-[#FEF9F9] w-screen relative flex">
+      <div className="bg-[#FEF3F3] w-screen relative flex">
         <div
+          style={window.screen.height >= 800 ? { minHeight: screenHeight } : {}}
           className={`${
             loginStatus || signUpStatus ? 'w-[60vw] lg:w-[70vw]' : 'w-full'
           } container relative flex h-screen max-h-screen mx-auto lg:max-w-screen-xl`}>

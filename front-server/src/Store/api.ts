@@ -73,6 +73,15 @@ interface ReturnBankListInterFace {
   result: string;
 }
 
+interface ReturnRankListInterFace {
+  data: Array<{
+    nickname: string;
+    profileImagePath: string;
+    totalMoney: number;
+  }>;
+  result: string;
+}
+
 interface UpdateStateInterFace {
   nickname: string;
   password: string;
@@ -130,6 +139,29 @@ interface ReturnStockListInterFace {
   };
   result: string;
 }
+interface ReturnBuyNewsInterFace {
+  data: {
+    content: string;
+    date: string;
+    kind: string;
+  };
+  result: string;
+}
+interface ReturnNewsListInterFace {
+  data: [
+    {
+      content: string;
+      date: string;
+      kind: string;
+    }
+  ];
+  result: string;
+}
+
+interface CommonTradeStockType {
+  stockAmount: number;
+  stockId: number | undefined;
+}
 
 interface ReturnLotteryInterFace {
   data: {
@@ -139,26 +171,15 @@ interface ReturnLotteryInterFace {
   result: string;
 }
 
-// export const everyStock = createApi({
-//   reducerPath: 'api',
-//   tagTypes: ['Api'],
-//   baseQuery: fetchBaseQuery({
-//     baseUrl: process.env.REACT_APP_API_URL,
-//     prepareHeaders(headers) {
-//       headers.set('accessToken', accessToken)
-//     },
-//     fetchFn: async (input, init, ...rest) => {
-//       // Call your axios request before fetching from the base URL
-//       const accessToken = await fetchAccessToken();
-//       const headers = new Headers(init?.headers);
-//       headers.set('accessToken', accessToken);
-//       headers.set("content-type", "application/json");
-//       headers.set("content-type", "application/json");
-//       localStorage.setItem('accessToken', accessToken)
-//       return fetch(input, { ...init, headers }, ...rest);
-//       //return fetch(input, { ...init }, ...rest);
-//     },
-//   }),
+interface ReturnCommonTradeStockType {
+  data: {
+    dealType: string;
+    price: number;
+    amount: number;
+    kind: string;
+  };
+  result: string;
+}
 
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
@@ -314,6 +335,8 @@ export const Api = createApi({
     // 5. 송금 하기
     postBankTransfer: builder.mutation<ReturnBasicInterFace, { money: number; receiver: string }>({
       query: (body) => {
+        console.log(body);
+
         return {
           url: `/bank/transfer`,
           method: 'Post',
@@ -324,9 +347,34 @@ export const Api = createApi({
     }),
 
     // ------------- 뉴스 -------------
-    // 1. 현재 뉴스 목록
+    // 1. 현재 뉴스 리스트 및 날짜
     getNewsInfo: builder.query<ReturnInfoInterFace, string>({
       query: () => `/info`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'NewsApi' }];
+      }
+    }),
+    // 2. 선택한 뉴스 구입
+    postNewsBuy: builder.mutation<ReturnBuyNewsInterFace, number>({
+      query: (stockId) => {
+        return {
+          url: `/info/buy`,
+          method: 'POST',
+          body: {
+            stockId
+          }
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'NewsApi' }, { type: 'UserApi' }]
+    }),
+    // 3. 보유한 뉴스 리스트
+    getNewsList: builder.query<ReturnNewsListInterFace, string>({
+      query: () => {
+        return {
+          url: `/info/mine`,
+          method: 'GET'
+        };
+      },
       providesTags: (result, error, arg) => {
         return [{ type: 'NewsApi' }];
       }
@@ -346,6 +394,39 @@ export const Api = createApi({
       query: (stockId) => `/stock/${stockId}`,
       providesTags: (result, error, arg) => {
         return [{ type: 'StockApi' }];
+      }
+    }),
+
+    // 3. 주식 매수
+    postStock: builder.mutation<ReturnCommonTradeStockType, CommonTradeStockType>({
+      query: (body) => {
+        return {
+          url: `/stock/`,
+          method: 'POST',
+          body: body
+        };
+      },
+
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }, { type: 'StockApi' }]
+    }),
+
+    // 4. 주식 매도
+    deleteStock: builder.mutation<ReturnCommonTradeStockType, any>({
+      query: (body) => {
+        return {
+          url: `/stock/`,
+          method: 'DELETE',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }, { type: 'StockApi' }]
+    }),
+
+    // ------------- 랭킹 -------------------
+    getRank: builder.query<ReturnRankListInterFace, string>({
+      query: () => `/rank`,
+      providesTags: (result, error, arg) => {
+        return [];
       }
     }),
 
@@ -380,6 +461,7 @@ export const Api = createApi({
 export const {
   // ------------- 유저 -------------
   useGetUsersInfoQuery,
+  useLazyGetUsersInfoQuery,
   useLazyGetUsersSearchQuery,
   useLazyGetUsersRandomQuery,
   useLazyGetUsersLogoutQuery,
@@ -389,6 +471,7 @@ export const {
 
   // ------------- 은행 -------------
   useGetBankQuery,
+  useLazyGetBankQuery,
   usePostBankMutation,
   useGetBankListQuery,
   useDeleteBankMutation,
@@ -396,12 +479,19 @@ export const {
 
   // ------------- 뉴스 -------------
   useGetNewsInfoQuery,
+  usePostNewsBuyMutation,
+  useGetNewsListQuery,
 
   // ------------- 주식 -------------
   useGetStockQuery,
   useLazyGetStockQuery,
   useGetStockSelectQuery,
   useLazyGetStockSelectQuery,
+  usePostStockMutation,
+  useDeleteStockMutation,
+
+  // ------------- 랭킹 -------------
+  useGetRankQuery,
 
   // ----------- 미니게임 ------------
   usePostMiniGameBrightMutation,

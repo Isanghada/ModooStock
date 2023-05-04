@@ -1,122 +1,99 @@
-import { useRef, useState } from 'react';
+import React, { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Chart from './Chart';
+
+interface CahrtDataType {
+  일자: string;
+  종가: number;
+}
 
 interface MobileInfoType {
   isMobileInfo: boolean;
   setIsMobileInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  oilData: CahrtDataType[];
+  goldData: CahrtDataType[];
+  usdData: CahrtDataType[];
+  jypData: CahrtDataType[];
+  euroData: CahrtDataType[];
 }
 
-function MobileInfo({ isMobileInfo, setIsMobileInfo }: MobileInfoType): JSX.Element {
+function MobileInfo({
+  isMobileInfo,
+  setIsMobileInfo,
+  oilData,
+  goldData,
+  usdData,
+  jypData,
+  euroData
+}: MobileInfoType): JSX.Element {
   const ref = useRef(null);
+  const ref2 = useRef<HTMLSelectElement>(null);
   const [isClickInfo, setIsClickInfo] = useState(0);
   const [isExchange, setIsExchange] = useState(0);
-  const [clickData, setClickData] = useState<any>([
+  const [clickData, setClickData] = useState<CahrtDataType[]>([
     {
-      name: '1월',
-      uv: 4000,
-      pv: 2400,
-      amt: 2400
-    },
-    {
-      name: '2월',
-      uv: 3000,
-      pv: 1398,
-      amt: 2210
-    },
-    {
-      name: '3월',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290
-    },
-    {
-      name: '4월',
-      uv: 2780,
-      pv: 3908,
-      amt: 2000
-    },
-    {
-      name: '5월',
-      uv: 1890,
-      pv: 4800,
-      amt: 2181
-    },
-    {
-      name: '6월',
-      uv: 2390,
-      pv: 3800,
-      amt: 2500
+      일자: '',
+      종가: 0
     }
   ]);
-  const data = [
-    {
-      name: '1월',
-      uv: 4000,
-      pv: 2400,
-      amt: 2400
-    },
-    {
-      name: '2월',
-      uv: 3000,
-      pv: 1398,
-      amt: 2210
-    },
-    {
-      name: '3월',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290
-    },
-    {
-      name: '4월',
-      uv: 2780,
-      pv: 3908,
-      amt: 2000
-    },
-    {
-      name: '5월',
-      uv: 1890,
-      pv: 4800,
-      amt: 2181
-    },
-    {
-      name: '6월',
-      uv: 2390,
-      pv: 3800,
-      amt: 2500
-    }
-  ];
+
+  useEffect(() => {
+    setClickData(oilData);
+  }, []);
 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
         setIsMobileInfo((pre) => !pre);
+        setIsClickInfo(0);
+        setIsExchange(0);
+        setClickData(oilData);
         break;
       case '유가':
         setIsClickInfo(0);
-        setClickData(data);
+        setClickData(oilData);
         break;
       case '금':
         setIsClickInfo(1);
-        setClickData(data);
+        setClickData(goldData);
         break;
       case '환율':
         setIsClickInfo(2);
         // default 로 미국 환율 보여주기
-        setClickData(data);
+        setIsExchange(0);
+        setClickData(usdData);
         break;
       case '미국':
         setIsExchange(0);
-        setClickData(data);
+        setClickData(usdData);
         break;
-      case '금':
+      case '일본':
         setIsExchange(1);
-        setClickData(data);
+        setClickData(jypData);
         break;
       case '유럽연합':
         setIsExchange(2);
-        setClickData(data);
+        setClickData(euroData);
         break;
+    }
+  };
+
+  const change: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    if (ref2.current) {
+      switch (ref2.current.value) {
+        case '미국':
+          setIsExchange(0);
+          setClickData(usdData);
+          break;
+        case '일본':
+          setIsExchange(1);
+          setClickData(jypData);
+          break;
+        case '유럽연합':
+          setIsExchange(2);
+          setClickData(euroData);
+          break;
+      }
     }
   };
 
@@ -131,7 +108,7 @@ function MobileInfo({ isMobileInfo, setIsMobileInfo }: MobileInfoType): JSX.Elem
               setIsMobileInfo((pre) => !pre);
             }
           }}>
-          <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[29rem] lg:w-[42%] lg:max-w-[40rem] px-7 rounded-xl space-y-2 lg:space-y-4 py-3 lg:py-6">
+          <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[29rem] lg:w-[42%] lg:max-w-[40rem] px-7 rounded-xl space-y-1 lg:space-y-4 py-3 lg:py-6">
             <div className="w-full flex justify-center items-center text-[1.5rem] lg:text-[2rem] font-black">
               <span>정보</span>
             </div>
@@ -161,39 +138,63 @@ function MobileInfo({ isMobileInfo, setIsMobileInfo }: MobileInfoType): JSX.Elem
                 <span>국제시장 환율</span>
               </div>
               <div className={`transition-all duration-300 cursor-pointer ${isClickInfo === 2 ? 'flex' : 'hidden'}`}>
-                <select className="outline-none" name="환율" id="">
-                  <option value="미국" aria-label="미국" onClick={click}>
-                    미국
-                  </option>
-                  <option value="일본" aria-label="일본" onClick={click}>
-                    일본
-                  </option>
-                  <option value="유럽연합" aria-label="유럽연합" onClick={click}>
-                    유럽연합
-                  </option>
+                <select ref={ref2} className="outline-none" name="환율" id="환율" onChange={change}>
+                  <option value="미국">미국</option>
+                  <option value="일본">일본</option>
+                  <option value="유럽연합">유럽연합</option>
                 </select>
               </div>
             </div>
+            <div className="flex items-center justify-end w-full px-2 space-x-2 font-extrabold pr-7">
+              {isClickInfo === 0 && (
+                <>
+                  <span>유가</span>
+                  <div>
+                    <span className="text-[#006EC9]">{oilData[oilData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 1 && (
+                <>
+                  <span>금</span>
+                  <div>
+                    <span className="text-[#006EC9]">{goldData[goldData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 0 && (
+                <>
+                  <span>미국</span>
+                  <div>
+                    <span className="text-[#006EC9]">{usdData[usdData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 1 && (
+                <>
+                  <span>일본</span>
+                  <div>
+                    <span className="text-[#006EC9]">{jypData[jypData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+              {isClickInfo === 2 && isExchange === 2 && (
+                <>
+                  <span>유럽연합</span>
+                  <div>
+                    <span className="text-[#006EC9]">{euroData[euroData.length - 1].종가.toLocaleString()}</span>
+                    <span>원</span>
+                  </div>
+                </>
+              )}
+            </div>
             {/* 선택한 것에 대한 차트 변경 */}
             <div className="w-full h-[11rem] text-[0.8rem]">
-              <ResponsiveContainer>
-                <AreaChart
-                  // width={500}
-                  height={400}
-                  data={clickData}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0
-                  }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="pv" stroke="#33D03D" fill="#c2eec5" />
-                </AreaChart>
-              </ResponsiveContainer>
+              <Chart data={clickData} />
             </div>
             <div className="flex items-end justify-between w-full px-2">
               <div className="flex flex-col justify-start items-start text-[#9B9B9B] text-[0.6rem] lg:text-[0.8rem]">

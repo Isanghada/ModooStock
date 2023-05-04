@@ -55,7 +55,6 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
 
   const isValidInput = async (input: string) => {
     const regex = await /^[0-9,]*$/;
-    console.log('regex: ', regex);
     return regex.test(input);
   };
 
@@ -83,12 +82,15 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     }
   };
 
+  // 송금
   const postTransfer = async (money: number, receiver: string) => {
     if (money > 0) {
       const body = {
         money: money,
         receiver: receiver
       };
+      console.log(body);
+
       const { data, result } = await postBankTransfer(body).unwrap();
       console.log('data', data);
       console.log('result', result);
@@ -170,8 +172,8 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
           const receiver: string = ref2.current.value;
           ref.current?.value.split(',').map((liMoney) => {
             price += liMoney;
-            postTransfer(parseInt(price), receiver);
           });
+          postTransfer(parseInt(price), receiver);
         } else {
           toast.error('닉네임을 입력 후 확인 해주세요!');
         }
