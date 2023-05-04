@@ -15,11 +15,12 @@ import Error from 'Components/Common/Error';
 import InfoShop from 'Components/InfoShop/InfoShop';
 import Loading from 'Components/Common/Loading';
 import GachaShop from 'Components/GachaShop/GachaShop';
+import Lottery from 'Components/MiniGame/Lottery';
 
 function App() {
   return (
     <>
-      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} limit={1}/>
+      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} limit={1} />
       <Routes>
         <Route path="" element={<Layout />}>
           <Route path="/" element={<Intro />} />
@@ -31,6 +32,7 @@ function App() {
           <Route path="/rank" element={<Rank />} />
           <Route path="/infoshop" element={<InfoShop />} />
           <Route path="/gachashop" element={<GachaShop />} />
+          <Route path="/lottery" element={<Lottery />} />
         </Route>
         <Route path="/error" element={<Error />} />
         <Route path="/loading" element={<Loading />} />
