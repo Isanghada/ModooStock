@@ -59,6 +59,9 @@ function Main(): JSX.Element {
       case '뽑기 상점':
         navigate('/gachashop');
         break;
+      case '미니 게임':
+        navigate('/lottery');
+        break;
 
       default:
         break;
@@ -112,9 +115,6 @@ function Main(): JSX.Element {
                 alt=""
                 onClick={handleOpenModal}
               />
-              <Modal isOpen={isOpen} onClose={handleCloseModal}>
-                <VisitModal onClose={handleCloseModal} />
-              </Modal>
             </div>
             <div className="h-[5%]"></div>
             <div className="flex justify-center h-[21%] w-full animate-moving">
@@ -168,7 +168,13 @@ function Main(): JSX.Element {
               </div>
               <div className="h-[56%]"></div>
               <div className="flex justify-center h-[14%] w-full">
-                <img aria-label="차" className="z-10 h-full pr-20" src="/images/toys/car.png" alt="" />
+                <img
+                  aria-label="미니 게임"
+                  className="z-10 h-full pr-20 cursor-pointer hover:scale-[1.2] transition-all duration-300"
+                  src="/images/toys/miniGame.png"
+                  alt=""
+                  onClick={click}
+                />
               </div>
               <div className="h-[8%]"></div>
             </div>
@@ -446,7 +452,13 @@ function Main(): JSX.Element {
             </div>
             <div className="h-[55%]"></div>
             <div className="flex justify-center h-[14%] w-full">
-              <img aria-label="차" className="z-10 h-full" src="/images/toys/car.png" alt="" />
+              <img
+                aria-label="미니 게임"
+                className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
+                src="/images/toys/miniGame.png"
+                alt=""
+                onClick={click}
+              />
             </div>
             <div className="h-[2%]"></div>
           </div>
@@ -467,6 +479,9 @@ function Main(): JSX.Element {
           </div>
         </div>
       </div>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
+        <VisitModal onClose={handleCloseModal} />
+      </Modal>
     </>
   );
 }
