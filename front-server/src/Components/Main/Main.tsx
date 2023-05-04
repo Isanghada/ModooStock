@@ -112,7 +112,7 @@ function Main(): JSX.Element {
                 alt=""
                 onClick={handleOpenModal}
               />
-              <Modal isOpen={isOpen} onClose={handleCloseModal}>
+              <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
                 <VisitModal onClose={handleCloseModal} />
               </Modal>
             </div>
