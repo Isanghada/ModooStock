@@ -137,7 +137,7 @@ function InfoShop(): JSX.Element {
         <div className="w-[70%]  h-[80%]">
           <div className="flex items-end justify-start h-1/6">
             <div className="px-2 text-xl font-bold lg:px-4 lg:text-5xl ">뉴스</div>
-            <div className="text-sm font-bold text-red-500 lg:text-lg">중복된 뉴스가 나올 수 있습니다</div>
+            <div className="text-sm font-bold text-red-500 lg:text-lg">중복되거나 관련 없는 뉴스가 나올 수 있습니다</div>
           </div>
           <div className="flex flex-col items-center justify-evenly h-5/6">
             {newsData.stockList &&
