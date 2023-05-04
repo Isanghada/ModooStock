@@ -18,7 +18,7 @@ interface Props {
 type DateType = Date | string | number;
 const zero = (value: number | string) => (value.toString().length === 1 ? `0${value}` : value);
 
-let dateFormater = (format: string, date: DateType): string => {
+let dateFormatter = (format: string, date: DateType): string => {
   const _date = new Date(date);
 
   return format.replace(/(yyyy|mm|dd|MM|DD|H|i|s)/g, (t: string): any => {
@@ -45,44 +45,60 @@ let dateFormater = (format: string, date: DateType): string => {
   });
 };
 
-function LeftDescriptionBright(): JSX.Element {
+function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
   return (
-    <div className={`flex flex-col items-center justify-center w-[200px] h-[300px] rounded-lg bg-sky-100 px-2 pt-4`}>
-      <span className={`${styles.font2} text-2xl text-center`}>최대 당첨금</span>
-      <span className={`${styles.font2} text-2xl text-center`}>5천만원!</span>
-      <div className={`${styles.font2} flex flex-col text-xs text-start mt-4 text-[#707070]`}>
-        <span>1등 : 오천만원 ( 0.1 % )</span>
-        <span>2등 : 3백만원 ( 0.9% )</span>
-        <span>3등 : 50만원 ( 2% )</span>
-        <span>4등 : 만원 ( 50% )</span>
-        <span>5등 : 꽝 ( 47% )</span>
+    <div
+      className={`flex flex-col items-center justify-center w-[160px] h-[240px] md:w-[200px] md:h-[300px] rounded-lg px-2 pt-4 ${
+        isDark ? 'bg-pink-100' : 'bg-sky-100'
+      }`}>
+      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>최대 당첨금</span>
+      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>{isDark ? '10억' : '5천만'}원!</span>
+      <div className={`${styles.font2} flex flex-col text-[0.6rem] md:text-xs text-start mt-2 md:mt-4 text-[#707070]`}>
+        {isDark ? (
+          <>
+            <span>1등 : 10억 ( 0.1% )</span>
+            <span>2등 : 꽝 ( 99.9% )</span>
+          </>
+        ) : (
+          <>
+            <span>1등 : 오천만원 ( 0.1 % )</span>
+            <span>2등 : 3백만원 ( 0.9% )</span>
+            <span>3등 : 50만원 ( 2% )</span>
+            <span>4등 : 만원 ( 50% )</span>
+            <span>5등 : 꽝 ( 47% )</span>
+          </>
+        )}
       </div>
-      <img className="w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
-    </div>
-  );
-}
-
-function LeftDescriptionDark(): JSX.Element {
-  return (
-    <div className={`flex flex-col items-center justify-center w-[200px] h-[300px] rounded-lg bg-pink-100 px-2 pt-4`}>
-      <span className={`${styles.font2} text-2xl text-center`}>최대 당첨금</span>
-      <span className={`${styles.font2} text-2xl text-center`}>10억원!</span>
-      <div className={`${styles.font2} flex flex-col text-xs text-start mt-4 text-[#707070]`}>
-        <span>1등 : 10억 ( 0.1% )</span>
-        <span>2등 : 꽝 ( 99.9% )</span>
-      </div>
-      <img className="w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
+      <img className="w-[80px] md:w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
     </div>
   );
 }
 
 function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
   // 발행 일자
-  const curTime = dateFormater('yyyy. MM. DD H:i:s', timestamp);
+  const curTime = dateFormatter('yyyy. MM. DD H:i:s', timestamp);
 
   // ------- 캔버스 부분 설정 -------
-  const WIDTH = 400;
-  const HEIGHT = 200;
+  const [HEIGHT, setHeight] = useState(window.screen.width <= 768 ? 150 : 200);
+  const [WIDTH, setWidth] = useState(window.screen.width <= 768 ? 300 : 400);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.screen.width <= 768) {
+        setHeight(150);
+        setWidth(300);
+      } else {
+        setHeight(200);
+        setWidth(400);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [window.innerWidth]);
+
   const ERASE_RADIUS = 30;
   const ERASE_DISTANCE = ERASE_RADIUS / 2; // 지워진 영역(투명한 원)간 임의 간격
   const dpr = window.devicePixelRatio;
@@ -100,13 +116,11 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
     const { offsetX, offsetY } = event.nativeEvent;
     handleDrawing(offsetX, offsetY);
   };
 
   const handleTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
     const { clientX, clientY } = event.changedTouches[0];
     const { top, left } = canvasRef.current!.getBoundingClientRect();
     handleDrawing(clientX - left, clientY - top);
@@ -135,17 +149,17 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
   };
 
   const handleDrawing = (x: number, y: number) => {
-    if (isDrawing) {
-      if (erasedList.length < thresholdOfEraseCount) {
-        drawTransparentCircle(x, y);
-      } else {
-        if (!isRevealed) {
-          if (!canvasRef.current) return;
-          const context = canvasRef.current.getContext('2d');
-          if (!context) return;
-          context.clearRect(0, 0, WIDTH, HEIGHT);
-          setIsRevealed(true);
-        }
+    if (!isDrawing) return;
+
+    if (erasedList.length < thresholdOfEraseCount) {
+      drawTransparentCircle(x, y);
+    } else {
+      if (!isRevealed) {
+        if (!canvasRef.current) return;
+        const context = canvasRef.current.getContext('2d');
+        if (!context) return;
+        context.clearRect(0, 0, WIDTH, HEIGHT);
+        setIsRevealed(true);
       }
     }
   };
@@ -178,7 +192,7 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
     context.fill();
 
     // 안내 문구 추가
-    context.font = '20px sans-serif';
+    context.font = '16px sans-serif';
     context.fillStyle = '#000';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
@@ -188,16 +202,15 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
     const col = Math.ceil(WIDTH / (ERASE_RADIUS * 2 + ERASE_DISTANCE));
     const row = Math.ceil(HEIGHT / (ERASE_RADIUS * 2 + ERASE_DISTANCE));
     setThresholdOfEraseCount(col * row);
-  }, [dpr, ERASE_DISTANCE]);
+  }, [dpr, ERASE_DISTANCE, WIDTH, HEIGHT]);
 
   // ------- (끝) 캔버스 부분 설정 -------
 
   return (
     <>
       <div className={`flex max-w-screen-xl mx-auto rounded-lg h-fit border-4`}>
-        {!isDark && <LeftDescriptionBright />}
-        {isDark && <LeftDescriptionDark />}
-        <div className="flex items-center flex-col justify-center w-[466px] h-[300px] bg-white rounded-lg">
+        <LeftDescription isDark={isDark} />
+        <div className="flex items-center flex-col justify-center w-[372px] h-[240px] md:w-[466px] md:h-[300px] bg-white rounded-lg">
           <div className="w-11/12 text-right pr-5 text-xs text-[#707070]">발행일시 : {curTime}</div>
           <div className="relative my-2">
             <div

@@ -1,17 +1,56 @@
-// import Error from 'Components/Common/Error';
-// import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { usePostMiniGameBrightMutation, usePostMiniGameDarkMutation } from 'Store/api';
 import Modal from 'Components/Main/Modal';
 import LotteryModal from './LotteryModal';
 import { useAppSelector } from 'Store/hooks';
-import { changeCurrentMoneyStatusStatus } from 'Store/store';
 import { toast } from 'react-toastify';
 
-export interface lottoResult {
-  ranking: number;
-  money: number;
-}
+type LotteryProps = {
+  title: string;
+  backgroundImage: string;
+  color: string;
+  onClick: () => void;
+  description: string[];
+  descriptionColor: string;
+  buttonColor: string;
+};
+
+const LotteryCard = ({
+  title,
+  backgroundImage,
+  color,
+  onClick,
+  description,
+  descriptionColor,
+  buttonColor
+}: LotteryProps) => {
+  return (
+    <div
+      className={`flex flex-col w-[25%] lg:min-w-[20%] lg:w-[23%] mx-2 text-center border-2 rounded-[2rem] border-[${color}]/60 bg-cover bg-center`}
+      style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div className="py-6 md:py-8 lg:py-10">
+        <span className={`font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[${color}]`}>{title}</span>
+      </div>
+      <div
+        className={`font-medium leading-5 text-[${descriptionColor}] text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] mx-auto lg:pb-16 h-[6rem] md:h-[8rem] lg:h-[12rem]`}>
+        {description.map((text, i) => (
+          <span key={i}>
+            {text}
+            <br />
+          </span>
+        ))}
+      </div>
+      <div className="pb-4 lg:pb-5">
+        <div
+          aria-label={`${title} 구매`}
+          className={`px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[${buttonColor}]/80 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[${buttonColor}] hover:scale-110 transition-all duration-300`}
+          onClick={onClick}>
+          구매 하기
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function Lottery(): JSX.Element {
   // 현재 잔액 상태
@@ -21,41 +60,41 @@ function Lottery(): JSX.Element {
     }).replaceAll(',', '')
   );
 
+  const defaultResult = { ranking: 5, money: 0 };
+
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setDark] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [result, setResult] = useState(defaultResult);
 
   const [postMiniGameBright, { isLoading: isLoading1, isError: isError1 }] = usePostMiniGameBrightMutation();
+  const [postMiniGameDark, { isError: isError2 }] = usePostMiniGameDarkMutation();
 
-  const [postMiniGameDark, { isLoading: isLoading2, isError: isError2 }] = usePostMiniGameDarkMutation();
-
-  const [result, setResult] = useState({ ranking: 5, money: 0 });
-
-  const handleOpenBrightModal = async () => {
-    console.log(currentMoneyStatus);
-    if (currentMoneyStatus < 1_0000) {
-      toast.error('보유돈이 만원보다 작습니다...');
-    } else {
-      setDark(false);
-      setIsOpen(true);
-
-      const { data } = await postMiniGameBright('').unwrap();
-      setResult(data);
+  const handleOpenModal = async (isDark: boolean) => {
+    const moneyLimit = isDark ? 100_0000 : 1_0000;
+    if (currentMoneyStatus < moneyLimit) {
+      toast.error(`보유돈이 ${moneyLimit}원보다 작습니다...`);
+      return;
     }
-  };
 
-  const handleOpenDarkModal = async () => {
-    if (currentMoneyStatus < 100_0000) {
-      toast.error('보유돈이 백만원보다 작습니다...');
-    } else {
-      setDark(true);
-      setIsOpen(true);
-      const { data } = await postMiniGameDark('').unwrap();
+    setIsOpen(true);
+    setIsDark(isDark);
+
+    try {
+      const { data } = isDark ? await postMiniGameDark('').unwrap() : await postMiniGameBright('').unwrap();
       setResult(data);
+    } catch (error) {
+      toast.error('오류 발생....');
     }
   };
 
   const handleCloseModal = () => {
     setIsOpen(false);
+    setResult(defaultResult);
+  };
+
+  const handleLotteryClick = (isDark: boolean) => {
+    setResult(defaultResult);
+    handleOpenModal(isDark);
   };
 
   if (isError1 || isError2) {
@@ -66,49 +105,25 @@ function Lottery(): JSX.Element {
     <>
       <div className="flex items-center w-full h-full justify-evenly max-w-[80rem] max-h-[46.5rem] mt-4 md:mt-0 my-auto mx-auto lg:flex">
         {/* 1. 스피드 복권 */}
-        <div
-          className="flex flex-col w-[25%] lg:min-w-[20%] lg:w-[23%] mx-2 text-center border-2 rounded-[2rem] border-[#F0A633]/60 bg-cover bg-center"
-          style={{ backgroundImage: 'url(images/logos/IntroBG2.png)' }}>
-          <div className="py-6 md:py-8 lg:py-10">
-            <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#F0A633] ">
-              스피드 복권
-            </span>
-          </div>
-          <div className="font-medium leading-5 text-[#707070] text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] mx-auto lg:py-8 h-[6rem] md:h-[8rem] lg:h-[12rem]">
-            <span>긁어봐 당첨 복권!</span> <br />
-            <span>만원으로 최대 오천만원까지</span>
-          </div>
-          <div className="pb-4 lg:pb-5">
-            <div
-              aria-label="스피드 복권 구매"
-              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#FFC24E]/80 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#FFC24E] hover:scale-110 transition-all duration-300"
-              onClick={handleOpenBrightModal}>
-              구매 하기
-            </div>
-          </div>
-        </div>
+        <LotteryCard
+          title="스피드 복권"
+          backgroundImage="images/logos/IntroBG2.png"
+          color="#F0A633"
+          onClick={() => handleLotteryClick(false)}
+          description={['긁어봐 당첨 복권!', '만원으로 최대 오천만원까지']}
+          descriptionColor="#707070"
+          buttonColor="#FFC24E"
+        />
         {/* 2. 어둠의 복권 */}
-        <div
-          className="flex flex-col w-[25%] lg:min-w-[20%] lg:w-[23%] mx-2 text-center border-2 rounded-[2rem] border-[#748DA6]/60 bg-cover bg-center"
-          style={{ backgroundImage: 'url(images/logos/IntroDarkBG.png)' }}>
-          <div className="py-6 md:py-8 lg:py-10">
-            <span className="font-extrabold text-[1.2rem] md:text-[1.5rem] lg:text-[2rem] text-[#748DA6] ">
-              어둠의 복권
-            </span>
-          </div>
-          <div className="font-medium leading-5 text-white/80 text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem] lg:py-8  h-[6rem] md:h-[8rem] lg:h-[12rem]">
-            <span>모 아님 도</span> <br />
-            <span>백만원으로 10억원 vs 꽝</span>
-          </div>
-          <div className="pb-4 lg:pb-5">
-            <div
-              aria-label="어둠의 복권"
-              className="px-4 py-1 mx-auto font-extrabold text-white cursor-pointer rounded-3xl w-[60%] bg-[#2C94EA]/80 text-[0.8rem] md:text-[0.9rem] lg:text-[1.1rem] hover:bg-[#2C94EA] hover:scale-110 transition-all duration-300"
-              onClick={handleOpenDarkModal}>
-              구매 하기
-            </div>
-          </div>
-        </div>
+        <LotteryCard
+          title="어둠의 복권"
+          backgroundImage="images/logos/IntroDarkBG.png"
+          color="#748DA6"
+          onClick={() => handleLotteryClick(true)}
+          description={['모 아님 도', '백만원으로 10억원 vs 꽝']}
+          descriptionColor="#ffffff"
+          buttonColor="#2C94EA"
+        />
       </div>
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'rounded-lg'}>
         <LotteryModal isDark={isDark} result={result} timestamp={Date.now()} />
