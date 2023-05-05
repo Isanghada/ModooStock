@@ -1,4 +1,4 @@
-import React, { ChangeEvent, PureComponent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import MobileInfo from './MobileInfo';
 import NewsModal from './NewsModal';
 import styled from './Exchange.module.css';
@@ -15,6 +15,10 @@ import Chart from './Chart';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import CountdownTimeMinute from './CountdownTimeMinute';
+import CountdownTimer from './CountdownTimer';
+import IRModal from './IRModal';
+import StockTradeModal from './StockTradeModal';
 
 interface CahrtDataType {
   일자: string;
@@ -68,6 +72,13 @@ interface SseDataType {
   }>;
 }
 
+interface TradeStockModalType {
+  amount: number;
+  dealType: string;
+  kind: string;
+  price: number;
+}
+
 function Exchange(): JSX.Element {
   const dispatch = useAppDispatch();
   const irData = require('./ir_data.json');
@@ -80,12 +91,11 @@ function Exchange(): JSX.Element {
   const currentMoney = useAppSelector((state) => {
     return state.currentMoneyStatus;
   });
-  const [currentMiliTime, setCurrentMiliTime] = useState<number>(0);
-  const [currentTimeData, setCurrentTimeData] = useState<string[]>(['-00', '-00', '-00']);
+  const [isPossibleStockTime, setIsPossibleStockTime] = useState<boolean>(false);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
-  const [checkStockTrading, setCheckStockTrading] = useState<boolean>(false);
+  const [stockTrade, setStockTrade] = useState<any>();
   const [afterMoney, setAfterMoney] = useState<string>('0');
   const [afterMoney2, setAfterMoney2] = useState<string>('0');
   const [lazyGetStockData, setLazyGetStockData] = useState<any>();
@@ -167,44 +177,11 @@ function Exchange(): JSX.Element {
     'total liabilities': 0
   });
 
-  // 4분 주기로 요청하기
-  // useEffect(() => {
-  //   const date = new Date();
-  //   const job1 = schedule.scheduleJob('4 * 10-22 * * *', () => {
-  //     // 10시 ~ 10시까지 1초씩 빼기
-
-  //   });
-  // }, []);
-
-  useEffect(() => {
-    setInterval(() => {
-      const date = new Date();
-
-      // const date = new Date();
-      console.log(date);
-    }, 1000);
-  }, []);
-
   // SSE
   useEffect(() => {
     // 기존 잔고 넣어주기
     setAfterMoney('0');
     setAfterMoney2('0');
-
-    // 거래 거래 및 시간 체크
-    const nowDate = new Date();
-    const nowTime = nowDate.toString().split(' ')[4];
-    const openStock = ['Mon', 'Wed', 'Fri'];
-    const cloesStock = ['Tue', 'Thu', 'Sat'];
-    console.log('nowTime: ', nowTime);
-
-    // let resultTime = 0;
-    // if (cloesStock.includes(nowDate.toString().split(' ')[0])) {
-    //   resultTime = +new Date('2023/04/10 22:00:00').getTime() - +new Date(`2023/04/10 ${nowTime}`).getTime();
-    // } else if (openStock.includes(nowDate.toString().split(' ')[0])) {
-    //   resultTime = +new Date('2023/04/11 10:00:00').getTime() - +new Date(`2023/04/10 ${nowTime}`).getTime();
-    // }
-    // setCurrentMiliTime(resultTime);
 
     if (eventSource) {
       eventSource.close();
@@ -236,6 +213,40 @@ function Exchange(): JSX.Element {
     };
   }, []);
 
+  // SSE 4분주기로 받기
+  useEffect(() => {
+    // 스케쥴러 4분마다 실행
+    const job = schedule.scheduleJob('*/1 10-22 * * *', () => {
+      if (eventSource) {
+        eventSource.close();
+        setEventSource(undefined);
+      }
+      const token = localStorage.getItem('accessToken');
+
+      const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
+        // heartbeatTimeout: 8700,
+        withCredentials: true
+      });
+
+      newEventSource.addEventListener('connect', (e: any) => {
+        // console.log(e);
+      });
+      setEventSource(newEventSource);
+      console.log('4분마다 실행');
+    });
+    return () => {
+      // console.log('연결끊기');
+      eventSource?.close();
+      setEventSource(undefined);
+    };
+  }, []);
+
   const clickButtonEvent = (number: number) => {
     if (stockRef1.current && stockRef2.current) {
       if (stockRef1.current.value !== '') {
@@ -263,6 +274,10 @@ function Exchange(): JSX.Element {
       }
     }
   };
+
+  const [isPostStock, setIsPostStock] = useState<boolean>(false);
+  const [isDeleteStock, setIsDeleteStock] = useState<boolean>(false);
+  const [tradeStockModalData, setTradeStockModalData] = useState<TradeStockModalType>();
 
   // 클릭 이벤트
   const click = (e: React.MouseEvent) => {
@@ -299,6 +314,7 @@ function Exchange(): JSX.Element {
         break;
       case '매수1':
         if (stockRef1.current) {
+          console.log('316');
           const body = {
             stockAmount: parseInt(stockRef1.current.value.replaceAll(',', '')),
             stockId: sseData?.stockId
@@ -307,11 +323,14 @@ function Exchange(): JSX.Element {
             const { data, result } = await postStock(body).unwrap();
             if (stockRef1.current) {
               if (result === 'SUCCESS') {
+                setTradeStockModalData(data);
+                setIsPostStock(true);
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
               }
               stockRef1.current.value = '0';
+            } else {
             }
           };
           posrStock();
@@ -327,6 +346,8 @@ function Exchange(): JSX.Element {
             const { data, result } = await postStock(body).unwrap();
             if (stockRef2.current) {
               if (result === 'SUCCESS') {
+                setTradeStockModalData(data);
+                setIsPostStock(true);
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -347,6 +368,8 @@ function Exchange(): JSX.Element {
             const { data, result } = await deleteStock(body).unwrap();
             if (stockRef1.current) {
               if (result === 'SUCCESS') {
+                setTradeStockModalData(data);
+                setIsDeleteStock(true);
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -367,6 +390,8 @@ function Exchange(): JSX.Element {
             const { data, result } = await deleteStock(body).unwrap();
             if (stockRef2.current) {
               if (result === 'SUCCESS') {
+                setTradeStockModalData(data);
+                setIsDeleteStock(true);
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -547,46 +572,14 @@ function Exchange(): JSX.Element {
     }
   }, [sseData]);
 
-  // useEffect(() => {
-  //   if (currentMiliTime !== 0) {
-  //     const job1 = schedule.scheduleJob('*/1 * 10-22 * * *', () => {
-  //       // 10시 ~ 10시까지 1초씩 빼기
-  //       console.log('currentMiliTime: ', currentMiliTime);
-  //       console.log('hi');
-
-  //       setCurrentMiliTime(currentMiliTime - 1000);
-  //       // const resultTime =
-  //       //   new Date(`2023/04/10 ${currentTimeData[0]}:${currentTimeData[1]}:${currentTimeData[2]}`).getTime() -
-  //       //   +new Date('2023/04/10 00:00:01').getTime();
-  //       // // console.log('resultTime: ', resultTime);
-
-  //       // let hour = Math.floor(resultTime / 3600000).toString();
-  //       // let minutes = Math.floor((resultTime % 3600000) / 60000).toString();
-  //       // let seconds = (Math.floor(((resultTime % 3600000) % 60000) / 1000) - 1).toString();
-  //       // if (hour.length === 1) {
-  //       //   hour = '0' + hour;
-  //       // }
-  //       // if (minutes.length === 1) {
-  //       //   minutes = '0' + minutes;
-  //       // }
-  //       // console.log(hour, minutes);
-
-  //       // if (seconds.length === 1) {
-  //       //   seconds = '0' + seconds;
-  //       // }
-  //       // setCurrentTimeData([hour, minutes, seconds]);
-  //       // console.log(hour, minutes, seconds);
-  //       // job1.cancel(true);
-  //     });
-  //   }
-  // }, []);
-
   const selectStockData = (stockId: number) => {
     getStockSelect(stockId);
   };
 
   if (eventSource) {
     eventSource.onmessage = (event: any) => {
+      console.log(JSON.parse(event.data));
+
       setSseData(JSON.parse(event.data));
     };
   }
@@ -627,57 +620,112 @@ function Exchange(): JSX.Element {
     );
   };
 
-  const stockBuyPeriod = () => {
-    const today = new Date();
-    const pre = [1, 3, 5];
-    const post = [2, 4, 6];
-    const todayList = today.toLocaleString().split('. ');
-    let check: number = 0; // 0: 월수금, 1: 화목토, 2:일요일
-    let tomorrow = new Date(today.setDate(today.getDate() + 1)).toLocaleString().split('. ');
-    let yesterday = new Date(today.setDate(today.getDate() - 1)).toLocaleString().split('. ');
-    if (pre.includes(today.getMonth())) {
-      check = 0;
-    } else if (post.includes(today.getMonth())) {
-      check = 1;
+  // 거래 가능한 시간에 따른 다른 컴포넌트 보이기
+  useEffect(() => {
+    if (isPossibleStockTime) {
+      setStockTrade(
+        <>
+          <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-2">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-[1.5rem] font-extrabold">주식 거래</span>
+              <span
+                className={`${
+                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                    ? 'text-black'
+                    : 'text-red-500'
+                }`}>
+                {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                  ? `구매 금액: ${afterMoney}원`
+                  : `한도 초과: ${afterMoney}원`}
+              </span>
+            </div>
+            <div className="flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
+              <input
+                ref={stockRef1}
+                aria-label="입력"
+                className=" py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
+                type="text"
+                placeholder="0"
+                onChange={change}
+              />
+              <span>개</span>
+            </div>
+            <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
+              <div
+                aria-label="1개"
+                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                onClick={click}>
+                <span>+1개</span>
+              </div>
+              <div
+                aria-label="10개"
+                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                onClick={click}>
+                <span>+10개</span>
+              </div>
+              <div
+                aria-label="100개"
+                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                onClick={click}>
+                <span>+100개</span>
+              </div>
+              <div
+                aria-label="1000개"
+                className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                onClick={click}>
+                <span>+1000개</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
+              <div
+                aria-label="매도1"
+                className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
+                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                    ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
+                    : 'cursor-not-allowed'
+                }`}
+                onClick={click}>
+                <span>매도</span>
+              </div>
+              <div
+                aria-label="매수1"
+                className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
+                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                    ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
+                    : 'cursor-not-allowed'
+                }`}
+                onClick={click}>
+                <span>매수</span>
+              </div>
+            </div>
+          </div>
+        </>
+      );
     } else {
-      check = 2;
+      setStockTrade(
+        <>
+          <div className="h-[11.35rem] w-full flxe justify-center items-center">
+            <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
+              <span className="text-[1.3rem] space-x-1">
+                <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span> 가능 시간
+              </span>
+              <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
+            </div>
+          </div>
+        </>
+      );
     }
-    return (
-      <>
-        <div className="flex items-center w-full py-4 justify-evenly text-[0.7rem] lg:text-[1.1rem]">
-          {check === 0 && (
-            <>
-              <div>
-                {todayList[0]}년 &nbsp;{todayList[1].length === 1 ? `0${todayList[1]}` : `${todayList[1]}`}월&nbsp;
-                {todayList[2].length === 1 ? `0${todayList[2]}` : `${todayList[2]}`}일
-              </div>
-              <div>
-                {tomorrow[0]}년 &nbsp;{tomorrow[1].length === 1 ? `0${tomorrow[1]}` : `${tomorrow[1]}`}월&nbsp;
-                {tomorrow[2].length === 1 ? `0${tomorrow[2]}` : `${tomorrow[2]}`}일
-              </div>
-            </>
-          )}
-          {check === 1 && (
-            <>
-              <span>
-                {todayList[0]}년 &nbsp;{todayList[1].length === 1 ? `0${todayList[1]}` : `${todayList[1]}`}월&nbsp;
-                {todayList[2].length === 1 ? `0${todayList[2]}` : `${todayList[2]}`}일
-              </span>
-              <span>-</span>
-              <span>
-                {yesterday[0]}년 &nbsp;{yesterday[1].length === 1 ? `0${yesterday[1]}` : `${yesterday[1]}`}월&nbsp;
-                {yesterday[2].length === 1 ? `0${yesterday[2]}` : `${yesterday[2]}`}일
-              </span>
-            </>
-          )}
-          {check === 2 && <span>오늘은 쉬는 날</span>}
-        </div>
-      </>
-    );
-  };
+  }, [isPossibleStockTime]);
 
   return (
     <>
+      {isPostStock && (
+        <StockTradeModal
+          tradeStockModalData={tradeStockModalData}
+          isPostStock={isPostStock}
+          setIsPostStock={setIsPostStock}
+        />
+      )}
       {isLoading1 && isLoading2 ? (
         <div>로딩</div>
       ) : (
@@ -918,7 +966,7 @@ function Exchange(): JSX.Element {
               {/* 데스크탑 */}
               <div className="hidden flex-col w-[28%] space-y-3 justify-end items-start lg:flex">
                 {/* 갱신 시간 */}
-                <div className="flex flex-col w-full pb-1 text-white bg-black rounded-lg">
+                <div className="flex flex-col w-full py-1 text-white bg-black rounded-lg">
                   <div className="flex justify-between w-full text-[1.2rem] px-[5%] font-semibold">
                     <div className="w-1/2 text-center">
                       <span className="text-[#FF5151]">종목 갱신</span>
@@ -927,137 +975,31 @@ function Exchange(): JSX.Element {
                       <span className="text-[#00A3FF]">날짜 갱신</span>
                     </div>
                   </div>
-                  {/* <div className="hidden justify-between w-full text-[1.6rem] font-bold  px-[5%]">
-                    <div className="flex items-start justify-center w-[55%]">
-                      <div className="flex flex-col items-center">
-                        <span>
-                          {Math.floor(currentMiliTime / 3600000).toString().length === 1
-                            ? `0${Math.floor(currentMiliTime / 3600000).toString()}`
-                            : Math.floor(currentMiliTime / 3600000).toString()}{' '}
-                          :
-                        </span>
-                        <span className="text-[0.8rem] font-medium">시간&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>
-                          {Math.floor((currentMiliTime % 3600000) / 60000).toString().length === 1
-                            ? `0${Math.floor((currentMiliTime % 3600000) / 60000).toString()}`
-                            : Math.floor((currentMiliTime % 3600000) / 60000).toString()}{' '}
-                          :
-                        </span>
-                        <span className="text-[0.8rem] font-medium">분&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>
-                          {Math.floor(((currentMiliTime % 3600000) % 60000) / 1000).toString().length === 1
-                            ? `0${Math.floor(((currentMiliTime % 3600000) % 60000) / 1000).toString()}`
-                            : Math.floor(((currentMiliTime % 3600000) % 60000) / 1000).toString()}
-                        </span>
-                        <span className="text-[0.8rem] font-medium">초</span>
-                      </div>
+                  <div className="flex justify-between w-full text-[1.6rem] font-bold px-[5%]">
+                    <div className="flex items-start justify-center w-1/2">
+                      <CountdownTimer
+                        setIsPossibleStockTime={setIsPossibleStockTime}
+                        isPossibleStockTime={isPossibleStockTime}
+                      />
                     </div>
-                    <div className="flex items-start justify-center w-2/5">
-                      <div className="flex flex-col items-center">
-                        <span>02 :</span>
-                        <span className="text-[0.8rem] font-medium">분&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>17</span>
-                        <span className="text-[0.8rem] font-medium">초</span>
-                      </div>
+                    <div className="flex items-start justify-center w-1/2">
+                      <CountdownTimeMinute />
                     </div>
-                  </div> */}
-                  <div className="w-full">{stockBuyPeriod()}</div>
+                  </div>
+                  <div className="flex justify-between w-full text-[0.7rem] text-[#FFFFFF] px-[5%] font-semibold">
+                    <div className="flex w-1/2 justify-center text-center space-x-9">
+                      <span>시간&nbsp;</span>
+                      <span>분&nbsp;</span>
+                      <span>초&nbsp;</span>
+                    </div>
+                    <div className="flex w-1/2 justify-center text-center space-x-9">
+                      <span>&ensp;분&nbsp;</span>
+                      <span>초&nbsp;</span>
+                    </div>
+                  </div>
                 </div>
                 {/* 주식 거래 */}
-                <div className="w-full bg-white rounded-lg">
-                  {checkStockTrading ? (
-                    <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-2">
-                      <div className="flex items-center justify-between w-full">
-                        <span className="text-[1.5rem] font-extrabold">주식 거래</span>
-                        <span
-                          className={`${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'text-black'
-                              : 'text-red-500'
-                          }`}>
-                          {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                            ? `구매 금액: ${afterMoney}원`
-                            : `한도 초과: ${afterMoney}원`}
-                        </span>
-                      </div>
-                      <div className="flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
-                        <input
-                          ref={stockRef1}
-                          aria-label="입력"
-                          className=" py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
-                          type="text"
-                          placeholder="0"
-                          onChange={change}
-                        />
-                        <span>개</span>
-                      </div>
-                      <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
-                        <div
-                          aria-label="1개"
-                          className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                          onClick={click}>
-                          <span>+1개</span>
-                        </div>
-                        <div
-                          aria-label="10개"
-                          className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                          onClick={click}>
-                          <span>+10개</span>
-                        </div>
-                        <div
-                          aria-label="100개"
-                          className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                          onClick={click}>
-                          <span>+100개</span>
-                        </div>
-                        <div
-                          aria-label="1000개"
-                          className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                          onClick={click}>
-                          <span>+1000개</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
-                        <div
-                          aria-label="매도1"
-                          className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                              : 'cursor-not-allowed'
-                          }`}
-                          onClick={click}>
-                          <span>매도</span>
-                        </div>
-                        <div
-                          aria-label="매수1"
-                          className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                              : 'cursor-not-allowed'
-                          }`}
-                          onClick={click}>
-                          <span>매수</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-[11.35rem] w-full flxe justify-center items-center">
-                      <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
-                        <span className="text-[1.3rem] space-x-1">
-                          <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
-                          가능 시간
-                        </span>
-                        <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <div className="w-full bg-white rounded-lg">{stockTrade}</div>
                 {/* 국제시장환율 */}
                 <div className="flex flex-col items-start w-full text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
                   <div className="flex flex-col items-end justify-between w-full py-2">
@@ -1150,37 +1092,16 @@ function Exchange(): JSX.Element {
                       <span className="text-[#00A3FF]">날짜 갱신</span>
                     </div>
                   </div>
-                  {/* <div className="hidden justify-between w-full text-[1rem] font-bold px-[5%]">
-                    <div className="flex items-start justify-center w-[50%]">
-                      <div className="flex flex-col items-center">
-                        <span>24 :</span>
-                        <span className="text-[0.6rem] font-medium">시간&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>27 :</span>
-                        <span className="text-[0.6rem] font-medium">분&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>54</span>
-                        <span className="text-[0.6rem] font-medium">초</span>
-                      </div>
-                    </div>
-                    <div className="flex items-start justify-center w-[45%]">
-                      <div className="flex flex-col items-center">
-                        <span>02 :</span>
-                        <span className="text-[0.6rem] font-medium">분&ensp;</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span>17</span>
-                        <span className="text-[0.6rem] font-medium">초</span>
-                      </div>
-                    </div>
-                  </div> */}
-                  <div className="w-full">{stockBuyPeriod()}</div>
+                  <div>
+                    <CountdownTimer
+                      setIsPossibleStockTime={setIsPossibleStockTime}
+                      isPossibleStockTime={isPossibleStockTime}
+                    />
+                  </div>
                 </div>
                 {/* 주식 거래 */}
                 <div className="w-full bg-white rounded-lg">
-                  {checkStockTrading ? (
+                  {isPossibleStockTime ? (
                     <div className="flex flex-col items-start justify-start w-full px-1 py-1 space-y-1">
                       <div className="flex items-center justify-between w-full">
                         <span className="text-[1.2rem] font-extrabold">주식 거래</span>
@@ -1276,375 +1197,3 @@ function Exchange(): JSX.Element {
   );
 }
 export default Exchange;
-
-interface IRModalType {
-  isIRClick: boolean;
-  setIsIRClick: React.Dispatch<React.SetStateAction<boolean>>;
-  selectIRData: any;
-  // 날짜는 parse() 해서 보냄
-  date: string[];
-}
-
-function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): JSX.Element {
-  const navigate = useNavigate();
-  const ref = useRef(null);
-  const quarterRef = useRef<HTMLSelectElement>(null);
-  const containerRef = useRef<any>(null);
-  const containerRef2 = useRef<any>(null);
-  const [dragging, setDragging] = useState<boolean>(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  const [yearOption, setYearOption] = useState<any>();
-  const [selectYear, setSelectYear] = useState<string>('');
-  const [quarterOption, setQuarterOption] = useState<any>();
-  const [showQuarterData, setShowQuarterData] = useState<any>();
-  const [quarterClick, setQuarterClick] = useState<number>(0);
-
-  useEffect(() => {
-    const gameNowYear = parseInt(date[0]);
-    const yearLis = new Array(gameNowYear - 2010).fill(2011);
-    // 2011년부터 현재년도까지 만들어주기
-    setYearOption(
-      yearLis
-        .map((li, idx) => {
-          return (
-            <option key={idx} value={`${li + idx}`}>
-              {li + idx}
-            </option>
-          );
-        })
-        .reverse()
-    );
-  }, [selectIRData]);
-
-  // selectYear가 변경될때마다 실행
-  useEffect(() => {
-    if (selectYear === '') {
-      setSelectYear(date[0]);
-    }
-
-    if (selectYear !== '') {
-      const gameNowYear = parseInt(selectYear);
-      let addMonthOptionCnt: number = 0;
-      if (gameNowYear === parseInt(date[0])) {
-        switch (date[1]) {
-          case '01':
-          case '02':
-          case '03':
-            addMonthOptionCnt = 1;
-            break;
-          case '04':
-          case '05':
-          case '06':
-            addMonthOptionCnt = 2;
-            break;
-          case '07':
-          case '08':
-          case '09':
-            addMonthOptionCnt = 3;
-            break;
-          case '10':
-          case '11':
-          case '12':
-            addMonthOptionCnt = 4;
-            break;
-        }
-      } else {
-        addMonthOptionCnt = 4;
-      }
-      const quarters = new Array(addMonthOptionCnt).fill('분기');
-      setQuarterOption(
-        quarters.map((quarter, idx) => {
-          return (
-            <option
-              aria-label={selectIRData[gameNowYear][idx].name}
-              key={idx}
-              value={`${selectIRData[gameNowYear][idx].name}`}>
-              {selectIRData[gameNowYear][idx].name}
-            </option>
-          );
-        })
-      );
-      // 가장 처음에 보여줄 데이터
-      setShowQuarterData(selectIRData[gameNowYear][0]);
-    }
-  }, [yearOption, selectYear]);
-
-  const click = (e: React.MouseEvent) => {
-    switch (e.currentTarget.ariaLabel) {
-      case '닫기':
-        setIsIRClick((pre) => !pre);
-        break;
-      case '정보상':
-        navigate('/infoshop');
-    }
-  };
-
-  const change = (e: ChangeEvent<HTMLSelectElement>) => {
-    if (e.currentTarget.ariaLabel === '연도') {
-      setSelectYear(e.currentTarget.value);
-      setQuarterClick(0);
-      if (quarterRef.current !== null) {
-        quarterRef.current.value = '1분기 보고서';
-      }
-    } else {
-      switch (e.currentTarget.value) {
-        case '1분기 보고서':
-          setQuarterClick(0);
-          changeQuarterData();
-          break;
-        case '반기 보고서':
-          setQuarterClick(1);
-          changeQuarterData();
-          break;
-        case '3분기 보고서':
-          setQuarterClick(2);
-          changeQuarterData();
-          break;
-        case '사업 보고서':
-          setQuarterClick(3);
-          changeQuarterData();
-          break;
-      }
-    }
-  };
-
-  const changeQuarterData = () => {
-    console.log(selectIRData[parseInt(selectYear)]);
-
-    setShowQuarterData(selectIRData[parseInt(selectYear)][quarterClick]);
-  };
-
-  // key service
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft);
-  };
-
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragging) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const dx = x - startX;
-    containerRef.current.scrollLeft = scrollLeft - dx;
-  };
-
-  // plan
-  const handleMouseDown2 = (e: React.MouseEvent) => {
-    setDragging(true);
-    setStartX(e.pageX - containerRef2.current.offsetLeft);
-    setScrollLeft(containerRef2.current.scrollLeft);
-  };
-
-  const handleMouseUp2 = () => {
-    setDragging(false);
-  };
-
-  const handleMouseMove2 = (e: React.MouseEvent) => {
-    if (!dragging) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef2.current.offsetLeft;
-    const dx = x - startX;
-    containerRef2.current.scrollLeft = scrollLeft - dx;
-  };
-
-  return (
-    <>
-      {isIRClick ? (
-        <div
-          ref={ref}
-          className="fixed flex items-center justify-center right-0 left-0 top-0 bottom-0 z-50 bg-[#707070]/50 pt-0"
-          onClick={(e) => {
-            if (e.target === ref.current) {
-              setIsIRClick((pre) => !pre);
-            }
-          }}>
-          <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[35rem] lg:w-[42%] lg:min-w-[40rem] lg:max-w-[40rem] px-7 rounded-xl space-y-2 lg:space-y-4 py-3 lg:py-6">
-            <div className="w-full flex justify-center items-center text-[1.3rem] lg:text-[2rem] font-black">
-              <span>기업 활동</span>
-            </div>
-            <div className="flex items-end justify-start w-full space-x-6 px-2 text-[0.9rem] lg:text-[1.3rem] border-b-2 py-[2px] lg:py-1 text-[#6F6F6F] font-extrabold">
-              <select aria-label="연도" className="outline-none" name="연도" id="연도" onChange={change}>
-                {yearOption !== undefined && yearOption}
-              </select>
-              <select
-                ref={quarterRef}
-                aria-label="보고서"
-                className="outline-none"
-                name="보고서"
-                id="보고서"
-                onChange={change}>
-                {quarterOption}
-              </select>
-            </div>
-            <div className="flex flex-col items-start justify-start w-full pb-3 font-bold border-b-2 lg:pb-5">
-              <div className="flex items-end justify-between w-full px-2 pb-2">
-                <span className="text-[1rem] lg:text-[1.2rem]">
-                  {selectYear !== '' && selectIRData[selectYear][quarterClick].name}
-                </span>
-                <span className="text-[0.6rem] text-[#9B9B9B] lg:text-[0.8rem]">
-                  실제 IR 공시 날짜와는 다를 수 있습니다.
-                </span>
-              </div>
-              <div className="flex items-center w-full mb-2 justify-evenly lg:mb-4">
-                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
-                  <div>
-                    <img
-                      className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
-                      alt="IR"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
-                      {selectYear !== '' &&
-                        (selectIRData[selectYear][quarterClick]['operating revenue'] / 100000000 > 0
-                          ? Math.floor(
-                              selectIRData[selectYear][quarterClick]['operating revenue'] / 100000000
-                            ).toLocaleString()
-                          : (
-                              Math.floor(selectIRData[selectYear][quarterClick]['operating revenue']) / 1000000
-                            ).toLocaleString())}
-                      억
-                    </span>
-                    <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 수익</span>
-                  </div>
-                </div>
-                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
-                  <div>
-                    <img
-                      className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
-                      alt="IR"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
-                      {selectYear !== '' &&
-                        (selectIRData[selectYear][quarterClick]['operating gain'] / 100000000 > 0
-                          ? Math.floor(
-                              selectIRData[selectYear][quarterClick]['operating gain'] / 100000000
-                            ).toLocaleString()
-                          : (
-                              Math.floor(selectIRData[selectYear][quarterClick]['operating gain']) / 1000000
-                            ).toLocaleString())}
-                      억
-                    </span>
-                    <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">영업 이익</span>
-                  </div>
-                </div>
-                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
-                  <div>
-                    <img
-                      className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
-                      alt="IR"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
-                      {selectYear !== '' &&
-                        (selectIRData[selectYear][quarterClick]['total equity'] / 100000000 > 0
-                          ? Math.floor(
-                              selectIRData[selectYear][quarterClick]['total equity'] / 100000000
-                            ).toLocaleString()
-                          : (
-                              Math.floor(selectIRData[selectYear][quarterClick]['total equity']) / 1000000
-                            ).toLocaleString())}
-                      억
-                    </span>
-                    <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총자본</span>
-                  </div>
-                </div>
-                <div className="w-[24%] flex flex-col justify-center items-center space-y-1 py-4 bg-[#FFF8F0] border-4 rounded-md border-[#f8e1c8]">
-                  <div>
-                    <img
-                      className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
-                      alt="IR"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
-                      {selectYear !== '' &&
-                        (selectIRData[selectYear][quarterClick]['total liabilities'] / 100000000 > 0
-                          ? Math.floor(
-                              selectIRData[selectYear][quarterClick]['total liabilities'] / 100000000
-                            ).toLocaleString()
-                          : (
-                              Math.floor(selectIRData[selectYear][quarterClick]['total liabilities']) / 1000000
-                            ).toLocaleString())}
-                      억
-                    </span>
-                    <span className="text-[0.8rem] lg:text-[1rem] text-[#DB0000]">총부채</span>
-                  </div>
-                </div>
-              </div>
-              <div
-                ref={containerRef}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleMouseMove}
-                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto ${styled.scroll} lg:mb-2`}>
-                <div className="flex flex-nowrap">
-                  {selectYear !== '' &&
-                    selectIRData[selectYear][quarterClick]['key services'].map((service: string, idx: number) => {
-                      return (
-                        <span
-                          key={idx}
-                          className="bg-[#FFC34F] min-w-fit text-center text-white text-[0.7rem] lg:text-[1rem] w-[10rem] lg:w-[13rem] px-5 lg:px-10 mx-2 py-1 lg:py-2 rounded-md">
-                          {service}
-                        </span>
-                      );
-                    })}
-                </div>
-                <div></div>
-              </div>
-              <div
-                ref={containerRef2}
-                onMouseDown={handleMouseDown2}
-                onMouseUp={handleMouseUp2}
-                onMouseMove={handleMouseMove2}
-                className={`flex flex-col justify-start items-start w-full h-full flex-nowrap overflow-x-auto mt-2 ${styled.scroll}`}>
-                <div className="flex flex-nowrap">
-                  {selectYear !== '' &&
-                    selectIRData[selectYear][quarterClick]['plan'].map((service: string, idx: number) => {
-                      return (
-                        <div
-                          key={idx}
-                          className="flex justify-center min-w-fit rounded-md overflow-x-hidden bg-black text-center text-white text-[0.7rem] lg:text-[1rem] px-5 lg:px-10 mx-2 py-1 lg:py-2">
-                          {service}
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            </div>
-            <div className="flex items-end justify-end w-full px-2">
-              <div className="flex justify-end items-end text-white w-[40%] space-x-2 text-center font-medium text-[0.8rem] lg:text-[1.1rem] ">
-                <div
-                  className="bg-[#A5A5A5] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md"
-                  aria-label="닫기"
-                  onClick={click}>
-                  <span>닫기</span>
-                </div>
-                <div
-                  aria-label="정보상"
-                  className="bg-black w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md"
-                  onClick={click}>
-                  <span>정보상 가기</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
-}
