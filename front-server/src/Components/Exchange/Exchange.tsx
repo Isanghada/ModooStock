@@ -19,6 +19,7 @@ import CountdownTimeMinute from './CountdownTimeMinute';
 import CountdownTimer from './CountdownTimer';
 import IRModal from './IRModal';
 import StockTradeModal from './StockTradeModal';
+import Loading from 'Components/Common/Loading';
 
 interface CahrtDataType {
   일자: string;
@@ -82,12 +83,12 @@ interface TradeStockModalType {
 function Exchange(): JSX.Element {
   const dispatch = useAppDispatch();
   const irData = require('./ir_data.json');
-  const stockRef1 = useRef<HTMLInputElement>(null);
-  const stockRef2 = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef2 = useRef<HTMLInputElement>(null);
   const [lazyGetStock, { isLoading: isLoading1, isError: isError1 }] = useLazyGetStockQuery();
   const [getStockSelect, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStockSelectQuery();
-  const [postStock, { isLoading: isLoading4, isError: isError4 }] = usePostStockMutation();
-  const [deleteStock, { isLoading: isLoading5, isError: isError5 }] = useDeleteStockMutation();
+  const [postStock, { isLoading: isLoading3, isError: isError3 }] = usePostStockMutation();
+  const [deleteStock, { isLoading: isLoading4, isError: isError4 }] = useDeleteStockMutation();
   const currentMoney = useAppSelector((state) => {
     return state.currentMoneyStatus;
   });
@@ -97,7 +98,6 @@ function Exchange(): JSX.Element {
   const [isIRClick, setIsIRClick] = useState<boolean>(false);
   const [stockTrade, setStockTrade] = useState<any>();
   const [afterMoney, setAfterMoney] = useState<string>('0');
-  const [afterMoney2, setAfterMoney2] = useState<string>('0');
   const [lazyGetStockData, setLazyGetStockData] = useState<any>();
   // 첫번째 인덱스면 현재 데이터의 PriceBefore or 아닐 경우엔 Average 값에 대한 수익
   const [selectRevenueData, setSelectRevenueData] = useState<number>(0);
@@ -181,7 +181,6 @@ function Exchange(): JSX.Element {
   useEffect(() => {
     // 기존 잔고 넣어주기
     setAfterMoney('0');
-    setAfterMoney2('0');
 
     if (eventSource) {
       eventSource.close();
@@ -216,7 +215,7 @@ function Exchange(): JSX.Element {
   // SSE 4분주기로 받기
   useEffect(() => {
     // 스케쥴러 4분마다 실행
-    const job = schedule.scheduleJob('*/1 10-22 * * *', () => {
+    const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       if (eventSource) {
         eventSource.close();
         setEventSource(undefined);
@@ -238,7 +237,6 @@ function Exchange(): JSX.Element {
         // console.log(e);
       });
       setEventSource(newEventSource);
-      console.log('4분마다 실행');
     });
     return () => {
       // console.log('연결끊기');
@@ -248,35 +246,40 @@ function Exchange(): JSX.Element {
   }, []);
 
   const clickButtonEvent = (number: number) => {
-    if (stockRef1.current && stockRef2.current) {
-      if (stockRef1.current.value !== '') {
-        stockRef1.current.value = (parseInt(stockRef1.current.value.replaceAll(',', '')) + number).toLocaleString();
-        stockRef2.current.value = (parseInt(stockRef2.current.value.replaceAll(',', '')) + number).toLocaleString();
+    if (inputRef.current) {
+      if (inputRef.current.value !== '') {
         let money = '';
         currentMoney.split(',').map((liMoney: string) => (money += liMoney));
         const checkMoney: number =
-          selectCurrentData.priceEnd * (parseInt(stockRef1.current.value.replaceAll(',', '')) + number);
-        const checkMoney2: number =
-          selectCurrentData.priceEnd * (parseInt(stockRef2.current.value.replaceAll(',', '')) + number);
+          selectCurrentData.priceEnd * (parseInt(inputRef.current.value.replaceAll(',', '')) + number);
         setAfterMoney(checkMoney.toLocaleString());
-        setAfterMoney2(checkMoney2.toLocaleString());
+        inputRef.current.value = (parseInt(inputRef.current.value.replaceAll(',', '')) + number).toLocaleString();
       } else {
-        stockRef1.current.value = `${number}`;
-        stockRef2.current.value = `${number}`;
-        let money = '';
-        currentMoney.split(',').map((liMoney: string) => (money += liMoney));
-        const checkMoney: number =
-          selectCurrentData.priceEnd * (parseInt(stockRef1.current.value.replaceAll(',', '')) + number);
-        const checkMoney2: number =
-          selectCurrentData.priceEnd * (parseInt(stockRef2.current.value.replaceAll(',', '')) + number);
+        inputRef.current.value = `${number}`;
+        const checkMoney: number = selectCurrentData.priceEnd * number;
         setAfterMoney(checkMoney.toLocaleString());
-        setAfterMoney2(checkMoney2.toLocaleString());
       }
     }
   };
 
-  const [isPostStock, setIsPostStock] = useState<boolean>(false);
-  const [isDeleteStock, setIsDeleteStock] = useState<boolean>(false);
+  const clickButtonEventM = (number: number) => {
+    if (inputRef2.current) {
+      if (inputRef2.current.value !== '') {
+        let money = '';
+        currentMoney.split(',').map((liMoney: string) => (money += liMoney));
+        const checkMoney: number =
+          selectCurrentData.priceEnd * (parseInt(inputRef2.current.value.replaceAll(',', '')) + number);
+        setAfterMoney(checkMoney.toLocaleString());
+        inputRef2.current.value = (parseInt(inputRef2.current.value.replaceAll(',', '')) + number).toLocaleString();
+      } else {
+        inputRef2.current.value = `${number}`;
+        const checkMoney: number = selectCurrentData.priceEnd * number;
+        setAfterMoney(checkMoney.toLocaleString());
+      }
+    }
+  };
+
+  const [isShowStockModal, setIsShowStockModal] = useState<boolean>(false);
   const [tradeStockModalData, setTradeStockModalData] = useState<TradeStockModalType>();
 
   // 클릭 이벤트
@@ -293,6 +296,18 @@ function Exchange(): JSX.Element {
         break;
       case '1000개':
         clickButtonEvent(1000);
+        break;
+      case '1개M':
+        clickButtonEventM(1);
+        break;
+      case '10개M':
+        clickButtonEventM(10);
+        break;
+      case '100개M':
+        clickButtonEventM(100);
+        break;
+      case '1000개M':
+        clickButtonEventM(1000);
         break;
       case '신문':
         setIsNewsClick((pre) => !pre);
@@ -312,24 +327,23 @@ function Exchange(): JSX.Element {
       case '유럽연합':
         setClickNational(2);
         break;
-      case '매수1':
-        if (stockRef1.current) {
-          console.log('316');
+      case '매수':
+        if (inputRef.current) {
           const body = {
-            stockAmount: parseInt(stockRef1.current.value.replaceAll(',', '')),
+            stockAmount: parseInt(inputRef.current.value.replaceAll(',', '')),
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
             const { data, result } = await postStock(body).unwrap();
-            if (stockRef1.current) {
+            if (inputRef.current) {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
-                setIsPostStock(true);
+                setIsShowStockModal(true);
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
               }
-              stockRef1.current.value = '0';
+              inputRef.current.value = '0';
             } else {
             }
           };
@@ -337,66 +351,67 @@ function Exchange(): JSX.Element {
         }
         break;
       case '매수2':
-        if (stockRef2.current) {
+        if (inputRef2.current) {
           const body = {
-            stockAmount: parseInt(stockRef2.current.value.replaceAll(',', '')),
+            stockAmount: parseInt(inputRef2.current.value.replaceAll(',', '')),
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
             const { data, result } = await postStock(body).unwrap();
-            if (stockRef2.current) {
+            if (inputRef2.current) {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
-                setIsPostStock(true);
+                setIsShowStockModal(true);
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
               }
-              stockRef2.current.value = '0';
+              inputRef2.current.value = '0';
+            } else {
             }
           };
           posrStock();
         }
         break;
-      case '매도1':
-        if (stockRef1.current) {
+      case '매도':
+        if (inputRef.current) {
           const body = {
-            stockAmount: parseInt(stockRef1.current.value.replaceAll(',', '')),
+            stockAmount: parseInt(inputRef.current.value.replaceAll(',', '')),
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
             const { data, result } = await deleteStock(body).unwrap();
-            if (stockRef1.current) {
+            if (inputRef.current) {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
-                setIsDeleteStock(true);
+                setIsShowStockModal(true);
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
               }
-              stockRef1.current.value = '0';
+              inputRef.current.value = '0';
             }
           };
           stockDelete();
         }
         break;
       case '매도2':
-        if (stockRef2.current) {
+        if (inputRef2.current) {
           const body = {
-            stockAmount: parseInt(stockRef2.current.value.replaceAll(',', '')),
+            stockAmount: parseInt(inputRef2.current.value.replaceAll(',', '')),
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
             const { data, result } = await deleteStock(body).unwrap();
-            if (stockRef2.current) {
+            if (inputRef2.current) {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
-                setIsDeleteStock(true);
+                setIsShowStockModal(true);
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
               }
-              stockRef2.current.value = '0';
+              inputRef2.current.value = '0';
             }
           };
           stockDelete();
@@ -418,41 +433,65 @@ function Exchange(): JSX.Element {
       case '입력':
         let money = '';
         currentMoney.split(',').map((liMoney: string) => (money += liMoney));
-        if (target.value !== '' && stockRef1.current && stockRef2.current) {
-          await isValidInput(stockRef1.current.value).then((r) => {
-            // 숫자가 들어왔을때
-            if (r === true && stockRef1.current && stockRef2.current) {
-              const intValue = parseInt(stockRef1.current.value.replaceAll(',', ''));
-              const intValue2 = parseInt(stockRef2.current.value.replaceAll(',', ''));
-              const checkMoney: number = selectCurrentData.priceEnd * intValue;
-              const checkMoney2: number = selectCurrentData.priceEnd * intValue2;
-              const inputMoney: string = checkMoney.toLocaleString();
-              const inputMoney2: string = checkMoney2.toLocaleString();
-              if (target.value !== '') {
-                setAfterMoney(inputMoney);
-                setAfterMoney2(inputMoney2);
+        if (target.value !== '') {
+          if (inputRef.current) {
+            await isValidInput(inputRef.current.value).then((r) => {
+              // 숫자가 들어왔을때
+              if (r === true && inputRef.current) {
+                const intValue = parseInt(inputRef.current.value.replaceAll(',', ''));
+                const checkMoney: number = selectCurrentData.priceEnd * intValue;
+                const inputMoney: string = checkMoney.toLocaleString();
+                if (target.value !== '') {
+                  setAfterMoney(inputMoney);
+                }
+                inputRef.current.value = intValue.toLocaleString();
               }
-              stockRef1.current.value = intValue.toLocaleString();
-              stockRef2.current.value = intValue2.toLocaleString();
-            }
-            // 문자가 들어왔을때
-            else if (r === false && stockRef1.current && stockRef2.current) {
-              const intValue = parseInt(stockRef1.current.value.slice(0, -1).replaceAll(',', ''));
-              const intValue2 = parseInt(stockRef2.current.value.slice(0, -1).replaceAll(',', ''));
-              if (stockRef1.current.value.length > 1) {
-                stockRef1.current.value = intValue.toLocaleString();
-              } else if (stockRef1.current.value.length > 2) {
-                stockRef2.current.value = intValue2.toLocaleString();
-              } else {
-                stockRef1.current.value = '0';
-                stockRef2.current.value = '0';
+              // 문자가 들어왔을때
+              else if (r === false && inputRef.current) {
+                const intValue = parseInt(inputRef.current.value.slice(0, -1).replaceAll(',', ''));
+                if (inputRef.current.value.length > 1) {
+                  inputRef.current.value = intValue.toLocaleString();
+                } else {
+                  inputRef.current.value = '0';
+                }
               }
-            }
-          });
+            });
+          }
         } else {
-          setAfterMoney(currentMoney);
-          setAfterMoney2(currentMoney);
+          setAfterMoney('0');
         }
+        break;
+      case '입력모바일':
+        let moneyMobile = '';
+        currentMoney.split(',').map((liMoney: string) => (moneyMobile += liMoney));
+        if (target.value !== '') {
+          if (inputRef2.current) {
+            await isValidInput(inputRef2.current.value).then((r) => {
+              // 숫자가 들어왔을때
+              if (r === true && inputRef2.current) {
+                const intValue = parseInt(inputRef2.current.value.replaceAll(',', ''));
+                const checkMoney: number = selectCurrentData.priceEnd * intValue;
+                const inputMoney: string = checkMoney.toLocaleString();
+                if (target.value !== '') {
+                  setAfterMoney(inputMoney);
+                }
+                inputRef2.current.value = intValue.toLocaleString();
+              }
+              // 문자가 들어왔을때
+              else if (r === false && inputRef2.current) {
+                const intValue = parseInt(inputRef2.current.value.slice(0, -1).replaceAll(',', ''));
+                if (inputRef2.current.value.length > 1) {
+                  inputRef2.current.value = intValue.toLocaleString();
+                } else {
+                  inputRef2.current.value = '0';
+                }
+              }
+            });
+          }
+        } else {
+          setAfterMoney('0');
+        }
+        break;
     }
   };
 
@@ -462,7 +501,6 @@ function Exchange(): JSX.Element {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
       await selectStockData(data.stockList[0].stockId);
-      // console.log('data.stockList[0].kind: ', typeof data.stockList[0].kind);
       const firstDataName = data.stockList[0].kind;
       SetSelectIRData(irData[firstDataName]);
     };
@@ -578,24 +616,18 @@ function Exchange(): JSX.Element {
 
   if (eventSource) {
     eventSource.onmessage = (event: any) => {
-      console.log(JSON.parse(event.data));
-
       setSseData(JSON.parse(event.data));
     };
   }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('innerHTML: ', e.currentTarget.innerHTML);
 
     setClickNationalName(e.currentTarget.innerHTML);
 
     if (e.currentTarget.ariaLabel !== null) {
-      // console.log(e.currentTarget.ariaLabel);
-
       await selectStockData(parseInt(e.currentTarget.ariaLabel));
       setListening(false);
-      // console.log('eventSource: ', eventSource);
     }
   };
 
@@ -620,114 +652,17 @@ function Exchange(): JSX.Element {
     );
   };
 
-  // 거래 가능한 시간에 따른 다른 컴포넌트 보이기
-  useEffect(() => {
-    if (isPossibleStockTime) {
-      setStockTrade(
-        <>
-          <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-2">
-            <div className="flex items-center justify-between w-full">
-              <span className="text-[1.5rem] font-extrabold">주식 거래</span>
-              <span
-                className={`${
-                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                    ? 'text-black'
-                    : 'text-red-500'
-                }`}>
-                {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                  ? `구매 금액: ${afterMoney}원`
-                  : `한도 초과: ${afterMoney}원`}
-              </span>
-            </div>
-            <div className="flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
-              <input
-                ref={stockRef1}
-                aria-label="입력"
-                className=" py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
-                type="text"
-                placeholder="0"
-                onChange={change}
-              />
-              <span>개</span>
-            </div>
-            <div className="flex items-center w-full text-center justify-evenly text-[#464646]">
-              <div
-                aria-label="1개"
-                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                onClick={click}>
-                <span>+1개</span>
-              </div>
-              <div
-                aria-label="10개"
-                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                onClick={click}>
-                <span>+10개</span>
-              </div>
-              <div
-                aria-label="100개"
-                className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                onClick={click}>
-                <span>+100개</span>
-              </div>
-              <div
-                aria-label="1000개"
-                className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
-                onClick={click}>
-                <span>+1000개</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between w-full text-center text-[1.5rem] text-white font-semibold pt-1">
-              <div
-                aria-label="매도1"
-                className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                    ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                    : 'cursor-not-allowed'
-                }`}
-                onClick={click}>
-                <span>매도</span>
-              </div>
-              <div
-                aria-label="매수1"
-                className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                  parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                    ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                    : 'cursor-not-allowed'
-                }`}
-                onClick={click}>
-                <span>매수</span>
-              </div>
-            </div>
-          </div>
-        </>
-      );
-    } else {
-      setStockTrade(
-        <>
-          <div className="h-[11.35rem] w-full flxe justify-center items-center">
-            <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
-              <span className="text-[1.3rem] space-x-1">
-                <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span> 가능 시간
-              </span>
-              <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
-            </div>
-          </div>
-        </>
-      );
-    }
-  }, [isPossibleStockTime]);
-
   return (
     <>
-      {isPostStock && (
+      {isShowStockModal && (
         <StockTradeModal
           tradeStockModalData={tradeStockModalData}
-          isPostStock={isPostStock}
-          setIsPostStock={setIsPostStock}
+          isShowStockModal={isShowStockModal}
+          setIsShowStockModal={setIsShowStockModal}
         />
       )}
-      {isLoading1 && isLoading2 ? (
-        <div>로딩</div>
+      {isLoading1 && isLoading2 && isLoading3 && isLoading4 ? (
+        <Loading />
       ) : (
         <>
           {isIRClick && (
@@ -999,7 +934,95 @@ function Exchange(): JSX.Element {
                   </div>
                 </div>
                 {/* 주식 거래 */}
-                <div className="w-full bg-white rounded-lg">{stockTrade}</div>
+                {isPossibleStockTime ? (
+                  <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
+                    <div className="flex items-end justify-between w-full font-extrabold">
+                      <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
+                      <span
+                        className={` text-[0.7rem]
+                          ${
+                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                              ? 'text-black'
+                              : 'text-red-500'
+                          }`}>
+                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          ? `구매 금액: ${afterMoney}원`
+                          : `한도 초과: ${afterMoney}원`}
+                      </span>
+                    </div>
+                    <div className="hidden lg:flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
+                      <input
+                        ref={inputRef}
+                        aria-label="입력"
+                        className=" py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
+                        type="text"
+                        placeholder="0"
+                        maxLength={6}
+                        onChange={change}
+                      />
+                      <span>개</span>
+                    </div>
+                    <div className="flex items-center w-full text-center justify-evenly text-[0.6rem] lg:text-[1rem] text-[#464646]">
+                      <div
+                        aria-label="1개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1개</span>
+                      </div>
+                      <div
+                        aria-label="10개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+10개</span>
+                      </div>
+                      <div
+                        aria-label="100개"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+100개</span>
+                      </div>
+                      <div
+                        aria-label="1000개"
+                        className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1000개</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between w-full text-center text-[1rem] lg:text-[1.5rem] text-white font-semibold pt-1">
+                      <div
+                        aria-label="매도"
+                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                            ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
+                            : 'cursor-not-allowed'
+                        }`}
+                        onClick={click}>
+                        <span>매도</span>
+                      </div>
+                      <div
+                        aria-label="매수"
+                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                            ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
+                            : 'cursor-not-allowed'
+                        }`}
+                        onClick={click}>
+                        <span>매수</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-[11.35rem] w-full flxe justify-center items-center">
+                    <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
+                      <span className="text-[1.3rem] space-x-1">
+                        <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
+                        가능 시간
+                      </span>
+                      <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* 국제시장환율 */}
                 <div className="flex flex-col items-start w-full text-[1.4rem] bg-white mr-[2%] px-5 font-semibold drop-shadow-lg rounded-lg hover:scale-[1.02] border-2 border-white hover:border-blue-200 transition-all duration-300">
                   <div className="flex flex-col items-end justify-between w-full py-2">
@@ -1085,109 +1108,126 @@ function Exchange(): JSX.Element {
                 {/* 종목 갱신, 날짜 갱신 */}
                 <div className="flex flex-col w-full py-1 text-white bg-black rounded-lg">
                   <div className="flex justify-between w-full text-[0.85rem] px-[5%] font-semibold">
-                    <div className="w-[50%] text-center">
+                    <div className="w-1/2 text-center">
                       <span className="text-[#FF5151]">종목 갱신</span>
                     </div>
-                    <div className="w-[45%] text-center">
+                    <div className="w-1/2 text-center">
                       <span className="text-[#00A3FF]">날짜 갱신</span>
                     </div>
                   </div>
-                  <div>
-                    <CountdownTimer
-                      setIsPossibleStockTime={setIsPossibleStockTime}
-                      isPossibleStockTime={isPossibleStockTime}
-                    />
+                  <div className="flex justify-between w-full text-[1rem] font-bold px-[5%]">
+                    <div className="flex items-start justify-center w-1/2">
+                      <CountdownTimer
+                        setIsPossibleStockTime={setIsPossibleStockTime}
+                        isPossibleStockTime={isPossibleStockTime}
+                      />
+                    </div>
+                    <div className="flex items-start justify-center w-1/2">
+                      <CountdownTimeMinute />
+                    </div>
+                  </div>
+                  <div className="flex justify-between w-full text-[0.6rem] text-[#FFFFFF] px-[5%] font-semibold">
+                    <div className="flex w-1/2 justify-center text-center space-x-4">
+                      <span>시간</span>
+                      <span>&nbsp;분&ensp;</span>
+                      <span>초&ensp;</span>
+                    </div>
+                    <div className="flex w-1/2 justify-center text-center space-x-4">
+                      <span>&ensp;분&ensp;</span>
+                      <span>초&nbsp;</span>
+                    </div>
                   </div>
                 </div>
                 {/* 주식 거래 */}
-                <div className="w-full bg-white rounded-lg">
-                  {isPossibleStockTime ? (
-                    <div className="flex flex-col items-start justify-start w-full px-1 py-1 space-y-1">
-                      <div className="flex items-center justify-between w-full">
-                        <span className="text-[1.2rem] font-extrabold">주식 거래</span>
-                        <span
-                          className={`text-[0.6rem] ${
-                            parseInt(afterMoney2.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                {/* <div className="w-full bg-white rounded-lg">{stockTrade}</div> */}
+                {isPossibleStockTime ? (
+                  <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
+                    <div className="flex items-end justify-between w-full font-extrabold">
+                      <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
+                      <span
+                        className={` text-[0.7rem]
+                          ${
+                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                               ? 'text-black'
                               : 'text-red-500'
                           }`}>
-                          {parseInt(afterMoney2.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                            ? `구매 금액: ${afterMoney2}원`
-                            : `한도 초과: ${afterMoney2}원`}
-                        </span>
+                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          ? `구매 금액: ${afterMoney}원`
+                          : `한도 초과: ${afterMoney}원`}
+                      </span>
+                    </div>
+                    <div className="flex lg:hidden justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
+                      <input
+                        ref={inputRef2}
+                        aria-label="입력모바일"
+                        className=" py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
+                        type="text"
+                        placeholder="0"
+                        maxLength={6}
+                        onChange={change}
+                      />
+                      <span>개</span>
+                    </div>
+                    <div className="flex items-center w-full text-center justify-evenly text-[0.6rem] lg:text-[1rem] text-[#464646]">
+                      <div
+                        aria-label="1개M"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1개</span>
                       </div>
-                      <div className="flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
-                        <input
-                          ref={stockRef2}
-                          aria-label="입력"
-                          className="py-2 pr-1 text-end w-full bg-[#FFF2F0] outline-none "
-                          type="text"
-                          placeholder="0"
-                          onChange={change}
-                        />
-                        <span>개</span>
+                      <div
+                        aria-label="10개M"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+10개</span>
                       </div>
-                      <div className="flex items-center w-full text-center justify-evenly text-[0.761rem] md:text-[0.935rem] pt-1 text-[#464646]">
-                        <div
-                          aria-label="1개"
-                          className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md"
-                          onClick={click}>
-                          <span>+1개</span>
-                        </div>
-                        <div
-                          aria-label="10개"
-                          className="w-[21%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md"
-                          onClick={click}>
-                          <span>+10개</span>
-                        </div>
-                        <div
-                          aria-label="100개"
-                          className="w-[24%] pr-1 hover:transition duration-300 border-r-2 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md"
-                          onClick={click}>
-                          <span>+100개</span>
-                        </div>
-                        <div
-                          aria-label="1000개"
-                          className="w-[35%%] hover:transition duration-300 hover:scale-105 active:bg-[#EA455D] active:text-white hover:rounded-md"
-                          onClick={click}>
-                          <span>+1000개</span>
-                        </div>
+                      <div
+                        aria-label="100개M"
+                        className="w-1/4 duration-200 border-r-2 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+100개</span>
                       </div>
-                      <div className="flex items-center justify-between w-full text-center text-[1rem] md:text-[1.3rem] text-white font-semibold">
-                        <div
-                          aria-label="매도2"
-                          className={`w-[45%] py-[1px] bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400 ${
-                            parseInt(afterMoney2.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                              : 'cursor-not-allowed'
-                          }`}
-                          onClick={click}>
-                          <span>매도</span>
-                        </div>
-                        <div
-                          aria-label="매수2"
-                          className={`w-[45%] py-[1px] bg-[#EA455D] shadow-md rounded-xl shadow-gray-400 ${
-                            parseInt(afterMoney2.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                              : 'cursor-not-allowed'
-                          }`}
-                          onClick={click}>
-                          <span>매수</span>
-                        </div>
+                      <div
+                        aria-label="1000개M"
+                        className="w-1/4 duration-200 hover:rounded-md hover:transition hover:scale-105 hover:font-bold hover:bg-[#EA455D] hover:text-white cursor-pointer"
+                        onClick={click}>
+                        <span>+1000개</span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="h-[8.7rem] w-full flxe justify-center items-center">
-                      <div className="flex flex-col items-center justify-center w-full h-full pb-5 font-semibold">
-                        <span className="text-[1rem] space-x-1">
-                          <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
-                          가능 시간
-                        </span>
-                        <span className="text-[1.2rem]">AM 10:00 ~ PM 10:00</span>
+                    <div className="flex items-center justify-between w-full text-center text-[1rem] lg:text-[1.5rem] text-white font-semibold pt-1">
+                      <div
+                        aria-label="매도2"
+                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                            ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
+                            : 'cursor-not-allowed'
+                        }`}
+                        onClick={click}>
+                        <span>매도</span>
+                      </div>
+                      <div
+                        aria-label="매수2"
+                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                            ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
+                            : 'cursor-not-allowed'
+                        }`}
+                        onClick={click}>
+                        <span>매수</span>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="h-[11.35rem] w-full flxe justify-center items-center">
+                    <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
+                      <span className="text-[1.3rem] space-x-1">
+                        <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
+                        가능 시간
+                      </span>
+                      <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
