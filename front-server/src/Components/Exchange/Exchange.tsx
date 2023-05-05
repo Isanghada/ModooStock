@@ -180,7 +180,7 @@ function Exchange(): JSX.Element {
   // SSE
   useEffect(() => {
     // 기존 잔고 넣어주기
-    setAfterMoney('0');
+    // setAfterMoney('0');
 
     if (eventSource) {
       eventSource.close();
@@ -510,6 +510,15 @@ function Exchange(): JSX.Element {
   // 차트 데이터 변경될때마다 실행
   useEffect(() => {
     if (sseData) {
+      // 거래 입력 값 초기화
+      if (inputRef.current) {
+        inputRef.current.value = '0';
+      }
+      if (inputRef2.current) {
+        inputRef2.current.value = '0';
+      }
+      setAfterMoney('0');
+      // 데이터 관련
       const { stockId, amount, average, rate, stockChartResDto } = sseData;
       if (clickNationalName !== '') {
         SetSelectIRData(irData[clickNationalName]);
