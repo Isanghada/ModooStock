@@ -98,9 +98,9 @@ function Lottery(): JSX.Element {
 
   useEffect(() => {
     if (isOpen) {
-      dispatch(changeCurrentMoneyHideStatus(false));
-    } else {
       dispatch(changeCurrentMoneyHideStatus(true));
+    } else {
+      dispatch(changeCurrentMoneyHideStatus(false));
     }
   }, [isOpen, dispatch]);
 

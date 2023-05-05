@@ -208,7 +208,7 @@ function Navbar(): JSX.Element {
               className={`bg-[#FFBF4D] grow min-w-fit px-2 h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 screenHeight >= 800 ? 'max-w-[20vw]' : ''
               }`}>
-              {currentMoneyHideStatus ? currentMoney : '??????'}원
+              {currentMoneyHideStatus ? '??????' : currentMoney}원
             </div>
           </div>
           <div className={`flex items-center w-[18vw] h-full`}>
