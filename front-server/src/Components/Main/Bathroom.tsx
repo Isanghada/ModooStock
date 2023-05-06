@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 
 function Bathroom({ len, pos, rot }: any): JSX.Element {
-  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/Livingroom2_Base.gltf');
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/Bathroom.gltf');
   console.log(process.env.REACT_APP_S3_URL);
 
   // const {} = materials
@@ -41,7 +41,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
   const meshData = meshPosition.map((data: any, idx: number) => {
     console.log('materials: ', materials);
 
-    return <mesh geometry={geo[idx]} material={materials['LP_Rooms.002']} position={meshPosition[idx]} />;
+    return <mesh geometry={geo[idx]} material={materials['LP_Rooms']} position={meshPosition[idx]} />;
   });
 
   // size를 받아옴
