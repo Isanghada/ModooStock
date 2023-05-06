@@ -46,7 +46,7 @@ function Intro(): JSX.Element {
             delay: 1.5,
             ease: 'easeInOut'
           }}>
-          <img className="w-full" src="/images/logos/LogoEarth.png" alt="logo" />
+          <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png'} alt="logo" />
         </motion.div>
         {/* 캐릭터 */}
         <motion.div
@@ -59,7 +59,11 @@ function Intro(): JSX.Element {
             delay: 1,
             ease: 'easeInOut'
           }}>
-          <img className="w-full max-h-full lg:w-3/4" src="/images/intro/characters.png" alt="characters" />
+          <img
+            className="w-full max-h-full lg:w-3/4"
+            src={process.env.REACT_APP_S3_URL + '/images/intro/characters.png'}
+            alt="characters"
+          />
         </motion.div>
         {/* 돈 뿌리기 */}
         <motion.div
@@ -86,7 +90,11 @@ function Intro(): JSX.Element {
               repeat: Infinity,
               ease: 'linear'
             }}>
-            <img className="w-full h-full hover:scale-105" src="/images/intro/increase.png" alt="arrow" />
+            <img
+              className="w-full h-full hover:scale-105"
+              src={process.env.REACT_APP_S3_URL + '/images/intro/increase.png'}
+              alt="arrow"
+            />
             {/* <div className='text-sm font-medium text-red-700 lg:font-bold lg:text-xl'>화성</div> */}
           </motion.div>
         )}
