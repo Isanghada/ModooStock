@@ -217,26 +217,33 @@ function Exchange(): JSX.Element {
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       if (eventSource) {
-        eventSource.close();
-        setEventSource(undefined);
+        eventSource.onmessage = (event: any) => {
+          console.log('4분이며 데이터 갱신되나?');
+
+          setSseData(JSON.parse(event.data));
+        };
       }
-      const token = localStorage.getItem('accessToken');
+      // if (eventSource) {
+      //   eventSource.close();
+      //   setEventSource(undefined);
+      // }
+      // const token = localStorage.getItem('accessToken');
 
-      const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache'
-        },
-        // heartbeatTimeout: 8700,
-        withCredentials: true
-      });
+      // const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+      //   headers: {
+      //     'Content-Type': 'text/event-stream',
+      //     'Access-Control-Allow-Origin': '*',
+      //     Authorization: `Bearer ${token}`,
+      //     'Cache-Control': 'no-cache'
+      //   },
+      //   // heartbeatTimeout: 8700,
+      //   withCredentials: true
+      // });
 
-      newEventSource.addEventListener('connect', (e: any) => {
-        // console.log(e);
-      });
-      setEventSource(newEventSource);
+      // newEventSource.addEventListener('connect', (e: any) => {
+      //   // console.log(e);
+      // });
+      // setEventSource(newEventSource);
     });
     return () => {
       // console.log('연결끊기');
@@ -623,11 +630,11 @@ function Exchange(): JSX.Element {
     getStockSelect(stockId);
   };
 
-  if (eventSource) {
-    eventSource.onmessage = (event: any) => {
-      setSseData(JSON.parse(event.data));
-    };
-  }
+  // if (eventSource) {
+  //   eventSource.onmessage = (event: any) => {
+  //     setSseData(JSON.parse(event.data));
+  //   };
+  // }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -733,7 +740,7 @@ function Exchange(): JSX.Element {
                   </span>
                   <img
                     className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem] cursor-pointer"
-                    src="/images/icons/news.png"
+                    src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'}
                     alt=""
                   />
                 </div>

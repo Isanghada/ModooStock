@@ -99,7 +99,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="가이드"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/guide.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/guide.png'}
                 alt=""
               />
             </div>
@@ -111,7 +111,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="방문하기"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/visit.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/visit.png'}
                 alt=""
                 onClick={handleOpenModal}
               />
@@ -121,13 +121,18 @@ function Main(): JSX.Element {
               <img
                 aria-label="경매장"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/auction.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/auction.png'}
                 alt=""
               />
             </div>
             <div className="h-[12%]"></div>
             <div className="flex justify-center h-[15%] w-full">
-              <img aria-label="게임기" className="z-10 h-full" src="/images/toys/nintendo.png" alt="" />
+              <img
+                aria-label="게임기"
+                className="z-10 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/nintendo.png'}
+                alt=""
+              />
             </div>
             <div className="h-[6%]"></div>
           </div>
@@ -143,7 +148,7 @@ function Main(): JSX.Element {
                 <img
                   aria-label="은행"
                   className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                  src="/images/toys/bank.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/bank.png'}
                   alt=""
                   onClick={click}
                 />
@@ -153,7 +158,7 @@ function Main(): JSX.Element {
                 <img
                   aria-label="뽑기 상점"
                   className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                  src="/images/toys/gatcha.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/gatcha.png'}
                   alt=""
                   onClick={click}
                 />
@@ -164,14 +169,19 @@ function Main(): JSX.Element {
             <div className="flex flex-col items-center justify-start w-1/2 h-[92%]">
               <div className="h-[12%]"></div>
               <div className="flex justify-center h-[10%] w-full">
-                <img aria-label="말" className="z-10 h-full" src="/images/toys/horse.png" alt="" />
+                <img
+                  aria-label="말"
+                  className="z-10 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/horse.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[56%]"></div>
               <div className="flex justify-center h-[14%] w-full">
                 <img
                   aria-label="미니 게임"
                   className="z-10 h-full pr-20 cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                  src="/images/toys/miniGame.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/miniGame.png'}
                   alt=""
                   onClick={click}
                 />
@@ -185,15 +195,30 @@ function Main(): JSX.Element {
             <div className="flex flex-col w-[17%] h-full">
               <div className="h-[11%]"></div>
               <div className="flex justify-center h-[14%] w-full">
-                <img aria-label="조이스틱" className="z-20 h-full" src="/images/toys/joystic.png" alt="" />
+                <img
+                  aria-label="조이스틱"
+                  className="z-20 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/joystic.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[30%]"></div>
               <div className="flex justify-end h-[17%] w-full">
-                <img aria-label="믹스" className="z-20 h-full pr-1" src="/images/toys/mixassets.png" alt="" />
+                <img
+                  aria-label="믹스"
+                  className="z-20 h-full pr-1"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/mixassets.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[18%]"></div>
               <div className="flex justify-start h-[7%] w-full">
-                <img aria-label="원" className="z-20 h-full" src="/images/toys/one.png" alt="" />
+                <img
+                  aria-label="원"
+                  className="z-20 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/one.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[3%]"></div>
             </div>
@@ -203,7 +228,12 @@ function Main(): JSX.Element {
             <div className="w-[15%] h-full z-30">
               <div className="h-[8%]"></div>
               <div className="flex justify-center h-[7%] w-full">
-                <img aria-label="믹스2" className="z-10 h-full" src="/images/toys/mixassets2.png" alt="" />
+                <img
+                  aria-label="믹스2"
+                  className="z-10 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/mixassets2.png'}
+                  alt=""
+                />
               </div>
             </div>
             {/* 빈칸 */}
@@ -212,15 +242,30 @@ function Main(): JSX.Element {
             <div className="w-[15%] h-full">
               <div className="h-[8%]"></div>
               <div className="flex justify-start h-[7%] w-full">
-                <img aria-label="줄무늬공" className="z-10 h-full" src="/images/toys/zebra.png" alt="" />
+                <img
+                  aria-label="줄무늬공"
+                  className="z-10 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/zebra.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[27%]"></div>
               <div className="flex justify-center h-[8%] w-full">
-                <img aria-label="플러스" className="z-10 h-full" src="/images/toys/plus.png" alt="" />
+                <img
+                  aria-label="플러스"
+                  className="z-10 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/plus.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[33%]"></div>
               <div className="flex justify-start h-[12%] w-full">
-                <img aria-label="공" className="z-10 h-full" src="/images/toys/ball.png" alt="" />
+                <img
+                  aria-label="공"
+                  className="z-10 h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/ball.png'}
+                  alt=""
+                />
               </div>
               <div className="h-[6%]"></div>
             </div>
@@ -230,7 +275,7 @@ function Main(): JSX.Element {
             <img
               aria-label="마카롱"
               className={`absolute object-contain scale-110 w-full`}
-              src="/images/toys/floor.png"
+              src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
               alt=""
               style={{ bottom: `-${floor}` }}
             />
@@ -248,7 +293,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1.3, -8]} rot={[1.75, 0, 0.2]} />
+              <Bathroom len={0.0055} pos={[0, -1.3, -8]} rot={[1.75, 0, -0.8]} />
             </Canvas>
           </div>
         </div>
@@ -260,7 +305,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="정보상"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/info.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/info.png'}
                 alt=""
                 onClick={click}
               />
@@ -270,7 +315,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="랭킹"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/rank.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/rank.png'}
                 alt=""
                 onClick={click}
               />
@@ -280,7 +325,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="주식 거래소"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/chart.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/chart.png'}
                 alt=""
                 onClick={click}
               />
@@ -296,7 +341,7 @@ function Main(): JSX.Element {
           <img
             aria-label="마카롱"
             className={`object-contain`}
-            src="/images/toys/floor.png"
+            src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
             alt=""
             // style={{ bottom: `-${floor}` }}
           />
@@ -330,7 +375,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="가이드"
                 className="z-10 h-full w-full cursor-pointer absolute pl-1 hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/guide.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/guide.png'}
                 alt=""
               />
               <div className="h-[5%]"></div>
@@ -343,7 +388,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="방문하기"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/visit.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/visit.png'}
                 alt=""
                 onClick={handleOpenModal}
               />
@@ -353,14 +398,19 @@ function Main(): JSX.Element {
               <img
                 aria-label="경매장"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/auction.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/auction.png'}
                 alt=""
                 onClick={click}
               />
             </div>
             <div className="h-[5%]"></div>
             <div className="flex justify-center pr-2 h-[13%] w-full">
-              <img aria-label="게임기" className="z-10 h-full" src="/images/toys/nintendo.png" alt="" />
+              <img
+                aria-label="게임기"
+                className="z-10 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/nintendo.png'}
+                alt=""
+              />
             </div>
             <div className="h-[7%]"></div>
           </div>
@@ -371,7 +421,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="은행"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/bank.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/bank.png'}
                 alt=""
                 onClick={click}
               />
@@ -381,7 +431,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="뽑기 상점"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/gatcha.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/gatcha.png'}
                 alt=""
                 onClick={click}
               />
@@ -396,7 +446,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="정보상"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/info.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/info.png'}
                 alt=""
                 onClick={click}
               />
@@ -406,7 +456,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="랭킹"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/rank.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/rank.png'}
                 alt=""
                 onClick={click}
               />
@@ -416,7 +466,7 @@ function Main(): JSX.Element {
               <img
                 aria-label="주식 거래소"
                 className="h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/chart.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/chart.png'}
                 alt=""
                 onClick={click}
               />
@@ -429,15 +479,30 @@ function Main(): JSX.Element {
           <div className="flex flex-col w-1/4 h-full">
             <div className="h-[15%]"></div>
             <div className="flex justify-start h-[15%] w-full">
-              <img aria-label="조이스틱" className="z-20 h-full" src="/images/toys/joystic.png" alt="" />
+              <img
+                aria-label="조이스틱"
+                className="z-20 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/joystic.png'}
+                alt=""
+              />
             </div>
             <div className="h-[16%]"></div>
             <div className="flex justify-center h-[14%] w-full">
-              <img aria-label="믹스" className="z-20 h-full pr-2" src="/images/toys/mixassets.png" alt="" />
+              <img
+                aria-label="믹스"
+                className="z-20 h-full pr-2"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/mixassets.png'}
+                alt=""
+              />
             </div>
             <div className="h-[32%]"></div>
             <div className="flex justify-start h-[5%] w-full">
-              <img aria-label="공" className="z-20 h-full" src="/images/toys/one.png" alt="" />
+              <img
+                aria-label="공"
+                className="z-20 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/one.png'}
+                alt=""
+              />
             </div>
             <div className="h-[3%]"></div>
           </div>
@@ -445,17 +510,27 @@ function Main(): JSX.Element {
           <div className="w-1/4 h-full">
             <div className="h-[13%]"></div>
             <div className="flex justify-start h-[6%] w-full">
-              <img aria-label="믹스2" className="z-10 h-full" src="/images/toys/mixassets2.png" alt="" />
+              <img
+                aria-label="믹스2"
+                className="z-10 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/mixassets2.png'}
+                alt=""
+              />
             </div>
             <div className="flex justify-end h-[10%] w-full">
-              <img aria-label="말" className="z-10 h-full" src="/images/toys/horse.png" alt="" />
+              <img
+                aria-label="말"
+                className="z-10 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/horse.png'}
+                alt=""
+              />
             </div>
             <div className="h-[55%]"></div>
             <div className="flex justify-center h-[14%] w-full">
               <img
                 aria-label="미니 게임"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
-                src="/images/toys/miniGame.png"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/miniGame.png'}
                 alt=""
                 onClick={click}
               />
@@ -465,15 +540,30 @@ function Main(): JSX.Element {
           <div className="w-1/4 h-full">
             <div className="h-[22%]"></div>
             <div className="flex justify-center h-[7%] w-full">
-              <img aria-label="게임기" className="z-10 h-full" src="/images/toys/zebra.png" alt="" />
+              <img
+                aria-label="게임기"
+                className="z-10 h-full"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/zebra.png'}
+                alt=""
+              />
             </div>
             <div className="h-[10%]"></div>
             <div className="flex justify-end h-[7%] w-full">
-              <img aria-label="플러스" className="z-10 h-full pr-5" src="/images/toys/plus.png" alt="" />
+              <img
+                aria-label="플러스"
+                className="z-10 h-full pr-5"
+                src={process.env.REACT_APP_S3_URL + '/images/toys/plus.png'}
+                alt=""
+              />
             </div>
             <div className="h-[42%]"></div>
             <div className="flex justify-center h-[10%] w-full">
-              <img aria-label="공" className="h-full " src="/images/toys/ball.png" alt="" />
+              <img
+                aria-label="공"
+                className="h-full "
+                src={process.env.REACT_APP_S3_URL + '/images/toys/ball.png'}
+                alt=""
+              />
             </div>
             <div className="h-[2%]"></div>
           </div>
