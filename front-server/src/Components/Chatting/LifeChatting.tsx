@@ -9,7 +9,6 @@ import Message from './Message';
 import { useAppDispatch } from 'Store/hooks';
 import { changeChattingStatus } from 'Store/store';
 
-
 // 시간 옵션
 const options = {
   year: 'numeric',
@@ -19,14 +18,14 @@ const options = {
 };
 const LifeChatting = () => {
   // const roomName = 'chatting';
-  const roomName = "생명";
+  const roomName = '생명';
   const dispatch = useAppDispatch();
   // 채팅 div
   const chatDiv = useRef<HTMLDivElement>(null);
   // 유저 프로필 데이터
   const myEmail = localStorage.getItem('nickname');
   const nickname = localStorage.getItem('nickname');
-  const profile_img_path = '/images/toys/pink.png';
+  const profile_img_path = process.env.REACT_APP_S3_URL + '/images/toys/pink.png';
   // 내 이미지 주소
 
   // 채팅메시지 데이터들
@@ -38,10 +37,7 @@ const LifeChatting = () => {
   // 채팅 데이터들 가져오기
   const getContents = async () => {
     // 우선 query로 데이터 가져오기 두번째 인자 where로 조건문도 가능
-    const content = query(
-      collection(dbService, roomName),
-      orderBy('createdAt')
-    );
+    const content = query(collection(dbService, roomName), orderBy('createdAt'));
 
     // 실시간 변화 감지 최신버전
     onSnapshot(content, (snapshot) => {
@@ -107,7 +103,9 @@ const LifeChatting = () => {
       }}
       className="flex flex-col justify-center w-full h-full text-white">
       <div className="w-full h-[6%] bg-[#FB6B9F] flex items-center justify-between px-3">
-        <div className="flex items-center h-full text-xs font-medium lg:font-semibold lg:text-lg ">{roomName}토론방</div>
+        <div className="flex items-center h-full text-xs font-medium lg:font-semibold lg:text-lg ">
+          {roomName}토론방
+        </div>
         <img
           onClick={() => {
             // 채팅창끄기
@@ -129,7 +127,7 @@ const LifeChatting = () => {
           </div>
           {messageDatas.map((msg, index) => {
             if (index === 0) {
-              return (<></>);
+              return <></>;
             }
             // 상대방의 닉네임 처음 한번만
             let checkSameNick = true;
@@ -197,7 +195,7 @@ const LifeChatting = () => {
             {/* 뉴스 업로드 */}
             <img
               className={`w-4 h-4 lg:min-w-8 lg:min-h-8 lg:w-8 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
-              src="/chatting/news.png"
+              src={process.env.REACT_APP_S3_URL + '/chatting/news.png'}
               alt="imagefile"
             />
             {/* 뉴스 및 메시지 입력 */}
@@ -223,7 +221,7 @@ const LifeChatting = () => {
             <label htmlFor="sendMsg">
               <img
                 className={`w-4 h-4 lg:min-w-9 lg:min-h-8 lg:w-9 lg:h-8 opacity-60 hover:opacity-100 cursor-pointer`}
-                src="/chatting/send.png"
+                src={process.env.REACT_APP_S3_URL + '/chatting/send.png'}
                 alt="send"
               />
             </label>

@@ -222,7 +222,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                   <div>
                     <img
                       className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
+                      src={process.env.REACT_APP_S3_URL + '/images/icons/IRImage.png'}
                       alt="IR"
                     />
                   </div>
@@ -245,7 +245,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                   <div>
                     <img
                       className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
+                      src={process.env.REACT_APP_S3_URL + '/images/icons/IRImage.png'}
                       alt="IR"
                     />
                   </div>
@@ -268,7 +268,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                   <div>
                     <img
                       className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
+                      src={process.env.REACT_APP_S3_URL + '/images/icons/IRImage.png'}
                       alt="IR"
                     />
                   </div>
@@ -291,7 +291,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                   <div>
                     <img
                       className="w-[1rem] lg:w-[2rem] h-[1rem] lg:h-[2rem]"
-                      src="/images/icons/IRImage.png"
+                      src={process.env.REACT_APP_S3_URL + '/images/icons/IRImage.png'}
                       alt="IR"
                     />
                   </div>

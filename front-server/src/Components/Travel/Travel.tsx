@@ -8,7 +8,12 @@ function TravelRoom(): JSX.Element {
   return (
     <div className="flex justify-center items-center w-[65%] h-full relative">
       <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
-        <img aria-label="마카롱" className={`object-contain w-full`} src="/images/toys/floor.png" alt="" />
+        <img
+          aria-label="마카롱"
+          className={`object-contain w-full`}
+          src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
+          alt=""
+        />
       </div>
       <div className="w-[80%] flex justify-center h-[87%] items-center">
         <Canvas
@@ -36,7 +41,12 @@ function MobileTravelRoom(): JSX.Element {
   return (
     <div className="flex justify-evenly items-center w-[65%] md:w-[58%] h-full relative">
       <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
-        <img aria-label="마카롱" className={`object-contain w-full`} src="/images/toys/floor.png" alt="" />
+        <img
+          aria-label="마카롱"
+          className={`object-contain w-full`}
+          src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
+          alt=""
+        />
       </div>
       <div className="w-[80%] flex justify-center h-[87%] items-center">
         <Canvas
@@ -130,7 +140,11 @@ function Travel(): JSX.Element {
               {/* 라인 */}
               <div className="w-5/6 text-center mt-4 border-b border-solid border-[#E0E0E0] leading-[0.1em]" />
               <div className="flex items-center justify-between w-5/6 px-2 py-2">
-                <img className="w-[2rem] h-[1.5rem] object-contain" src="/images/icons/coin.png" alt="돈" />
+                <img
+                  className="w-[2rem] h-[1.5rem] object-contain"
+                  src={process.env.REACT_APP_S3_URL + '/images/icons/coin.png'}
+                  alt="돈"
+                />
                 <p className="w-[17.5rem] text-xl font-bold text-right text-black">
                   {user?.data.totalCash?.toLocaleString()}원
                 </p>
@@ -171,7 +185,11 @@ function Travel(): JSX.Element {
                   {/* 라인 */}
                   <div className="w-full text-center mt-2 border-b border-solid border-[#E0E0E0] leading-[0.1em]" />
                   <div className="flex items-center justify-between w-full py-2">
-                    <img className="w-[1.5rem] h-[1.5rem] object-contain" src="/images/icons/coin.png" alt="돈" />
+                    <img
+                      className="w-[1.5rem] h-[1.5rem] object-contain"
+                      src={process.env.REACT_APP_S3_URL + '/images/icons/coin.png'}
+                      alt="돈"
+                    />
                     <p className="text-[1rem] font-bold text-right text-black">
                       {user?.data.totalCash?.toLocaleString()}원
                     </p>
