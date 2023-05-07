@@ -16,7 +16,6 @@ import InfoShop from 'Components/InfoShop/InfoShop';
 import Loading from 'Components/Common/Loading';
 import GachaShop from 'Components/GachaShop/GachaShop';
 import Lottery from 'Components/MiniGame/Lottery';
-import Check from 'Components/Mypage/Check';
 
 function App() {
   return (
@@ -34,7 +33,6 @@ function App() {
           <Route path="/infoshop" element={<InfoShop />} />
           <Route path="/gachashop" element={<GachaShop />} />
           <Route path="/lottery" element={<Lottery />} />
-          <Route path="/check" element={<Check />} />
         </Route>
         <Route path="/error" element={<Error />} />
         <Route path="/loading" element={<Loading />} />

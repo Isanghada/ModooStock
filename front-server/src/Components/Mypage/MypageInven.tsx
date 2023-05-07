@@ -1,6 +1,14 @@
 import styled from './Mypage.module.css';
 import { useRef, useState } from 'react';
 
+interface ReturnInvenType {
+  userAssetId: number;
+  assetImagePath: string;
+  assetLevel: string;
+  assetCategory: null;
+  isAuctioned: string;
+}
+
 function MypageInven(): JSX.Element {
   const containerRef = useRef<any>(null);
   const [dragging, setDragging] = useState<boolean>(false);
