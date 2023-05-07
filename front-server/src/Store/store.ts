@@ -84,11 +84,22 @@ const currentDataIndex = createSlice({
   initialState: 0,
   reducers: {
     getCurrentDataIndex(state, action) {
-      console.log(action.payload, "인덱스")
+      console.log(action.payload, '인덱스');
       return (state = action.payload);
     }
   }
-})
+});
+
+// ------------- 마이페이지 -------------
+const clickAssetName = createSlice({
+  name: 'clickAssetName',
+  initialState: '',
+  reducers: {
+    changeClickAssetName(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
 
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
@@ -106,7 +117,8 @@ export const store = configureStore({
     currentMoneyStatus: currentMoneyStatus.reducer,
     getCurrentDataIndex: currentDataIndex.reducer,
     currentMoneyHideStatus: currentMoneyHideStatus.reducer,
-
+    // ------------- 마이페이지 -------------
+    clickAssetName: clickAssetName.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -124,6 +136,8 @@ export const { changeCurrentMoneyStatusStatus } = currentMoneyStatus.actions;
 export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
 export const { getCurrentDataIndex } = currentDataIndex.actions;
+// ------------- 마이페이지 -------------
+export const { changeClickAssetName } = clickAssetName.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

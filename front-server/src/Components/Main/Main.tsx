@@ -8,6 +8,7 @@ import MyHomeAsset from './MyHomeAsset';
 import axios from 'axios';
 import Modal from './Modal';
 import VisitModal from './VisitModal';
+import AllAssetsList from 'Components/Mypage/AllAssetsList';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -31,12 +32,8 @@ function Main(): JSX.Element {
       const st = 2 + (window.innerWidth - 1024) * (1 / 140);
       setFloor(`${st}rem`);
     } else if (1024 > window.innerWidth) {
-      console.log('hihi');
-
       setFloor('5rem');
     } else {
-      console.log('bye');
-
       setFloor('4rem');
     }
   };
@@ -293,7 +290,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1.3, -8]} rot={[1.75, 0, 0.2]} />
+              <AllAssetsList len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, -0.8]} />
             </Canvas>
           </div>
         </div>
@@ -362,7 +359,7 @@ function Main(): JSX.Element {
             }}>
             <ambientLight intensity={0.5} />
             <pointLight distance={2000} position={10} power={8} />
-            <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+            <AllAssetsList len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
           </Canvas>
         </div>
         <div className="w-[50%] h-[15%]"></div>
