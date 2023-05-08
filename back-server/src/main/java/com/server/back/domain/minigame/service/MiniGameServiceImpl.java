@@ -78,7 +78,7 @@ public class MiniGameServiceImpl implements MiniGameService{
             ranking=4;
             money=10_000L;
         }
-        userRepository.save(user);
+
         return new MiniGameResDto(ranking,money);
 
     }
@@ -112,9 +112,9 @@ public class MiniGameServiceImpl implements MiniGameService{
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000_000_000L);
             ranking=1;
-            money=10_000_000_000L;
+            money=7_000_000_000L;
         }
-        userRepository.save(user);
+
         return new MiniGameResDto(ranking,money);
     }
 }
