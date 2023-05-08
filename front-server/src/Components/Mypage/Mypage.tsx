@@ -1,49 +1,52 @@
 import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/Bathroom';
+import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import styled from './Mypage.module.css';
 import MypageInven from './MypageInven';
 import AllAssetsList from './AllAssetsList';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
 
 function Mypage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
   const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
 
-  const [pos1, setPos1] = useState<string>('0');
-  const [pos2, setPos2] = useState<string>('0');
-  const [pos3, setPos3] = useState<string>('0');
-
-  const [rot1, setRot1] = useState<string>('0');
-  const [rot2, setRot2] = useState<string>('0');
-  const [rot3, setRot3] = useState<string>('0');
+  const clickAssetPosition = useAppSelector((state) => {
+    return state.clickAssetPosition;
+  });
+  const clickAssetRotation = useAppSelector((state) => {
+    return state.clickAssetRotation;
+  });
 
   const change = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     const value = target.value as string;
     switch (target.ariaLabel) {
       case 'pos1':
-        console.log(value);
-
-        setPos1(value);
+        console.log('pos1', value);
+        dispatch(changeClickAssetPosition([parseInt(value), clickAssetPosition[1], clickAssetPosition[2]]));
         break;
       case 'pos2':
-        setPos2(value);
+        console.log('pos2', value);
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], parseInt(value), clickAssetPosition[2]]));
         break;
       case 'pos3':
         console.log('pos3', value);
-        setPos3(value);
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], clickAssetPosition[1], parseInt(value)]));
         break;
       case 'rot1':
-        setRot1(value);
+        console.log('rot1', value);
+        dispatch(changeClickAssetRotation([parseInt(value), clickAssetRotation[1], clickAssetRotation[2]]));
         break;
       case 'rot2':
-        setRot2(value);
+        console.log('rot2', value);
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], parseInt(value), clickAssetRotation[2]]));
         break;
       case 'rot3':
-        setRot3(value);
-        break;
-      default:
+        console.log('rot3', value);
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], clickAssetRotation[1], parseInt(value)]));
         break;
     }
   };
@@ -216,10 +219,10 @@ function Mypage(): JSX.Element {
                           min={-200}
                           max={200}
                           step={0.1}
-                          defaultValue={0}
+                          // defaultValue={0}
                           aria-label="pos1"
                           className={`flex items-center w-[90%]`}
-                          // value={pos1}
+                          value={clickAssetPosition[0]}
                           type="range"
                           onChange={change}
                         />
@@ -237,10 +240,10 @@ function Mypage(): JSX.Element {
                           min={-200}
                           max={200}
                           step={0.1}
-                          defaultValue={0}
+                          // defaultValue={0}
                           aria-label="pos2"
                           className={`flex items-center w-[90%]`}
-                          // value={parseInt(pos2)}
+                          value={clickAssetPosition[1]}
                           type="range"
                           onChange={change}
                         />
@@ -254,12 +257,12 @@ function Mypage(): JSX.Element {
                         </div>
                         <input
                           min={-400}
-                          max={0}
+                          max={-10}
                           step={0.1}
-                          defaultValue={-200}
+                          // defaultValue={-200}
                           aria-label="pos3"
                           className={`flex items-center w-[90%]`}
-                          // value={pos3}
+                          value={clickAssetPosition[2]}
                           type="range"
                           onChange={change}
                         />
@@ -278,13 +281,13 @@ function Mypage(): JSX.Element {
                           <span>X</span>
                         </div>
                         <input
-                          min={-1.5}
-                          max={1.5}
-                          step={0}
-                          defaultValue={0}
+                          min={-3}
+                          max={3}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot1"
                           className={`flex items-center w-[90%]`}
-                          // value={rot1}
+                          value={clickAssetRotation[0]}
                           type="range"
                           onChange={change}
                         />
@@ -297,13 +300,13 @@ function Mypage(): JSX.Element {
                           <span>Y</span>
                         </div>
                         <input
-                          min={-1.5}
-                          max={1.5}
-                          step={0}
-                          defaultValue={0}
+                          min={-3}
+                          max={3}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot2"
                           className={`flex items-center w-[90%]`}
-                          // value={rot2}
+                          value={clickAssetRotation[1]}
                           type="range"
                           onChange={change}
                         />
@@ -318,11 +321,11 @@ function Mypage(): JSX.Element {
                         <input
                           min={-3}
                           max={3}
-                          step={0}
-                          defaultValue={0}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot3"
                           className={`flex items-cente w-[90%]`}
-                          // value={rot3}
+                          value={clickAssetRotation[2]}
                           type="range"
                           onChange={change}
                         />
@@ -488,44 +491,52 @@ function Mypage(): JSX.Element {
                         max={200}
                         step={0.1}
                         aria-label="pos1M"
-                        className={`flex items-center ${styled.sPos1}`}
-                        value={pos1}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[0]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#ffc0c0] h-full rounded-full`} style={{ width: `${pos1}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Y</span>
                       </div>
                       <input
+                        min={-200}
+                        max={200}
+                        step={0.1}
+                        // defaultValue={0}
                         aria-label="pos2M"
-                        className={`flex items-center ${styled.sPos2}`}
-                        value={pos2}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[1]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#fec563] h-full rounded-full`} style={{ width: `${pos2}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Z</span>
                       </div>
                       <input
+                        min={-400}
+                        max={0}
+                        step={0.1}
+                        // defaultValue={-200}
                         aria-label="pos3M"
-                        className={`flex items-center ${styled.sPos3}`}
-                        value={pos3}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[2]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#fffca9] h-full rounded-full`} style={{ width: `${pos3}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   {/* Rotation */}
@@ -538,45 +549,57 @@ function Mypage(): JSX.Element {
                         <span>X</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot1M"
-                        className={`flex items-center ${styled.sRot1}`}
-                        value={rot1}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[0]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#DCFFC0] h-full rounded-full`} style={{ width: `${rot1}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Y</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot2M"
-                        className={`flex items-center ${styled.sRot2}`}
-                        value={rot2}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[1]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#C6EEFF] h-full rounded-full`} style={{ width: `${rot2}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Z</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot3M"
-                        className={`flex items-center ${styled.sRot3}`}
-                        value={rot3}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[2]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#f0d9ff] h-full rounded-full`} style={{ width: `${rot3}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

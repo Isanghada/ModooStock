@@ -87,7 +87,6 @@ function Navbar(): JSX.Element {
       setCurrentMoney(currentMoney.toLocaleString());
       dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
       setTotalStockReturn(totalStockReturn);
-      localStorage.setItem('nickname', nickname);
     }
     // 현재 잔액 변경될 때 실행되도록 추가
   }, [currentMoneyStatus, dataUserInfo]);

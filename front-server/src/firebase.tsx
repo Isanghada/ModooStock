@@ -33,39 +33,20 @@ async function requestPermission() {
   }
   console.log('알림 권한 허용 됨!!! ');
 
-  // FCM 메시지
-  // const newSw = await navigator.serviceWorker.register(
-  //   'firebase-messaging-sw.js'
-  // );
-  // console.log(newSw, "뉴스?")
-  // getToken(messaging, { vapidKey: process.env.REACT_APP_FCM_VAPID}).then((currentToken) => {
-  //   if (currentToken) {
-  //     // Send the token to your server and update the UI if necessary
-  //     // ...
-  //   } else {
-  //     // Show permission request UI
-  //     console.log('No registration token available. Request permission to generate one.');
-  //     // ...
-  //   }
-  // }).catch((err) => {
-  //   console.log('An error occurred while retrieving token. ', err);
-  //   // ...
+  // const token = await getToken(messaging, {
+  //   vapidKey: process.env.REACT_APP_FCM_VAPID
   // });
-  const token = await getToken(messaging, {
-    vapidKey: process.env.REACT_APP_FCM_VAPID
-  });
-  if (token) {
-    console.log('token: ', token);
-  } else {
-    console.log('Can not get Token');
-  }
+  // if (token) {
+  //   console.log('token: ', token);
+  // } else {
+  //   console.log('Can not get Token');
+  // }
 
-  onMessage(messaging, (payload) => {
-    console.log("메시지가 도착했습니다.", payload);
-    // ...
-  });
-  
 }
+// onMessage(messaging, (payload) => {
+//   console.log("메시지가 도착했습니다.", payload);
+//   // ...
+// });
 requestPermission();
 
-export { app, dbService };
+export { app, dbService, messaging };

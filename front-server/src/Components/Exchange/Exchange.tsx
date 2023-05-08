@@ -195,7 +195,6 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
-      // heartbeatTimeout: 8700,
       withCredentials: true
     });
 
@@ -205,7 +204,6 @@ function Exchange(): JSX.Element {
     setEventSource(newEventSource);
 
     return () => {
-      // console.log('연결끊기');
       eventSource?.close();
       newEventSource?.close();
       setEventSource(undefined);
@@ -214,49 +212,27 @@ function Exchange(): JSX.Element {
 
     if (eventSource) {
       eventSource.onmessage = (event: any) => {
-        toast.info('sse 데이터 받기');
-        console.log(event.data);
+        // toast.info('sse 데이터 받기');
         setSseData(JSON.parse(event.data));
       };
+
+      eventSource.onerror = (event:any) => {
+        eventSource.close();
+        const token = localStorage.getItem('accessToken');
+
+        const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache'
+          },
+          withCredentials: true
+        });
+
+        setEventSource(newEventSource);
+      }
     }
-  // SSE 4분주기로 받기
-  // useEffect(() => {
-  //   // 스케쥴러 4분마다 실행
-  //   const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
-  //     // if (eventSource) {
-  //     //   eventSource.onmessage = (event: any) => {
-  //     //     toast.info('갱신 됐나?');
-  //     //     setSseData(JSON.parse(event.data));
-  //     //   };
-  //     // }
-  //     // if (eventSource) {
-  //     //   eventSource.close();
-  //     //   setEventSource(undefined);
-  //     // }
-  //     // const token = localStorage.getItem('accessToken');
-
-  //     // const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
-  //     //   headers: {
-  //     //     'Content-Type': 'text/event-stream',
-  //     //     'Access-Control-Allow-Origin': '*',
-  //     //     Authorization: `Bearer ${token}`,
-  //     //     'Cache-Control': 'no-cache'
-  //     //   },
-  //     //   // heartbeatTimeout: 8700,
-  //     //   withCredentials: true
-  //     // });
-
-  //     // newEventSource.addEventListener('connect', (e: any) => {
-  //     //   // console.log(e);
-  //     // });
-  //     // setEventSource(newEventSource);
-  //   });
-  //   return () => {
-  //     // console.log('연결끊기');
-  //     eventSource?.close();
-  //     setEventSource(undefined);
-  //   };
-  // }, []);
 
   const clickButtonEvent = (number: number) => {
     if (inputRef.current) {

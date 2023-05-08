@@ -91,11 +91,40 @@ const currentDataIndex = createSlice({
 });
 
 // ------------- 마이페이지 -------------
-const clickAssetName = createSlice({
+const clickAsseData = createSlice({
   name: 'clickAssetName',
-  initialState: '',
+  initialState: {
+    userAssetId: 0,
+    assetName: '',
+    pos_x: 0.0,
+    pos_y: 0.0,
+    pos_z: -195.0,
+    rot_x: 0.0,
+    rot_y: 0.0,
+    rot_z: 0.0
+  },
   reducers: {
-    changeClickAssetName(state, action) {
+    changeClickAsseData(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+const clickAssetPosition = createSlice({
+  name: 'clickAssetPosition',
+  initialState: [0, 0, -200],
+  reducers: {
+    changeClickAssetPosition(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+const clickAssetRotation = createSlice({
+  name: 'clickAssetRotation',
+  initialState: [0, 0, 0],
+  reducers: {
+    changeClickAssetRotation(state, action) {
       return (state = action.payload);
     }
   }
@@ -118,7 +147,9 @@ export const store = configureStore({
     getCurrentDataIndex: currentDataIndex.reducer,
     currentMoneyHideStatus: currentMoneyHideStatus.reducer,
     // ------------- 마이페이지 -------------
-    clickAssetName: clickAssetName.reducer
+    clickAsseData: clickAsseData.reducer,
+    clickAssetPosition: clickAssetPosition.reducer,
+    clickAssetRotation: clickAssetRotation.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -137,7 +168,9 @@ export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
 export const { getCurrentDataIndex } = currentDataIndex.actions;
 // ------------- 마이페이지 -------------
-export const { changeClickAssetName } = clickAssetName.actions;
+export const { changeClickAsseData } = clickAsseData.actions;
+export const { changeClickAssetPosition } = clickAssetPosition.actions;
+export const { changeClickAssetRotation } = clickAssetRotation.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;
