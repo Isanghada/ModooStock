@@ -18,8 +18,6 @@ public class AssetEntity {
 
     @Column(nullable = false)
     private String category;
-    @Column(nullable = false)
-    private String assetImagePath;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AssetLevelType assetLevel;
