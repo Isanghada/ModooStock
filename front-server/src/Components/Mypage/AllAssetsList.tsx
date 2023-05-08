@@ -1,27 +1,63 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeClickAssetName } from 'Store/store';
+import { changeClickAsseData, changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
+
+interface AssetType {
+  userAssetId: number;
+  assetName: string;
+  pos_x: number;
+  pos_y: number;
+  pos_z: number;
+  rot_x: number;
+  rot_y: number;
+  rot_z: number;
+}
 
 function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): JSX.Element {
   const dispatch = useAppDispatch();
-  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/RoomCheck.gltf');
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
   const [scale, setScale] = useState(len);
   const [myAssets, setMyAssets] = useState<any>();
-  let clickData: any = [];
-  const clickAssetName = useAppSelector((state) => {
-    return state.clickAssetName;
+  const clickAsseData = useAppSelector((state) => {
+    return state.clickAsseData;
   });
-  // console.log(nodes);
+  const clickAssetPosition = useAppSelector((state) => {
+    return state.clickAssetPosition;
+  });
+  const clickAssetRotation = useAppSelector((state) => {
+    return state.clickAssetRotation;
+  });
 
   const ref = useRef<any>(null);
 
-  const click = (name: string, pos: number[], rot: number[]) => {
-    console.log('name: ', name);
-    console.log('pos: ', pos);
-    console.log('rot: ', rot);
-    dispatch(changeClickAssetName(name));
+  const click = (asset: AssetType, pos: number[], rot: number[]) => {
+    console.log('asset: ', asset);
+
+    dispatch(changeClickAsseData(asset));
+    dispatch(changeClickAssetPosition(pos));
+    dispatch(changeClickAssetRotation(rot));
+    setIsClickAsset(true);
+  };
+
+  const changeClick = (asset: AssetType, pos: number[], rot: number[]) => {
+    console.log('asset: ', asset);
+
+    dispatch(
+      changeClickAsseData({
+        userAssetId: asset.userAssetId,
+        assetName: asset.assetName,
+        pos_x: pos[0],
+        pos_y: pos[1],
+        pos_z: pos[2],
+        rot_x: rot[0],
+        rot_y: rot[1],
+        rot_z: rot[2]
+      })
+    );
+    dispatch(changeClickAssetPosition(pos));
+    dispatch(changeClickAssetRotation(rot));
     setIsClickAsset(true);
   };
 
@@ -32,18 +68,16 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       {
         userAssetId: 0,
         assetName: 'Backyard_Tree',
-        assetImagePath: '31',
-        pos_x: 0.0,
+        pos_x: 10.0,
         pos_y: 0.0,
         pos_z: 0.0,
         rot_x: 0.0,
         rot_y: 0.0,
-        rot_z: 0.0
+        rot_z: -2.0
       },
       {
         userAssetId: 1,
         assetName: 'Yogaroom_base',
-        assetImagePath: '32',
         pos_x: 0.0,
         pos_y: 0.0,
         pos_z: 0.0,
@@ -54,24 +88,32 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       {
         userAssetId: 2,
         assetName: 'Yogaroom_rug1',
-        assetImagePath: '33',
-        pos_x: 200,
-        pos_y: 200,
-        pos_z: -400,
+        pos_x: 20,
+        pos_y: 0,
+        pos_z: 0.0,
+        rot_x: 0.0,
+        rot_y: 0,
+        rot_z: -0.2
+      },
+      {
+        userAssetId: 3,
+        assetName: 'Backyard_Flower_2',
+        pos_x: 50.0,
+        pos_y: 40.0,
+        pos_z: 0.0,
         rot_x: 0.0,
         rot_y: 0.0,
         rot_z: 0.0
       },
       {
-        userAssetId: 3,
-        assetName: 'Yogaroom_airconditioning',
-        assetImagePath: '34',
-        pos_x: 0.0,
-        pos_y: 0.0,
-        pos_z: 0.0,
+        userAssetId: 4,
+        assetName: 'Gym_Peloton',
+        pos_x: -200.0,
+        pos_y: 50.0,
+        pos_z: -10.0,
         rot_x: 0.0,
         rot_y: 0.0,
-        rot_z: 0.0
+        rot_z: -0.2
       }
     ];
     let geo: any = [];
@@ -86,22 +128,20 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
         // let isShow = true;
         // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
         // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
+
         return (
           <mesh
             key={idx}
             geometry={geo[idx]}
             material={materials[Object.keys(materials)[0]]}
-            position={
-              // [assetsName[idx].pos_x, assetsName[idx].pos_y, assetsName[idx].pos_z]
-              [assetsName[idx].pos_x, assetsName[idx].pos_y, assetsName[idx].pos_z]
-            }
-            // rotation={[assetsName[idx].rot_x, assetsName[idx].rot_y, assetsName[idx].rot_z]}
-            rotation={idx !== 1 ? [assetsName[idx].rot_x, assetsName[idx].rot_y, assetsName[idx].rot_z] : [0, 0, 0]}
+            position={[assetsName[idx].pos_x, assetsName[idx].pos_y, assetsName[idx].pos_z]}
+            rotation={[assetsName[idx].rot_x, assetsName[idx].rot_y, assetsName[idx].rot_z]}
             visible={true}
             onClick={(e) => {
               e.stopPropagation();
               click(
-                assetsName[idx].assetName,
+                // 이름. position, rotation
+                assetsName[idx],
                 [assetsName[idx].pos_x, assetsName[idx].pos_y, assetsName[idx].pos_z],
                 [assetsName[idx].rot_x, assetsName[idx].rot_y, assetsName[idx].rot_z]
               );
@@ -113,60 +153,151 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
   }, []);
 
   useEffect(() => {
-    // if (isClickAsset) {
-    //   console.log('클릭했다~!', clickAssetName);
-    //   const assetsName = ['', 'Backyard_Tree', 'Yogaroom_base', 'Yogaroom_rug1'];
-    //   const length = 3;
-    //   let nodesCnt = -1;
-    //   let cnt = 0;
-    //   let meshPositionCnt = -1;
-    //   let geo: any = [];
-    //   // // console.log('nodes: ', nodes);
-    //   for (const key in nodes) {
-    //     // console.log(key);
-    //     nodesCnt += 1;
-    //     cnt += 1;
-    //     if (!(nodesCnt === 0) && nodesCnt <= length) {
-    //       // console.log(key);
-    //       clickData = [...clickData, key];
-    //       geo = [...geo, nodes[assetsName[nodesCnt]].geometry];
-    //     }
-    //   }
-    //   let meshPosition: any = [];
-    //   Object.values(nodes).map((item: any, idx) => {
-    //     meshPositionCnt += 1;
-    //     if (!(idx === 0 && meshPositionCnt <= length)) {
-    //       let li: any = [];
-    //       Object.values(item.position).map((po: any) => {
-    //         li = [...li, Math.round(po * 100) / 100];
-    //       });
-    //       meshPosition = [...meshPosition, li];
-    //     }
-    //   });
-    //   // 데이터
-    //   setMyAssets(
-    //     meshPosition.map((data: any, idx: number) => {
-    //       // let isShow = true;
-    //       // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
-    //       return (
-    //         <mesh
-    //           key={idx}
-    //           geometry={geo[idx]}
-    //           material={materials[Object.keys(materials)[0]]}
-    //           position={idx !== 2 ? [0, 0, 0] : [200, 200, -400]}
-    //           rotation={[0, 0, 0]}
-    //           visible={true}
-    //           onClick={(e) => {
-    //             e.stopPropagation();
-    //             console.log(e);
-    //             click(assetsName[idx + 1]);
-    //           }}
-    //         />
-    //       );
-    //     })
-    //   );
-    // }
-  }, [isClickAsset, clickAssetName]);
+    if (isClickAsset) {
+      console.log('clickAsseData.assetName: ', clickAsseData.assetName);
+
+      // 원래 마이룸 API 데이터 조회 후
+      let assets = [
+        {
+          userAssetId: 0,
+          assetName: 'Backyard_Tree',
+          assetImagePath: 'Backyard_Tree',
+          pos_x: 10.0,
+          pos_y: 0.0,
+          pos_z: 0.0,
+          rot_x: 0.0,
+          rot_y: 0.0,
+          rot_z: -2.0
+        },
+        {
+          userAssetId: 1,
+          assetName: 'Yogaroom_base',
+          assetImagePath: 'Yogaroom_base',
+          pos_x: 0.0,
+          pos_y: 0.0,
+          pos_z: 0.0,
+          rot_x: 0.0,
+          rot_y: 0.0,
+          rot_z: 0.0
+        },
+        {
+          userAssetId: 2,
+          assetName: 'Yogaroom_rug1',
+          assetImagePath: 'Yogaroom_rug1',
+          pos_x: 20,
+          pos_y: 0,
+          pos_z: 0.0,
+          rot_x: 0.0,
+          rot_y: 0,
+          rot_z: -0.2
+        },
+        {
+          userAssetId: 3,
+          assetName: 'Backyard_Flower_2',
+          assetImagePath: 'Backyard_Flower_2',
+          pos_x: 50.0,
+          pos_y: 40.0,
+          pos_z: 0.0,
+          rot_x: 0.0,
+          rot_y: 0.0,
+          rot_z: 0.0
+        },
+        {
+          userAssetId: 4,
+          assetName: 'Gym_Peloton',
+          assetImagePath: 'Gym_Peloton',
+          pos_x: -200.0,
+          pos_y: 50.0,
+          pos_z: -10.0,
+          rot_x: 0.0,
+          rot_y: 0.0,
+          rot_z: -0.2
+        }
+      ];
+
+      const check = assets.find((asset) => {
+        return asset.assetName === clickAsseData.assetName;
+      });
+      // 클릭한 에셋이 현재 배치된 곳에 없는 경우 클릭한 에셋 데이터를 추가,
+      // 배치된 곳에 있는 에셋을 클릭시엔 그냥 진행
+      if (check === undefined) {
+        assets = [
+          ...assets,
+          // 클릭한 에셋 데이터
+          {
+            userAssetId: 5,
+            assetName: 'Office2_monitor1',
+            assetImagePath: 'Office2_monitor1',
+            pos_x: 0.0,
+            pos_y: 0.0,
+            pos_z: 0.0,
+            rot_x: 0.0,
+            rot_y: 0.0,
+            rot_z: 0.0
+          }
+        ];
+      }
+
+      // 클릭한 ASSET이 마이룸에 있는지 체크
+
+      let geo: any = [];
+      assets.map((asset: AssetType, idx) => {
+        geo = [...geo, nodes[assets[idx].assetName].geometry];
+      });
+
+      // 데이터
+      setMyAssets(
+        assets.map((asset: AssetType, idx: number) => {
+          let isClick = false;
+          // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
+          // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
+          // console.log('asset.assetName', asset.assetName);
+          // console.log('clickAsseData.assetName', clickAsseData.assetName);
+
+          if (asset.assetName === clickAsseData.assetName) {
+            isClick = true;
+
+            // console.log('clickAsseData: ', '이거다!!');
+
+            // console.log('clickAssetPosition: ', clickAssetPosition);
+            // console.log('clickAssetRotation: ', clickAssetRotation);
+          }
+          return (
+            <mesh
+              key={idx}
+              geometry={geo[idx]}
+              material={materials[Object.keys(materials)[0]]}
+              position={
+                isClick
+                  ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
+                  : [assets[idx].pos_x, assets[idx].pos_y, assets[idx].pos_z]
+              }
+              rotation={
+                isClick
+                  ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
+                  : [assets[idx].rot_x, assets[idx].rot_y, assets[idx].rot_z]
+              }
+              visible={true}
+              onClick={(e) => {
+                e.stopPropagation();
+                changeClick(
+                  // 이름. position, rotation
+                  assets[idx],
+                  isClick
+                    ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
+                    : [assets[idx].pos_x, assets[idx].pos_y, assets[idx].pos_z],
+                  isClick
+                    ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
+                    : [assets[idx].rot_x, assets[idx].rot_y, assets[idx].rot_z]
+                );
+              }}
+            />
+          );
+        })
+      );
+    }
+    // console.log('myAssets: ', myAssets);
+  }, [clickAsseData, clickAssetPosition, clickAssetRotation]);
 
   // size를 받아옴
   const { size } = useThree();
