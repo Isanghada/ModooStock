@@ -8,6 +8,8 @@ import MyHomeAsset from './MyHomeAsset';
 import axios from 'axios';
 import Modal from './Modal';
 import VisitModal from './VisitModal';
+import Guide from './Guide';
+import AllAssetsList from 'Components/Mypage/AllAssetsList';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -31,12 +33,8 @@ function Main(): JSX.Element {
       const st = 2 + (window.innerWidth - 1024) * (1 / 140);
       setFloor(`${st}rem`);
     } else if (1024 > window.innerWidth) {
-      console.log('hihi');
-
       setFloor('5rem');
     } else {
-      console.log('bye');
-
       setFloor('4rem');
     }
   };
@@ -69,6 +67,7 @@ function Main(): JSX.Element {
   };
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openGuide, setOpenGuide] = useState(false);
 
   const handleOpenModal = () => {
     setIsOpen(true);
@@ -76,6 +75,14 @@ function Main(): JSX.Element {
 
   const handleCloseModal = () => {
     setIsOpen(false);
+  };
+
+  const handleOpenGuide = () => {
+    setOpenGuide(true);
+  };
+
+  const handleCloseGuide = () => {
+    setOpenGuide(false);
   };
 
   return (
@@ -101,6 +108,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src={process.env.REACT_APP_S3_URL + '/images/toys/guide.png'}
                 alt=""
+                onClick={handleOpenGuide}
               />
             </div>
             <div className="h-[19%]"></div>
@@ -293,7 +301,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1.3, -8]} rot={[1.75, 0, 0.2]} />
+              <Bathroom len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, 0.2]} />
             </Canvas>
           </div>
         </div>
@@ -362,7 +370,7 @@ function Main(): JSX.Element {
             }}>
             <ambientLight intensity={0.5} />
             <pointLight distance={2000} position={10} power={8} />
-            <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+            <Bathroom len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
           </Canvas>
         </div>
         <div className="w-[50%] h-[15%]"></div>
@@ -569,6 +577,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       </div>
+      {openGuide && <Guide onClose={handleCloseGuide} /> }
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
         <VisitModal onClose={handleCloseModal} />
       </Modal>

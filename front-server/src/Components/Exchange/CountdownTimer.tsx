@@ -17,7 +17,7 @@ function CountdownTimer({ setIsPossibleStockTime, isPossibleStockTime }: Countdo
 
     if (dayOfWeek === '일') {
       setIsPossibleStockTime(false);
-      return '구매할 수 없는 날입니다';
+      return '00 : 00 : 00';
     } else if (dayOfWeek === '월' || dayOfWeek === '수' || dayOfWeek === '금') {
       if (hours >= 10 && hours < 22) {
         if (!isPossibleStockTime) {
