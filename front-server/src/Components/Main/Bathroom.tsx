@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 
 function Bathroom({ len, pos, rot }: any): JSX.Element {
-  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/Bedroom_Base.gltf');
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/model.gltf');
   console.log('materials: ', Object.keys(materials)[0]);
 
   const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
