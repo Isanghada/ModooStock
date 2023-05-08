@@ -1,7 +1,6 @@
 package com.server.back.domain.admin.dto;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
-import com.server.back.domain.store.dto.AssetResDto;
 import com.server.back.domain.store.entity.AssetEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +19,6 @@ public class AdminAssetResDto {
     public static AdminAssetResDto fromEntity(AssetEntity asset){
         return AdminAssetResDto.builder()
                 .assetId(asset.getId())
-                .assetImagePath(asset.getAssetImagePath())
                 .assetLevel(asset.getAssetLevel())
                 .assetCategory(asset.getCategory())
                 .build();
