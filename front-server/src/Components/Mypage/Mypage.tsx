@@ -156,10 +156,10 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <AllAssetsList
+              <Bathroom
                 len={0.0055}
                 pos={[0, -0.98, -8]}
-                rot={[1.75, 0, -0.8]}
+                rot={[1.75, 0, 0.2]}
                 isClickAsset={isClickAsset}
                 setIsClickAsset={setIsClickAsset}
               />
@@ -376,10 +376,10 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <AllAssetsList
+              <Bathroom
                 len={0.0055}
                 pos={[0, -0.98, -8]}
-                rot={[1.75, 0, -0.8]}
+                rot={[1.75, 0, 0.2]}
                 isClickAsset={isClickAsset}
                 setIsClickAsset={setIsClickAsset}
               />
