@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 public class AssetResDto {
     private Long assetId;
+    private String assetName;
     private String assetImagePath;
     private AssetLevelType assetLevel;
     private String assetCategory;
@@ -15,6 +16,7 @@ public class AssetResDto {
     public static AssetResDto fromEntity(AssetEntity asset){
         return AssetResDto.builder()
                 .assetId(asset.getId())
+                .assetName(asset.getAssetName())
                 .assetImagePath(asset.getAssetImagePath())
                 .assetLevel(asset.getAssetLevel())
                 .assetCategory(asset.getCategory())
