@@ -16,7 +16,7 @@ public class AssetEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String category;
     @Column(nullable = false)
     private String assetImagePath;

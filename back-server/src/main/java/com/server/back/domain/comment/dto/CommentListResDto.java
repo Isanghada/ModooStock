@@ -1,10 +1,9 @@
 package com.server.back.domain.comment.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
+@Data
 @Builder
-@Getter
 public class CommentListResDto {
     private AuthorResDto authorResDto;
     private CommentResDto commentResDto;

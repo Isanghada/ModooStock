@@ -1,10 +1,9 @@
 package com.server.back.domain.comment.dto;
 
 import com.server.back.domain.comment.entity.CommentEntity;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
 @Builder
 public class CommentResDto {
     private Long commentId;

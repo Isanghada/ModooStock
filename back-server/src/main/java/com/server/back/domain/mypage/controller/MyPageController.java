@@ -30,7 +30,7 @@ public class MyPageController {
     }
 
     @PostMapping("/{myAssetId}")
-    @ApiOperation(value = "에셋 마이룸에 넣기")
+    @ApiOperation(value = "인벤토리에 있는 에셋 마이룸에 넣기")
     public ResponseEntity<ResultDto<Boolean>> createUserAssetInMyPage(@PathVariable Long myAssetId){
         myPageService.createUserAssetInMyPage(myAssetId);
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
