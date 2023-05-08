@@ -577,7 +577,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       </div>
-      {openGuide && <Guide onClose={handleCloseGuide} /> }
+      {openGuide && <Guide onClose={handleCloseGuide} />}
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
         <VisitModal onClose={handleCloseModal} />
       </Modal>

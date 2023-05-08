@@ -31,7 +31,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
     const assetsName = [
       {
         userAssetId: 0,
-        userAssetName: 'Backyard_Tree',
+        assetName: 'Backyard_Tree',
         assetImagePath: '31',
         pos_x: 0.0,
         pos_y: 0.0,
@@ -42,7 +42,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       },
       {
         userAssetId: 1,
-        userAssetName: 'Yogaroom_base',
+        assetName: 'Yogaroom_base',
         assetImagePath: '32',
         pos_x: 0.0,
         pos_y: 0.0,
@@ -53,7 +53,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       },
       {
         userAssetId: 2,
-        userAssetName: 'Yogaroom_rug1',
+        assetName: 'Yogaroom_rug1',
         assetImagePath: '33',
         pos_x: 200,
         pos_y: 200,
@@ -64,7 +64,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       },
       {
         userAssetId: 3,
-        userAssetName: 'Yogaroom_airconditioning',
+        assetName: 'Yogaroom_airconditioning',
         assetImagePath: '34',
         pos_x: 0.0,
         pos_y: 0.0,
@@ -77,7 +77,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
     let geo: any = [];
 
     assetsName.map((asset, idx) => {
-      geo = [...geo, nodes[assetsName[idx].userAssetName].geometry];
+      geo = [...geo, nodes[assetsName[idx].assetName].geometry];
     });
 
     // 데이터
@@ -101,7 +101,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
             onClick={(e) => {
               e.stopPropagation();
               click(
-                assetsName[idx].userAssetName,
+                assetsName[idx].assetName,
                 [assetsName[idx].pos_x, assetsName[idx].pos_y, assetsName[idx].pos_z],
                 [assetsName[idx].rot_x, assetsName[idx].rot_y, assetsName[idx].rot_z]
               );
