@@ -301,7 +301,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <AllAssetsList len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, -0.8]} />
+              <Bathroom len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, 0.2]} />
             </Canvas>
           </div>
         </div>
@@ -370,7 +370,7 @@ function Main(): JSX.Element {
             }}>
             <ambientLight intensity={0.5} />
             <pointLight distance={2000} position={10} power={8} />
-            <AllAssetsList len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
+            <Bathroom len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
           </Canvas>
         </div>
         <div className="w-[50%] h-[15%]"></div>
@@ -577,7 +577,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       </div>
-      {openGuide && <Guide onClose={handleCloseGuide} /> }
+      {openGuide && <Guide onClose={handleCloseGuide} />}
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
         <VisitModal onClose={handleCloseModal} />
       </Modal>

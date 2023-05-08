@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 
 function Bathroom({ len, pos, rot }: any): JSX.Element {
-  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/model.gltf');
   console.log('materials: ', Object.keys(materials)[0]);
 
   const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
@@ -32,14 +32,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
 
   // 데이터
   const meshData = meshPosition.map((data: any, idx: number) => {
-    return (
-      <mesh
-        visible={false}
-        geometry={geo[idx]}
-        material={materials[Object.keys(materials)[0]]}
-        position={meshPosition[idx]}
-      />
-    );
+    return <mesh geometry={geo[idx]} material={materials[Object.keys(materials)[0]]} position={meshPosition[idx]} />;
   });
 
   // size를 받아옴
