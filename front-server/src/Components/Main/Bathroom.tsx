@@ -4,10 +4,10 @@ import { useRef, useState } from 'react';
 
 function Bathroom({ len, pos, rot }: any): JSX.Element {
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/Bathroom.gltf');
-  console.log(process.env.REACT_APP_S3_URL);
+  // console.log(process.env.REACT_APP_S3_URL);
 
   // const {} = materials
-  console.log(materials);
+  // console.log(materials);
 
   const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
 
@@ -16,7 +16,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
   let cnt = -1;
   let geo: any = [];
   for (const key in nodes) {
-    console.log('key: ', key);
+    // console.log('key: ', key);
 
     cnt += 1;
     if (!(cnt === 0)) {
@@ -26,7 +26,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
   let meshPosition: any = [];
 
   Object.values(nodes).map((item: any, idx) => {
-    console.log(item);
+    // console.log(item);
 
     if (!(idx === 0)) {
       let li: any = [];
@@ -39,7 +39,7 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
 
   // 데이터
   const meshData = meshPosition.map((data: any, idx: number) => {
-    console.log('materials: ', materials);
+    // console.log('materials: ', materials);
 
     return <mesh geometry={geo[idx]} material={materials['LP_Rooms']} position={meshPosition[idx]} />;
   });

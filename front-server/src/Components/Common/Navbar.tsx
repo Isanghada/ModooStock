@@ -13,6 +13,7 @@ import schedule from 'node-schedule';
 import { toast } from 'react-toastify';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
+import axios from 'axios';
 
 const tabList = ['투자', '전체', '전자', '화학', '생명', 'IT'];
 
@@ -25,7 +26,8 @@ function Navbar(): JSX.Element {
 
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
-  // 내 정보 이벤트실행시 API
+
+  // 내 정보 이벤트실행시 API 
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   // 전체 스크린 높이
@@ -66,6 +68,17 @@ function Navbar(): JSX.Element {
   const showMenu = () => {
     dispatch(changeMenuStatus(true));
   };
+  // 유저 정보 가져오기
+  const getUser = async () => {
+    const { data } = await getUsersInfo('');
+    if (data) {
+      const { nickname, currentMoney, totalStockReturn } = data.data;
+      setMyNickName(nickname);
+      setCurrentMoney(currentMoney.toLocaleString());
+      dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
+      setTotalStockReturn(totalStockReturn);
+    }
+  }
 
   useEffect(() => {
     if (dataUserInfo) {
@@ -86,6 +99,8 @@ function Navbar(): JSX.Element {
   }, [window.screen.height]);
 
   useEffect(() => {
+    // 첫 내정보 실행
+    getUser();
     // 창 넓이 변할때마다 실행
     const updateScreenWidth = () => {
       const newWidth = window.innerWidth;
@@ -150,10 +165,32 @@ function Navbar(): JSX.Element {
     dispatch(getCurrentDataIndex(index));
   };
 
+  const sendMessage = async (message: any) => {
+    try {
+      const url = `https://fcm.googleapis.com/fcm/send`;
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `bearer AAAAqCWFedU:APA91bF6BY_WsxTklVjOhjwZwpmKmSclxmsoA604qvrPYllNxweJ07-8kc-koRAriNYlAvUi3Tv35g6PahM1Gm1-HYPaRZFMVfoZWfrmv5qwocWS9Ma6lDIgHvktbqxAIDLrpSF9NNsy`
+      };
+      const response = await axios.post(url, message, { headers });
+      console.log('FCM HTTP v1 API Response:', response.data);
+    } catch (error) {
+      console.error('FCM HTTP v1 API Error:', error);
+    }
+  };
+
+  const message = {
+    notification: {
+      title: 'TEST-PWA',
+      body: '4분마다 보냄 ㅋㅋ'
+    },
+    to: 'ePAnXNopQWs_0TNJ8klIOR:APA91bEBRceBJ2LH48yhR_r9bCCJpf4v1IqxP0CS5A5eMOXJE4Gc2dsti2b_IoDTbjxCssosPL-o1q9UG6bRp4kAvdbQBAAsSz6DsvSo4CBcaZqjJiTw1gv5E7joibI3mAYbX1JeTAaw'
+  };
+
   useEffect(() => {
     const now = new Date();
     const hour = now.getHours();
-    console.log(hour);
+    // sendMessage(message);
 
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
@@ -163,19 +200,13 @@ function Navbar(): JSX.Element {
         toast.info('새로운 하루의 정보가 갱신되었습니다');
         // 내정보 갱신
         setTimeout(async () => {
-          const { data } = await getUsersInfo('');
-          if (data) {
-            const { nickname, currentMoney, totalStockReturn } = data.data;
-            setMyNickName(nickname);
-            setCurrentMoney(currentMoney.toLocaleString());
-            dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
-            setTotalStockReturn(totalStockReturn);
-          }
+          getUser();
         }, 1000);
       }
     });
     getIndex();
   }, []);
+
 
   return (
     <>

@@ -21,7 +21,7 @@ import Check from 'Components/Mypage/Check';
 function App() {
   return (
     <>
-      <ToastContainer autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={false} limit={1} />
+      <ToastContainer position="top-left" autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={true} limit={1} />
       <Routes>
         <Route path="" element={<Layout />}>
           <Route path="/" element={<Intro />} />
