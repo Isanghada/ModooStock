@@ -290,7 +290,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, 0.2]} />
+              <AllAssetsList len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, -0.8]} />
             </Canvas>
           </div>
         </div>
@@ -359,7 +359,7 @@ function Main(): JSX.Element {
             }}>
             <ambientLight intensity={0.5} />
             <pointLight distance={2000} position={10} power={8} />
-            <Bathroom len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
+            <AllAssetsList len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
           </Canvas>
         </div>
         <div className="w-[50%] h-[15%]"></div>
