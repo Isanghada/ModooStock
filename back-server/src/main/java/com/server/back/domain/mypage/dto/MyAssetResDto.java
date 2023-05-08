@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Builder
 public class MyAssetResDto {
     private Long userAssetId;
+    private String assetName;
     private String assetImagePath;
     private AssetLevelType assetLevel;
     private String assetCategory;
@@ -20,6 +21,7 @@ public class MyAssetResDto {
     public static MyAssetResDto fromEntity(UserAssetEntity userAsset){
         return  MyAssetResDto.builder()
                 .userAssetId(userAsset.getAsset().getId())
+                .assetName(userAsset.getAsset().getAssetName())
                 .assetImagePath(userAsset.getAsset().getAssetImagePath())
                 .assetLevel(userAsset.getAsset().getAssetLevel())
                 .assetCategory(userAsset.getAsset().getCategory())
