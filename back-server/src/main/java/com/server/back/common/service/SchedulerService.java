@@ -52,7 +52,7 @@ public class SchedulerService {
 
         // 2011년 1월 1일 ~ 2021년 7월 16 : 3849일
         int MAX_VALUE = 3849;
-        
+
         // 랜덤값으로 기준 날짜 계산
         int rand = (int) Math.round(Math.random() * MAX_VALUE);
         LocalDate pivotDate = pivot.plusDays(rand);
@@ -65,6 +65,36 @@ public class SchedulerService {
         }
         LocalDate start = marketDate.get(0).toLocalDate();
         LocalDate end = marketDate.get(359).toLocalDate();
+
+        // 주식 분할이 일어나는 날짜. 시작 초과 종료 이하에 포함될 경우 날짜 다시 선정
+        LocalDate[] impossibleList = new LocalDate[]{LocalDate.of(2013, 3, 22),
+                LocalDate.of(2013, 8, 29),
+                LocalDate.of(2018, 5, 4),
+                LocalDate.of(2018, 10, 12),
+                LocalDate.of(2021, 11, 29),};
+
+        while(true){
+            boolean flag = false;
+            for(LocalDate impossible : impossibleList){
+                if(start.compareTo(impossible) < 0 && end.compareTo(impossible) >= 0){
+                    flag = true;
+                    break;
+                }
+            }
+
+            if(flag){
+                rand = (int) Math.round(Math.random() * MAX_VALUE);
+                pivotDate = pivot.plusDays(rand);
+
+                marketDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(pivotDate, 360);
+                log.info(pivotDate+", "+marketDate.toString());
+                if(marketDate.size() == 0){
+                    return;
+                }
+                start = marketDate.get(0).toLocalDate();
+                end = marketDate.get(359).toLocalDate();
+            }else break;
+        }
 
         // log.info("[schedulerService] new MarketDate : "+start+", "+end);
         // 새로운 장(시즌) 생성
