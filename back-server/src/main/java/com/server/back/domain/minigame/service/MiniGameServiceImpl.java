@@ -50,35 +50,35 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         Integer ranking=5;
         Long money=0L;
-        if(rd==0) {
+        if(rd<10) {
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 50_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(50_000_000L);
             ranking=1;
             money=50_000_000L;
         }
-        else if(rd>=1&&rd<10){
+        else if(rd>=10&&rd<35){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 3_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(3_000_000L);
             ranking=2;
             money=3_000_000L;
         }
-        else if(rd>=10&&rd<30){
+        else if(rd>=35&&rd<115){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 500_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(500_000L);
             ranking=3;
             money=500_000L;
         }
-        else if(rd>=30&&rd<530){
+        else if(rd>=115&&rd<540){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 10_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000L);
             ranking=4;
             money=10_000L;
         }
-
+        userRepository.save(user);
         return new MiniGameResDto(ranking,money);
 
     }
@@ -107,14 +107,14 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         Integer ranking=2;
         Long money=0L;
-        if(rd==0) {
+        if(rd<7) {
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, 10_000_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000_000_000L);
             ranking=1;
             money=10_000_000_000L;
         }
-
+        userRepository.save(user);
         return new MiniGameResDto(ranking,money);
     }
 }
