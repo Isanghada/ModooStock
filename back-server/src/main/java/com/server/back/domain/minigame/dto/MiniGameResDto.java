@@ -2,10 +2,8 @@ package com.server.back.domain.minigame.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@Builder
 public class MiniGameResDto {
     private Integer ranking;
     private Long money;

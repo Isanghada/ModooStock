@@ -2,13 +2,12 @@ package com.server.back.domain.auction.dto;
 
 import com.server.back.domain.auction.entity.AuctionEntity;
 import com.server.back.domain.store.dto.AssetResDto;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @Builder
 public class AuctionResDto {
     private AssetResDto assetResDto;

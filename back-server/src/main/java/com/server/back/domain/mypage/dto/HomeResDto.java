@@ -1,13 +1,12 @@
 package com.server.back.domain.mypage.dto;
 
 import com.server.back.domain.store.entity.UserAssetLocation;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @Builder
 public class HomeResDto {
     private Long userAssetId;
