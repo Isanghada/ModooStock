@@ -19,7 +19,6 @@ function Menu(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   // 모달 창 닫기
   function closeModal() {
-    dispatch(changeUpdateStatus(true));
     setModalOpen(false);
   }
   // 백 그라운드

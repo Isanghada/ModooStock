@@ -24,14 +24,15 @@ const dbService = getFirestore(app);
 const messaging = getMessaging(app);
 // const storageService = getStorage(app);
 
+
 async function requestPermission() {
-  console.log('권한 요청 가냐?');
   const permission = await Notification.requestPermission();
   if (permission === 'denied') {
     console.log('알림 권한 허용 안됨');
     return;
   }
   console.log('알림 권한 허용 됨!!! ');
+
   // FCM 메시지
   // const newSw = await navigator.serviceWorker.register(
   //   'firebase-messaging-sw.js'
@@ -63,6 +64,7 @@ async function requestPermission() {
     console.log("메시지가 도착했습니다.", payload);
     // ...
   });
+  
 }
 requestPermission();
 

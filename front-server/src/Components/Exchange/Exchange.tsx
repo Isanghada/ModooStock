@@ -212,6 +212,13 @@ function Exchange(): JSX.Element {
     };
   }, []);
 
+    if (eventSource) {
+      eventSource.onmessage = (event: any) => {
+        toast.info('sse 데이터 받기');
+        console.log(event.data);
+        setSseData(JSON.parse(event.data));
+      };
+    }
   // SSE 4분주기로 받기
   // useEffect(() => {
   //   // 스케쥴러 4분마다 실행

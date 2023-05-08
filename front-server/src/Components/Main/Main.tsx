@@ -8,6 +8,7 @@ import MyHomeAsset from './MyHomeAsset';
 import axios from 'axios';
 import Modal from './Modal';
 import VisitModal from './VisitModal';
+import Guide from './Guide';
 import AllAssetsList from 'Components/Mypage/AllAssetsList';
 
 function Main(): JSX.Element {
@@ -66,6 +67,7 @@ function Main(): JSX.Element {
   };
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openGuide, setOpenGuide] = useState(false);
 
   const handleOpenModal = () => {
     setIsOpen(true);
@@ -73,6 +75,14 @@ function Main(): JSX.Element {
 
   const handleCloseModal = () => {
     setIsOpen(false);
+  };
+
+  const handleOpenGuide = () => {
+    setOpenGuide(true);
+  };
+
+  const handleCloseGuide = () => {
+    setOpenGuide(false);
   };
 
   return (
@@ -98,6 +108,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src={process.env.REACT_APP_S3_URL + '/images/toys/guide.png'}
                 alt=""
+                onClick={handleOpenGuide}
               />
             </div>
             <div className="h-[19%]"></div>
@@ -566,6 +577,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       </div>
+      {openGuide && <Guide onClose={handleCloseGuide} />}
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
         <VisitModal onClose={handleCloseModal} />
       </Modal>
