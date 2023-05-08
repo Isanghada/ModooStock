@@ -35,6 +35,7 @@ public class StockServiceImpl implements StockService {
     private final AuthService authService;
     private final UserService userService;
     SseEmitter emitter;
+    public Long select;
 
     public SseEmitter subscribe(){
         // SSE 구독
@@ -43,16 +44,16 @@ public class StockServiceImpl implements StockService {
         // SSE 연결이 종료될 때 리스트에서 해당 emitter를 삭제
         emitter.onCompletion(() -> {
             emitter.complete();
+            emitter = null;
         });
         emitter.onTimeout(() -> {
             emitter.complete();
+            emitter = null;
         });
 
         // 연결
         try {
-            emitter.send(SseEmitter.event()
-                    .name("connect")
-                    .data("connected!"));
+            emitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,25 +71,34 @@ public class StockServiceImpl implements StockService {
         return StockInfoResDto.fromEntity(stockList, oil,gold, usd, jyp, euro);
     }
 
+    // 스케쥴링을 써서 data 가져오기
+    public void schedularData(){
+        if(emitter != null) {
+            getStockChart(select);
+        }
+    }
+
     @Override
     public void getStockChart(Long stockId) {
-    // 로그인한 유저 가져오기
-    Long userId = authService.getUserId();
 
-    // 장 정보 가져오기
-    StockEntity stock = stockRepository.findById(stockId).get();
-    LocalDate startDate = stock.getMarket().getStartAt();
-    LocalDate gameDate = stock.getMarket().getGameDate();
+        select = stockId;
+        // 로그인한 유저 가져오기
+        Long userId = authService.getUserId();
 
-    Long companyId = stock.getCompany().getId();
+        // 장 정보 가져오기
+        StockEntity stock = stockRepository.findById(stockId).get();
+        LocalDate startDate = stock.getMarket().getStartAt();
+        LocalDate gameDate = stock.getMarket().getGameDate();
 
-    // 주식 chart
-    List<ChartEntity> stockChartList = chartRepository.findAllByCompanyIdAndDateBetween(companyId, startDate, gameDate);
+        Long companyId = stock.getCompany().getId();
 
-    // 유저 보유 주식
-    Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
+        // 주식 chart
+        List<ChartEntity> stockChartList = chartRepository.findAllByCompanyIdAndDateBetween(companyId, startDate, gameDate);
 
-    StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
+        // 유저 보유 주식
+        Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
+
+        StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
 
         try {
             emitter.send(SseEmitter.event().data(stockResDto));

@@ -188,5 +188,6 @@ public class SchedulerService {
 
         marketRepository.save(market);
         stockService.calRate(nextDate);
+        stockService.schedularData();
     }
 }
