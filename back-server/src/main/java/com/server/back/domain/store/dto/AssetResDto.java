@@ -2,9 +2,7 @@ package com.server.back.domain.store.dto;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.domain.store.entity.AssetEntity;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
 @Builder

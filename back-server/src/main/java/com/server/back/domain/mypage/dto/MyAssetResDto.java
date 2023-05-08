@@ -3,8 +3,7 @@ package com.server.back.domain.mypage.dto;
 import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.commonCode.IsAuctioned;
 import com.server.back.domain.store.entity.UserAssetEntity;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
