@@ -22,7 +22,6 @@ public class AdminAssetModifyReqDto {
     public AssetEntity toEntity(AssetEntity asset) {
         return AssetEntity.builder()
                 .id(asset.getId())
-                .assetImagePath(asset.getAssetImagePath())
                 .assetLevel(this.assetLevel)
                 .category((this.category))
                 .build();
