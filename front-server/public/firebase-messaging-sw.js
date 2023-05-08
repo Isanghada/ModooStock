@@ -1,4 +1,9 @@
-
+self.addEventListener('message', (event) => {
+  console.log(event.data)
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 self.addEventListener('install', function (e) {
   console.log('fcm sw install..');
   self.skipWaiting();
