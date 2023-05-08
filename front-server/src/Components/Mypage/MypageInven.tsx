@@ -1,3 +1,4 @@
+import { useGetStorageQuery } from 'Store/api';
 import styled from './Mypage.module.css';
 import { useRef, useState } from 'react';
 
@@ -14,7 +15,10 @@ function MypageInven(): JSX.Element {
   const [dragging, setDragging] = useState<boolean>(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const funitureList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((funiture, idx) => {
+  const { data: getStorage, isLoading: isLoading1, isError: isError1 } = useGetStorageQuery('');
+  // console.log('data1: ', data1);
+
+  const funitureList = getStorage?.data.map((funiture, idx) => {
     return (
       <div
         key={idx}
@@ -23,7 +27,7 @@ function MypageInven(): JSX.Element {
         <div className="flex justify-center w-[50%] h-[65%] lg:h-[75%] lg:mb-1">
           <img
             className="h-full drop-shadow-lg"
-            src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
+            src={process.env.REACT_APP_S3_URL + `/assets/img/${funiture.assetName}.png`}
             alt=""
           />
         </div>

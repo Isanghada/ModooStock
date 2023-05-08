@@ -165,8 +165,8 @@ interface CommonTradeStockType {
 
 interface ReturnLotteryInterFace {
   data: {
-    ranking: number,
-    money: number
+    ranking: number;
+    money: number;
   };
   result: string;
 }
@@ -178,6 +178,30 @@ interface ReturnCommonTradeStockType {
     amount: number;
     kind: string;
   };
+  result: string;
+}
+
+interface ReturnMyRoomAsset {
+  data: Array<{
+    assetName: string;
+    pos_x: number;
+    pos_y: number;
+    pos_z: number;
+    rot_x: number;
+    rot_y: number;
+    rot_z: number;
+    userAssetId: number;
+  }>;
+  result: string;
+}
+interface ReturnInven {
+  data: Array<{
+    userAssetId: number;
+    assetName: string;
+    assetLevel: string;
+    assetCategory: string;
+    isAuctioned: string;
+  }>;
   result: string;
 }
 
@@ -453,6 +477,24 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
+    }),
+
+    // ------------- 마이페이지 -------------------
+    //  1. 마이 룸 반환
+    getMypage: builder.query<ReturnMyRoomAsset, string>({
+      query: () => `/mypage/${localStorage.getItem('nickname')}`,
+      providesTags: (result, error, arg) => {
+        return [];
+      }
+    }),
+
+    // ------------- 창고 -------------------
+    //  1. 창고에 있는 물품 리스트 반환
+    getStorage: builder.query<ReturnInven, string>({
+      query: () => `/storage`,
+      providesTags: (result, error, arg) => {
+        return [];
+      }
     })
   })
 });
@@ -495,5 +537,12 @@ export const {
 
   // ----------- 미니게임 ------------
   usePostMiniGameBrightMutation,
-  usePostMiniGameDarkMutation
+  usePostMiniGameDarkMutation,
+
+  // ------------- 마이페이지 -------------
+  useLazyGetMypageQuery,
+
+  // ------------- 창고 -------------
+  useGetStorageQuery,
+  useLazyGetStorageQuery
 } = Api;

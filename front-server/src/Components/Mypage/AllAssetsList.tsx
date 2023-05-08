@@ -1,5 +1,6 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
+import { useLazyGetMypageQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeClickAsseData, changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,6 +18,7 @@ interface AssetType {
 
 function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): JSX.Element {
   const dispatch = useAppDispatch();
+  const [getMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
   const [scale, setScale] = useState(len);
   const [myAssets, setMyAssets] = useState<any>();
@@ -29,6 +31,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
   const clickAssetRotation = useAppSelector((state) => {
     return state.clickAssetRotation;
   });
+
+  // console.log('data1: ', data1);
 
   const ref = useRef<any>(null);
 
@@ -64,6 +68,11 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
   // 현재 배치해놓은 에셋 보이도록 하기
   useEffect(() => {
     // api로 받아올 보여지는 에셋 데이터
+    const check = async () => {
+      const { data, result } = await getMypage('').unwrap();
+      console.log('data: ', data);
+    };
+    check();
     const assetsName = [
       {
         userAssetId: 0,
