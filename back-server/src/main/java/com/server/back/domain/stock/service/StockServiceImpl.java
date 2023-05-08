@@ -19,7 +19,10 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
 @Service
@@ -34,21 +37,29 @@ public class StockServiceImpl implements StockService {
     private final ExchangeRepository exchangeRepository;
     private final AuthService authService;
     private final UserService userService;
-    SseEmitter emitter;
-    public Long select;
+
+    // 연결된 사용자 목록을 저장할 맵
+    private Map<Long, SseEmitter> userEmitterMap = new ConcurrentHashMap<>();
+    // 사용자가 선택한 주식 종목을 저장할 맵
+    private Map<Long, Long> userStockIdMap = new ConcurrentHashMap<>();
+
+//    public Long select;
 
     public SseEmitter subscribe(){
-        // SSE 구독
-        emitter =  new SseEmitter();
+        SseEmitter emitter = new SseEmitter();
 
-        // SSE 연결이 종료될 때 리스트에서 해당 emitter를 삭제
+        Long userId = authService.getUserId();
+
+        // 연결된 사용자 목록에 userId와 SseEmitter 추가
+        userEmitterMap.put(userId, emitter);
+
+        // 연결 종료 시 SseEmitter 제거
         emitter.onCompletion(() -> {
-            emitter.complete();
-            emitter = null;
+            userEmitterMap.remove(userId);
         });
         emitter.onTimeout(() -> {
+            userEmitterMap.remove(userId);
             emitter.complete();
-            emitter = null;
         });
 
         // 연결
@@ -72,18 +83,27 @@ public class StockServiceImpl implements StockService {
     }
 
     // 스케쥴링을 써서 data 가져오기
+    @Transactional
     public void schedularData(){
-        if(emitter != null) {
-            getStockChart(select);
+
+        Set<Long> userIds = userEmitterMap.keySet();
+        for(Long userId: userIds){
+            getData(userId, userStockIdMap.get(userId));
         }
     }
 
     @Override
     public void getStockChart(Long stockId) {
 
-        select = stockId;
-        // 로그인한 유저 가져오기
         Long userId = authService.getUserId();
+        userStockIdMap.put(userId, stockId);
+        getData(userId, stockId);
+
+}
+
+    @Transactional
+    public void getData(Long userId, Long stockId){
+        SseEmitter emitter = userEmitterMap.get(userId);
 
         // 장 정보 가져오기
         StockEntity stock = stockRepository.findById(stockId).get();
@@ -105,7 +125,7 @@ public class StockServiceImpl implements StockService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-}
+    }
 
 
     @Transactional
