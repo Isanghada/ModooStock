@@ -20,27 +20,28 @@ function Mypage(): JSX.Element {
 
   const change = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
-    const len = target.value as string;
+    const value = target.value as string;
     switch (target.ariaLabel) {
       case 'pos1':
-        console.log(len);
+        console.log(value);
 
-        setPos1(len);
+        setPos1(value);
         break;
       case 'pos2':
-        setPos2(len);
+        setPos2(value);
         break;
       case 'pos3':
-        setPos3(len);
+        console.log('pos3', value);
+        setPos3(value);
         break;
       case 'rot1':
-        setRot1(len);
+        setRot1(value);
         break;
       case 'rot2':
-        setRot2(len);
+        setRot2(value);
         break;
       case 'rot3':
-        setRot3(len);
+        setRot3(value);
         break;
       default:
         break;
@@ -156,10 +157,10 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom
+              <AllAssetsList
                 len={0.0055}
                 pos={[0, -0.98, -8]}
-                rot={[1.75, 0, 0.2]}
+                rot={[1.75, 0, -0.8]}
                 isClickAsset={isClickAsset}
                 setIsClickAsset={setIsClickAsset}
               />
@@ -212,45 +213,59 @@ function Mypage(): JSX.Element {
                           <span>X</span>
                         </div>
                         <input
+                          min={-200}
+                          max={200}
+                          step={0.1}
+                          defaultValue={0}
                           aria-label="pos1"
-                          className={`flex items-center ${styled.pos1}`}
-                          value={pos1}
+                          className={`flex items-center w-[90%]`}
+                          // value={pos1}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
-                          <div className={`bg-[#ffc0c0] h-full rounded-full`} style={{ width: `${pos1}%` }}></div>
-                        </div>
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                          <div
+                            className={`bg-[#ffc0c0] h-full rounded-full`}
+                            style={{ width: `${(parseInt(pos1) + 200 / 4).toFixed(2)}%` }}></div>
+                        </div> */}
                       </div>
                       <div className="relative flex items-center w-full space-x-2">
                         <div>
                           <span>Y</span>
                         </div>
                         <input
+                          min={-200}
+                          max={200}
+                          step={0.1}
+                          defaultValue={0}
                           aria-label="pos2"
-                          className={`flex items-center ${styled.pos2}`}
-                          value={pos2}
+                          className={`flex items-center w-[90%]`}
+                          // value={parseInt(pos2)}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
                           <div className={`bg-[#ffedc0] h-full rounded-full`} style={{ width: `${pos2}%` }}></div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="relative flex items-center w-full space-x-2">
                         <div>
                           <span>Z</span>
                         </div>
                         <input
+                          min={-400}
+                          max={0}
+                          step={0.1}
+                          defaultValue={-200}
                           aria-label="pos3"
-                          className={`flex items-center ${styled.pos3}`}
-                          value={pos3}
+                          className={`flex items-center w-[90%]`}
+                          // value={pos3}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
                           <div className={`bg-[#fffca9] h-full rounded-full`} style={{ width: `${pos3}%` }}></div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     {/* Rotation */}
@@ -263,45 +278,57 @@ function Mypage(): JSX.Element {
                           <span>X</span>
                         </div>
                         <input
+                          min={-1.5}
+                          max={1.5}
+                          step={0}
+                          defaultValue={0}
                           aria-label="rot1"
-                          className={`flex items-center ${styled.rot1}`}
-                          value={rot1}
+                          className={`flex items-center w-[90%]`}
+                          // value={rot1}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
                           <div className={`bg-[#DCFFC0] h-full rounded-full`} style={{ width: `${rot1}%` }}></div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="relative flex items-center w-full space-x-2">
                         <div>
                           <span>Y</span>
                         </div>
                         <input
+                          min={-1.5}
+                          max={1.5}
+                          step={0}
+                          defaultValue={0}
                           aria-label="rot2"
-                          className={`flex items-center ${styled.rot2}`}
-                          value={rot2}
+                          className={`flex items-center w-[90%]`}
+                          // value={rot2}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
                           <div className={`bg-[#C6EEFF] h-full rounded-full`} style={{ width: `${rot2}%` }}></div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="relative flex items-center w-full space-x-2">
                         <div>
                           <span>Z</span>
                         </div>
                         <input
+                          min={-3}
+                          max={3}
+                          step={0}
+                          defaultValue={0}
                           aria-label="rot3"
-                          className={`flex items-center ${styled.rot3}`}
-                          value={rot3}
+                          className={`flex items-cente w-[90%]`}
+                          // value={rot3}
                           type="range"
                           onChange={change}
                         />
-                        <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
+                        {/* <div className="absolute w-[85%] h-[10px] rounded left-3 bg-[#EAEAEA]">
                           <div className={`bg-[#f0d9ff] h-full rounded-full`} style={{ width: `${rot3}%` }}></div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -376,10 +403,10 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom
+              <AllAssetsList
                 len={0.0055}
                 pos={[0, -0.98, -8]}
-                rot={[1.75, 0, 0.2]}
+                rot={[1.75, 0, -0.8]}
                 isClickAsset={isClickAsset}
                 setIsClickAsset={setIsClickAsset}
               />
@@ -457,7 +484,10 @@ function Mypage(): JSX.Element {
                         <span>X</span>
                       </div>
                       <input
-                        aria-label="pos1"
+                        min={-200}
+                        max={200}
+                        step={0.1}
+                        aria-label="pos1M"
                         className={`flex items-center ${styled.sPos1}`}
                         value={pos1}
                         type="range"
@@ -472,7 +502,7 @@ function Mypage(): JSX.Element {
                         <span>Y</span>
                       </div>
                       <input
-                        aria-label="pos2"
+                        aria-label="pos2M"
                         className={`flex items-center ${styled.sPos2}`}
                         value={pos2}
                         type="range"
@@ -487,7 +517,7 @@ function Mypage(): JSX.Element {
                         <span>Z</span>
                       </div>
                       <input
-                        aria-label="pos3"
+                        aria-label="pos3M"
                         className={`flex items-center ${styled.sPos3}`}
                         value={pos3}
                         type="range"
@@ -508,7 +538,7 @@ function Mypage(): JSX.Element {
                         <span>X</span>
                       </div>
                       <input
-                        aria-label="rot1"
+                        aria-label="rot1M"
                         className={`flex items-center ${styled.sRot1}`}
                         value={rot1}
                         type="range"
@@ -523,7 +553,7 @@ function Mypage(): JSX.Element {
                         <span>Y</span>
                       </div>
                       <input
-                        aria-label="rot2"
+                        aria-label="rot2M"
                         className={`flex items-center ${styled.sRot2}`}
                         value={rot2}
                         type="range"
@@ -538,7 +568,7 @@ function Mypage(): JSX.Element {
                         <span>Z</span>
                       </div>
                       <input
-                        aria-label="rot3"
+                        aria-label="rot3M"
                         className={`flex items-center ${styled.sRot3}`}
                         value={rot3}
                         type="range"
