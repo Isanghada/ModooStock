@@ -137,7 +137,7 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
         break;
       case '정보상':
         setIsNewsClick(false);
-        navigate('/infoshop')
+        navigate('/infoshop');
         break;
     }
     // 부득이하게 숫자로 구분
@@ -178,7 +178,7 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
           }}>
           <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[35rem] lg:w-[42%] lg:min-w-[40rem] lg:max-w-[40rem] px-7 rounded-xl space-y-2 lg:space-y-4 py-2 lg:py-4">
             <div className="w-full flex justify-center items-center text-[1.2rem] h-10 lg:h-16 lg:text-[2rem] font-black">
-              <img className="w-auto h-full" src="/images/icons/news.png" alt="news" />
+              <img className="w-auto h-full" src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'} alt="news" />
               <span>뉴스 스크랩</span>
             </div>
             <div className="flex items-end justify-start w-full space-x-6 px-2 text-sm lg:text-[1.3rem] font-semibold border-b-2 py-1 cursor-pointer text-[#6F6F6F]">
@@ -222,7 +222,10 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
                   onClick={click}>
                   <span>닫기</span>
                 </div>
-                <div onClick={click} aria-label="정보상" className="bg-[#ffafa2] hover:bg-[#ff9584] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
+                <div
+                  onClick={click}
+                  aria-label="정보상"
+                  className="bg-[#ffafa2] hover:bg-[#ff9584] w-[45%] lg:w-[48%] py-[2px] hover:scale-105 active:scale-105 transition duration-300 cursor-pointer rounded-md">
                   <span>정보상</span>
                 </div>
               </div>

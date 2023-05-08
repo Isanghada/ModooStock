@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
 
 interface ReturnBasicInterFace {
   data: boolean;
@@ -159,26 +158,28 @@ interface ReturnNewsListInterFace {
   result: string;
 }
 
-// export const everyStock = createApi({
-//   reducerPath: 'api',
-//   tagTypes: ['Api'],
-//   baseQuery: fetchBaseQuery({
-//     baseUrl: process.env.REACT_APP_API_URL,
-//     prepareHeaders(headers) {
-//       headers.set('accessToken', accessToken)
-//     },
-//     fetchFn: async (input, init, ...rest) => {
-//       // Call your axios request before fetching from the base URL
-//       const accessToken = await fetchAccessToken();
-//       const headers = new Headers(init?.headers);
-//       headers.set('accessToken', accessToken);
-//       headers.set("content-type", "application/json");
-//       headers.set("content-type", "application/json");
-//       localStorage.setItem('accessToken', accessToken)
-//       return fetch(input, { ...init, headers }, ...rest);
-//       //return fetch(input, { ...init }, ...rest);
-//     },
-//   }),
+interface CommonTradeStockType {
+  stockAmount: number;
+  stockId: number | undefined;
+}
+
+interface ReturnLotteryInterFace {
+  data: {
+    ranking: number,
+    money: number
+  };
+  result: string;
+}
+
+interface ReturnCommonTradeStockType {
+  data: {
+    dealType: string;
+    price: number;
+    amount: number;
+    kind: string;
+  };
+  result: string;
+}
 
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
@@ -334,6 +335,8 @@ export const Api = createApi({
     // 5. 송금 하기
     postBankTransfer: builder.mutation<ReturnBasicInterFace, { money: number; receiver: string }>({
       query: (body) => {
+        console.log(body);
+
         return {
           url: `/bank/transfer`,
           method: 'Post',
@@ -394,12 +397,62 @@ export const Api = createApi({
       }
     }),
 
+    // 3. 주식 매수
+    postStock: builder.mutation<ReturnCommonTradeStockType, CommonTradeStockType>({
+      query: (body) => {
+        return {
+          url: `/stock/`,
+          method: 'POST',
+          body: body
+        };
+      },
+
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }, { type: 'StockApi' }]
+    }),
+
+    // 4. 주식 매도
+    deleteStock: builder.mutation<ReturnCommonTradeStockType, any>({
+      query: (body) => {
+        return {
+          url: `/stock/`,
+          method: 'DELETE',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }, { type: 'StockApi' }]
+    }),
+
     // ------------- 랭킹 -------------------
     getRank: builder.query<ReturnRankListInterFace, string>({
       query: () => `/rank`,
       providesTags: (result, error, arg) => {
-        return[];
+        return [];
       }
+    }),
+
+    // ----------- 미니게임 ------------
+    // 1. 스피드 복권 버전
+    postMiniGameBright: builder.mutation<ReturnLotteryInterFace, string>({
+      query: (body) => {
+        return {
+          url: `/mini/bright`,
+          method: 'Post',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
+    }),
+
+    // 2. 어둠의 복권 버전
+    postMiniGameDark: builder.mutation<ReturnLotteryInterFace, string>({
+      query: (body) => {
+        return {
+          url: `/mini/dark`,
+          method: 'Post',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
     })
   })
 });
@@ -408,6 +461,7 @@ export const Api = createApi({
 export const {
   // ------------- 유저 -------------
   useGetUsersInfoQuery,
+  useLazyGetUsersInfoQuery,
   useLazyGetUsersSearchQuery,
   useLazyGetUsersRandomQuery,
   useLazyGetUsersLogoutQuery,
@@ -417,6 +471,7 @@ export const {
 
   // ------------- 은행 -------------
   useGetBankQuery,
+  useLazyGetBankQuery,
   usePostBankMutation,
   useGetBankListQuery,
   useDeleteBankMutation,
@@ -432,7 +487,13 @@ export const {
   useLazyGetStockQuery,
   useGetStockSelectQuery,
   useLazyGetStockSelectQuery,
+  usePostStockMutation,
+  useDeleteStockMutation,
 
   // ------------- 랭킹 -------------
   useGetRankQuery,
+
+  // ----------- 미니게임 ------------
+  usePostMiniGameBrightMutation,
+  usePostMiniGameDarkMutation
 } = Api;

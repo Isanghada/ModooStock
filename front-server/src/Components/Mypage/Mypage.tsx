@@ -3,9 +3,11 @@ import { Canvas } from '@react-three/fiber';
 import Bathroom from 'Components/Main/Bathroom';
 import styled from './Mypage.module.css';
 import MypageInven from './MypageInven';
+import AllAssetsList from './AllAssetsList';
 
 function Mypage(): JSX.Element {
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
+  const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
 
   const [pos1, setPos1] = useState<string>('0');
@@ -21,6 +23,8 @@ function Mypage(): JSX.Element {
     const len = target.value as string;
     switch (target.ariaLabel) {
       case 'pos1':
+        console.log(len);
+
         setPos1(len);
         break;
       case 'pos2':
@@ -77,7 +81,7 @@ function Mypage(): JSX.Element {
               <div className="flex justify-center items-center w-[35%] bg-white rounded-lg">
                 <img
                   className="w-[4rem] h-[9rem] lg:w-[4.5rem] lg:h-[10rem] pb-2"
-                  src="/images/funitures/funiture.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
                   alt="가구"
                 />
               </div>
@@ -130,7 +134,12 @@ function Mypage(): JSX.Element {
       <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
         <div className="flex justify-center items-center w-[65%] h-full relative">
           <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
-            <img aria-label="마카롱" className={`object-contain w-full`} src="/images/toys/floor.png" alt="" />
+            <img
+              aria-label="마카롱"
+              className={`object-contain w-full`}
+              src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
+              alt=""
+            />
           </div>
           <div className="w-[80%] flex justify-center h-[87%] items-center">
             <Canvas
@@ -147,7 +156,13 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+              <AllAssetsList
+                len={0.0055}
+                pos={[0, -0.98, -8]}
+                rot={[1.75, 0, -0.8]}
+                isClickAsset={isClickAsset}
+                setIsClickAsset={setIsClickAsset}
+              />
             </Canvas>
           </div>
         </div>
@@ -176,7 +191,11 @@ function Mypage(): JSX.Element {
               </div>
               {/* 에셋 이미지 */}
               <div className="flex justify-center my-2 w-[5rem] h-[10rem] max-w-[5rem] max-h-[10rem]">
-                <img className="drop-shadow-lg" src="/images/funitures/funiture.png" alt="가구" />
+                <img
+                  className="drop-shadow-lg"
+                  src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
+                  alt="가구"
+                />
               </div>
               {/* 포지션 변경 */}
               {isAuction !== true ? (
@@ -335,7 +354,12 @@ function Mypage(): JSX.Element {
       <div className="relative flex items-center justify-between w-full h-full overflow-y-hidden max-w-[41.6rem] md:max-w-[50rem] max-h-[23.4rem] lg:hidden mx-auto my-auto">
         <div className="flex justify-evenly items-center w-[65%] md:w-[58%] h-full relative">
           <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
-            <img aria-label="마카롱" className={`object-contain w-full`} src="/images/toys/floor.png" alt="" />
+            <img
+              aria-label="마카롱"
+              className={`object-contain w-full`}
+              src={process.env.REACT_APP_S3_URL + '/images/toys/floor.png'}
+              alt=""
+            />
           </div>
           <div className="w-[80%] flex justify-center h-[87%] items-center">
             <Canvas
@@ -352,7 +376,13 @@ function Mypage(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+              <AllAssetsList
+                len={0.0055}
+                pos={[0, -0.98, -8]}
+                rot={[1.75, 0, -0.8]}
+                isClickAsset={isClickAsset}
+                setIsClickAsset={setIsClickAsset}
+              />
             </Canvas>
           </div>
         </div>
@@ -380,7 +410,11 @@ function Mypage(): JSX.Element {
             </div>
             {/* 에셋 이미지 */}
             <div className="flex justify-center my-1 w-[2.8rem] h-[5rem] md:my-2 md:w-[3rem] md:h-[6rem]">
-              <img className="drop-shadow-lg" src="/images/funitures/funiture.png" alt="가구" />
+              <img
+                className="drop-shadow-lg"
+                src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
+                alt="가구"
+              />
             </div>
             {isAuction ? (
               // 경매장에 등록했을 때
@@ -429,7 +463,7 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] lg:w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#ffc0c0] h-full rounded-full`} style={{ width: `${pos1}%` }}></div>
                       </div>
                     </div>
@@ -444,8 +478,8 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
-                        <div className={`bg-[#ffedc0] h-full rounded-full`} style={{ width: `${pos2}%` }}></div>
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                        <div className={`bg-[#fec563] h-full rounded-full`} style={{ width: `${pos2}%` }}></div>
                       </div>
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
@@ -459,7 +493,7 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#fffca9] h-full rounded-full`} style={{ width: `${pos3}%` }}></div>
                       </div>
                     </div>
@@ -480,7 +514,7 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#DCFFC0] h-full rounded-full`} style={{ width: `${rot1}%` }}></div>
                       </div>
                     </div>
@@ -495,7 +529,7 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#C6EEFF] h-full rounded-full`} style={{ width: `${rot2}%` }}></div>
                       </div>
                     </div>
@@ -510,7 +544,7 @@ function Mypage(): JSX.Element {
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[72%] h-[8px] rounded left-3 bg-[#EAEAEA]">
+                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#f0d9ff] h-full rounded-full`} style={{ width: `${rot3}%` }}></div>
                       </div>
                     </div>

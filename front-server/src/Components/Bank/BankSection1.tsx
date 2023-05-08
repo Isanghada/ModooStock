@@ -79,6 +79,8 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         if (target.value !== '' && ref.current) {
           await isValidInput(ref.current.value).then((r) => {
             if (r === true && ref.current) {
+              console.log(ref.current.value);
+
               const intValue = parseInt(ref.current.value.replaceAll(',', ''));
               const checkMoney: number = IntAfterCurrentMoney - intValue;
               const inputMoney: string = checkMoney.toLocaleString();
