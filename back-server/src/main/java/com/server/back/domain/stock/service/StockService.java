@@ -17,5 +17,7 @@ public interface StockService {
 
     SseEmitter subscribe();
 
+    void schedularData();
+
     void calRate(LocalDate gameDate);
 }

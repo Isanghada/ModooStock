@@ -1,17 +1,16 @@
 package com.server.back.domain.mypage.dto;
 
 import com.server.back.domain.store.entity.UserAssetLocation;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @Builder
 public class HomeResDto {
     private Long userAssetId;
-    private String assetImagePath;
+    private String assetName;
     private float pos_x;
     private float pos_y;
     private float pos_z;
@@ -21,7 +20,7 @@ public class HomeResDto {
 
     public static HomeResDto fromEntity(UserAssetLocation userAssetLocation){
         return HomeResDto.builder()
-                .assetImagePath(userAssetLocation.getAsset().getAssetImagePath())
+                .assetName(userAssetLocation.getAsset().getAssetName())
                 .userAssetId(userAssetLocation.getId())
                 .pos_x(userAssetLocation.getPosX())
                 .pos_y(userAssetLocation.getPosY())

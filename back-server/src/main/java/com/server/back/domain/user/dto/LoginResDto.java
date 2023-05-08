@@ -1,7 +1,6 @@
 package com.server.back.domain.user.dto;
 
 
-import com.server.back.domain.user.entity.UserEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,11 +10,13 @@ import lombok.Data;
 public class LoginResDto {
 	private String accessToken;
 	private String refreshToken;
+	private String nickname;
 
-	public static LoginResDto fromEntity(String accessToken, String refreshToken) {
+	public static LoginResDto fromEntity(String accessToken, String refreshToken, String nickname) {
 		return LoginResDto.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
+			.nickname(nickname)
 			.build();
 	}
 

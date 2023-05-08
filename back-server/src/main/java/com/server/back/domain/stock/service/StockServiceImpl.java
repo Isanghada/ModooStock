@@ -19,7 +19,10 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
 @Service
@@ -34,25 +37,34 @@ public class StockServiceImpl implements StockService {
     private final ExchangeRepository exchangeRepository;
     private final AuthService authService;
     private final UserService userService;
-    SseEmitter emitter;
+
+    // 연결된 사용자 목록을 저장할 맵
+    private Map<Long, SseEmitter> userEmitterMap = new ConcurrentHashMap<>();
+    // 사용자가 선택한 주식 종목을 저장할 맵
+    private Map<Long, Long> userStockIdMap = new ConcurrentHashMap<>();
+
+//    public Long select;
 
     public SseEmitter subscribe(){
-        // SSE 구독
-        emitter =  new SseEmitter();
+        SseEmitter emitter = new SseEmitter();
 
-        // SSE 연결이 종료될 때 리스트에서 해당 emitter를 삭제
+        Long userId = authService.getUserId();
+
+        // 연결된 사용자 목록에 userId와 SseEmitter 추가
+        userEmitterMap.put(userId, emitter);
+
+        // 연결 종료 시 SseEmitter 제거
         emitter.onCompletion(() -> {
-            emitter.complete();
+            userEmitterMap.remove(userId);
         });
         emitter.onTimeout(() -> {
+            userEmitterMap.remove(userId);
             emitter.complete();
         });
 
         // 연결
         try {
-            emitter.send(SseEmitter.event()
-                    .name("connect")
-                    .data("connected!"));
+            emitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,32 +82,50 @@ public class StockServiceImpl implements StockService {
         return StockInfoResDto.fromEntity(stockList, oil,gold, usd, jyp, euro);
     }
 
+    // 스케쥴링을 써서 data 가져오기
+    @Transactional
+    public void schedularData(){
+
+        Set<Long> userIds = userEmitterMap.keySet();
+        for(Long userId: userIds){
+            getData(userId, userStockIdMap.get(userId));
+        }
+    }
+
     @Override
     public void getStockChart(Long stockId) {
-    // 로그인한 유저 가져오기
-    Long userId = authService.getUserId();
 
-    // 장 정보 가져오기
-    StockEntity stock = stockRepository.findById(stockId).get();
-    LocalDate startDate = stock.getMarket().getStartAt();
-    LocalDate gameDate = stock.getMarket().getGameDate();
+        Long userId = authService.getUserId();
+        userStockIdMap.put(userId, stockId);
+        getData(userId, stockId);
 
-    Long companyId = stock.getCompany().getId();
+}
 
-    // 주식 chart
-    List<ChartEntity> stockChartList = chartRepository.findAllByCompanyIdAndDateBetween(companyId, startDate, gameDate);
+    @Transactional
+    public void getData(Long userId, Long stockId){
+        SseEmitter emitter = userEmitterMap.get(userId);
 
-    // 유저 보유 주식
-    Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
+        // 장 정보 가져오기
+        StockEntity stock = stockRepository.findById(stockId).get();
+        LocalDate startDate = stock.getMarket().getStartAt();
+        LocalDate gameDate = stock.getMarket().getGameDate();
 
-    StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
+        Long companyId = stock.getCompany().getId();
+
+        // 주식 chart
+        List<ChartEntity> stockChartList = chartRepository.findAllByCompanyIdAndDateBetween(companyId, startDate, gameDate);
+
+        // 유저 보유 주식
+        Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
+
+        StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
 
         try {
             emitter.send(SseEmitter.event().data(stockResDto));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-}
+    }
 
 
     @Transactional

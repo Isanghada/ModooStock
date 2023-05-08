@@ -1,10 +1,9 @@
 package com.server.back.domain.comment.dto;
 
 import com.server.back.domain.user.entity.UserEntity;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
 @Builder
 public class AuthorResDto {
     private String nickname;
