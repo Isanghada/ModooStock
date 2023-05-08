@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/Bathroom';
+import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
