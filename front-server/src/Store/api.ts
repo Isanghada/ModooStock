@@ -180,6 +180,15 @@ interface ReturnCommonTradeStockType {
   };
   result: string;
 }
+interface ReturnGotchaInterFace {
+  data: {
+    assetCategory: string;
+    assetId: number;
+    assetLevel: string;
+    assetName: string;
+  };
+  result: string;
+}
 
 interface ReturnMyRoomAsset {
   data: Array<{
@@ -238,7 +247,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -516,6 +525,17 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'InvenApi' }];
       }
+    }),
+    // ----------- 뽑기상점 ------------
+    postGotchaLevel: builder.mutation<ReturnGotchaInterFace, string>({
+      query: (gotchaLevel) => {
+        console.log('뽑기레벨', gotchaLevel);
+        return {
+          url: `/store/level/${gotchaLevel}`,
+          method: 'Post'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'GotchaApi' }, { type: 'UserApi' }]
     })
   })
 });
@@ -567,5 +587,7 @@ export const {
 
   // ------------- 창고 -------------
   useGetStorageQuery,
-  useLazyGetStorageQuery
+  useLazyGetStorageQuery,
+  // ----------- 미니게임 ------------
+  usePostGotchaLevelMutation
 } = Api;

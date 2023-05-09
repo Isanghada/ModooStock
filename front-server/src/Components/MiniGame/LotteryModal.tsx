@@ -56,16 +56,16 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
       <div className={`${styles.font2} flex flex-col text-[0.6rem] md:text-xs text-start mt-2 md:mt-4 text-[#707070]`}>
         {isDark ? (
           <>
-            <span>1등 : 10억 ( 0.1% )</span>
-            <span>2등 : 꽝 ( 99.9% )</span>
+            <span>1등 : 7억 ( 0.7% )</span>
+            <span>2등 : 꽝 ( 99.3% )</span>
           </>
         ) : (
           <>
-            <span>1등 : 오천만원 ( 0.1 % )</span>
-            <span>2등 : 3백만원 ( 0.9% )</span>
-            <span>3등 : 50만원 ( 2% )</span>
-            <span>4등 : 만원 ( 50% )</span>
-            <span>5등 : 꽝 ( 47% )</span>
+            <span>1등 : 5천만원 ( 1 % )</span>
+            <span>2등 : 3백만원 ( 2.5% )</span>
+            <span>3등 : 50만원 ( 8% )</span>
+            <span>4등 : 만원 ( 42.5% )</span>
+            <span>5등 : 꽝 ( 46% )</span>
           </>
         )}
       </div>
@@ -99,7 +99,7 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
     };
   }, [window.innerWidth]);
 
-  const ERASE_RADIUS = 30;
+  const ERASE_RADIUS = 24;
   const ERASE_DISTANCE = ERASE_RADIUS / 2; // 지워진 영역(투명한 원)간 임의 간격
   const dpr = window.devicePixelRatio;
   const canvasTop = useRef<number>(0);

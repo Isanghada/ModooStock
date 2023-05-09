@@ -110,7 +110,7 @@ const Chatting = () => {
             dispatch(changeChattingStatus(false));
           }}
           className={`w-3 h-3 lg:min-w-6 lg:min-h-6 lg:w-6 lg:h-6 cursor-pointer hover:scale-105`}
-          src="chatting/cancel.png"
+          src={`${process.env.REACT_APP_S3_URL}/chatting/cancel.png`}
           alt="cancel"
         />
       </div>

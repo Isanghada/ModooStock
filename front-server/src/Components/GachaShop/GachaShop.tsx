@@ -7,17 +7,20 @@ import bluegift from 'Components/Common/Lottie/bluegift.json';
 import yellowgift from 'Components/Common/Lottie/yellowgift.json';
 import redgift from 'Components/Common/Lottie/redgift.json';
 import redopen from 'Components/Common/Lottie/redopen.json';
-import { useNavigate } from 'react-router-dom';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePostGotchaLevelMutation } from 'Store/api';
 
 function GachaShop(): JSX.Element {
-  const navigate = useNavigate();
   const [isHover, setIsHover] = useState<string | null>('');
   const [giftWaitData, setGiftWaitData] = useState<any>(null);
   const [giftOpenData, setGiftOpenData] = useState<any>(null);
   const [giftStatus, setGiftStatus] = useState<boolean>(false);
   const [giftOpenStatus, setGiftOpenStatus] = useState<boolean>(false);
+  const [ItemOpenStatus, setItemOpenStatus] = useState<boolean>(false);
+  const [assetName, setAssetName] = useState<string>('');
   const [giftColor, setGiftColor] = useState<string>('');
+  // 뉴스 구입 API
+  const [gotchaItem] = usePostGotchaLevelMutation();
 
   const hoverOn = (event: React.MouseEvent<HTMLDivElement>) => {
     const label = event.currentTarget.ariaLabel;
@@ -47,7 +50,10 @@ function GachaShop(): JSX.Element {
         setGiftStatus(false);
         setGiftOpenStatus(true);
         if (giftColor === '블루') {
+          const { data } = await gotchaItem('LOW').unwrap();
+          console.log(data, '블루블루');
           setGiftOpenData(blueopen);
+          setAssetName(data.assetName);
           break;
         }
         if (giftColor === '빨강') {
@@ -65,6 +71,7 @@ function GachaShop(): JSX.Element {
     if (giftOpenStatus) {
       setTimeout(() => {
         setGiftOpenStatus(false);
+        setItemOpenStatus(true);
       }, 3900);
     }
   }, [giftOpenStatus]);
@@ -169,6 +176,18 @@ function GachaShop(): JSX.Element {
               animationData={giftOpenData}
               className="w-1/2 mx-auto transition-all duration-300 cursor-pointer drop-shadow-[0_10px_20px_rgba(255,255,255)]"
             />
+          </Transition.Child>
+        </div>
+      </Transition>
+      <Transition show={ItemOpenStatus}>
+        <div className="fixed inset-0 z-50 flex flex-col justify-center w-full h-screen text-center transition-all duration-150 bg-black bg-opacity-80 ">
+          <Transition.Child
+            enter="ease-in-out duration-[3.5s]"
+            enterFrom="drop-shadow-[0_10px_10px_rgba(255,255,255)]"
+            enterTo={
+              test ? `drop-shadow-[0_20px_70px_rgba(255,255,000)]` : `drop-shadow-[0_20px_70px_rgba(255,255,255)]`
+            }>
+            <img src={process.env.REACT_APP_S3_URL + `/assets/img/${assetName}.png`} />
           </Transition.Child>
         </div>
       </Transition>
