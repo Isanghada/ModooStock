@@ -108,7 +108,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         toast.success('송금을 성공했습니다!');
         setIsClick(false);
         // 웹 푸시용
-        const docRef = doc(dbService, 'PushToken', '핑크빈');
+        const docRef = doc(dbService, 'PushToken', receiver);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const pushToken = docSnap.data().token;

@@ -13,7 +13,6 @@ import schedule from 'node-schedule';
 import { toast } from 'react-toastify';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
-import axios from 'axios';
 
 const tabList = ['투자', '전체', '전자', '화학', '생명', 'IT'];
 
@@ -164,33 +163,9 @@ function Navbar(): JSX.Element {
     dispatch(getCurrentDataIndex(index));
   };
 
-  const sendMessage = async (message: any) => {
-    try {
-      const url = `https://fcm.googleapis.com/fcm/send`;
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `bearer AAAAqCWFedU:APA91bF6BY_WsxTklVjOhjwZwpmKmSclxmsoA604qvrPYllNxweJ07-8kc-koRAriNYlAvUi3Tv35g6PahM1Gm1-HYPaRZFMVfoZWfrmv5qwocWS9Ma6lDIgHvktbqxAIDLrpSF9NNsy`
-      };
-      const response = await axios.post(url, message, { headers });
-      console.log('FCM HTTP v1 API Response:', response.data);
-    } catch (error) {
-      console.error('FCM HTTP v1 API Error:', error);
-    }
-  };
-
-  const message = {
-    notification: {
-      title: 'TEST-PWA',
-      body: '4분마다 보냄 ㅋㅋ'
-    },
-    to: 'ePAnXNopQWs_0TNJ8klIOR:APA91bEBRceBJ2LH48yhR_r9bCCJpf4v1IqxP0CS5A5eMOXJE4Gc2dsti2b_IoDTbjxCssosPL-o1q9UG6bRp4kAvdbQBAAsSz6DsvSo4CBcaZqjJiTw1gv5E7joibI3mAYbX1JeTAaw'
-  };
-
   useEffect(() => {
     const now = new Date();
     const hour = now.getHours();
-    // sendMessage(message);
-
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
@@ -205,7 +180,7 @@ function Navbar(): JSX.Element {
     });
     getIndex();
   }, []);
-
+  
 
   return (
     <>

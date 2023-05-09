@@ -42,11 +42,11 @@ async function requestPermission() {
   //   console.log('Can not get Token');
   // }
 
+  onMessage(messaging, (payload) => {
+    console.log("메시지가 도착했습니다.", payload);
+    // ...
+  });
 }
-// onMessage(messaging, (payload) => {
-//   console.log("메시지가 도착했습니다.", payload);
-//   // ...
-// });
 requestPermission();
 
 export { app, dbService, messaging };
