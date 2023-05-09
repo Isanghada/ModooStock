@@ -190,6 +190,31 @@ interface ReturnGotchaInterFace {
   result: string;
 }
 
+interface ReturnMyRoomAsset {
+  data: Array<{
+    userAssetId: number;
+    assetName: string;
+    assetLevel: string;
+    pos_x: number;
+    pos_y: number;
+    pos_z: number;
+    rot_x: number;
+    rot_y: number;
+    rot_z: number;
+  }>;
+  result: string;
+}
+interface ReturnInven {
+  data: Array<{
+    userAssetId: number;
+    assetName: string;
+    assetLevel: string;
+    assetCategory: string;
+    isAuctioned: string;
+  }>;
+  result: string;
+}
+
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
 
@@ -222,7 +247,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'GotchaApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -463,16 +488,54 @@ export const Api = createApi({
       },
       invalidatesTags: (result, error, arg) => [{ type: 'UserApi' }]
     }),
+
+    // ------------- 마이페이지 -------------------
+    //  1. 마이 룸 반환
+    getMypage: builder.query<ReturnMyRoomAsset, string>({
+      query: () => `/mypage/${localStorage.getItem('nickname')}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'MypageApi' }];
+      }
+    }),
+    //  2. 인벤토리에 있는 에셋 마이룸에 넣기
+    postMypage: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/mypage/${myAssetId}`,
+          method: 'POST'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
+    //  3. 인벤토리에 있는 에셋 마이룸에 넣기
+    deleteMypage: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/mypage/${myAssetId}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
+
+    // ------------- 창고 -------------------
+    //  1. 창고에 있는 물품 리스트 반환
+    getStorage: builder.query<ReturnInven, string>({
+      query: () => `/storage`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'InvenApi' }];
+      }
+    }),
     // ----------- 뽑기상점 ------------
     postGotchaLevel: builder.mutation<ReturnGotchaInterFace, string>({
       query: (gotchaLevel) => {
-        console.log("뽑기레벨", gotchaLevel);
+        console.log('뽑기레벨', gotchaLevel);
         return {
           url: `/store/level/${gotchaLevel}`,
-          method: 'Post',
+          method: 'Post'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'GotchaApi'}, { type: 'UserApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'GotchaApi' }, { type: 'UserApi' }]
     })
   })
 });
@@ -516,7 +579,15 @@ export const {
   // ----------- 미니게임 ------------
   usePostMiniGameBrightMutation,
   usePostMiniGameDarkMutation,
-  // ----------- 미니게임 ------------
-  usePostGotchaLevelMutation,
 
+  // ------------- 마이페이지 -------------
+  useLazyGetMypageQuery,
+  usePostMypageMutation,
+  useDeleteMypageMutation,
+
+  // ------------- 창고 -------------
+  useGetStorageQuery,
+  useLazyGetStorageQuery,
+  // ----------- 미니게임 ------------
+  usePostGotchaLevelMutation
 } = Api;

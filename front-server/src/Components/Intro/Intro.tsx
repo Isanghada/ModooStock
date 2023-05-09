@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import money from 'Components/Common/Lottie/money.json';
+// import money from 'Components/Common/Lottie/money.json';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'Store/hooks';
