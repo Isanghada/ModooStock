@@ -1,6 +1,6 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useLazyGetMypageQuery } from 'Store/api';
+import { useGetMypageQuery, useGetStorageQuery, useLazyGetMypageQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeClickAsseData, changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
@@ -19,7 +19,9 @@ interface AssetType {
 
 function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): JSX.Element {
   const dispatch = useAppDispatch();
-  const [getMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
+  const [getLazyMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
+  const { data: getMypage, isLoading: isLoading2, isError: isError2 } = useGetMypageQuery('');
+  // const { data: getStorage, isLoading: isLoading3, isError: isError3 } = useGetStorageQuery('');
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
   const [scale, setScale] = useState(len);
   const [myAssets, setMyAssets] = useState<any>();
@@ -71,7 +73,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
   useEffect(() => {
     // api로 받아올 보여지는 에셋 데이터
     const getMyRoomAssets = async () => {
-      const { data, result } = await getMypage('').unwrap();
+      const { data, result } = await getLazyMypage('').unwrap();
       let geo: any = [];
       console.log('data: ', data);
 
@@ -112,7 +114,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       console.log('clickAsseData.assetName: ', clickAsseData.assetName);
 
       const getMyRoomAssets = async () => {
-        const { data, result } = await getMypage('').unwrap();
+        const { data, result } = await getLazyMypage('').unwrap();
 
         console.log('data: ', data);
 
@@ -177,7 +179,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       getMyRoomAssets();
     }
     // console.log('myAssets: ', myAssets);
-  }, [clickAsseData, clickAssetPosition, clickAssetRotation]);
+  }, [clickAsseData, clickAssetPosition, clickAssetRotation, getMypage]);
 
   // size를 받아옴
   const { size } = useThree();

@@ -2,7 +2,12 @@ import { useGetStorageQuery, useLazyGetStorageQuery, usePostMypageMutation } fro
 import styled from './Mypage.module.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from 'Store/hooks';
-import { changeClickAsseData, changeClickInvenAsset } from 'Store/store';
+import {
+  changeClickAsseData,
+  changeClickAssetPosition,
+  changeClickAssetRotation,
+  changeClickInvenAsset
+} from 'Store/store';
 
 interface ReturnInvenType {
   userAssetId: number;
@@ -93,13 +98,16 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
                     console.log('data: ', data);
                   };
                   goMypage();
+                  console.log('여기가 실행되냐?');
+                  dispatch(changeClickAssetPosition([0, 0, -10]));
+                  dispatch(changeClickAssetRotation([0, 0, 0]));
                   dispatch(
                     changeClickAsseData({
                       userAssetId: funiture.userAssetId,
                       assetName: funiture.assetName,
                       pos_x: 0,
                       pos_y: 0,
-                      pos_z: 0,
+                      pos_z: -40,
                       rot_x: 0,
                       rot_y: 0,
                       rot_z: 0,

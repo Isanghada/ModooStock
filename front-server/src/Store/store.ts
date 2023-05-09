@@ -91,6 +91,7 @@ const currentDataIndex = createSlice({
 });
 
 // ------------- 마이페이지 -------------
+// 클릭한 에셋 데이터
 const clickAsseData = createSlice({
   name: 'clickAssetName',
   initialState: {
@@ -98,7 +99,7 @@ const clickAsseData = createSlice({
     assetName: '',
     pos_x: 0.0,
     pos_y: 0.0,
-    pos_z: -195.0,
+    pos_z: -10.0,
     rot_x: 0.0,
     rot_y: 0.0,
     rot_z: 0.0,
@@ -111,16 +112,17 @@ const clickAsseData = createSlice({
   }
 });
 
+// 클릭한 에셋 포지션
 const clickAssetPosition = createSlice({
   name: 'clickAssetPosition',
-  initialState: [0, 0, -195.0],
+  initialState: [0, 0, -10],
   reducers: {
     changeClickAssetPosition(state, action) {
       return (state = action.payload);
     }
   }
 });
-
+// 클릭한 에셋 회전
 const clickAssetRotation = createSlice({
   name: 'clickAssetRotation',
   initialState: [0, 0, 0],
@@ -131,6 +133,7 @@ const clickAssetRotation = createSlice({
   }
 });
 
+// 클릭한 인벤 에셋
 const clickInvenAsset = createSlice({
   name: 'clickInvenAsset',
   initialState: {

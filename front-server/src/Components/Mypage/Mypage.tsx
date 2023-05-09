@@ -1,12 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import styled from './Mypage.module.css';
 import MypageInven from './MypageInven';
 import AllAssetsList from './AllAssetsList';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
-import { useDeleteMypageMutation, usePostMypageMutation } from 'Store/api';
+import {
+  useDeleteMypageMutation,
+  usePostMypageMutation,
+  usePostStorageResaleMutation,
+  usePutMypageMutation
+} from 'Store/api';
+import { toast } from 'react-toastify';
 
 function Mypage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -15,6 +20,8 @@ function Mypage(): JSX.Element {
   const [isAuction, setIsAuction] = useState<boolean>(false);
   const [postMypage, { isLoading: isLoading1, isError: isError1 }] = usePostMypageMutation();
   const [deleteMypage, { isLoading: isLoading2, isError: isError2 }] = useDeleteMypageMutation();
+  const [putMypage, { isLoading: isLoading3, isError: isError3 }] = usePutMypageMutation();
+  const [postStorageResale, { isLoading: isLoading4, isError: isError4 }] = usePostStorageResaleMutation();
 
   const clickAssetPosition = useAppSelector((state) => {
     return state.clickAssetPosition;
@@ -69,15 +76,49 @@ function Mypage(): JSX.Element {
         setIsModalClick((pre) => !pre);
         setIsAuction((pre) => !pre);
         break;
+      case '되팔기':
+        const resale = async () => {
+          const { data, result } = await postStorageResale(clickAsseData.userAssetId).unwrap();
+          if (result === 'SUCCESS') {
+            toast.success('판매 완료!');
+          } else {
+            toast.error('요청 실패!');
+          }
+        };
+        resale();
+        break;
       case '창고':
         console.log('clickAsseData: ', clickAsseData.userAssetId);
         const goInven = async () => {
           const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
-          console.log('data: ', data);
+          if (result === 'SUCCESS') {
+            toast.success('창고에 넣었습니다!');
+          } else {
+            toast.error('요청 실패!');
+          }
+          // setIsClickAsset(false);
         };
         goInven();
         break;
       case '배치':
+        const settingAsset = async () => {
+          const body = {
+            pos_x: clickAssetPosition[0],
+            pos_y: clickAssetPosition[1],
+            pos_z: clickAssetPosition[2],
+            rot_x: clickAssetRotation[0],
+            rot_y: clickAssetRotation[1],
+            rot_z: clickAssetRotation[2],
+            userAssetId: clickAsseData.userAssetId
+          };
+          const { data, result } = await putMypage(body).unwrap();
+          if (result === 'SUCCESS') {
+            toast.success('배치 완료!');
+          } else {
+            toast.error('요청 실패!');
+          }
+        };
+        settingAsset();
         break;
       case '취소':
         break;
@@ -198,7 +239,7 @@ function Mypage(): JSX.Element {
             {/* 에셋 이미지 & 위치 조정 및 배치*/}
             <div className="flex flex-col justify-center items-center border-4 border-[#fb7c7c] rounded-3xl text-white mb-10">
               {/* 등급 */}
-              <div className="flex items-center justify-between w-full px-2 py-2">
+              <div className="flex items-center justify-between w-full px-2 py-2 z-10">
                 {/* 희귀도 */}
                 {clickAsseData.assetLevel === 'RARE' && (
                   <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
@@ -217,13 +258,17 @@ function Mypage(): JSX.Element {
                 )}
                 {isAuction !== true && isClickAsset ? (
                   <div className="flex items-center justify-between text-white">
-                    <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1">
+                    <div
+                      aria-label="되팔기"
+                      className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1"
+                      onClick={click}>
                       <span>되팔기</span>
                     </div>
-                    <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full">
-                      <span aria-label="모달" onClick={click}>
-                        경매장 등록
-                      </span>
+                    <div
+                      aria-label="모달"
+                      className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full"
+                      onClick={click}>
+                      <span>경매장 등록</span>
                     </div>
                   </div>
                 ) : (
@@ -258,7 +303,7 @@ function Mypage(): JSX.Element {
               {isAuction !== true ? (
                 // 인벤토리에 있을 경우
                 <>
-                  <div className="flex justify-between w-full px-5 py-3 mb-2 text-black">
+                  <div className="flex justify-between w-full px-5 py-3 mb-2 text-black z-10">
                     {/* Position */}
                     <div className="flex flex-col items-start w-[45%] space-y-1 justify-evenly">
                       <div className="flex">
@@ -310,7 +355,7 @@ function Mypage(): JSX.Element {
                         </div>
                         <input
                           min={-400}
-                          max={-10}
+                          max={0}
                           step={0.1}
                           // defaultValue={-200}
                           aria-label="pos3"
@@ -334,9 +379,9 @@ function Mypage(): JSX.Element {
                           <span>X</span>
                         </div>
                         <input
-                          min={-3}
-                          max={3}
-                          step={0.001}
+                          min={-10}
+                          max={10}
+                          step={0.00001}
                           // defaultValue={0}
                           aria-label="rot1"
                           className={`flex items-center w-[90%]`}
@@ -353,9 +398,9 @@ function Mypage(): JSX.Element {
                           <span>Y</span>
                         </div>
                         <input
-                          min={-3}
-                          max={3}
-                          step={0.001}
+                          min={-10}
+                          max={10}
+                          step={0.00001}
                           // defaultValue={0}
                           aria-label="rot2"
                           className={`flex items-center w-[90%]`}
@@ -372,9 +417,9 @@ function Mypage(): JSX.Element {
                           <span>Z</span>
                         </div>
                         <input
-                          min={-3}
-                          max={3}
-                          step={0.001}
+                          min={-10}
+                          max={10}
+                          step={0.00001}
                           // defaultValue={0}
                           aria-label="rot3"
                           className={`flex items-cente w-[90%]`}
