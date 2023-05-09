@@ -13,7 +13,6 @@ import schedule from 'node-schedule';
 import { toast } from 'react-toastify';
 import Chat from 'Components/Chatting/Chat';
 import Menu from 'Components/Menu/Menu';
-import axios from 'axios';
 
 const tabList = ['투자', '전체', '전자', '화학', '생명', 'IT'];
 
@@ -181,7 +180,7 @@ function Navbar(): JSX.Element {
     });
     getIndex();
   }, []);
-
+  
 
   return (
     <>
