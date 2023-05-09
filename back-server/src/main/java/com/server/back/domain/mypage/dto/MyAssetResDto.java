@@ -19,7 +19,7 @@ public class MyAssetResDto {
 
     public static MyAssetResDto fromEntity(UserAssetEntity userAsset){
         return  MyAssetResDto.builder()
-                .userAssetId(userAsset.getAsset().getId())
+                .userAssetId(userAsset.getId())
                 .assetName(userAsset.getAsset().getAssetName())
                 .assetLevel(userAsset.getAsset().getAssetLevel())
                 .assetCategory(userAsset.getAsset().getCategory())
