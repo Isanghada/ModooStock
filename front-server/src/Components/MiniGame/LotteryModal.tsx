@@ -69,7 +69,10 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
           </>
         )}
       </div>
-      <img className="w-[80px] md:w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
+      <img
+        className="w-[80px] md:w-[120px]"
+        src={process.env.REACT_APP_S3_URL + '/images/icons/lottoPig.png'}
+        alt="로또"></img>
     </div>
   );
 }
