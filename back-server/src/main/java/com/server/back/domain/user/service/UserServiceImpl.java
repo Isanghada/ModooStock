@@ -1,9 +1,6 @@
 package com.server.back.domain.user.service;
 
-import com.server.back.common.code.commonCode.DealType;
-import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.common.code.commonCode.IsCompleted;
-import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.*;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.auction.entity.AuctionEntity;
 import com.server.back.domain.auction.repository.AuctionRepository;
@@ -20,7 +17,11 @@ import com.server.back.domain.stock.repository.ChartRepository;
 import com.server.back.domain.stock.repository.DealStockRepository;
 import com.server.back.domain.stock.repository.StockRepository;
 import com.server.back.domain.stock.repository.UserDealRepository;
+import com.server.back.domain.store.entity.AssetEntity;
 import com.server.back.domain.store.entity.UserAssetEntity;
+import com.server.back.domain.store.entity.UserAssetLocation;
+import com.server.back.domain.store.repository.AssetRepository;
+import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.entity.UserEntity;
@@ -54,6 +55,8 @@ public class UserServiceImpl implements UserService{
     private final ChartRepository chartRepository;
     private final DealStockRepository dealStockRepository;
     private final BankRepository bankRepository;
+    private final AssetRepository assetRepository;
+    private final UserAssetLocationRepository userAssetLocationRepository;
 
     @Override
     public UserEntity getUserById(Long id) {
@@ -74,12 +77,12 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void createUser(UsersRegisterReqDto usersRegisterReqDto) {
         // 이미 존재하는 계정인지 다시 한번 확인
-        if (userRepository.findByAccount(usersRegisterReqDto.getAccount()).isPresent()) {
+        if (!checkAccount(usersRegisterReqDto.getAccount())) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
         // 이미 존재하는 닉네임인지 다시 한번 확인
-        if (userRepository.findByNickname(usersRegisterReqDto.getNickname()).isPresent()) {
+        if (!checkNickname(usersRegisterReqDto.getNickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
@@ -96,6 +99,24 @@ public class UserServiceImpl implements UserService{
         String profileImagePath = "https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/";
 
         userRepository.save(usersRegisterReqDto.toEntity(profileImagePath + imageArray[rd]));
+
+        // 기본 base asset 추가
+        AssetEntity asset = assetRepository.findById(351L).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 회원가입한 유저 가져오기
+        UserEntity user = getUserByNickname(usersRegisterReqDto.getNickname());
+        
+        // 회원 가입 시 기본 에셋 추가
+        UserAssetLocation userAssetLocation=UserAssetLocation.builder()
+                .asset(asset)
+                .user(user)
+                .isDeleted(IsDeleted.N)
+                .isInRepository(IsInRespository.Y)
+                .isAuctioned(IsAuctioned.N)
+                .build();
+        userAssetLocation.init();
+
+        userAssetLocationRepository.save(userAssetLocation);
     }
 
     /**
@@ -265,8 +286,6 @@ public class UserServiceImpl implements UserService{
         for ( BankEntity userBank : userBankList ) {
             userBank.setIsCompleted(IsCompleted.Y);
         }
-
-        //
 
         // 회원 삭제
         user.setIsDeleted(IsDeleted.Y);
