@@ -19,7 +19,6 @@ function Menu(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   // 모달 창 닫기
   function closeModal() {
-    dispatch(changeUpdateStatus(true));
     setModalOpen(false);
   }
   // 백 그라운드
@@ -71,9 +70,9 @@ function Menu(): JSX.Element {
     const img = new Image();
     img.onload = () => {
       setIsLoaded(true);
-      setSrc('/images/logos/LogoEarth.png');
+      setSrc(process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png');
     };
-    img.src = '/images/logos/LogoEarth.png';
+    img.src = process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png';
   }, []);
   return (
     <>
@@ -107,7 +106,7 @@ function Menu(): JSX.Element {
               <img
                 aria-label="나가기"
                 onClick={onClick}
-                src="/chatting/cancelBlack.png"
+                src={process.env.REACT_APP_S3_URL + '/chatting/cancelBlack.png'}
                 className="absolute w-2 h-2 cursor-pointer opacity-60 lg:w-6 lg:h-6 top-2 right-2 hover:opacity-80"
                 alt="cancelBlack"
               />

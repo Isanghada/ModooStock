@@ -195,7 +195,6 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
-      // heartbeatTimeout: 8700,
       withCredentials: true
     });
 
@@ -205,45 +204,35 @@ function Exchange(): JSX.Element {
     setEventSource(newEventSource);
 
     return () => {
-      // console.log('연결끊기');
       eventSource?.close();
       newEventSource?.close();
       setEventSource(undefined);
     };
   }, []);
 
-  // SSE 4분주기로 받기
-  useEffect(() => {
-    // 스케쥴러 4분마다 실행
-    const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
-      if (eventSource) {
+    if (eventSource) {
+      eventSource.onmessage = (event: any) => {
+        // toast.info('sse 데이터 받기');
+        setSseData(JSON.parse(event.data));
+      };
+
+      eventSource.onerror = (event:any) => {
         eventSource.close();
-        setEventSource(undefined);
+        const token = localStorage.getItem('accessToken');
+
+        const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache'
+          },
+          withCredentials: true
+        });
+
+        setEventSource(newEventSource);
       }
-      const token = localStorage.getItem('accessToken');
-
-      const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache'
-        },
-        // heartbeatTimeout: 8700,
-        withCredentials: true
-      });
-
-      newEventSource.addEventListener('connect', (e: any) => {
-        // console.log(e);
-      });
-      setEventSource(newEventSource);
-    });
-    return () => {
-      // console.log('연결끊기');
-      eventSource?.close();
-      setEventSource(undefined);
-    };
-  }, []);
+    }
 
   const clickButtonEvent = (number: number) => {
     if (inputRef.current) {
@@ -623,11 +612,11 @@ function Exchange(): JSX.Element {
     getStockSelect(stockId);
   };
 
-  if (eventSource) {
-    eventSource.onmessage = (event: any) => {
-      setSseData(JSON.parse(event.data));
-    };
-  }
+  // if (eventSource) {
+  //   eventSource.onmessage = (event: any) => {
+  //     setSseData(JSON.parse(event.data));
+  //   };
+  // }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -733,7 +722,7 @@ function Exchange(): JSX.Element {
                   </span>
                   <img
                     className="absolute -bottom-3 h-[2.9rem] lg:h-[4.5rem] cursor-pointer"
-                    src="/images/icons/news.png"
+                    src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'}
                     alt=""
                   />
                 </div>
@@ -931,12 +920,12 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                   <div className="flex justify-between w-full text-[0.7rem] text-[#FFFFFF] px-[5%] font-semibold">
-                    <div className="flex w-1/2 justify-center text-center space-x-9">
+                    <div className="flex justify-center w-1/2 text-center space-x-9">
                       <span>시간&nbsp;</span>
                       <span>분&nbsp;</span>
                       <span>초&nbsp;</span>
                     </div>
-                    <div className="flex w-1/2 justify-center text-center space-x-9">
+                    <div className="flex justify-center w-1/2 text-center space-x-9">
                       <span>&ensp;분&nbsp;</span>
                       <span>초&nbsp;</span>
                     </div>
@@ -1021,7 +1010,7 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-[11.35rem] w-full flxe justify-center items-center">
+                  <div className="h-[11.35rem] w-full flxe justify-center items-center bg-white rounded-lg">
                     <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
                       <span className="text-[1.3rem] space-x-1">
                         <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
@@ -1124,7 +1113,7 @@ function Exchange(): JSX.Element {
                       <span className="text-[#00A3FF]">날짜 갱신</span>
                     </div>
                   </div>
-                  <div className="flex justify-between w-full text-[1rem] font-bold px-[5%]">
+                  <div className={`flex justify-between w-full font-bold px-[5%] text-[1rem]`}>
                     <div className="flex items-start justify-center w-1/2">
                       <CountdownTimer
                         setIsPossibleStockTime={setIsPossibleStockTime}
@@ -1136,12 +1125,12 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                   <div className="flex justify-between w-full text-[0.6rem] text-[#FFFFFF] px-[5%] font-semibold">
-                    <div className="flex w-1/2 justify-center text-center space-x-4">
+                    <div className="flex justify-center w-1/2 space-x-4 text-center">
                       <span>시간</span>
                       <span>&nbsp;분&ensp;</span>
                       <span>초&ensp;</span>
                     </div>
-                    <div className="flex w-1/2 justify-center text-center space-x-4">
+                    <div className="flex justify-center w-1/2 space-x-4 text-center">
                       <span>&ensp;분&ensp;</span>
                       <span>초&nbsp;</span>
                     </div>
@@ -1227,13 +1216,13 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-[11.35rem] w-full flxe justify-center items-center">
+                  <div className="h-[8.7rem] md:h-[9.2rem] w-full flxe justify-center items-center bg-white rounded-lg">
                     <div className="flex flex-col items-center justify-center w-full h-full font-semibold">
-                      <span className="text-[1.3rem] space-x-1">
+                      <span className="text-[1rem] md:text-[1.1rem] space-x-1">
                         <span className="text-blue-500">매도</span>&nbsp;/<span className="text-red-500">매수</span>{' '}
                         가능 시간
                       </span>
-                      <span className="text-[1.7rem]">AM 10:00 ~ PM 10:00</span>
+                      <span className="text-[1.1rem] md:text-[1.3rem]">AM 10:00 ~ PM 10:00</span>
                     </div>
                   </div>
                 )}

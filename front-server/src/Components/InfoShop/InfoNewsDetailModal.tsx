@@ -16,11 +16,11 @@ export default function InfoNewsDetailModal({ closeModal, propsData, isOpen }: M
     const img = new Image();
     img.onload = () => {
       setIsLoaded(true);
-      setSrc('/images/icons/newspaper.png');
+      setSrc(process.env.REACT_APP_S3_URL + '/images/icons/newspaper.png');
     };
-    img.src = '/images/icons/newspaper.png';
+    img.src = process.env.REACT_APP_S3_URL + '/images/icons/newspaper.png';
   }, []);
-  
+
   return (
     <>
       {isLoaded && (
@@ -51,12 +51,14 @@ export default function InfoNewsDetailModal({ closeModal, propsData, isOpen }: M
                     <img
                       aria-label="나가기"
                       onClick={closeModal}
-                      src="/chatting/cancelBlack.png"
+                      src={process.env.REACT_APP_S3_URL + '/chatting/cancelBlack.png'}
                       className="absolute w-4 h-4 cursor-pointer opacity-60 lg:w-6 lg:h-6 top-2 right-2 hover:opacity-80"
                       alt="cancelBlack"
                     />
                     <div className="flex items-end justify-between h-fit">
-                      <span className={`${propsData.color} text-white w-1/6 font-medium lg:font-bold`}>{propsData.kind}</span>
+                      <span className={`${propsData.color} text-white w-1/6 font-medium lg:font-bold`}>
+                        {propsData.kind}
+                      </span>
                       <span>{propsData.date}</span>
                     </div>
                     <div className="flex justify-center w-full">

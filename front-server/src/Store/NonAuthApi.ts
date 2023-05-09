@@ -1,29 +1,34 @@
 // import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 
 // 타입
 interface SignUpStateInterFace {
-  account: string,
-  nickname: string,
-  password: string,
+  account: string;
+  nickname: string;
+  password: string;
 }
 interface LoginStateInterFace {
-  account: string,
-  password: string,
+  account: string;
+  password: string;
 }
 interface ReturnDataInterFace {
   data: boolean;
   result: string;
 }
-
-
+interface ReturnLoginDataInterFace {
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  result: string;
+}
 
 export const NonAuthApi = createApi({
-  reducerPath: "NonAuthApi",
+  reducerPath: 'NonAuthApi',
   tagTypes: ['NonAuthApi'],
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_URL,
+    baseUrl: process.env.REACT_APP_API_URL
   }),
   endpoints: (builder) => ({
     // 1. 아이디 중복체크
@@ -31,11 +36,11 @@ export const NonAuthApi = createApi({
       query: (email) => {
         return {
           url: `users/account/${email}`,
-          method: "GET",
-        }
+          method: 'GET'
+        };
       },
       providesTags: (result, error, arg) => {
-        return [{ type: "NonAuthApi" }]
+        return [{ type: 'NonAuthApi' }];
       }
     }),
     // 2. 닉네임 중복체크
@@ -43,11 +48,11 @@ export const NonAuthApi = createApi({
       query: (nickname) => {
         return {
           url: `users/nickname/${nickname}`,
-          method: "GET",
-        }
+          method: 'GET'
+        };
       },
       providesTags: (result, error, arg) => {
-        return [{ type: "NonAuthApi" }]
+        return [{ type: 'NonAuthApi' }];
       }
     }),
     // 3. 회원가입
@@ -56,32 +61,30 @@ export const NonAuthApi = createApi({
         // console.log("회원가입 : ", data);
         return {
           url: `users`,
-          method: "POST",
+          method: 'POST',
           body: data
-        }
+        };
       },
-      invalidatesTags: (result, error, arg) => [{ type: "NonAuthApi" }]
+      invalidatesTags: (result, error, arg) => [{ type: 'NonAuthApi' }]
     }),
     // 4. 로그인
-    postUsersLogin: builder.mutation<ReturnDataInterFace, LoginStateInterFace>({
+    postUsersLogin: builder.mutation<ReturnLoginDataInterFace, LoginStateInterFace>({
       query: (data) => {
         // console.log("로그인 : ", data);
         return {
           url: `login`,
-          method: "POST",
+          method: 'POST',
           body: data
-        }
+        };
       },
-      invalidatesTags: (result, error, arg) => [{ type: "NonAuthApi" }]
-    }),
-
+      invalidatesTags: (result, error, arg) => [{ type: 'NonAuthApi' }]
+    })
   })
-})
+});
 
 export const {
   usePostUsersSignUpMutation,
   useLazyGetUsersNickCheckQuery,
   useLazyGetUsersEmailCheckQuery,
-  usePostUsersLoginMutation,
-
+  usePostUsersLoginMutation
 } = NonAuthApi;

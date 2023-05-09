@@ -22,10 +22,10 @@ function StockTradeModal({ tradeStockModalData, isShowStockModal, setIsShowStock
 
     const img = new Image();
     img.onload = () => {
-      setSrc('/images/icons/info.png');
+      setSrc(process.env.REACT_APP_S3_URL + '/images/icons/info.png');
       setIsLoaded(true);
     };
-    img.src = '/images/icons/info.png';
+    img.src = process.env.REACT_APP_S3_URL + '/images/icons/info.png';
   }, []);
 
   const click = (e: React.MouseEvent) => {

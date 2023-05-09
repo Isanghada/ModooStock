@@ -5,6 +5,9 @@ import { changeLoginStatus, changeSignUpStatus } from 'Store/store';
 import { usePostUsersLoginMutation } from 'Store/NonAuthApi';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../../firebase';
+import SetPushToken from 'Components/Common/SetPushToken'
 
 
 interface LoginInterFace {
@@ -45,14 +48,30 @@ function Login(): JSX.Element {
   const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // 로그인 시도 API
-    const loginData: any = await postUsersLogin(loginAccount);
+    const loginData : any = await postUsersLogin(loginAccount);
     // 로그인 시도후 처리
     if (loginData.data) {
       // 토큰 세팅
-      const { accessToken, refreshToken } = loginData.data.data;
+      const { accessToken, refreshToken, nickname } = loginData.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-
+      localStorage.setItem('nickname', nickname);
+      // 웹푸시용 토큰
+      const permission = await Notification.requestPermission();
+      if (permission === 'denied') {
+        console.log('알림 권한 허용 안됨');
+      } else if (permission === 'granted') {
+        console.log('알림 권한 허용 됨!!! ');
+        const token = await getToken(messaging, {
+          vapidKey: process.env.REACT_APP_FCM_VAPID
+        });
+        if (token) {
+          console.log('token: ', token);
+          SetPushToken(nickname, token);
+        } else {
+          console.log('Can not get Token');
+        }
+      }
       closeLogin();
       toast.success('어서오세요!!');
       navigate('/main');

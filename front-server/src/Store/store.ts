@@ -84,11 +84,51 @@ const currentDataIndex = createSlice({
   initialState: 0,
   reducers: {
     getCurrentDataIndex(state, action) {
-      console.log(action.payload, "인덱스")
+      console.log(action.payload, '인덱스');
       return (state = action.payload);
     }
   }
-})
+});
+
+// ------------- 마이페이지 -------------
+const clickAsseData = createSlice({
+  name: 'clickAssetName',
+  initialState: {
+    userAssetId: 0,
+    assetName: '',
+    pos_x: 0.0,
+    pos_y: 0.0,
+    pos_z: -195.0,
+    rot_x: 0.0,
+    rot_y: 0.0,
+    rot_z: 0.0
+  },
+  reducers: {
+    changeClickAsseData(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+const clickAssetPosition = createSlice({
+  name: 'clickAssetPosition',
+  initialState: [0, 0, -200],
+  reducers: {
+    changeClickAssetPosition(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+const clickAssetRotation = createSlice({
+  name: 'clickAssetRotation',
+  initialState: [0, 0, 0],
+  reducers: {
+    changeClickAssetRotation(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
 
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
@@ -106,7 +146,10 @@ export const store = configureStore({
     currentMoneyStatus: currentMoneyStatus.reducer,
     getCurrentDataIndex: currentDataIndex.reducer,
     currentMoneyHideStatus: currentMoneyHideStatus.reducer,
-
+    // ------------- 마이페이지 -------------
+    clickAsseData: clickAsseData.reducer,
+    clickAssetPosition: clickAssetPosition.reducer,
+    clickAssetRotation: clickAssetRotation.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -124,6 +167,10 @@ export const { changeCurrentMoneyStatusStatus } = currentMoneyStatus.actions;
 export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
 export const { getCurrentDataIndex } = currentDataIndex.actions;
+// ------------- 마이페이지 -------------
+export const { changeClickAsseData } = clickAsseData.actions;
+export const { changeClickAssetPosition } = clickAssetPosition.actions;
+export const { changeClickAssetRotation } = clickAssetRotation.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

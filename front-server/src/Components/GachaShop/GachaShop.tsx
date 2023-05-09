@@ -83,7 +83,7 @@ function GachaShop(): JSX.Element {
           }}
           className="flex flex-col items-center w-full h-full justify-evnely">
           <div className="w-1/3 h-[30%] flex items-end">
-            <img className="w-full h-auto" src="/images/logos/gacha.png" alt="gacha" />
+            <img className="w-full h-auto" src={process.env.REACT_APP_S3_URL + '/images/logos/gacha.png'} alt="gacha" />
           </div>
           <div className="flex justify-evenly items-center w-full h-[80%]">
             <div
@@ -96,7 +96,7 @@ function GachaShop(): JSX.Element {
               <div className="w-[60%] lg:w-[70%]">
                 <img
                   className={`w-full h-auto ${isHover === '일반' && `animate-[ring_3s_infinite]`}`}
-                  src="/images/toys/bluemove.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/bluemove.png'}
                   alt="bluemove"
                 />
               </div>
@@ -115,7 +115,7 @@ function GachaShop(): JSX.Element {
               <div className="w-[60%] lg:w-[70%]">
                 <img
                   className={`w-full h-auto ${isHover === '고급' && `animate-[ring_3s_infinite]`}`}
-                  src="/images/toys/redmove.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/redmove.png'}
                   alt="redmove"
                 />
               </div>
@@ -134,7 +134,7 @@ function GachaShop(): JSX.Element {
               <div className="w-[60%] lg:w-[70%]">
                 <img
                   className={`w-full h-auto ${isHover === '전설' && `animate-[ring_3s_infinite]`}`}
-                  src="/images/toys/yellowmove.png"
+                  src={process.env.REACT_APP_S3_URL + '/images/toys/yellowmove.png'}
                   alt="yellowmove"
                 />
               </div>

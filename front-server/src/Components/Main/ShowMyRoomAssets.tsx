@@ -2,8 +2,8 @@ import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 
-function Bathroom({ len, pos, rot }: any): JSX.Element {
-  const { nodes, materials }: any = useGLTF('/assets/Bathroom.gltf');
+function ShowMyRoomAssets({ len, pos, rot }: any): JSX.Element {
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/model.gltf');
   const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
 
   const ref = useRef<any>(null);
@@ -12,15 +12,14 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
   let geo: any = [];
   for (const key in nodes) {
     cnt += 1;
-    if (!(cnt === 0 || cnt === 1)) {
+    if (!(cnt === 0)) {
       geo = [...geo, nodes[key].geometry];
     }
   }
-
   let meshPosition: any = [];
 
   Object.values(nodes).map((item: any, idx) => {
-    if (!(idx === 0 || idx === 1)) {
+    if (!(idx === 0)) {
       let li: any = [];
       Object.values(item.position).map((po: any) => {
         li = [...li, Math.round(po * 100) / 100];
@@ -33,8 +32,9 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
   const meshData = meshPosition.map((data: any, idx: number) => {
     return (
       <mesh
+        key={idx}
         geometry={geo[idx]}
-        material={materials.LP_Rooms}
+        material={materials[Object.keys(materials)[0]]}
         position={meshPosition[idx]}
       />
     );
@@ -60,4 +60,4 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
     </group>
   );
 }
-export default Bathroom;
+export default ShowMyRoomAssets;
