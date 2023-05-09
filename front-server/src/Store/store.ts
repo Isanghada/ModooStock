@@ -101,7 +101,8 @@ const clickAsseData = createSlice({
     pos_z: -195.0,
     rot_x: 0.0,
     rot_y: 0.0,
-    rot_z: 0.0
+    rot_z: 0.0,
+    assetLevel: '레어'
   },
   reducers: {
     changeClickAsseData(state, action) {
@@ -112,7 +113,7 @@ const clickAsseData = createSlice({
 
 const clickAssetPosition = createSlice({
   name: 'clickAssetPosition',
-  initialState: [0, 0, -200],
+  initialState: [0, 0, -195.0],
   reducers: {
     changeClickAssetPosition(state, action) {
       return (state = action.payload);
@@ -125,6 +126,22 @@ const clickAssetRotation = createSlice({
   initialState: [0, 0, 0],
   reducers: {
     changeClickAssetRotation(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+const clickInvenAsset = createSlice({
+  name: 'clickInvenAsset',
+  initialState: {
+    assetCategory: '',
+    assetLevel: '',
+    assetName: '',
+    isAuctioned: '',
+    userAssetId: 1
+  },
+  reducers: {
+    changeClickInvenAsset(state, action) {
       return (state = action.payload);
     }
   }
@@ -149,7 +166,8 @@ export const store = configureStore({
     // ------------- 마이페이지 -------------
     clickAsseData: clickAsseData.reducer,
     clickAssetPosition: clickAssetPosition.reducer,
-    clickAssetRotation: clickAssetRotation.reducer
+    clickAssetRotation: clickAssetRotation.reducer,
+    clickInvenAsset: clickInvenAsset.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -171,6 +189,7 @@ export const { getCurrentDataIndex } = currentDataIndex.actions;
 export const { changeClickAsseData } = clickAsseData.actions;
 export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
+export const { changeClickInvenAsset } = clickInvenAsset.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

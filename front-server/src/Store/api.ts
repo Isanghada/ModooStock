@@ -183,14 +183,15 @@ interface ReturnCommonTradeStockType {
 
 interface ReturnMyRoomAsset {
   data: Array<{
+    userAssetId: number;
     assetName: string;
+    assetLevel: string;
     pos_x: number;
     pos_y: number;
     pos_z: number;
     rot_x: number;
     rot_y: number;
     rot_z: number;
-    userAssetId: number;
   }>;
   result: string;
 }
@@ -237,7 +238,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -484,8 +485,28 @@ export const Api = createApi({
     getMypage: builder.query<ReturnMyRoomAsset, string>({
       query: () => `/mypage/${localStorage.getItem('nickname')}`,
       providesTags: (result, error, arg) => {
-        return [];
+        return [{ type: 'MypageApi' }];
       }
+    }),
+    //  2. 인벤토리에 있는 에셋 마이룸에 넣기
+    postMypage: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/mypage/${myAssetId}`,
+          method: 'POST'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
+    //  3. 인벤토리에 있는 에셋 마이룸에 넣기
+    deleteMypage: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/mypage/${myAssetId}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
     }),
 
     // ------------- 창고 -------------------
@@ -493,7 +514,7 @@ export const Api = createApi({
     getStorage: builder.query<ReturnInven, string>({
       query: () => `/storage`,
       providesTags: (result, error, arg) => {
-        return [];
+        return [{ type: 'InvenApi' }];
       }
     })
   })
@@ -541,6 +562,8 @@ export const {
 
   // ------------- 마이페이지 -------------
   useLazyGetMypageQuery,
+  usePostMypageMutation,
+  useDeleteMypageMutation,
 
   // ------------- 창고 -------------
   useGetStorageQuery,

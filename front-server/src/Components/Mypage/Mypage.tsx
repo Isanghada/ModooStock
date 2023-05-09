@@ -6,18 +6,24 @@ import MypageInven from './MypageInven';
 import AllAssetsList from './AllAssetsList';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
+import { useDeleteMypageMutation, usePostMypageMutation } from 'Store/api';
 
 function Mypage(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
   const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
+  const [postMypage, { isLoading: isLoading1, isError: isError1 }] = usePostMypageMutation();
+  const [deleteMypage, { isLoading: isLoading2, isError: isError2 }] = useDeleteMypageMutation();
 
   const clickAssetPosition = useAppSelector((state) => {
     return state.clickAssetPosition;
   });
   const clickAssetRotation = useAppSelector((state) => {
     return state.clickAssetRotation;
+  });
+  const clickAsseData = useAppSelector((state) => {
+    return state.clickAsseData;
   });
 
   const change = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,13 +58,29 @@ function Mypage(): JSX.Element {
   };
 
   const click = (e: React.MouseEvent) => {
-    if (e.currentTarget.ariaLabel === '모달') {
-      setIsModalClick((pre) => !pre);
-    } else if (e.currentTarget.ariaLabel === '경매장') {
-      setIsAuction((pre) => !pre);
-    } else if (e.currentTarget.ariaLabel === '판매등록') {
-      setIsModalClick((pre) => !pre);
-      setIsAuction((pre) => !pre);
+    switch (e.currentTarget.ariaLabel) {
+      case '모달':
+        setIsModalClick((pre) => !pre);
+        break;
+      case '경매장':
+        setIsAuction((pre) => !pre);
+        break;
+      case '판매등록':
+        setIsModalClick((pre) => !pre);
+        setIsAuction((pre) => !pre);
+        break;
+      case '창고':
+        console.log('clickAsseData: ', clickAsseData.userAssetId);
+        const goInven = async () => {
+          const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
+          console.log('data: ', data);
+        };
+        goInven();
+        break;
+      case '배치':
+        break;
+      case '취소':
+        break;
     }
   };
 
@@ -177,10 +199,23 @@ function Mypage(): JSX.Element {
             <div className="flex flex-col justify-center items-center border-4 border-[#fb7c7c] rounded-3xl text-white mb-10">
               {/* 등급 */}
               <div className="flex items-center justify-between w-full px-2 py-2">
-                <div className="bg-[#FFC34F] drop-shadow-lg px-7 py-[2.5px] rounded-full">
-                  <span>유니크</span>
-                </div>
-                {isAuction !== true ? (
+                {/* 희귀도 */}
+                {clickAsseData.assetLevel === 'RARE' && (
+                  <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>레어</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'EPIC' && (
+                  <div className="bg-[#b73bec] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>에픽</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'UNIQUE' && (
+                  <div className="bg-[#FFC34F] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>유니크</span>
+                  </div>
+                )}
+                {isAuction !== true && isClickAsset ? (
                   <div className="flex items-center justify-between text-white">
                     <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1">
                       <span>되팔기</span>
@@ -191,15 +226,33 @@ function Mypage(): JSX.Element {
                       </span>
                     </div>
                   </div>
-                ) : null}
+                ) : (
+                  // 공간만 차지하기
+                  <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg rounded-full mr-1">
+                    &nbsp;
+                  </div>
+                )}
               </div>
               {/* 에셋 이미지 */}
-              <div className="flex justify-center my-2 w-[5rem] h-[10rem] max-w-[5rem] max-h-[10rem]">
-                <img
-                  className="drop-shadow-lg"
-                  src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
-                  alt="가구"
-                />
+              <div
+                className={`flex justify-center ${
+                  clickAsseData
+                    ? 'w-[10rem] h-[10rem] max-w-[10rem] max-h-[10rem] my-2'
+                    : 'w-[12rem] h-[12rem] max-w-[12rem] max-h-[12rem] my-5'
+                } `}>
+                {isClickAsset ? (
+                  <img
+                    className="object-contain scale-[1.8] drop-shadow-lg"
+                    src={process.env.REACT_APP_S3_URL + `/assets/img/${clickAsseData.assetName}.png`}
+                    alt="가구"
+                  />
+                ) : (
+                  <img
+                    className="object-contain drop-shadow-lg"
+                    src={process.env.REACT_APP_S3_URL + `/images/icons/question.png`}
+                    alt="가구"
+                  />
+                )}
               </div>
               {/* 포지션 변경 */}
               {isAuction !== true ? (
@@ -337,13 +390,22 @@ function Mypage(): JSX.Element {
                   </div>
                   {/* 버튼 */}
                   <div className="flex w-full pb-2 justify-evenly">
-                    <div className="bg-[#87D21F] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="배치"
+                      className="bg-[#87D21F] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>배치 완료</span>
                     </div>
-                    <div className="bg-[#41A4F7] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="창고"
+                      className="bg-[#41A4F7] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>창고에 넣기</span>
                     </div>
-                    <div className="bg-[#E94561] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="취소"
+                      className="bg-[#E94561] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>취소</span>
                     </div>
                   </div>
@@ -620,7 +682,7 @@ function Mypage(): JSX.Element {
           </div>
         </div>
       </div>
-      <MypageInven />
+      <MypageInven setIsClickAsset={setIsClickAsset} />
     </>
   );
 }
