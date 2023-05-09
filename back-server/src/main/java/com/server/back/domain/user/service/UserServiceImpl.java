@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService{
     private final BankRepository bankRepository;
     private final AssetRepository assetRepository;
     private final UserAssetLocationRepository userAssetLocationRepository;
+    private final static String PROFILE_IMAGE_PATH = "https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/";
 
     @Override
     public UserEntity getUserById(Long id) {
@@ -96,9 +97,8 @@ public class UserServiceImpl implements UserService{
         int rd =random.nextInt(6);
 
         String[] imageArray = {"f1.png", "f6.png", "f7.png", "m3.png", "m4.png", "m9.png"};
-        String profileImagePath = "https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/";
 
-        userRepository.save(usersRegisterReqDto.toEntity(profileImagePath + imageArray[rd]));
+        userRepository.save(usersRegisterReqDto.toEntity(PROFILE_IMAGE_PATH + imageArray[rd]));
 
         // 기본 base asset 추가
         AssetEntity asset = assetRepository.findById(351L).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService{
                 .asset(asset)
                 .user(user)
                 .isDeleted(IsDeleted.N)
-                .isInRepository(IsInRespository.Y)
+                .isInRepository(IsInRespository.N)
                 .isAuctioned(IsAuctioned.N)
                 .build();
         userAssetLocation.init();
@@ -205,10 +205,6 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public void deleteUser() {
-        /* TODO
-        - table 삭제: 거래, 은행, 주식거래, 보유주식, 보유 뉴스
-        - isDeleted.Y: 회원에셋, 회원
-         */
         Long userId = authService.getUserId();
         UserEntity user = getUserById(userId);
 
