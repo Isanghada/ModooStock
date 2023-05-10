@@ -2,10 +2,8 @@ import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 
-function Bathroom({ len, pos, rot }: any): JSX.Element {
+function ShowMyRoomAssets({ len, pos, rot }: any): JSX.Element {
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/model.gltf');
-  console.log('materials: ', Object.keys(materials)[0]);
-
   const [scale, setScale] = useState(len); // Bathroom 컴포넌트의 scale 값을 useState로 관리
 
   const ref = useRef<any>(null);
@@ -32,7 +30,14 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
 
   // 데이터
   const meshData = meshPosition.map((data: any, idx: number) => {
-    return <mesh geometry={geo[idx]} material={materials[Object.keys(materials)[0]]} position={meshPosition[idx]} />;
+    return (
+      <mesh
+        key={idx}
+        geometry={geo[idx]}
+        material={materials[Object.keys(materials)[0]]}
+        position={meshPosition[idx]}
+      />
+    );
   });
 
   // size를 받아옴
@@ -55,4 +60,4 @@ function Bathroom({ len, pos, rot }: any): JSX.Element {
     </group>
   );
 }
-export default Bathroom;
+export default ShowMyRoomAssets;

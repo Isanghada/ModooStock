@@ -1,61 +1,86 @@
 import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/Bathroom';
+import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import styled from './Mypage.module.css';
 import MypageInven from './MypageInven';
 import AllAssetsList from './AllAssetsList';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
+import { useDeleteMypageMutation, usePostMypageMutation } from 'Store/api';
 
 function Mypage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
   const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
+  const [postMypage, { isLoading: isLoading1, isError: isError1 }] = usePostMypageMutation();
+  const [deleteMypage, { isLoading: isLoading2, isError: isError2 }] = useDeleteMypageMutation();
 
-  const [pos1, setPos1] = useState<string>('0');
-  const [pos2, setPos2] = useState<string>('0');
-  const [pos3, setPos3] = useState<string>('0');
-
-  const [rot1, setRot1] = useState<string>('0');
-  const [rot2, setRot2] = useState<string>('0');
-  const [rot3, setRot3] = useState<string>('0');
+  const clickAssetPosition = useAppSelector((state) => {
+    return state.clickAssetPosition;
+  });
+  const clickAssetRotation = useAppSelector((state) => {
+    return state.clickAssetRotation;
+  });
+  const clickAsseData = useAppSelector((state) => {
+    return state.clickAsseData;
+  });
 
   const change = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     const value = target.value as string;
     switch (target.ariaLabel) {
       case 'pos1':
-        console.log(value);
-
-        setPos1(value);
+        console.log('pos1', value);
+        dispatch(changeClickAssetPosition([parseInt(value), clickAssetPosition[1], clickAssetPosition[2]]));
         break;
       case 'pos2':
-        setPos2(value);
+        console.log('pos2', value);
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], parseInt(value), clickAssetPosition[2]]));
         break;
       case 'pos3':
         console.log('pos3', value);
-        setPos3(value);
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], clickAssetPosition[1], parseInt(value)]));
         break;
       case 'rot1':
-        setRot1(value);
+        console.log('rot1', value);
+        dispatch(changeClickAssetRotation([parseInt(value), clickAssetRotation[1], clickAssetRotation[2]]));
         break;
       case 'rot2':
-        setRot2(value);
+        console.log('rot2', value);
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], parseInt(value), clickAssetRotation[2]]));
         break;
       case 'rot3':
-        setRot3(value);
-        break;
-      default:
+        console.log('rot3', value);
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], clickAssetRotation[1], parseInt(value)]));
         break;
     }
   };
 
   const click = (e: React.MouseEvent) => {
-    if (e.currentTarget.ariaLabel === '모달') {
-      setIsModalClick((pre) => !pre);
-    } else if (e.currentTarget.ariaLabel === '경매장') {
-      setIsAuction((pre) => !pre);
-    } else if (e.currentTarget.ariaLabel === '판매등록') {
-      setIsModalClick((pre) => !pre);
-      setIsAuction((pre) => !pre);
+    switch (e.currentTarget.ariaLabel) {
+      case '모달':
+        setIsModalClick((pre) => !pre);
+        break;
+      case '경매장':
+        setIsAuction((pre) => !pre);
+        break;
+      case '판매등록':
+        setIsModalClick((pre) => !pre);
+        setIsAuction((pre) => !pre);
+        break;
+      case '창고':
+        console.log('clickAsseData: ', clickAsseData.userAssetId);
+        const goInven = async () => {
+          const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
+          console.log('data: ', data);
+        };
+        goInven();
+        break;
+      case '배치':
+        break;
+      case '취소':
+        break;
     }
   };
 
@@ -174,10 +199,23 @@ function Mypage(): JSX.Element {
             <div className="flex flex-col justify-center items-center border-4 border-[#fb7c7c] rounded-3xl text-white mb-10">
               {/* 등급 */}
               <div className="flex items-center justify-between w-full px-2 py-2">
-                <div className="bg-[#FFC34F] drop-shadow-lg px-7 py-[2.5px] rounded-full">
-                  <span>유니크</span>
-                </div>
-                {isAuction !== true ? (
+                {/* 희귀도 */}
+                {clickAsseData.assetLevel === 'RARE' && (
+                  <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>레어</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'EPIC' && (
+                  <div className="bg-[#b73bec] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>에픽</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'UNIQUE' && (
+                  <div className="bg-[#FFC34F] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>유니크</span>
+                  </div>
+                )}
+                {isAuction !== true && isClickAsset ? (
                   <div className="flex items-center justify-between text-white">
                     <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1">
                       <span>되팔기</span>
@@ -188,15 +226,33 @@ function Mypage(): JSX.Element {
                       </span>
                     </div>
                   </div>
-                ) : null}
+                ) : (
+                  // 공간만 차지하기
+                  <div className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg rounded-full mr-1">
+                    &nbsp;
+                  </div>
+                )}
               </div>
               {/* 에셋 이미지 */}
-              <div className="flex justify-center my-2 w-[5rem] h-[10rem] max-w-[5rem] max-h-[10rem]">
-                <img
-                  className="drop-shadow-lg"
-                  src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
-                  alt="가구"
-                />
+              <div
+                className={`flex justify-center ${
+                  clickAsseData
+                    ? 'w-[10rem] h-[10rem] max-w-[10rem] max-h-[10rem] my-2'
+                    : 'w-[12rem] h-[12rem] max-w-[12rem] max-h-[12rem] my-5'
+                } `}>
+                {isClickAsset ? (
+                  <img
+                    className="object-contain scale-[1.8] drop-shadow-lg"
+                    src={process.env.REACT_APP_S3_URL + `/assets/img/${clickAsseData.assetName}.png`}
+                    alt="가구"
+                  />
+                ) : (
+                  <img
+                    className="object-contain drop-shadow-lg"
+                    src={process.env.REACT_APP_S3_URL + `/images/icons/question.png`}
+                    alt="가구"
+                  />
+                )}
               </div>
               {/* 포지션 변경 */}
               {isAuction !== true ? (
@@ -216,10 +272,10 @@ function Mypage(): JSX.Element {
                           min={-200}
                           max={200}
                           step={0.1}
-                          defaultValue={0}
+                          // defaultValue={0}
                           aria-label="pos1"
                           className={`flex items-center w-[90%]`}
-                          // value={pos1}
+                          value={clickAssetPosition[0]}
                           type="range"
                           onChange={change}
                         />
@@ -237,10 +293,10 @@ function Mypage(): JSX.Element {
                           min={-200}
                           max={200}
                           step={0.1}
-                          defaultValue={0}
+                          // defaultValue={0}
                           aria-label="pos2"
                           className={`flex items-center w-[90%]`}
-                          // value={parseInt(pos2)}
+                          value={clickAssetPosition[1]}
                           type="range"
                           onChange={change}
                         />
@@ -254,12 +310,12 @@ function Mypage(): JSX.Element {
                         </div>
                         <input
                           min={-400}
-                          max={0}
+                          max={-10}
                           step={0.1}
-                          defaultValue={-200}
+                          // defaultValue={-200}
                           aria-label="pos3"
                           className={`flex items-center w-[90%]`}
-                          // value={pos3}
+                          value={clickAssetPosition[2]}
                           type="range"
                           onChange={change}
                         />
@@ -278,13 +334,13 @@ function Mypage(): JSX.Element {
                           <span>X</span>
                         </div>
                         <input
-                          min={-1.5}
-                          max={1.5}
-                          step={0}
-                          defaultValue={0}
+                          min={-3}
+                          max={3}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot1"
                           className={`flex items-center w-[90%]`}
-                          // value={rot1}
+                          value={clickAssetRotation[0]}
                           type="range"
                           onChange={change}
                         />
@@ -297,13 +353,13 @@ function Mypage(): JSX.Element {
                           <span>Y</span>
                         </div>
                         <input
-                          min={-1.5}
-                          max={1.5}
-                          step={0}
-                          defaultValue={0}
+                          min={-3}
+                          max={3}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot2"
                           className={`flex items-center w-[90%]`}
-                          // value={rot2}
+                          value={clickAssetRotation[1]}
                           type="range"
                           onChange={change}
                         />
@@ -318,11 +374,11 @@ function Mypage(): JSX.Element {
                         <input
                           min={-3}
                           max={3}
-                          step={0}
-                          defaultValue={0}
+                          step={0.001}
+                          // defaultValue={0}
                           aria-label="rot3"
                           className={`flex items-cente w-[90%]`}
-                          // value={rot3}
+                          value={clickAssetRotation[2]}
                           type="range"
                           onChange={change}
                         />
@@ -334,13 +390,22 @@ function Mypage(): JSX.Element {
                   </div>
                   {/* 버튼 */}
                   <div className="flex w-full pb-2 justify-evenly">
-                    <div className="bg-[#87D21F] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="배치"
+                      className="bg-[#87D21F] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>배치 완료</span>
                     </div>
-                    <div className="bg-[#41A4F7] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="창고"
+                      className="bg-[#41A4F7] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>창고에 넣기</span>
                     </div>
-                    <div className="bg-[#E94561] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div
+                      aria-label="취소"
+                      className="bg-[#E94561] py-1 drop-shadow-lg px-6 rounded-full hover:scale-105 transition-all duration-300 cursor-pointer"
+                      onClick={click}>
                       <span>취소</span>
                     </div>
                   </div>
@@ -488,44 +553,52 @@ function Mypage(): JSX.Element {
                         max={200}
                         step={0.1}
                         aria-label="pos1M"
-                        className={`flex items-center ${styled.sPos1}`}
-                        value={pos1}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[0]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#ffc0c0] h-full rounded-full`} style={{ width: `${pos1}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Y</span>
                       </div>
                       <input
+                        min={-200}
+                        max={200}
+                        step={0.1}
+                        // defaultValue={0}
                         aria-label="pos2M"
-                        className={`flex items-center ${styled.sPos2}`}
-                        value={pos2}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[1]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#fec563] h-full rounded-full`} style={{ width: `${pos2}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Z</span>
                       </div>
                       <input
+                        min={-400}
+                        max={0}
+                        step={0.1}
+                        // defaultValue={-200}
                         aria-label="pos3M"
-                        className={`flex items-center ${styled.sPos3}`}
-                        value={pos3}
+                        className={`flex items-center`}
+                        value={clickAssetPosition[2]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#fffca9] h-full rounded-full`} style={{ width: `${pos3}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   {/* Rotation */}
@@ -538,45 +611,57 @@ function Mypage(): JSX.Element {
                         <span>X</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot1M"
-                        className={`flex items-center ${styled.sRot1}`}
-                        value={rot1}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[0]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#DCFFC0] h-full rounded-full`} style={{ width: `${rot1}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Y</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot2M"
-                        className={`flex items-center ${styled.sRot2}`}
-                        value={rot2}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[1]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#C6EEFF] h-full rounded-full`} style={{ width: `${rot2}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative flex items-center w-full space-x-2">
                       <div>
                         <span>Z</span>
                       </div>
                       <input
+                        min={-3}
+                        max={3}
+                        step={0.01}
+                        // defaultValue={0}
                         aria-label="rot3M"
-                        className={`flex items-center ${styled.sRot3}`}
-                        value={rot3}
+                        className={`flex items-center`}
+                        value={clickAssetRotation[2]}
                         type="range"
                         onChange={change}
                       />
-                      <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
+                      {/* <div className="absolute w-[84%] max-w-[84%] h-[8px] rounded left-[6px] bg-[#EAEAEA]">
                         <div className={`bg-[#f0d9ff] h-full rounded-full`} style={{ width: `${rot3}%` }}></div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -597,7 +682,7 @@ function Mypage(): JSX.Element {
           </div>
         </div>
       </div>
-      <MypageInven />
+      <MypageInven setIsClickAsset={setIsClickAsset} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import money from 'Components/Common/Lottie/money.json';
+// import money from 'Components/Common/Lottie/money.json';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'Store/hooks';
@@ -20,7 +20,24 @@ function Intro(): JSX.Element {
     dispatch(changeLoginStatus(false));
     setShowLogin(true);
   };
+  useEffect(() => {
+    // beforeinstallprompt 이벤트 핸들러 등록
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
+    // 컴포넌트가 unmount될 때 이벤트 핸들러 해제
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
+  }, []);
+
+  // beforeinstallprompt 이벤트 핸들러
+  const handleInstallPrompt = (event : any) => {
+    // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
+    event.preventDefault();
+    console.log("event")
+    let deferredPrompt = event;
+    deferredPrompt.prompt();
+  }
   return (
     <AnimatePresence>
       {/* 전체 배경 */}

@@ -15,8 +15,8 @@ function CountdownTimeMinute(): JSX.Element {
     if (day === 0) {
       setTime({ minutes: 0, seconds: 0 });
     } else {
-      if (hours < 10 || hours > 22) {
-        setTime({ minutes: 4, seconds: 0 });
+      if (hours < 10 || hours >= 22) {
+        setTime({ minutes: 0, seconds: 0 });
       } else {
         setTime({
           minutes: 4 - ((minutes % 4) % 4) - 1,
