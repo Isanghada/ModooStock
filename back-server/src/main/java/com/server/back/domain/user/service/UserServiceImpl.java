@@ -143,8 +143,8 @@ public class UserServiceImpl implements UserService{
             Optional<UserDealEntity> userDeal = userDealRepository.findByUserIdAndStockId(userId, stock.getId());
 
             if (userDeal.isPresent() && userDeal.get().getTotalAmount() != 0L) {
-                totalStockReturn += userDeal.get().getRate();
-                count++;
+                totalStockReturn += userDeal.get().getRate() * userDeal.get().getTotalAmount();
+                count += userDeal.get().getTotalAmount();
             }
         }
 
