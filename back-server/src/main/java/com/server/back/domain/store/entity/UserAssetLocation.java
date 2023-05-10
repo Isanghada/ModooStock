@@ -48,5 +48,9 @@ public class UserAssetLocation extends UserAssetEntity {
         this.rotZ=rotZ;
     }
 
+    public void update(float rotZ){
+        this.rotZ=rotZ;
+    }
+
 
 }
