@@ -24,17 +24,19 @@ self.addEventListener('push', function (e) {
   const notificationOptions = {
     body: resultData.body,
     icon: resultData.image,
+    badge: "./images/icons/badge-72x72.png",
+    vibrate: [200, 100, 200, 100, 200, 100, 200],
     tag: resultData.tag,
     ...resultData
   };
-  // console.log('2 push: ', { resultData, notificationTitle, notificationOptions });
+  console.log('2 push: ', { resultData, notificationTitle, notificationOptions });
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener('notificationclick', function (event) {
   console.log('notification click');
-  const url = '/';
+  const url = '/main';
   event.notification.close();
   event.waitUntil(clients.openWindow(url));
 });

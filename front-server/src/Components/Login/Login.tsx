@@ -106,7 +106,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="account"
             type="text"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
             placeholder="아이디"
             required
           />
@@ -114,7 +114,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="password"
             type="password"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
             placeholder="비밀번호"
             required
           />
