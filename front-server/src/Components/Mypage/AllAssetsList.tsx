@@ -74,8 +74,12 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
     // if (isClickAsset) {
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
+      console.log('data: ', data);
+
       let geo: any = [];
       data.map((asset, idx) => {
+        console.log(idx, nodes[asset.assetName].geometry);
+
         geo = [...geo, nodes[asset.assetName].geometry];
       });
 
