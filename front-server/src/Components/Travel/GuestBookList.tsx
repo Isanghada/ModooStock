@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import DeleteGuestBookModal from './DeleteGuestBookModal';
+import WriteGuestBookModal from './WirteGuestBookModal';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
@@ -15,20 +16,18 @@ interface GuestBookItemProps {
     content: string;
     isEditable: boolean;
   };
+  handleOpenDeleteModal?: () => void;
+  handleOpenWriteModal?: () => void;
 }
 
-function GuestBookItem({ authorResDto: author, commentResDto: comment }: GuestBookItemProps): JSX.Element {
-  const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
-
-  const handleOpenModal = () => {
-    setIsShowDeleteModal(true);
-  };
-
+function GuestBookItem({
+  authorResDto: author,
+  commentResDto: comment,
+  handleOpenDeleteModal,
+  handleOpenWriteModal
+}: GuestBookItemProps): JSX.Element {
   return (
     <>
-      {isShowDeleteModal && (
-        <DeleteGuestBookModal isShowDeleteModal={isShowDeleteModal} setIsShowDeleteModal={setIsShowDeleteModal} />
-      )}
       <div className="w-[208px] h-[204px] rounded-xl bg-white border border-[#fde2e2] p-4">
         <div className="flex flex-row mb-2">
           <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
@@ -40,10 +39,10 @@ function GuestBookItem({ authorResDto: author, commentResDto: comment }: GuestBo
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
         {comment.isEditable && (
           <div className="bottom-0 flex justify-start gap-2">
-            <button className="" onClick={handleOpenModal}>
+            <button className="" onClick={handleOpenDeleteModal}>
               <img alt="" src="/images/icons/delete.png" className="w-[18px] h-[18px] object-cover" />
             </button>
-            <button className="">
+            <button className="" onClick={handleOpenWriteModal}>
               <img alt="" src="/images/icons/edit.png" className="w-[18px] h-[18px] object-cover" />
             </button>
           </div>
@@ -179,30 +178,52 @@ const guestBookList: GuestBookItemProps[] = [
 ];
 
 function GuestBookList({ onClose }: Props): JSX.Element {
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+
+  const handleOpenDeleteModal = () => {
+    setIsShowDeleteModal(true);
+  };
+
+  const [isShowWriteModal, setIsShowWriteModal] = useState<boolean>(false);
+
+  const handleOpenWriteModal = () => {
+    setIsShowWriteModal(true);
+  };
+
   return (
     <>
-      <div className="flex flex-col w-fit h-[544px]">
-        <div className="flex w-full h-[82px] rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-8 pr-4 justify-between">
+      <div className="flex flex-col w-fit h-[34rem]">
+        <div className="flex w-full h-[5.125rem] rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-8 pr-4 justify-between">
           <div className="flex items-center">
             <img alt="" src="/images/icons/mailBox.png" className="w-[60px] h-[60px] object-cover" />
             <p className="text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
           </div>
-          <button className="w-[48px] h-[48px] object-cover round-full" onClick={onClose}>
-            <img alt="" src="/images/icons/multiply.png" className="w-[48px] h-[48px] object-cover round-full" />
+          <button className="w-[3rem] h-[3rem] object-cover round-full" onClick={onClose}>
+            <img alt="" src="/images/icons/multiply.png" className="w-[3rem] h-[3rem] object-cover round-full" />
           </button>
         </div>
-        <div className="w-fit h-[462px] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto">
+        <div className="w-fit h-[28.875rem] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
             {/* map */}
             {guestBookList.map((item, index) => (
-              <GuestBookItem authorResDto={item.authorResDto} commentResDto={item.commentResDto}></GuestBookItem>
+              <GuestBookItem
+                authorResDto={item.authorResDto}
+                commentResDto={item.commentResDto}
+                handleOpenDeleteModal={handleOpenDeleteModal}
+                handleOpenWriteModal={handleOpenWriteModal}></GuestBookItem>
             ))}
           </div>
-          <button className="absolute bottom-4 right-4 flex justify-center items-center w-[60px] h-[60px] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1">
-            <img alt="" src="/images/icons/pencil.png" className="w-[40px] h-[40px] object-cover" />
+          <button className="absolute bottom-4 right-4 flex justify-center items-center w-[3.75rem] h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1">
+            <img alt="" src="/images/icons/pencil.png" className="w-[2.5rem] h-[2.5rem] object-cover" />
           </button>
         </div>
       </div>
+      {isShowDeleteModal && (
+        <DeleteGuestBookModal isShowDeleteModal={isShowDeleteModal} setIsShowDeleteModal={setIsShowDeleteModal} />
+      )}
+      {isShowWriteModal && (
+        <WriteGuestBookModal isShowWriteModal={isShowWriteModal} setIsShowWriteModal={setIsShowWriteModal} />
+      )}
     </>
   );
 }

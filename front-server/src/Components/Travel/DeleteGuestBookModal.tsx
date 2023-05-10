@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 
 interface InfoModalType {
   isShowDeleteModal: boolean;
@@ -7,20 +7,11 @@ interface InfoModalType {
 
 function DeleteGuestBookModal({ isShowDeleteModal, setIsShowDeleteModal }: InfoModalType): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [src, setSrc] = useState('');
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      setSrc(process.env.REACT_APP_S3_URL + '/images/icons/info.png');
-      setIsLoaded(true);
-    };
-    img.src = process.env.REACT_APP_S3_URL + '/images/icons/info.png';
-  }, []);
 
   const click = (e: React.MouseEvent) => {
     setIsShowDeleteModal(false);
   };
+
   return (
     <>
       {isShowDeleteModal && (
@@ -32,19 +23,17 @@ function DeleteGuestBookModal({ isShowDeleteModal, setIsShowDeleteModal }: InfoM
               setIsShowDeleteModal(false);
             }
           }}>
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black bg-opacity-25 rounded-lg" />
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-full p-4 text-center">
+            <div className="flex items-center justify-center min-h-full p-4 text-center ">
               <div className="w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold">
                 <div className="flex justify-center w-full my-2 lg:my-4">
                   <img className="w-[12%] h-auto" src="/images/icons/warning.png" alt="info" />
                 </div>
                 <div className={`w-full mb-2 lg:mb-6 lg:pt-2 text-red-500`}>
-                  <div className="w-full ">
-                    <span className="text-gray-600">방명록을&nbsp;</span>
-                    <span>삭제</span>
-                    <span className="text-gray-600">하시겠습니까?</span>
-                  </div>
+                  <span className="text-gray-600">방명록을&nbsp;</span>
+                  <span>삭제</span>
+                  <span className="text-gray-600">하시겠습니까?</span>
                 </div>
                 <div className="flex justify-evenly ">
                   <button

@@ -27,7 +27,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding = '', canOpe
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, canOpenModal]);
 
   if (!isOpen) return null;
 

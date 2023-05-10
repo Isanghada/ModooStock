@@ -3,7 +3,6 @@ import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
-import DeleteGuestBookModal from './DeleteGuestBookModal';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
 import { useState } from 'react';
