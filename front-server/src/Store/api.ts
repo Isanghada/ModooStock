@@ -82,6 +82,21 @@ interface ReturnRankListInterFace {
   result: string;
 }
 
+interface ReturnActionListInterFace {
+  data: [
+    {
+      assetResDto: {
+        assetId: number
+        assetName: string;
+        assetLevel: string;
+        assetCategory: string;
+        assetNameKor: string;
+      },
+      price: number;
+    }
+  ];
+}
+
 interface UpdateStateInterFace {
   nickname: string;
   password: string;
@@ -260,7 +275,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -569,7 +584,16 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'GotchaApi' }, { type: 'UserApi' }]
-    })
+    }),
+
+    // ----------- 경매 ------------
+    // 1. 경매 물품 리스트 조회
+    getAuction: builder.query<ReturnActionListInterFace, string>({
+      query: () => `/auction`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AuctionApi' }];
+      }
+    }),
   })
 });
 
@@ -625,5 +649,8 @@ export const {
   useLazyGetStorageQuery,
   usePostStorageResaleMutation,
   // ----------- 미니게임 ------------
-  usePostGotchaLevelMutation
+  usePostGotchaLevelMutation,
+
+  // 경매장
+  useGetAuctionQuery,
 } = Api;

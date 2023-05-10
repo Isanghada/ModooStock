@@ -54,6 +54,9 @@ function Main(): JSX.Element {
       case '미니 게임':
         navigate('/lottery');
         break;
+      case '경매장':
+          navigate('/auction');
+          break;
       case '마이룸':
         navigate('/mypage');
         break;
