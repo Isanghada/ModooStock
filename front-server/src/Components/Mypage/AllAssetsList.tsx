@@ -1,10 +1,15 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useLazyGetMypageQuery } from 'Store/api';
+import { useGetMypageQuery, useGetStorageQuery, useLazyGetMypageQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeClickAsseData, changeClickAssetPosition, changeClickAssetRotation } from 'Store/store';
+import {
+  changeClickAsseData,
+  changeClickAssetPosition,
+  changeClickAssetRotation,
+  changeIsClickInvenAssetStore
+} from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
-
+import Loading from 'Components/Common/Loading';
 interface AssetType {
   userAssetId: number;
   assetName: string;
@@ -17,9 +22,19 @@ interface AssetType {
   rot_z: number;
 }
 
-function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): JSX.Element {
+interface AllAssetsListType {
+  len: number;
+  pos: any;
+  rot: any;
+  isClickAsset: boolean;
+  setIsClickAsset: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAssetsListType): JSX.Element {
   const dispatch = useAppDispatch();
-  const [getMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
+  const [getLazyMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
+  const { data: getMypage, isLoading: isLoading2, isError: isError2 } = useGetMypageQuery('');
+  // const { data: getStorage, isLoading: isLoading3, isError: isError3 } = useGetStorageQuery('');
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
   const [scale, setScale] = useState(len);
   const [myAssets, setMyAssets] = useState<any>();
@@ -33,27 +48,14 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
     return state.clickAssetRotation;
   });
 
-  // console.log('data1: ', data1);
-
   const ref = useRef<any>(null);
-
-  const click = (asset: AssetType, pos: number[], rot: number[]) => {
-    console.log('asset: ', asset);
-
-    dispatch(changeClickAsseData(asset));
-    dispatch(changeClickAssetPosition(pos));
-    dispatch(changeClickAssetRotation(rot));
-    setIsClickAsset(true);
-  };
-
   const changeClick = (asset: any, pos: number[], rot: number[]) => {
-    console.log('asset: ', asset);
-
     dispatch(
       changeClickAsseData({
         userAssetId: asset.userAssetId,
         assetName: asset.assetName,
         assetLevel: asset.assetLevel,
+        assetNameKor: asset.assetNameKor,
         pos_x: pos[0],
         pos_y: pos[1],
         pos_z: pos[2],
@@ -65,38 +67,54 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
     dispatch(changeClickAssetPosition(pos));
     dispatch(changeClickAssetRotation(rot));
     setIsClickAsset(true);
+    dispatch(changeIsClickInvenAssetStore(false));
   };
 
-  // 현재 배치해놓은 에셋 보이도록 하기
   useEffect(() => {
-    // api로 받아올 보여지는 에셋 데이터
+    // if (isClickAsset) {
     const getMyRoomAssets = async () => {
-      const { data, result } = await getMypage('').unwrap();
+      const { data, result } = await getLazyMypage('').unwrap();
       let geo: any = [];
-      console.log('data: ', data);
-
       data.map((asset, idx) => {
         geo = [...geo, nodes[asset.assetName].geometry];
       });
 
       // 데이터
       setMyAssets(
-        data.map((asset: any, idx: number) => {
+        data.map((asset, idx: number) => {
+          let isClick = false;
+          // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
+          // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
+          if (asset.assetName === clickAsseData.assetName) {
+            isClick = true;
+          }
           return (
             <mesh
               key={idx}
               geometry={geo[idx]}
               material={materials[Object.keys(materials)[0]]}
-              position={[asset.pos_x, asset.pos_y, asset.pos_z]}
-              rotation={[asset.rot_x, asset.rot_y, asset.rot_z]}
+              position={
+                isClick
+                  ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
+                  : [asset.pos_x, asset.pos_y, asset.pos_z]
+              }
+              rotation={
+                isClick
+                  ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
+                  : [asset.rot_x, asset.rot_y, asset.rot_z]
+              }
               visible={true}
               onClick={(e) => {
                 e.stopPropagation();
-                click(
+                changeClick(
                   // 이름. position, rotation
                   asset,
-                  [asset.pos_x, asset.pos_y, asset.pos_z],
-                  [asset.rot_x, asset.rot_y, asset.rot_z]
+                  isClick
+                    ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
+                    : [asset.pos_x, asset.pos_y, asset.pos_z],
+                  isClick
+                    ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
+                    : [asset.rot_x, asset.rot_y, asset.rot_z]
                 );
               }}
             />
@@ -105,79 +123,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
       );
     };
     getMyRoomAssets();
-  }, []);
-
-  useEffect(() => {
-    if (isClickAsset) {
-      console.log('clickAsseData.assetName: ', clickAsseData.assetName);
-
-      const getMyRoomAssets = async () => {
-        const { data, result } = await getMypage('').unwrap();
-
-        console.log('data: ', data);
-
-        let geo: any = [];
-        data.map((asset, idx) => {
-          geo = [...geo, nodes[asset.assetName].geometry];
-        });
-
-        // 데이터
-        setMyAssets(
-          data.map((asset, idx: number) => {
-            let isClick = false;
-            // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
-            // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
-            // console.log('asset.assetName', asset.assetName);
-            // console.log('clickAsseData.assetName', clickAsseData.assetName);
-
-            if (asset.assetName === clickAsseData.assetName) {
-              isClick = true;
-
-              // console.log('clickAsseData: ', '이거다!!');
-
-              // console.log('clickAssetPosition: ', clickAssetPosition);
-              // console.log('clickAssetRotation: ', clickAssetRotation);
-            }
-            return (
-              <mesh
-                key={idx}
-                geometry={geo[idx]}
-                material={materials[Object.keys(materials)[0]]}
-                position={
-                  isClick
-                    ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
-                    : [asset.pos_x, asset.pos_y, asset.pos_z]
-                }
-                rotation={
-                  isClick
-                    ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
-                    : [asset.rot_x, asset.rot_y, asset.rot_z]
-                }
-                visible={true}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  changeClick(
-                    // 이름. position, rotation
-                    asset,
-                    isClick
-                      ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
-                      : [asset.pos_x, asset.pos_y, asset.pos_z],
-                    isClick
-                      ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
-                      : [asset.rot_x, asset.rot_y, asset.rot_z]
-                  );
-                }}
-              />
-            );
-          })
-        );
-      };
-      console.log('clickAsseData: ', clickAsseData);
-
-      getMyRoomAssets();
-    }
-    // console.log('myAssets: ', myAssets);
-  }, [clickAsseData, clickAssetPosition, clickAssetRotation]);
+    // }
+  }, [clickAsseData, clickAssetPosition, clickAssetRotation, getMypage]);
 
   // size를 받아옴
   const { size } = useThree();
@@ -187,15 +134,17 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: any): J
   });
 
   return (
-    <group
-      ref={ref}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}>
-      <group position={pos} rotation={rot} scale={scale}>
-        {myAssets}
+    <>
+      <group
+        ref={ref}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}>
+        <group position={pos} rotation={rot} scale={scale}>
+          {myAssets}
+        </group>
       </group>
-    </group>
+    </>
   );
 }
 export default AllAssetsList;

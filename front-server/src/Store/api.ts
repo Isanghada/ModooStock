@@ -83,6 +83,21 @@ interface ReturnRankListInterFace {
   result: string;
 }
 
+interface ReturnActionListInterFace {
+  data: [
+    {
+      assetResDto: {
+        assetId: number
+        assetName: string;
+        assetLevel: string;
+        assetCategory: string;
+        assetNameKor: string;
+      },
+      price: number;
+    }
+  ];
+}
+
 interface UpdateStateInterFace {
   nickname: string;
   password: string;
@@ -197,6 +212,7 @@ interface ReturnMyRoomAsset {
     userAssetId: number;
     assetName: string;
     assetLevel: string;
+    assetNameKor: string;
     pos_x: number;
     pos_y: number;
     pos_z: number;
@@ -211,10 +227,21 @@ interface ReturnInven {
     userAssetId: number;
     assetName: string;
     assetLevel: string;
+    assetNameKor: string;
     assetCategory: string;
     isAuctioned: string;
   }>;
   result: string;
+}
+
+interface PutMypage {
+  pos_x: number;
+  pos_y: number;
+  pos_z: number;
+  rot_x: number;
+  rot_y: number;
+  rot_z: number;
+  userAssetId: number;
 }
 
 const fetchAccessToken = async () => {
@@ -249,7 +276,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -519,6 +546,17 @@ export const Api = createApi({
       },
       invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
     }),
+    //  4. 마이 룸 내의 에셋 위치 옮기기
+    putMypage: builder.mutation<ReturnBasicInterFace, PutMypage>({
+      query: (body) => {
+        return {
+          url: `/mypage/`,
+          method: 'PUT',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
 
     // ------------- 창고 -------------------
     //  1. 창고에 있는 물품 리스트 반환
@@ -527,6 +565,16 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'InvenApi' }];
       }
+    }),
+    //  2. 창고에 있는 물품 되팔기
+    postStorageResale: builder.mutation<ReturnBasicInterFace, number>({
+      query: (userAssetId) => {
+        return {
+          url: `/storage/resale/${userAssetId}`,
+          method: 'POST'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }, { type: 'UserApi' }]
     }),
     // ----------- 뽑기상점 ------------
     postGotchaLevel: builder.mutation<ReturnGotchaInterFace, string>({
@@ -537,7 +585,16 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'GotchaApi' }, { type: 'UserApi' }]
-    })
+    }),
+
+    // ----------- 경매 ------------
+    // 1. 경매 물품 리스트 조회
+    getAuction: builder.query<ReturnActionListInterFace, string>({
+      query: () => `/auction`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AuctionApi' }];
+      }
+    }),
   })
 });
 
@@ -583,12 +640,18 @@ export const {
 
   // ------------- 마이페이지 -------------
   useLazyGetMypageQuery,
+  useGetMypageQuery,
   usePostMypageMutation,
   useDeleteMypageMutation,
+  usePutMypageMutation,
 
   // ------------- 창고 -------------
   useGetStorageQuery,
   useLazyGetStorageQuery,
+  usePostStorageResaleMutation,
   // ----------- 미니게임 ------------
-  usePostGotchaLevelMutation
+  usePostGotchaLevelMutation,
+
+  // 경매장
+  useGetAuctionQuery,
 } = Api;

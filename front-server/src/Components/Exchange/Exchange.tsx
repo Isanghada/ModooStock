@@ -803,7 +803,9 @@ function Exchange(): JSX.Element {
 
                       <div className="flex items-center space-x-1">
                         <span className="text-[0.9rem]">현재가</span>
-                        <span className={`text-black text-[1.3rem]`}>{selectCurrentData.priceEnd.toLocaleString()}</span>
+                        <span className={`text-black text-[1.3rem]`}>
+                          {selectCurrentData.priceEnd.toLocaleString()}
+                        </span>
                         <span className="text-black text-[1.3rem]">원</span>
                         <span
                           className={`text-[1rem] flex pt-2 items-end ${
