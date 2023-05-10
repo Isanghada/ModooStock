@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class HomeResDto {
     private Long userAssetId;
     private String assetName;
+    private String assetNameKor;
     private AssetLevelType assetLevel;
     private float pos_x;
     private float pos_y;
@@ -24,6 +25,7 @@ public class HomeResDto {
     public static HomeResDto fromEntity(UserAssetLocation userAssetLocation){
         return HomeResDto.builder()
                 .assetName(userAssetLocation.getAsset().getAssetName())
+                .assetNameKor(userAssetLocation.getAsset().getAssetNameKor())
                 .assetLevel(userAssetLocation.getAsset().getAssetLevel())
                 .userAssetId(userAssetLocation.getId())
                 .pos_x(userAssetLocation.getPosX())
