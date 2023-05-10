@@ -10,6 +10,7 @@ import redopen from 'Components/Common/Lottie/redopen.json';
 import { useEffect, useState } from 'react';
 import { usePostGotchaLevelMutation } from 'Store/api';
 import { toast } from 'react-toastify';
+import { useAppSelector } from 'Store/hooks';
 
 interface AssetDataInterFace {
   assetCategory: string;
@@ -34,6 +35,11 @@ function GachaShop(): JSX.Element {
   const [giftGradeName, setGiftGradeName] = useState<string>('bg-[#2079c2]');
   // 아이템 확인 딜레이
   const [ItemCloseDelay, setItemCloseDelay] = useState<boolean>(false);
+
+  // 현재 잔액 상태
+  const currentMoneyStatus = useAppSelector((state) => {
+    return state.currentMoneyStatus;
+  });
   // 뉴스 구입 API
   const [gotchaItem] = usePostGotchaLevelMutation();
 
@@ -47,18 +53,31 @@ function GachaShop(): JSX.Element {
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
+    const currentMoney = Number(currentMoneyStatus.replaceAll(",", ''));
     switch (target.ariaLabel) {
       case '일반':
+        if (currentMoney < 500000) {
+          toast.error('소지하신 잔액이 부족합니다!');
+          break;
+        }
         setGiftStatus(true);
         setGiftWaitData(bluegift);
         setGiftColor('블루');
         break;
       case '고급':
+        if (currentMoney < 1000000) {
+          toast.error('소지하신 잔액이 부족합니다!');
+          break;
+        }
         setGiftStatus(true);
         setGiftWaitData(redgift);
         setGiftColor('빨강');
         break;
       case '전설':
+        if (currentMoney < 3000000) {
+          toast.error('소지하신 잔액이 부족합니다!');
+          break;
+        }
         setGiftStatus(true);
         setGiftWaitData(yellowgift);
         setGiftColor('노랑');
@@ -221,7 +240,7 @@ function GachaShop(): JSX.Element {
               </div>
               <div
                 className={`bg-[#ffbf00] hover:bg-[#e4ab00] w-2/3 py-1 rounded-2xl text-sm lg:text-2xl text-white font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400  `}>
-                5,000,000원
+                3,000,000원
               </div>
             </div>
           </div>
