@@ -19,6 +19,7 @@ interface ReturnMyInfoInterFace {
     currentMoney: number;
     nickname: string;
     totalStockReturn: number;
+    profileImagePath: string;
   };
   result: string;
 }
