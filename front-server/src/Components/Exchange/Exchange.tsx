@@ -334,7 +334,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('구매 완료하였습니다!');
@@ -363,7 +363,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('구매 완료하였습니다!');
@@ -392,7 +392,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('판매 완료하였습니다!');
@@ -420,7 +420,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('판매 완료하였습니다!');
@@ -803,7 +803,9 @@ function Exchange(): JSX.Element {
 
                       <div className="flex items-center space-x-1">
                         <span className="text-[0.9rem]">현재가</span>
-                        <span className={`text-black text-[1.3rem]`}>{selectCurrentData.priceEnd.toLocaleString()}</span>
+                        <span className={`text-black text-[1.3rem]`}>
+                          {selectCurrentData.priceEnd.toLocaleString()}
+                        </span>
                         <span className="text-black text-[1.3rem]">원</span>
                         <span
                           className={`text-[1rem] flex pt-2 items-end ${

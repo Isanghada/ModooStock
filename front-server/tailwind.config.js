@@ -9,7 +9,8 @@ module.exports = {
         nanum: ["Nanum Gothic"],
       },
       animation: {
-        moving: 'moving 3s linear infinite'
+        moving: 'moving 3s linear infinite',
+        open: 'open 2s linear infinite',
       },
 
       keyframes: {
@@ -44,6 +45,17 @@ module.exports = {
           },
           '100%': {
             transform: 'rotate(0deg)'
+          }
+        },
+        open: {
+          '0%': {
+            transform: 'scale(1)',
+          },
+          '50%': {
+            transform: 'scale(1.1)',
+          },
+          '100%': {
+            transform: 'scale(1)',
           }
         }
       }
