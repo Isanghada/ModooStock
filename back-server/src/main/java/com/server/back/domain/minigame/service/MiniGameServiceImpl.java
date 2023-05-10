@@ -50,28 +50,28 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         Integer ranking=5;
         Long money=0L;
-        if(rd<10) {
+        if(rd<7) {
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 50_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(50_000_000L);
             ranking=1;
             money=50_000_000L;
         }
-        else if(rd>=10&&rd<35){
+        else if(rd>=7&&rd<27){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 3_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(3_000_000L);
             ranking=2;
             money=3_000_000L;
         }
-        else if(rd>=35&&rd<115){
+        else if(rd>=27&&rd<77){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 500_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(500_000L);
             ranking=3;
             money=500_000L;
         }
-        else if(rd>=115&&rd<540){
+        else if(rd>=77&&rd<377){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 10_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000L);
@@ -107,12 +107,12 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         Integer ranking=2;
         Long money=0L;
-        if(rd<7) {
+        if(rd<5) {
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, 10_000_000_000L);
             dealRepository.save(dealPlus);
-            user.increaseCurrentMoney(10_000_000_000L);
+            user.increaseCurrentMoney(700_000_000L);
             ranking=1;
-            money=7_000_000_000L;
+            money=700_000_000L;
         }
 
         return new MiniGameResDto(ranking,money);

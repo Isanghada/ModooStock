@@ -67,6 +67,9 @@ public class StorageServiceImpl implements StorageService {
         UserAssetEntity userAsset=userAssetRepository.findById(myAssetId).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
         if(!userAsset.getUser().equals(user))throw new CustomException(ErrorCode.NO_ACCESS);
 
+        // 이미 삭제된 경우 오류 반환
+        if(userAsset.getIsDeleted().equals(IsDeleted.Y)) throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
+
         //삭제
         userAsset.update();
 
