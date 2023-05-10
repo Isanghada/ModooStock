@@ -97,6 +97,7 @@ const clickAsseData = createSlice({
   initialState: {
     userAssetId: 0,
     assetName: '',
+    assetNameKor: '',
     pos_x: 0.0,
     pos_y: 0.0,
     pos_z: -10.0,
@@ -115,7 +116,7 @@ const clickAsseData = createSlice({
 // 클릭한 에셋 포지션
 const clickAssetPosition = createSlice({
   name: 'clickAssetPosition',
-  initialState: [0, 0, -10],
+  initialState: [0, 0, -200],
   reducers: {
     changeClickAssetPosition(state, action) {
       return (state = action.payload);
@@ -150,6 +151,17 @@ const clickInvenAsset = createSlice({
   }
 });
 
+// 에셋 클릭 여부
+const isClickInvenAssetStore = createSlice({
+  name: 'isClickAssetStore',
+  initialState: false,
+  reducers: {
+    changeIsClickInvenAssetStore(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
   reducer: {
@@ -170,7 +182,8 @@ export const store = configureStore({
     clickAsseData: clickAsseData.reducer,
     clickAssetPosition: clickAssetPosition.reducer,
     clickAssetRotation: clickAssetRotation.reducer,
-    clickInvenAsset: clickInvenAsset.reducer
+    clickInvenAsset: clickInvenAsset.reducer,
+    isClickInvenAssetStore: isClickInvenAssetStore.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -193,6 +206,7 @@ export const { changeClickAsseData } = clickAsseData.actions;
 export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
 export const { changeClickInvenAsset } = clickInvenAsset.actions;
+export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

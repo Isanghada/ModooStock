@@ -195,6 +195,7 @@ interface ReturnMyRoomAsset {
     userAssetId: number;
     assetName: string;
     assetLevel: string;
+    assetNameKor: string;
     pos_x: number;
     pos_y: number;
     pos_z: number;
@@ -209,6 +210,7 @@ interface ReturnInven {
     userAssetId: number;
     assetName: string;
     assetLevel: string;
+    assetNameKor: string;
     assetCategory: string;
     isAuctioned: string;
   }>;
