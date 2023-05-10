@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import styled from './Mypage.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,7 @@ import {
   usePutMypageMutation
 } from 'Store/api';
 import { toast } from 'react-toastify';
+import AssetLoading from 'Components/Common/AssetLoading';
 
 function Mypage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -274,6 +275,7 @@ function Mypage(): JSX.Element {
               />
             </div>
             <div className="w-[80%] flex justify-center h-[87%] items-center">
+              {/* <Suspense fallback={<AssetLoading />}> */}
               <Canvas
                 style={{ width: '100%', height: '100%', paddingTop: '6%' }}
                 orthographic
@@ -296,6 +298,7 @@ function Mypage(): JSX.Element {
                   setIsClickAsset={setIsClickAsset}
                 />
               </Canvas>
+              {/* </Suspense> */}
             </div>
           </div>
           <div className="flex justify-center items-center lg:w-[33%] lg:pr-[2%] xl:pr-0 xl:w-[27%] pb-10">

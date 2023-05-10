@@ -91,8 +91,6 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
       setFunitureList(
         funitureListData
           .map((funiture, idx) => {
-            console.log('funiture: ', funiture);
-
             return (
               <div
                 onClick={() => {
