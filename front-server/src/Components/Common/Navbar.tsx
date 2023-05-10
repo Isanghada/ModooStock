@@ -22,7 +22,7 @@ function Navbar(): JSX.Element {
   const [myNickName, setMyNickName] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
-
+  const [isUnmounted, setIsUnmounted] = useState(false);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
 
@@ -169,8 +169,7 @@ function Navbar(): JSX.Element {
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
-      const currentDate = new Date().toLocaleString('ko-kr');
-      if (hour >= 10 && hour < 22) {
+      if (hour >= 10 && hour < 22 && !isUnmounted) {
         toast.info('새로운 하루의 정보가 갱신되었습니다');
         // 내정보 갱신
         setTimeout(async () => {
@@ -179,6 +178,11 @@ function Navbar(): JSX.Element {
       }
     });
     getIndex();
+
+    return () => {
+      job.cancel();
+      setIsUnmounted(true);
+    };
   }, []);
   
 

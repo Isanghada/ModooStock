@@ -334,7 +334,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('구매 완료하였습니다!');
@@ -363,7 +363,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('구매 완료하였습니다!');
@@ -392,7 +392,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('판매 완료하였습니다!');
@@ -420,7 +420,7 @@ function Exchange(): JSX.Element {
                 // 시스템 메시지에 추가
                 await addDoc(collection(dbService, 'system'), {
                   nickname: localStorage.getItem('nickname'),
-                  content: `님이 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
                   createdAt: serverTimestamp()
                 });
                 toast.success('판매 완료하였습니다!');

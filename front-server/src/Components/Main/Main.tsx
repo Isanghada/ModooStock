@@ -392,6 +392,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full w-full cursor-pointer absolute pl-1 hover:scale-[1.2] active:scale-[1.2] transition-all duration-300"
                 src={process.env.REACT_APP_S3_URL + '/images/toys/guide.png'}
                 alt=""
+                onClick={handleOpenGuide}
               />
               <div className="h-[5%]"></div>
             </div>
@@ -588,7 +589,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       </motion.div>
-      {openGuide && <Guide onClose={handleCloseGuide} />}
+      {openGuide && <Guide onClose={handleCloseGuide} openGuide={openGuide} />}
       <Modal isOpen={isOpen} onClose={handleCloseModal} padding={'p-6 lg:p-8'}>
         <VisitModal onClose={handleCloseModal} />
       </Modal>
