@@ -60,7 +60,9 @@ function Main(): JSX.Element {
       case '미니 게임':
         navigate('/lottery');
         break;
-
+      case '경매장':
+          navigate('/auction');
+          break;
       default:
         break;
     }
@@ -131,6 +133,7 @@ function Main(): JSX.Element {
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] transition-all duration-300"
                 src={process.env.REACT_APP_S3_URL + '/images/toys/auction.png'}
                 alt=""
+                onClick={click}
               />
             </div>
             <div className="h-[12%]"></div>
