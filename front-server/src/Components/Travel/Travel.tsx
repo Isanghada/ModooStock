@@ -121,8 +121,8 @@ function BottomButtons(): JSX.Element {
           onClick={handleRandomVisit}
         />
       </div>
-      <Modal isOpen={isOpen} onClose={handleCloseModal}>
-        <GuestBookList />
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={false}>
+        <GuestBookList onClose={handleCloseModal} />
       </Modal>
     </>
   );

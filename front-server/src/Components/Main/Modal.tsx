@@ -6,17 +6,16 @@ type ModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   padding?: string;
+  canOpenModal?: boolean;
 };
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding = '', canOpenModal = true }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const el = document.getElementById('modal-root');
 
-  if (padding === undefined) padding = '';
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (canOpenModal && modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
