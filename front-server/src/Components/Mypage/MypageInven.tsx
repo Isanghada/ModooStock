@@ -1,6 +1,14 @@
 import styled from './Mypage.module.css';
 import { useRef, useState } from 'react';
 
+interface ReturnInvenType {
+  userAssetId: number;
+  assetImagePath: string;
+  assetLevel: string;
+  assetCategory: null;
+  isAuctioned: string;
+}
+
 function MypageInven(): JSX.Element {
   const containerRef = useRef<any>(null);
   const [dragging, setDragging] = useState<boolean>(false);
@@ -13,7 +21,11 @@ function MypageInven(): JSX.Element {
         className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 border-[#F0EBE3] rounded-2xl mx-1 lg:mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
         {/* 이미지 */}
         <div className="flex justify-center w-[50%] h-[65%] lg:h-[75%] lg:mb-1">
-          <img className="h-full drop-shadow-lg" src="/images/funitures/funiture.png" alt="asdsd" />
+          <img
+            className="h-full drop-shadow-lg"
+            src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
+            alt=""
+          />
         </div>
         {/* 희귀도 */}
         <div className="bg-[#FFC34F] drop-shadow-lg px-3 lg:px-7 mb-[5%] text-[0.6rem] lg:text-[1rem] rounded-full font-extrabold flex">

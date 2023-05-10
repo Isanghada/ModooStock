@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "모두의 주식",
+  "name": "모두의 주식 for SSAFY",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,7 +19,7 @@
     }
   ],
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "theme_color": "#000000",
   "background_color": "#ffffff"
