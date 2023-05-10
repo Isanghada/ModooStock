@@ -25,4 +25,7 @@ public class AssetEntity {
     @Column(nullable = false,unique = true)
     private String assetName;
 
+    @Column(nullable = false)
+    private String assetNameKor;
+
 }

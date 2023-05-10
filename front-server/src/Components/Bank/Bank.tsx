@@ -48,7 +48,7 @@ function Bank(): JSX.Element {
             <div className="py-4 mx-auto lg:py-8">
               <img
                 className="object-contain w-[4rem] md:w-[5rem] lg:w-[7rem] h-[4rem] md:h-[5rem] lg:h-[7rem]"
-                src="/images/icons/money1.png"
+                src={process.env.REACT_APP_S3_URL + '/images/icons/money1.png'}
                 alt=""
               />
             </div>
@@ -73,7 +73,7 @@ function Bank(): JSX.Element {
             <div className="py-4 mx-auto lg:py-8">
               <img
                 className="object-contain w-[4rem] md:w-[5rem] lg:w-[7rem] h-[4rem] md:h-[5rem] lg:h-[7rem]"
-                src="/images/icons//money2.png"
+                src={process.env.REACT_APP_S3_URL + '/images/icons/money2.png'}
                 alt=""
               />
             </div>
@@ -98,7 +98,7 @@ function Bank(): JSX.Element {
             <div className="py-4 mx-auto lg:py-8">
               <img
                 className="object-contain w-[4rem] md:w-[5rem] lg:w-[7rem] h-[4rem] md:h-[5rem] lg:h-[7rem]"
-                src="/images/icons/money3.png"
+                src={process.env.REACT_APP_S3_URL + '/images/icons/money3.png'}
                 alt=""
               />
             </div>

@@ -98,9 +98,9 @@ function Lottery(): JSX.Element {
 
   useEffect(() => {
     if (isOpen) {
-      dispatch(changeCurrentMoneyHideStatus(false));
-    } else {
       dispatch(changeCurrentMoneyHideStatus(true));
+    } else {
+      dispatch(changeCurrentMoneyHideStatus(false));
     }
   }, [isOpen, dispatch]);
 
@@ -110,7 +110,7 @@ function Lottery(): JSX.Element {
         {/* 1. 스피드 복권 */}
         <LotteryCard
           title="스피드 복권"
-          backgroundImage="images/logos/IntroBG2.png"
+          backgroundImage={process.env.REACT_APP_S3_URL + '/images/logos/IntroBG2.png'}
           color="#F0A633"
           onClick={() => handleLotteryClick(false)}
           description={['긁어봐 당첨 복권!', '만원으로 최대 오천만원까지']}
@@ -119,7 +119,7 @@ function Lottery(): JSX.Element {
         {/* 2. 어둠의 복권 */}
         <LotteryCard
           title="어둠의 복권"
-          backgroundImage="images/logos/IntroDarkBG.png"
+          backgroundImage={process.env.REACT_APP_S3_URL + '/images/logos/IntroDarkBG.png'}
           color="#748DA6"
           onClick={() => handleLotteryClick(true)}
           description={['모 아님 도', '백만원으로 10억원 vs 꽝']}

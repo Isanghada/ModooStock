@@ -74,6 +74,9 @@ public class MyPageServiceImpl implements MyPageService{
         if(!user.equals(userAssetLocation.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
 
         userAssetLocation.update(IsInRespository.N);
+
+        // 카테고리 ROOM 제외 나머지 asset들 모두 posZ를 -200로 설정
+        if (!userAssetLocation.getAsset().getCategory().equals("ROOM")) userAssetLocation.update(-200F);
     }
 
     /**

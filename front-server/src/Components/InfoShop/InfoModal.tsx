@@ -27,7 +27,6 @@ interface BuyNewsInterFace {
   };
 }
 
-
 export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, cancel }: ModalInterFace) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [src, setSrc] = useState('');
@@ -44,7 +43,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   // 뉴스 디테일 모달 창 닫기
   const closeNewsModal = () => {
     setNewsModalOpen(false);
-  }
+  };
   // 현재 잔액 상태
   const currentMoneyStatus = useAppSelector((state) => {
     return state.currentMoneyStatus;
@@ -54,7 +53,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   // 뉴스 구입 요청
   const buyNewsPaper = async (price: number, color: string) => {
     const currentMoney = Number(currentMoneyStatus);
-    const newColor = color.replace("text", "bg")
+    const newColor = color.replace('text', 'bg');
     if (currentMoney < price) {
       toast.error('소지하신 잔액이 부족합니다!');
       return;
@@ -65,19 +64,19 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
       toast.success('정보 구입완료');
       closeModal();
       setNewsModalOpen(true);
-      setNewsModalData({...buyNewsData, color: newColor})
+      setNewsModalData({ ...buyNewsData, color: newColor });
     } catch (error) {
-      console.log(error, "정보 구입 실패");
+      console.log(error, '정보 구입 실패');
     }
   };
   // 이미지 로딩상태 체크
   useEffect(() => {
     const img = new Image();
     img.onload = () => {
-      setSrc('/images/icons/info.png');
+      setSrc(process.env.REACT_APP_S3_URL + '/images/icons/info.png');
       setIsLoaded(true);
     };
-    img.src = '/images/icons/info.png';
+    img.src = process.env.REACT_APP_S3_URL + '/images/icons/info.png';
   }, []);
   return (
     <>
