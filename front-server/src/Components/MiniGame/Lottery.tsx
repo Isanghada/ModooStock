@@ -106,7 +106,7 @@ function Lottery(): JSX.Element {
 
   return (
     <>
-      <div className="flex items-center w-full h-full justify-evenly max-w-[80rem] max-h-[46.5rem] mt-4 md:mt-0 my-auto mx-auto lg:flex">
+      <div className="flex items-center w-full h-full justify-evenly max-w-[80rem] max-h-[46.5rem] pt-6 my-auto mx-auto">
         {/* 1. 스피드 복권 */}
         <LotteryCard
           title="스피드 복권"

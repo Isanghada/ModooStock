@@ -75,7 +75,7 @@ const SystemChatting = () => {
             dispatch(changeChattingStatus(false));
           }}
           className={`w-3 h-3 lg:min-w-6 lg:min-h-6 lg:w-6 lg:h-6 cursor-pointer hover:scale-105`}
-          src="chatting/cancel.png"
+          src={`${process.env.REACT_APP_S3_URL}/chatting/cancel.png`}
           alt="cancel"
         />
       </div>
@@ -110,9 +110,8 @@ const SystemChatting = () => {
                           {currentDate}
                         </span>
                       </div>
-                      <div className="flex items-end justify-center lg:w-11/12">
-                        <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
-                          {msg.nickname}
+                      <div className="flex flex-col items-center justify-center w-full lg:w-11/12">
+                        <div className={`${msg.content.includes("구매") ? "bg-red-700" : "bg-blue-700" } w-full px-2 py-1 text-xs text-center  rounded-lg h-fit lg:text-sm`}>
                           {msg.content}
                         </div>
                         <div className="text-xs text-slate-500 min-w-fit grow">{date}</div>
@@ -123,12 +122,11 @@ const SystemChatting = () => {
               }
               // 전날과 같지 않으면
               return (
-                <div className="flex items-end justify-center lg:w-11/12">
-                  <div className="px-2 py-1 text-center bg-gray-800 lg:w-5/6 h-fit">
-                    {msg.nickname}
+                <div className="flex flex-col items-center justify-center w-full lg:w-11/12">
+                  <div className={`${msg.content.includes("구매") ? "bg-red-700" : "bg-blue-700" }  w-full px-2 py-1 text-xs text-center  rounded-lg lg:text-sm h-fit`}>
                     {msg.content}
                   </div>
-                  <div className="text-xs text-slate-500 min-w-fit grow">{date}</div>
+                  <div className="w-full text-xs text-slate-500 min-w-fit text-end">{date}</div>
                 </div>
               );
             })}

@@ -54,12 +54,12 @@ function Layout(): JSX.Element {
   useEffect(() => {
     // 레이아웃 최소값 세팅
     const height = window.screen.height;
-    setScreenHeight(`${height * 7/10}px`);
+    setScreenHeight(`${height * 3/10}px`);
   }, [window.screen.height]);
 
   return (
     <>
-      <div className="bg-[#FEF3F3] w-screen relative flex">
+      <div className="bg-[#FFF9F9] w-screen relative flex">
         <div
           style={window.screen.height >= 800 ? { minHeight: screenHeight } : {}}
           className={`${

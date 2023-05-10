@@ -20,9 +20,10 @@ function Navbar(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [myNickName, setMyNickName] = useState<string>('');
+  const [myProfile, setMyProfile] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
-
+  const [isUnmounted, setIsUnmounted] = useState(false);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
 
@@ -70,8 +71,10 @@ function Navbar(): JSX.Element {
   // 유저 정보 가져오기
   const getUser = async () => {
     const { data } = await getUsersInfo('');
+    console.log(data, "내정보")
     if (data) {
-      const { nickname, currentMoney, totalStockReturn } = data.data;
+      const { nickname, currentMoney, totalStockReturn, profileImagePath } = data.data;
+      setMyProfile(profileImagePath);
       setMyNickName(nickname);
       setCurrentMoney(currentMoney.toLocaleString());
       dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
@@ -169,8 +172,7 @@ function Navbar(): JSX.Element {
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
-      const currentDate = new Date().toLocaleString('ko-kr');
-      if (hour >= 10 && hour < 22) {
+      if (hour >= 10 && hour < 22 && !isUnmounted) {
         toast.info('새로운 하루의 정보가 갱신되었습니다');
         // 내정보 갱신
         setTimeout(async () => {
@@ -179,6 +181,11 @@ function Navbar(): JSX.Element {
       }
     });
     getIndex();
+
+    return () => {
+      job.cancel();
+      setIsUnmounted(true);
+    };
   }, []);
   
 
@@ -196,7 +203,7 @@ function Navbar(): JSX.Element {
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
               onClick={click}>
-              <img className="w-5/6" src={process.env.REACT_APP_S3_URL + `/images/toys/pink.png`} alt="money" />
+              <img className="w-2/3" src={myProfile} alt="profile" />
             </div>
             <div
               className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${

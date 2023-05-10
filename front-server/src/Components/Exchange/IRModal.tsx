@@ -227,7 +227,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                    <span className="text-[1rem] lg:text-[1.3rem] leading-5 lg:leading-8">
                       {selectYear !== '' &&
                         (selectIRData[selectYear][quarterClick]['operating revenue'] / 100000000 > 0
                           ? Math.floor(
@@ -250,7 +250,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                    <span className="text-[1rem] lg:text-[1.3rem] leading-5 lg:leading-8">
                       {selectYear !== '' &&
                         (selectIRData[selectYear][quarterClick]['operating gain'] / 100000000 > 0
                           ? Math.floor(
@@ -273,7 +273,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                    <span className="text-[1rem] lg:text-[1.3rem] leading-5 lg:leading-8">
                       {selectYear !== '' &&
                         (selectIRData[selectYear][quarterClick]['total equity'] / 100000000 > 0
                           ? Math.floor(
@@ -296,7 +296,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
                     />
                   </div>
                   <div className="flex flex-col items-center justify-start">
-                    <span className="text-[1rem] lg:text-[1.5rem] leading-5 lg:leading-8">
+                    <span className="text-[1rem] lg:text-[1.3rem] leading-5 lg:leading-8">
                       {selectYear !== '' &&
                         (selectIRData[selectYear][quarterClick]['total liabilities'] / 100000000 > 0
                           ? Math.floor(
