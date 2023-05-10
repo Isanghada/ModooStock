@@ -19,13 +19,6 @@ interface NewsPropsInterFace {
   date: string;
   kind: string;
 }
-interface BuyNewsInterFace {
-  data: {
-    content: string;
-    date: string;
-    kind: string;
-  };
-}
 
 export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, cancel }: ModalInterFace) {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -52,7 +45,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   const [buyNews] = usePostNewsBuyMutation();
   // 뉴스 구입 요청
   const buyNewsPaper = async (price: number, color: string) => {
-    const currentMoney = Number(currentMoneyStatus);
+    const currentMoney = Number(currentMoneyStatus.replaceAll(",", ''));
     const newColor = color.replace('text', 'bg');
     if (currentMoney < price) {
       toast.error('소지하신 잔액이 부족합니다!');
