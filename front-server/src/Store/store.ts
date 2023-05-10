@@ -91,14 +91,16 @@ const currentDataIndex = createSlice({
 });
 
 // ------------- 마이페이지 -------------
+// 클릭한 에셋 데이터
 const clickAsseData = createSlice({
   name: 'clickAssetName',
   initialState: {
     userAssetId: 0,
     assetName: '',
+    assetNameKor: '',
     pos_x: 0.0,
     pos_y: 0.0,
-    pos_z: -195.0,
+    pos_z: -10.0,
     rot_x: 0.0,
     rot_y: 0.0,
     rot_z: 0.0,
@@ -111,16 +113,17 @@ const clickAsseData = createSlice({
   }
 });
 
+// 클릭한 에셋 포지션
 const clickAssetPosition = createSlice({
   name: 'clickAssetPosition',
-  initialState: [0, 0, -195.0],
+  initialState: [0, 0, -200],
   reducers: {
     changeClickAssetPosition(state, action) {
       return (state = action.payload);
     }
   }
 });
-
+// 클릭한 에셋 회전
 const clickAssetRotation = createSlice({
   name: 'clickAssetRotation',
   initialState: [0, 0, 0],
@@ -131,6 +134,7 @@ const clickAssetRotation = createSlice({
   }
 });
 
+// 클릭한 인벤 에셋
 const clickInvenAsset = createSlice({
   name: 'clickInvenAsset',
   initialState: {
@@ -142,6 +146,17 @@ const clickInvenAsset = createSlice({
   },
   reducers: {
     changeClickInvenAsset(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
+
+// 에셋 클릭 여부
+const isClickInvenAssetStore = createSlice({
+  name: 'isClickAssetStore',
+  initialState: false,
+  reducers: {
+    changeIsClickInvenAssetStore(state, action) {
       return (state = action.payload);
     }
   }
@@ -167,7 +182,8 @@ export const store = configureStore({
     clickAsseData: clickAsseData.reducer,
     clickAssetPosition: clickAssetPosition.reducer,
     clickAssetRotation: clickAssetRotation.reducer,
-    clickInvenAsset: clickInvenAsset.reducer
+    clickInvenAsset: clickInvenAsset.reducer,
+    isClickInvenAssetStore: isClickInvenAssetStore.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -190,6 +206,7 @@ export const { changeClickAsseData } = clickAsseData.actions;
 export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
 export const { changeClickInvenAsset } = clickInvenAsset.actions;
+export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;
