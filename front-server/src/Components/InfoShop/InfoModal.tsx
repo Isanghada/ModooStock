@@ -115,7 +115,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
                       {propsData.name}&nbsp;
                       <span className="text-gray-600 ">{msg}</span>
                       <div className="text-sm text-gray-600 lg:text-lg">
-                        가격은 <span className={`text-red-500`}>{propsData.price}원</span> 입니다
+                        가격은 <span className={`text-red-500`}>{propsData.price.toLocaleString()}원</span> 입니다
                       </div>
                     </Dialog.Title>
 

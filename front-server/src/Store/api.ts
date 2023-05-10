@@ -186,6 +186,7 @@ interface ReturnGotchaInterFace {
     assetId: number;
     assetLevel: string;
     assetName: string;
+    assetNameKor: string;
   };
   result: string;
 }
@@ -529,7 +530,6 @@ export const Api = createApi({
     // ----------- 뽑기상점 ------------
     postGotchaLevel: builder.mutation<ReturnGotchaInterFace, string>({
       query: (gotchaLevel) => {
-        console.log('뽑기레벨', gotchaLevel);
         return {
           url: `/store/level/${gotchaLevel}`,
           method: 'Post'
