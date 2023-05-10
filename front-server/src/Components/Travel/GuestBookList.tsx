@@ -1,53 +1,8 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import DeleteGuestBookModal from './DeleteGuestBookModal';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
-}
-
-function test(): JSX.Element {
-  return (
-    <div className="w-[1042px] h-[545px]">
-      <div className="w-[1042px] h-[462px] absolute left-[219.5px] top-[321.5px] rounded-bl-[20px] rounded-br-[20px] bg-[#fff6f2] border border-[#fde2e2]" />
-      <div className="w-[1042px] h-[83px] absolute left-[220.5px] top-[238.5px] rounded-tl-[20px] rounded-tr-[20px] bg-[#fde2e2]" />
-      <div className="w-[207px] h-[204px] absolute left-[269.5px] top-[352.5px] rounded-[15px] bg-white border border-[#fde2e2]" />
-      <div className="w-[207px] h-[184px] absolute left-[273.5px] top-[587.5px] rounded-[15px] bg-white" />
-      <div className="w-[207px] h-[204px] absolute left-[974.5px] top-[352.5px] rounded-[15px] bg-white" />
-      <div className="w-[207px] h-[204px] absolute left-[739.5px] top-[352.5px] rounded-[15px] bg-white" />
-      <div className="w-[207px] h-[204px] absolute left-[504.5px] top-[352.5px] rounded-[15px] bg-white border border-[#fde2e2]" />
-      <p className="w-[257px] h-[55px] absolute left-[261px] top-[253px] text-[52px] font-semibold text-center text-[#ff6060]">
-        방명록
-      </p>
-      <p className="w-[174px] h-[52px] absolute left-[301px] top-[416px] text-base text-left text-[#747474]">
-        안녕하세요. 왔다감
-      </p>
-      <img
-        alt=""
-        src="image-206.png"
-        className="w-[26px] h-[27px] absolute left-[291.5px] top-[367.5px] rounded-[73.5px] object-none"
-      />
-      <p className="w-[95px] h-[27px] absolute left-[334px] top-[378px] text-base font-semibold text-left text-[#454545]">
-        오리
-      </p>
-      <img
-        alt=""
-        src="multiply-1.png"
-        className="w-[53px] h-[53px] absolute left-[1192.5px] top-[306.5px] object-cover"
-      />
-      <div className="w-[75px] h-[76px] absolute left-[1155px] top-[678px] rounded-[50px] bg-white border-2 border-[#fde2e2]" />
-      <img
-        alt=""
-        src="pencil-1.png"
-        className="w-[50px] h-[50px] absolute left-[1167.5px] top-[691.5px] object-cover"
-      />
-      <img alt="" src="delete-1.png" className="w-[18px] h-[18px] absolute left-[438.5px] top-[523.5px] object-cover" />
-      <img alt="" src="edit-1.png" className="w-[18px] h-[18px] absolute left-[412.5px] top-[523.5px] object-cover" />
-      <img
-        alt=""
-        src="mail-box-1.png"
-        className="w-[67px] h-[67px] absolute left-[239.5px] top-[246.5px] object-cover"
-      />
-    </div>
-  );
 }
 
 interface GuestBookItemProps {
@@ -63,27 +18,38 @@ interface GuestBookItemProps {
 }
 
 function GuestBookItem({ authorResDto: author, commentResDto: comment }: GuestBookItemProps): JSX.Element {
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+
+  const handleOpenModal = () => {
+    setIsShowDeleteModal(true);
+  };
+
   return (
-    <div className="w-[208px] h-[204px] rounded-xl bg-white border border-[#fde2e2] p-4">
-      <div className="flex flex-row mb-2">
-        <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
-          <img className="m-1 rounded-full object-contain" src={`${author.profileImagePath}`} alt="프로필 이미지" />
-        </div>
-        <p className="w-[95px] h-[26px] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
-      </div>
-      <p className="w-[174px] h-[120px] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
-      {/* 오른쪽 아래 수정 및 삭제 버튼 */}
-      {comment.isEditable && (
-        <div className="bottom-0 flex justify-end gap-2">
-          <button className="">
-            <img alt="" src="/images/icons/delete.png" className="w-[18px] h-[18px] object-cover" />
-          </button>
-          <button className="">
-            <img alt="" src="/images/icons/edit.png" className="w-[18px] h-[18px] object-cover" />
-          </button>
-        </div>
+    <>
+      {isShowDeleteModal && (
+        <DeleteGuestBookModal isShowDeleteModal={isShowDeleteModal} setIsShowDeleteModal={setIsShowDeleteModal} />
       )}
-    </div>
+      <div className="w-[208px] h-[204px] rounded-xl bg-white border border-[#fde2e2] p-4">
+        <div className="flex flex-row mb-2">
+          <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
+            <img className="m-1 rounded-full object-contain" src={`${author.profileImagePath}`} alt="프로필 이미지" />
+          </div>
+          <p className="w-[95px] h-[26px] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
+        </div>
+        <p className="w-[174px] h-[120px] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
+        {/* 오른쪽 아래 수정 및 삭제 버튼 */}
+        {comment.isEditable && (
+          <div className="bottom-0 flex justify-start gap-2">
+            <button className="" onClick={handleOpenModal}>
+              <img alt="" src="/images/icons/delete.png" className="w-[18px] h-[18px] object-cover" />
+            </button>
+            <button className="">
+              <img alt="" src="/images/icons/edit.png" className="w-[18px] h-[18px] object-cover" />
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -95,8 +61,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 1,
-      content:
-        '안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감',
+      content: '안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. ',
       isEditable: false
     }
   },
@@ -118,6 +83,17 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 3,
+      content: '일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십',
+      isEditable: false
+    }
+  },
+  {
+    authorResDto: {
+      nickname: '강아지',
+      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
+    },
+    commentResDto: {
+      commentId: 4,
       content: '멍멍',
       isEditable: false
     }
@@ -128,7 +104,7 @@ const guestBookList: GuestBookItemProps[] = [
       profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
     },
     commentResDto: {
-      commentId: 3,
+      commentId: 5,
       content: '멍멍',
       isEditable: false
     }
@@ -139,7 +115,7 @@ const guestBookList: GuestBookItemProps[] = [
       profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
     },
     commentResDto: {
-      commentId: 3,
+      commentId: 6,
       content: '멍멍',
       isEditable: false
     }
@@ -150,7 +126,7 @@ const guestBookList: GuestBookItemProps[] = [
       profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
     },
     commentResDto: {
-      commentId: 3,
+      commentId: 7,
       content: '멍멍',
       isEditable: false
     }
@@ -161,20 +137,9 @@ const guestBookList: GuestBookItemProps[] = [
       profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
     },
     commentResDto: {
-      commentId: 3,
+      commentId: 8,
       content: '멍멍',
-      isEditable: false
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 3,
-      content: '멍멍',
-      isEditable: false
+      isEditable: true
     }
   },
   {

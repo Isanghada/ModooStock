@@ -1,64 +1,72 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
-interface props {
-  onClose: () => void;
-  children: React.ReactNode;
+interface InfoModalType {
+  isShowDeleteModal: boolean;
+  setIsShowDeleteModal: Dispatch<SetStateAction<boolean>>;
 }
 
-function DeleteGuestBookModal({ onClose, children }: props) {
-  const [showNestedModal, setShowNestedModal] = useState(false);
+function DeleteGuestBookModal({ isShowDeleteModal, setIsShowDeleteModal }: InfoModalType): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [src, setSrc] = useState('');
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      setSrc(process.env.REACT_APP_S3_URL + '/images/icons/info.png');
+      setIsLoaded(true);
+    };
+    img.src = process.env.REACT_APP_S3_URL + '/images/icons/info.png';
+  }, []);
 
-  const handleOpenNestedModal = () => {
-    setShowNestedModal(true);
+  const click = (e: React.MouseEvent) => {
+    setIsShowDeleteModal(false);
   };
-
-  const handleCloseNestedModal = () => {
-    setShowNestedModal(false);
-  };
-
-  return ReactDOM.createPortal(
-    <div className="modal">
-      <div className="modal-content">
-        <button className="close-btn" onClick={onClose}>
-          &times;
-        </button>
-        {children}
-        <button onClick={handleOpenNestedModal}>Open nested modal</button>
-        {showNestedModal && (
-          <DeleteGuestBookModal onClose={handleCloseNestedModal} key="nestedModal">
-            <h2>Nested modal</h2>
-            <p>This is the content of the nested modal.</p>
-          </DeleteGuestBookModal>
-        )}
-      </div>
-    </div>,
-    document.body
+  return (
+    <>
+      {isShowDeleteModal && (
+        <div
+          ref={ref}
+          className="relative z-[60]"
+          onClick={(e) => {
+            if (ref.current !== e.target) {
+              setIsShowDeleteModal(false);
+            }
+          }}>
+          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-full p-4 text-center">
+              <div className="w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold">
+                <div className="flex justify-center w-full my-2 lg:my-4">
+                  <img className="w-[12%] h-auto" src="/images/icons/warning.png" alt="info" />
+                </div>
+                <div className={`w-full mb-2 lg:mb-6 lg:pt-2 text-red-500`}>
+                  <div className="w-full ">
+                    <span className="text-gray-600">방명록을&nbsp;</span>
+                    <span>삭제</span>
+                    <span className="text-gray-600">하시겠습니까?</span>
+                  </div>
+                </div>
+                <div className="flex justify-evenly ">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center px-2 lg:px-4 py-[2px] lg:py-1 min-w-[4.5rem] w-[40%] text-xs font-medium lg:text-base lg:font-semibold text-white bg-[#ED0000]/80 border border-transparent rounded-md hover:bg-[#ED0000] focus:outline-none "
+                    onClick={click}>
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex justify-center px-2 lg:px-4 py-[2px] lg:py-1 min-w-[4.5rem] w-[40%] text-xs font-medium lg:text-base lg:font-semibold text-white bg-[#1971C2]/80 border border-transparent rounded-md hover:bg-[#1971C2] focus:outline-none "
+                    onClick={click}>
+                    확인
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
-
-// function DeleteGuestBookModal(): JSX.Element {
-//   const [showModal, setShowModal] = useState(false);
-
-//   const handleCloseModal = () => {
-//     setShowModal(false);
-//   };
-
-//   const handleOpenModal = () => {
-//     setShowModal(true);
-//   };
-
-//   return (
-//     <div className="deleteGuestBookModal">
-//       <button onClick={handleOpenModal}>Open modal</button>
-//       {showModal && (
-//         <Modal onClose={handleCloseModal} key="modal">
-//           <h2>Main modal</h2>
-//           <p>This is the content of the main modal.</p>
-//         </Modal>
-//       )}
-//     </div>
-//   );
-// }
 
 export default DeleteGuestBookModal;
