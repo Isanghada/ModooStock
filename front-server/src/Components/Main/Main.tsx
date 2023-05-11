@@ -90,7 +90,6 @@ function Main(): JSX.Element {
     <>
       {/* 데스크탑 */}
       <motion.div
-        // key={}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
