@@ -103,19 +103,19 @@ function BottomButtons(): JSX.Element {
         <img
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer
         hover:scale-105 transition-all duration-300"
-          src="/images/icons/backIcon.png"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/backIcon.png'}
           alt="돌아가기"
           onClick={() => navigate('/main')}
         />
         <img
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
-          src="/images/icons/guestBookIcon.png"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/guestBookIcon.png'}
           alt="방명록"
           onClick={handleOpenModal}
         />
         <img
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
-          src="/images/icons/randomVisit.png"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/randomVisit.png'}
           alt="랜덤방문"
           onClick={handleRandomVisit}
         />

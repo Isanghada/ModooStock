@@ -40,10 +40,18 @@ function GuestBookItem({
         {comment.isEditable && (
           <div className="bottom-0 flex justify-start gap-2">
             <button className="" onClick={handleOpenDeleteModal}>
-              <img alt="" src="/images/icons/delete.png" className="w-[18px] h-[18px] object-cover" />
+              <img
+                alt=""
+                src={process.env.REACT_APP_S3_URL + '/images/visits/delete.png'}
+                className="w-[18px] h-[18px] object-cover"
+              />
             </button>
             <button className="" onClick={handleOpenWriteModal}>
-              <img alt="" src="/images/icons/edit.png" className="w-[18px] h-[18px] object-cover" />
+              <img
+                alt=""
+                src={process.env.REACT_APP_S3_URL + '/images/visits/edit.png'}
+                className="w-[18px] h-[18px] object-cover"
+              />
             </button>
           </div>
         )}
@@ -100,7 +108,7 @@ const guestBookList: GuestBookItemProps[] = [
   {
     authorResDto: {
       nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
+      profileImagePath: 'https://i.pinimg.com/236x/e4/0d/31/e40d31b6c62a4b11d13b5f0e2d8c7c7e.jpg'
     },
     commentResDto: {
       commentId: 5,
@@ -110,12 +118,12 @@ const guestBookList: GuestBookItemProps[] = [
   },
   {
     authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
+      nickname: '시나몬롤',
+      profileImagePath: 'https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/sinamonroll.png'
     },
     commentResDto: {
       commentId: 6,
-      content: '멍멍',
+      content: '안녕',
       isEditable: false
     }
   },
@@ -195,11 +203,19 @@ function GuestBookList({ onClose }: Props): JSX.Element {
       <div className="flex flex-col w-fit h-[34rem]">
         <div className="flex w-full h-[5.125rem] rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-8 pr-4 justify-between">
           <div className="flex items-center">
-            <img alt="" src="/images/icons/mailBox.png" className="w-[60px] h-[60px] object-cover" />
+            <img
+              alt=""
+              src={process.env.REACT_APP_S3_URL + '/images/visits/mailBox.png'}
+              className="w-[60px] h-[60px] object-cover"
+            />
             <p className="text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
           </div>
           <button className="w-[3rem] h-[3rem] object-cover round-full" onClick={onClose}>
-            <img alt="" src="/images/icons/multiply.png" className="w-[3rem] h-[3rem] object-cover round-full" />
+            <img
+              alt=""
+              src={process.env.REACT_APP_S3_URL + '/images/visits/multiply.png'}
+              className="w-[3rem] h-[3rem] object-cover round-full"
+            />
           </button>
         </div>
         <div className="w-fit h-[28.875rem] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto">
@@ -214,7 +230,11 @@ function GuestBookList({ onClose }: Props): JSX.Element {
             ))}
           </div>
           <button className="absolute bottom-4 right-4 flex justify-center items-center w-[3.75rem] h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1">
-            <img alt="" src="/images/icons/pencil.png" className="w-[2.5rem] h-[2.5rem] object-cover" />
+            <img
+              alt=""
+              src={process.env.REACT_APP_S3_URL + '/images/visits/pencil.png'}
+              className="w-[2.5rem] h-[2.5rem] object-cover"
+            />
           </button>
         </div>
       </div>

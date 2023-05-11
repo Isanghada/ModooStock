@@ -7,11 +7,19 @@ type ModalProps = {
   children: React.ReactNode;
   padding?: string;
   canOpenModal?: boolean;
+  elementId?: string;
 };
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding = '', canOpenModal = true }) => {
+const Modal: FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+  padding = '',
+  canOpenModal = true,
+  elementId = 'modal-root'
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const el = document.getElementById('modal-root');
+  const el = document.getElementById(elementId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

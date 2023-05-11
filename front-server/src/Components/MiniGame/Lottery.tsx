@@ -52,6 +52,7 @@ function Lottery(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [result, setResult] = useState(defaultResult);
+  const [canOpenModal, setCanOpenModal] = useState(false);
 
   // 현재 잔액 상태
   const currentMoneyStatus = parseInt(
@@ -92,6 +93,10 @@ function Lottery(): JSX.Element {
     handleOpenModal(isDark);
   };
 
+  const handleCanOpenModal = (canOpenModal: boolean) => {
+    setCanOpenModal(canOpenModal);
+  };
+
   if (isError1 || isError2) {
     toast.error('오류 발생....');
   }
@@ -126,8 +131,8 @@ function Lottery(): JSX.Element {
           descriptionColor="#ffffff"
         />
       </div>
-      <Modal isOpen={isOpen} onClose={handleCloseModal}>
-        <LotteryModal isDark={isDark} result={result} timestamp={Date.now()} />
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={canOpenModal}>
+        <LotteryModal isDark={isDark} result={result} timestamp={Date.now()} handleCanOpenModal={handleCanOpenModal} />
       </Modal>
     </>
   );

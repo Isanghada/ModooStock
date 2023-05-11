@@ -28,7 +28,11 @@ function DeleteGuestBookModal({ isShowDeleteModal, setIsShowDeleteModal }: InfoM
             <div className="flex items-center justify-center min-h-full p-4 text-center ">
               <div className="w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold">
                 <div className="flex justify-center w-full my-2 lg:my-4">
-                  <img className="w-[12%] h-auto" src="/images/icons/warning.png" alt="info" />
+                  <img
+                    className="w-[12%] h-auto"
+                    src={process.env.REACT_APP_S3_URL + '/images/visits/warning.png'}
+                    alt="info"
+                  />
                 </div>
                 <div className={`w-full mb-2 lg:mb-6 lg:pt-2 text-red-500`}>
                   <span className="text-gray-600">방명록을&nbsp;</span>

@@ -11,7 +11,7 @@ function Test(): JSX.Element {
       <div className="w-[279px] h-[58px] absolute left-[-1px] top-[-1px] rounded-tl-[15px] rounded-tr-[15px] bg-[#ff7b7b]" />
       <div className="w-[608px] h-[241px] absolute left-[-1.5px] top-[46.5px] rounded-[15px] bg-white border-2 border-white" />
       <img
-        src="/images/icons/pencil.png"
+        src={process.env.REACT_APP_S3_URL + '/images/visits/pencil.png'}
         className="w-[21px] h-[21px] absolute left-6 top-3.5 object-cover"
         alt="연필"
       />
@@ -52,7 +52,11 @@ function WriteGuestBookModal({ isShowWriteModal, setIsShowWriteModal }: InfoModa
             <div className="flex items-center justify-center min-h-full p-4 text-center ">
               <div className="w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold">
                 <div className="flex justify-center w-full my-2 lg:my-4">
-                  <img className="w-[12%] h-auto" src="/images/icons/warning.png" alt="info" />
+                  <img
+                    className="w-[12%] h-auto"
+                    src={process.env.REACT_APP_S3_URL + '/images/visits/warning.png'}
+                    alt="info"
+                  />
                   <div>임시 작성 페이지</div>
                 </div>
                 <div className={`w-full mb-2 lg:mb-6 lg:pt-2`}>

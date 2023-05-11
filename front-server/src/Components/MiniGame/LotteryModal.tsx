@@ -13,6 +13,7 @@ interface Props {
     money: number;
   };
   timestamp: number;
+  handleCanOpenModal: (canOpenModal: boolean) => void;
 }
 
 type DateType = Date | string | number;
@@ -77,7 +78,7 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
   );
 }
 
-function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
+function LotteryModal({ isDark, result, timestamp, handleCanOpenModal }: Props): JSX.Element {
   // 발행 일자
   const curTime = dateFormatter('yyyy. MM. DD H:i:s', timestamp);
 
@@ -208,6 +209,15 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
   }, [dpr, ERASE_DISTANCE, WIDTH, HEIGHT]);
 
   // ------- (끝) 캔버스 부분 설정 -------
+
+  // ------- 화면밖 클릭시 닫힘 설정 -------
+  useEffect(() => {
+    if (erasedList.length !== 0) {
+      handleCanOpenModal(true);
+    } else {
+      handleCanOpenModal(false);
+    }
+  }, [erasedList, handleCanOpenModal]);
 
   return (
     <>
