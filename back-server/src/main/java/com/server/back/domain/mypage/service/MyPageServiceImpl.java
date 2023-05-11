@@ -1,11 +1,16 @@
 package com.server.back.domain.mypage.service;
 
 import com.server.back.common.code.commonCode.IsAuctioned;
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.common.service.AuthService;
+import com.server.back.domain.auction.entity.AuctionEntity;
+import com.server.back.domain.auction.repository.AuctionRepository;
+import com.server.back.domain.auction.service.AuctionService;
 import com.server.back.domain.mypage.dto.HomeModifyReqDto;
 import com.server.back.domain.mypage.dto.HomeResDto;
+import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.user.entity.UserEntity;
@@ -31,8 +36,11 @@ public class MyPageServiceImpl implements MyPageService{
 
     private final UserAssetLocationRepository userAssetLocationRepository;
     private final UserRepository userRepository;
+    private final AuctionRepository auctionRepository;
     private final AuthService authService;
     private final RedisTemplate<String,Object> redisTemplate;
+
+    private final AuctionService auctionService;
 
 
     /**
@@ -67,13 +75,27 @@ public class MyPageServiceImpl implements MyPageService{
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeletedAndIsInRepositoryAndIsAuctioned(myAssetId, IsDeleted.N, IsInRespository.Y, IsAuctioned.N)
+        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeleted(myAssetId, IsDeleted.N)
                 .orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
         // 본인 아니면 접근 제한
         if(!user.equals(userAssetLocation.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
 
+        // 경매장에 등록된 물품일 경우 경매장 취소
+        if(userAssetLocation.getIsAuctioned().equals(IsAuctioned.Y)){
+            AuctionEntity auctionEntity = auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(userAssetLocation.getAsset().getId(), IsCompleted.N, IsDeleted.N).get(0);
+
+            AuctionEntity auction=auctionRepository.findByIdAndIsDeletedAndIsCompleted(auctionEntity.getId(),IsDeleted.N,IsCompleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+            //경매유무 변경
+            userAssetLocation.update(IsAuctioned.N);
+            auction.update(IsDeleted.Y);
+        }
+
         userAssetLocation.update(IsInRespository.N);
+
+        // 카테고리 ROOM 제외 나머지 asset들 모두 posZ를 -200로 설정
+        if (!userAssetLocation.getAsset().getCategory().equals("ROOM")) userAssetLocation.update(-200F);
     }
 
     /**

@@ -47,7 +47,7 @@ public class NewsServiceImpl implements NewsService {
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
         StockEntity stock = stockRepository.findById(newsReqDto.getStockId()).get();
-        Long price = (long) (stock.getAverage()*(1.75));
+        Long price = 50000L;
 
         // 에러처리 : 돈 부족
         if(user.getCurrentMoney() < price ){

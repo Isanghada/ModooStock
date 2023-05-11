@@ -11,6 +11,7 @@ public class AssetResDto {
     private String assetName;
     private AssetLevelType assetLevel;
     private String assetCategory;
+    private String assetNameKor;
 
     public static AssetResDto fromEntity(AssetEntity asset){
         return AssetResDto.builder()
@@ -18,6 +19,7 @@ public class AssetResDto {
                 .assetName(asset.getAssetName())
                 .assetLevel(asset.getAssetLevel())
                 .assetCategory(asset.getCategory())
+                .assetNameKor(asset.getAssetNameKor())
                 .build();
     }
 

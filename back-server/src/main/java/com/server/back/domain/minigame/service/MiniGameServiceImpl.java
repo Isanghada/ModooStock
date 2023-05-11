@@ -37,11 +37,11 @@ public class MiniGameServiceImpl implements MiniGameService{
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if(user.getCurrentMoney()<10000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
-        user.decreaseCurrentMoney(10000L);
+        if(user.getCurrentMoney()<50000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
+        user.decreaseCurrentMoney(50000L);
 
         //거래 내역
-        DealEntity deal=new DealEntity(user, DealType.LOSE_MONEY_FOR_BLOTTO,10000L);
+        DealEntity deal=new DealEntity(user, DealType.LOSE_MONEY_FOR_BLOTTO,50000L);
         dealRepository.save(deal);
 
         //확률
@@ -51,27 +51,27 @@ public class MiniGameServiceImpl implements MiniGameService{
         Integer ranking=5;
         Long money=0L;
         if(rd<7) {
-            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 50_000_000L);
+            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 30_000_000L);
             dealRepository.save(dealPlus);
-            user.increaseCurrentMoney(50_000_000L);
+            user.increaseCurrentMoney(30_000_000L);
             ranking=1;
-            money=50_000_000L;
+            money=30_000_000L;
         }
-        else if(rd>=7&&rd<27){
+        else if(rd>=7&&rd<22){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 3_000_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(3_000_000L);
             ranking=2;
             money=3_000_000L;
         }
-        else if(rd>=27&&rd<77){
+        else if(rd>=22&&rd<52){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 500_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(500_000L);
             ranking=3;
             money=500_000L;
         }
-        else if(rd>=77&&rd<377){
+        else if(rd>=52&&rd<377){
             DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_BLOTTO, 10_000L);
             dealRepository.save(dealPlus);
             user.increaseCurrentMoney(10_000L);

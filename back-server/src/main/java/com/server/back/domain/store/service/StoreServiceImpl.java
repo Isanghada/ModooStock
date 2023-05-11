@@ -53,7 +53,7 @@ public class StoreServiceImpl implements StoreService {
 
         //gotcha 레벨에 따라 비율이 달라짐
         if(level.equals(GotchaLevel.HIGH)) {
-            price=2000000L;
+            price=3000000L;
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             Random random=new Random();
             int rd=random.nextInt(100);
