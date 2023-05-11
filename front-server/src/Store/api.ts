@@ -615,7 +615,7 @@ export const Api = createApi({
       invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
     }),
 
-    // 2. 내가 올린 경매 물품 리스트 조회
+    // 3. 내가 올린 경매 물품 리스트 조회
     getAuctionMy: builder.query<ReturnActionListInterFace, string>({
       query: () => `/auction/my`,
       providesTags: (result, error, arg) => {
@@ -623,7 +623,7 @@ export const Api = createApi({
       }
     }),
 
-    // 3. 구매
+    // 4. 구매
     postAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
       query: (auctionId) => {
         return {
@@ -633,7 +633,7 @@ export const Api = createApi({
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
     }),
-    // 4. 판매 취소
+    // 5. 판매 취소
     deleteAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
       query: (auctionId) => {
         return {
@@ -642,6 +642,16 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+    }),
+    // 6. 마이페이지에서 판매 취소
+    deleteAuctionMyAssetId: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/auction/my/${myAssetId}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'InvenApi' }]
     })
   })
 });
@@ -705,5 +715,6 @@ export const {
   useGetAuctionQuery,
   useGetAuctionMyQuery,
   usePostAuctionAuctionIdMutation,
-  useDeleteAuctionAuctionIdMutation
+  useDeleteAuctionAuctionIdMutation,
+  useDeleteAuctionMyAssetIdMutation
 } = Api;

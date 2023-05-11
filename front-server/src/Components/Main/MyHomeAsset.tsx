@@ -30,7 +30,14 @@ function MyHomeAsset({ len, pos, rot }: any): JSX.Element {
 
   // 데이터
   const meshData = meshPosition.map((data: any, idx: number) => {
-    return <mesh geometry={geo[idx]} material={materials[`${Object.keys(materials)}`]} position={meshPosition[idx]} />;
+    return (
+      <mesh
+        key={idx}
+        geometry={geo[idx]}
+        material={materials[`${Object.keys(materials)}`]}
+        position={meshPosition[idx]}
+      />
+    );
   });
 
   return (

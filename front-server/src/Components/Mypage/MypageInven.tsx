@@ -2,6 +2,7 @@ import { useGetStorageQuery, useLazyGetStorageQuery, usePostMypageMutation } fro
 import styled from './Mypage.module.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from 'Store/hooks';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   changeClickAsseData,
   changeClickAssetPosition,
@@ -116,14 +117,7 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
                     dispatch(changeIsAuctionClickInvenAsset(false));
                   }
                 }}
-                // onDoubleClick={() => {
-                //   setIsClickAsset(true);
-                //   const goMypage = async () => {
-                //     const { data, result } = await postMypage(funiture.userAssetId).unwrap();
-                //   };
-                //   goMypage();
-                // }}
-                key={funiture.userAssetId}
+                key={idx}
                 className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 pb-2 border-[#F0EBE3] rounded-2xl mx-1 lg:mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
                 {/* 이미지 */}
                 <div className="flex justify-center w-[65%] h-[65%] lg:w-[75%] lg:h-[75%] lg:mb-1">
@@ -177,7 +171,15 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
   };
   return (
     <>
-      <div className="absolute flex flex-start w-[63%] lg:w-full mx-auto h-[5.7rem] md:h-[7rem] lg:h-[11.5rem] bg-[#FFFFFF]/40 bottom-0 lg:bottom-2 z-10 text-white ">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: 1,
+          ease: 'easeInOut'
+        }}
+        className="absolute flex flex-start w-[63%] lg:w-full mx-auto h-[5.7rem] md:h-[7rem] lg:h-[11.5rem] bg-[#FFFFFF]/40 bottom-0 lg:bottom-2 z-10 text-white ">
         {/* 가구 섹션 */}
         <div className="flex flex-col text-center justify-center text-white w-[12.5%] lg:w-[9%] text-[0.7rem] lg:text-[1rem] font-extrabold">
           <div
@@ -216,7 +218,7 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
           className={`flex justify-start w-[84%] h-full flex-nowrap overflow-x-auto ${styled.scroll}`}>
           <div className="flex justify-start">{funitureList}</div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }
