@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class AuctionResDto {
+    private Long auctionId;
     private AssetResDto assetResDto;
     private String account;
     private String nickname;
@@ -21,6 +22,7 @@ public class AuctionResDto {
         AssetResDto assetResDto=AssetResDto.fromEntity(auction.getUserAsset().getAsset());
         UserEntity userEntity = auction.getUserAsset().getUser();
         return  AuctionResDto.builder()
+                .auctionId(auction.getId())
                 .assetResDto(assetResDto)
                 .account(userEntity.getAccount())
                 .nickname(userEntity.getNickname())
