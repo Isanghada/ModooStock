@@ -57,6 +57,16 @@ const updateStatus = createSlice({
     }
   }
 });
+// 개인정보보호 상태관리
+const privacyStatus = createSlice({
+  name: 'privacyStatus',
+  initialState: false,
+  reducers: {
+    changePrivacyStatus(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
 // 소지 금액 상태관리
 const currentMoneyStatus = createSlice({
   name: 'currentMoneyStatus',
@@ -171,6 +181,7 @@ export const store = configureStore({
     chattingStatus: chattingStatus.reducer,
     menuStatus: menuStatus.reducer,
     updateStatus: updateStatus.reducer,
+    privacyStatus: privacyStatus.reducer,
     currentMoneyStatus: currentMoneyStatus.reducer,
     getCurrentDataIndex: currentDataIndex.reducer,
     currentMoneyHideStatus: currentMoneyHideStatus.reducer,
@@ -193,6 +204,7 @@ export const { changeSignUpStatus } = signUpStatus.actions;
 export const { changeChattingStatus } = chattingStatus.actions;
 export const { changeMenuStatus } = menuStatus.actions;
 export const { changeUpdateStatus } = updateStatus.actions;
+export const { changePrivacyStatus } = privacyStatus.actions;
 export const { changeCurrentMoneyStatusStatus } = currentMoneyStatus.actions;
 export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
