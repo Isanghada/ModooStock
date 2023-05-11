@@ -61,7 +61,7 @@ function Message({
                 {date}
               </div>
               {date && (
-                <div className="flex flex-col items-center px-2 py-1 break-keep bg-[#FB6B9F] rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
+                <div className="flex flex-col items-center px-2 py-1 break-all bg-[#FB6B9F] rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
                   {data.downLoadUrl && (
                     <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                   )}
@@ -90,7 +90,7 @@ function Message({
               ) : null}
               <div className="flex items-end my-[0.1rem] lg:my-[0.3rem] ml-8 lg:ml-12">
                 {date && (
-                  <div className="flex flex-col items-center py-1 px-2 lg:px-3 lg:py-2 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-keep w-fit max-w-[60%] lg:max-w-[80%]">
+                  <div className="flex flex-col items-center py-1 px-2 lg:px-3 lg:py-2 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-all w-fit max-w-[60%] lg:max-w-[80%]">
                     {data.downLoadUrl && (
                       <img src={data.downLoadUrl} alt={data.downLoadUrl} />
                     )}

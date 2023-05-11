@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useAppDispatch } from 'Store/hooks'; //스토어 생성단계에서 export한 커스텀 dispatch, selector hook
 import { motion } from 'framer-motion';
 import { changeSignUpStatus } from 'Store/store';
+import PrivacyPolicy from 'Components/Common/PrivacyPolicy';
 import {
   useLazyGetUsersEmailCheckQuery,
   useLazyGetUsersNickCheckQuery,
   usePostUsersSignUpMutation
 } from 'Store/NonAuthApi';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 interface AccountInterFace {
   account: string;
@@ -29,6 +30,12 @@ interface MinValueInterFace {
 function SignUp(): JSX.Element {
   const dispatch = useAppDispatch();
   const [screenHeight, setScreenHeight] = useState<number>(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [privacyCheck, setPrivacyCheck] = useState(false);
+  function closePrivacyModal() {
+    setPrivacyModalOpen(false);
+  }
   // 빈값 체크
   const [emptyValue, setEmptyValue] = useState<ValueInterFace>({
     account: false,
@@ -125,6 +132,10 @@ function SignUp(): JSX.Element {
   //회원가입 form 제출
   const onSubmitSignUpForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!privacyCheck) {
+      toast.error("개인정보방침을 확인해주세요")
+      return
+    }
     // 제출 데이터
     const accoutData = {
       account: account.account,
@@ -140,6 +151,18 @@ function SignUp(): JSX.Element {
       toast.error('회원가입실패');
     }
   };
+  // 클릭 이벤트 처리
+  const onClick = async (e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    switch (target.ariaLabel) {
+      case '개인정보처리방침':
+        setPrivacyCheck(true);
+        setPrivacyModalOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     // 창 높이 변할떄마다 실행
@@ -147,117 +170,146 @@ function SignUp(): JSX.Element {
     setScreenHeight(height);
   }, [window.screen.height]);
 
-  return (
-    <motion.div
-      className={`w-full h-full flex justify-center text-[#FFC1B7] bg-white`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, display: 'none' }}
-      transition={{
-        duration: 1,
-        ease: 'easeInOut'
-      }}>
-      {/* 오른쪽 폼 */}
-      <div
-        className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center  ${
-          screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
-        }`}>
-        <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
-        <form
-          onSubmit={onSubmitSignUpForm}
-          className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between ${
-            screenHeight >= 800 ? 'lg:min-h-[28rem] min-h-[16rem]' : ''
-          }`}>
-          <div
-            className={`flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full ${
-              screenHeight >= 800 ? 'lg:min-h-[25rem] min-h-[12rem]' : ''
-            } `}>
-            {/* 아이디 */}
-            <div className="h-8 lg:h-12">
-              <input
-                onChange={onChangeAccount}
-                name="account"
-                type="string"
-                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
-                placeholder="아이디"
-                maxLength={15}
-                minLength={2}
-                required
-              />
-              {emptyValue.account && (
-                <div className={`text-[0.5rem] lg:text-base h-1/6 ${checkEmail ? `text-green-500` : `text-red-500`}`}>
-                  {minValue.account ? checkEmail ? '사용가능한 아이디입니다' : '이미 사용중인 아이디입니다' : '아이디를 2글자 이상 입력해주세요'}
+  // 이미지 로딩상태 체크
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      setIsLoaded(true);
+    };
+    img.src = '/images/PrivacyPolicy.png';
+  }, []);
 
-                  {/* {emailComment} */}
-                </div>
-              )}
+  return (
+    <>
+      {isLoaded && <PrivacyPolicy isOpen={privacyModalOpen} closeModal={closePrivacyModal} cancel={'확인'} />}
+      <motion.div
+        className={`w-full h-full flex justify-center text-[#FFC1B7] bg-white`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0, display: 'none' }}
+        transition={{
+          duration: 1,
+          ease: 'easeInOut'
+        }}>
+        {/* 오른쪽 폼 */}
+        <div
+          className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center  ${
+            screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
+          }`}>
+          <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>회원가입</div>
+          <form
+            onSubmit={onSubmitSignUpForm}
+            className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[75vh] lg:h-[50vh] justify-between ${
+              screenHeight >= 800 ? 'lg:min-h-[28rem] min-h-[16rem]' : ''
+            }`}>
+            <div
+              className={`flex flex-col h-[60vh] lg:h-[40vh] justify-evenly w-full ${
+                screenHeight >= 800 ? 'lg:min-h-[25rem] min-h-[12rem]' : ''
+              } `}>
+              {/* 아이디 */}
+              <div className="h-8 lg:h-12">
+                <input
+                  onChange={onChangeAccount}
+                  name="account"
+                  type="string"
+                  className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
+                  placeholder="아이디"
+                  maxLength={15}
+                  minLength={2}
+                  required
+                />
+                {emptyValue.account && (
+                  <div className={`text-[0.5rem] lg:text-base h-1/6 ${checkEmail ? `text-green-500` : `text-red-500`}`}>
+                    {minValue.account
+                      ? checkEmail
+                        ? '사용가능한 아이디입니다'
+                        : '이미 사용중인 아이디입니다'
+                      : '아이디를 2글자 이상 입력해주세요'}
+
+                    {/* {emailComment} */}
+                  </div>
+                )}
+              </div>
+              {/* 닉네임 */}
+              <div className="h-8 lg:h-12">
+                <input
+                  onChange={onChangeAccount}
+                  name="nickname"
+                  type="text"
+                  className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
+                  placeholder="닉네임"
+                  maxLength={6}
+                  minLength={2}
+                  required
+                />
+                {emptyValue.nickname && (
+                  <div
+                    className={`text-[0.5rem] lg:text-base h-1/6 ${checkNickname ? `text-green-500` : `text-red-500`}`}>
+                    {minValue.nickname
+                      ? checkNickname
+                        ? '사용가능한 닉네임입니다'
+                        : '이미 사용중인 닉네임입니다'
+                      : '닉네임을 2글자 이상 입력해주세요'}
+                  </div>
+                )}
+              </div>
+              {/* 비밀번호  */}
+              <div className="h-8 lg:h-12">
+                <input
+                  onChange={onChangeAccount}
+                  name="password"
+                  type="password"
+                  className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+                  placeholder="비밀번호"
+                  minLength={4}
+                  maxLength={15}
+                  required
+                />
+              </div>
+              <div className="h-8 lg:h-12">
+                <input
+                  onChange={onChangeAccount}
+                  name="password2"
+                  type="password"
+                  className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+                  placeholder="비밀번호 확인"
+                  required
+                />
+                {emptyValue.password && (
+                  <div
+                    className={`text-[0.5rem] lg:text-base h-1/6 ${checkPassword ? `text-green-500` : `text-red-500`}`}>
+                    {checkPassword ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다'}
+                  </div>
+                )}
+              </div>
             </div>
-            {/* 닉네임 */}
-            <div className="h-8 lg:h-12">
+            <div className='flex justify-between w-full'>
               <input
-                onChange={onChangeAccount}
-                name="nickname"
-                type="text"
-                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-full rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
-                placeholder="닉네임"
-                maxLength={6}
-                minLength={2}
-                required
+                onClick={onClick}
+                aria-label="개인정보처리방침"
+                type="button"
+                className={`w-[48%] h-8 lg:h-10 rounded-lg bg-[#cfcfcf] text-md lg:text-lg font-semibold text-white cursor-pointer hover:bg-[#c0c0c0]`}
+                value="개인정보방침"
               />
-              {emptyValue.nickname && (
-                <div
-                  className={`text-[0.5rem] lg:text-base h-1/6 ${checkNickname ? `text-green-500` : `text-red-500`}`}>
-                  {minValue.nickname ? checkNickname ? '사용가능한 닉네임입니다' : '이미 사용중인 닉네임입니다' : "닉네임을 2글자 이상 입력해주세요"}
-                </div>
-              )}
-            </div>
-            {/* 비밀번호  */}
-            <div className="h-8 lg:h-12">
               <input
-                onChange={onChangeAccount}
-                name="password"
-                type="password"
-                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
-                placeholder="비밀번호"
-                minLength={4}
-                maxLength={15}
-                required
+                type="submit"
+                className={`w-[48%] h-8 lg:h-10 rounded-lg bg-[#fccbcb] text-md lg:text-lg font-semibold text-white cursor-pointer hover:bg-[#ffb4b4]`}
+                value="회원가입"
               />
             </div>
-            <div className="h-8 lg:h-12">
-              <input
-                onChange={onChangeAccount}
-                name="password2"
-                type="password"
-                className={`border-2 border-[#FFC1B7] w-full h-5/6 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
-                placeholder="비밀번호 확인"
-                required
-              />
-              {emptyValue.password && (
-                <div
-                  className={`text-[0.5rem] lg:text-base h-1/6 ${checkPassword ? `text-green-500` : `text-red-500`}`}>
-                  {checkPassword ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다'}
-                </div>
-              )}
+          </form>
+          <div className={`w-5/6 flex justify-end items-end h-[8vh] `}>
+            <div className="mr-1 text-xs lg:mr-2 lg:text-sm"> 계정이 있으신가요? </div>
+            <div
+              onClick={closeSignUp}
+              className="text-sm lg:text-lg font-semibold lg:font-bold cursor-pointer text-[#fca699] hover:text-[#f98270]">
+              {' '}
+              로그인{' '}
             </div>
-          </div>
-          <input
-            type="submit"
-            className={`w-full h-8 lg:h-10 rounded-lg bg-[#cfcfcf] text-md lg:text-lg font-semibold text-white cursor-pointer hover:bg-[#c0c0c0]`}
-            value="회원가입"
-          />
-        </form>
-        <div className={`w-5/6 flex justify-end items-end h-[8vh] `}>
-          <div className="mr-1 text-xs lg:mr-2 lg:text-sm"> 계정이 있으신가요? </div>
-          <div
-            onClick={closeSignUp}
-            className="text-sm lg:text-lg font-semibold lg:font-bold cursor-pointer text-[#fca699] hover:text-[#f98270]">
-            {' '}
-            로그인{' '}
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }
 
