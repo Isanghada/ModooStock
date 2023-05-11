@@ -16,14 +16,9 @@ import InfoShop from 'Components/InfoShop/InfoShop';
 import Loading from 'Components/Common/Loading';
 import GachaShop from 'Components/GachaShop/GachaShop';
 import Lottery from 'Components/MiniGame/Lottery';
-import { useEffect } from 'react';
+import Auction from 'Components/Auction/Auction';
 
 function App() {
-  useEffect(() => {
-    if ('virtualKeyboard' in navigator) {
-      (navigator.virtualKeyboard as any).overlaysContent = true;
-    }
-  }, []);
   return (
     <>
       <ToastContainer position="top-left" autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={true} limit={1} />
@@ -39,6 +34,7 @@ function App() {
           <Route path="/infoshop" element={<InfoShop />} />
           <Route path="/gachashop" element={<GachaShop />} />
           <Route path="/lottery" element={<Lottery />} />
+          <Route path="/auction" element={<Auction />} />
         </Route>
         <Route path="/error" element={<Error />} />
         <Route path="/loading" element={<Loading />} />
