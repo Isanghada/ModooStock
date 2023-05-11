@@ -10,6 +10,7 @@ import com.server.back.domain.auction.repository.AuctionRepository;
 import com.server.back.domain.auction.service.AuctionService;
 import com.server.back.domain.mypage.dto.HomeModifyReqDto;
 import com.server.back.domain.mypage.dto.HomeResDto;
+import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.user.entity.UserEntity;
@@ -83,7 +84,12 @@ public class MyPageServiceImpl implements MyPageService{
         // 경매장에 등록된 물품일 경우 경매장 취소
         if(userAssetLocation.getIsAuctioned().equals(IsAuctioned.Y)){
             AuctionEntity auctionEntity = auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(userAssetLocation.getAsset().getId(), IsCompleted.N, IsDeleted.N).get(0);
-            auctionService.deleteAuction(auctionEntity.getId());
+
+            AuctionEntity auction=auctionRepository.findByIdAndIsDeletedAndIsCompleted(auctionEntity.getId(),IsDeleted.N,IsCompleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+            //경매유무 변경
+            userAssetLocation.update(IsAuctioned.N);
+            auction.update(IsDeleted.Y);
         }
 
         userAssetLocation.update(IsInRespository.N);
