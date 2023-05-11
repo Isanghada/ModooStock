@@ -22,9 +22,9 @@ function WriteGuestBookModal({ onClose, type }: WriteGuestBookModalType): JSX.El
         <div className="absolute w-full top-[2.75rem] p-4 overflow-hidden shadow-xl lg:p-4 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold bg-white">
           <div className={`w-full mb-2`}>
             <textarea
-              className="w-full h-[10.75rem] rounded-lg bg-[#fff6f2] border-2 border-[#fde2e2] focus:outline-[#FFC1B7] font-medium p-2"
+              className="w-full h-[10.75rem] rounded-lg bg-[#fff6f2] border-2 border-[#fde2e2] focus:outline-[#FFC1B7] font-medium p-4"
               style={{ resize: 'none' }}
-              placeholder={' 방명록을 남겨보세요!'}
+              placeholder={'방명록을 남겨보세요!'}
             />
           </div>
           <div className="flex justify-between">

@@ -244,6 +244,11 @@ interface PutMypage {
   userAssetId: number;
 }
 
+interface ReturnVisitors { 
+  data: number;
+  result: string;
+}
+
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
 
@@ -276,7 +281,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi', 'UserMypageApi', ],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -595,6 +600,22 @@ export const Api = createApi({
         return [{ type: 'AuctionApi' }];
       }
     }),
+    // ----------- 방문하기 ------------
+    // 1. 방문한 유저의 마이룸 조회
+    getUserMypage: builder.query<ReturnMyRoomAsset, string>({
+      query: (nickname) => `/mypage/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserMypageApi'}];
+      }
+    }),
+    // 2. 마이페이지 방문자 수 조회
+    // GET ​/api​/mypage​/{nickname}​/visitor
+    getUserMypageVisitors: builder.query<ReturnVisitors, string>({
+      query: (nickname) => `/mypage/${nickname}​/visitor`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserMypageApi'}];
+      }
+    }),
   })
 });
 
@@ -654,4 +675,7 @@ export const {
 
   // 경매장
   useGetAuctionQuery,
+  // ----------- 방문 ------------
+  useLazyGetUserMypageQuery,
+  useGetUserMypageVisitorsQuery,
 } = Api;

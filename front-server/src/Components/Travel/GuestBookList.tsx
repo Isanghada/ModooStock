@@ -15,7 +15,6 @@ interface GuestBookItemProps {
   commentResDto: {
     commentId: number;
     content: string;
-    isEditable: boolean;
   };
   handleOpenDeleteModal?: () => void;
   handleOpenModifyModal?: () => void;
@@ -38,7 +37,7 @@ function GuestBookItem({
         </div>
         <p className="w-[10.875rem] h-[7.5rem] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
-        {comment.isEditable && (
+        {localStorage.getItem('nickname') === author.nickname && (
           <div className="bottom-0 flex justify-start gap-2">
             <button className="" onClick={handleOpenDeleteModal}>
               <img
@@ -69,8 +68,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 1,
-      content: '안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. ',
-      isEditable: false
+      content: '안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. '
     }
   },
   {
@@ -80,8 +78,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 2,
-      content: '냐옹',
-      isEditable: true
+      content: '냐옹'
     }
   },
   {
@@ -91,19 +88,17 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 3,
-      content: '일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십',
-      isEditable: false
+      content: '일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십'
     }
   },
   {
     authorResDto: {
-      nickname: '강아지',
+      nickname: '톰과젤리',
       profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
     },
     commentResDto: {
       commentId: 4,
-      content: '멍멍',
-      isEditable: false
+      content: '젤리'
     }
   },
   {
@@ -113,8 +108,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 5,
-      content: '멍멍',
-      isEditable: false
+      content: '멍멍'
     }
   },
   {
@@ -124,8 +118,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 6,
-      content: '안녕',
-      isEditable: false
+      content: '안녕'
     }
   },
   {
@@ -135,8 +128,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 7,
-      content: '멍멍',
-      isEditable: false
+      content: '멍멍'
     }
   },
   {
@@ -146,8 +138,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 8,
-      content: '멍멍',
-      isEditable: true
+      content: '멍멍'
     }
   },
   {
@@ -157,8 +148,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 3,
-      content: '멍멍',
-      isEditable: false
+      content: '멍멍'
     }
   },
   {
@@ -168,8 +158,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 3,
-      content: '멍멍',
-      isEditable: false
+      content: '멍멍'
     }
   },
 
@@ -180,8 +169,7 @@ const guestBookList: GuestBookItemProps[] = [
     },
     commentResDto: {
       commentId: 3,
-      content: '삐약삐약',
-      isEditable: false
+      content: '삐약삐약'
     }
   }
 ];
@@ -247,6 +235,7 @@ function GuestBookList({ onClose }: Props): JSX.Element {
             {/* map */}
             {guestBookList.map((item, index) => (
               <GuestBookItem
+                key={index}
                 authorResDto={item.authorResDto}
                 commentResDto={item.commentResDto}
                 handleOpenDeleteModal={handleOpenDeleteModal}
