@@ -14,6 +14,7 @@ import com.server.back.domain.auction.repository.AuctionRepository;
 import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.UserAssetLocationRepository;
+import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
@@ -33,6 +34,7 @@ public class AuctionServiceImpl implements AuctionService {
     private final AuthService authService;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
+    private final UserAssetRepository userAssetRepository;
     private final UserAssetLocationRepository userAssetLocationRepository;
     private final DealRepository dealRepository;
 
@@ -172,7 +174,6 @@ public class AuctionServiceImpl implements AuctionService {
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         AuctionEntity auction = auctionRepository.findByUserAssetIdAndIsCompletedAndIsDeleted(myAssetId, IsCompleted.N, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
-
         UserAssetEntity userAsset=auction.getUserAsset();
         //보유한 유저가 아니면
         if(!userAsset.getUser().equals(user)){
@@ -180,6 +181,9 @@ public class AuctionServiceImpl implements AuctionService {
         }
         //경매유무 변경
         userAsset.update(IsAuctioned.N);
+        userAssetRepository.save(userAsset);
+
         auction.update(IsDeleted.Y);
+        auctionRepository.save(auction);
     }
 }
