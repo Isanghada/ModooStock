@@ -20,6 +20,9 @@ import CountdownTimer from './CountdownTimer';
 import IRModal from './IRModal';
 import StockTradeModal from './StockTradeModal';
 import Loading from 'Components/Common/Loading';
+// 파이어베이스
+import { dbService } from '../../firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 interface CahrtDataType {
   일자: string;
@@ -210,29 +213,29 @@ function Exchange(): JSX.Element {
     };
   }, []);
 
-    if (eventSource) {
-      eventSource.onmessage = (event: any) => {
-        // toast.info('sse 데이터 받기');
-        setSseData(JSON.parse(event.data));
-      };
+  if (eventSource) {
+    eventSource.onmessage = (event: any) => {
+      // toast.info('sse 데이터 받기');
+      setSseData(JSON.parse(event.data));
+    };
 
-      eventSource.onerror = (event:any) => {
-        eventSource.close();
-        const token = localStorage.getItem('accessToken');
+    eventSource.onerror = (event: any) => {
+      eventSource.close();
+      const token = localStorage.getItem('accessToken');
 
-        const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${token}`,
-            'Cache-Control': 'no-cache'
-          },
-          withCredentials: true
-        });
+      const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
+        withCredentials: true
+      });
 
-        setEventSource(newEventSource);
-      }
-    }
+      setEventSource(newEventSource);
+    };
+  }
 
   const clickButtonEvent = (number: number) => {
     if (inputRef.current) {
@@ -328,6 +331,12 @@ function Exchange(): JSX.Element {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
                 setIsShowStockModal(true);
+                // 시스템 메시지에 추가
+                await addDoc(collection(dbService, 'system'), {
+                  nickname: localStorage.getItem('nickname'),
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  createdAt: serverTimestamp()
+                });
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -351,6 +360,12 @@ function Exchange(): JSX.Element {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
                 setIsShowStockModal(true);
+                // 시스템 메시지에 추가
+                await addDoc(collection(dbService, 'system'), {
+                  nickname: localStorage.getItem('nickname'),
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                  createdAt: serverTimestamp()
+                });
                 toast.success('구매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -374,6 +389,12 @@ function Exchange(): JSX.Element {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
                 setIsShowStockModal(true);
+                // 시스템 메시지에 추가
+                await addDoc(collection(dbService, 'system'), {
+                  nickname: localStorage.getItem('nickname'),
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  createdAt: serverTimestamp()
+                });
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -396,6 +417,12 @@ function Exchange(): JSX.Element {
               if (result === 'SUCCESS') {
                 setTradeStockModalData(data);
                 setIsShowStockModal(true);
+                // 시스템 메시지에 추가
+                await addDoc(collection(dbService, 'system'), {
+                  nickname: localStorage.getItem('nickname'),
+                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
+                  createdAt: serverTimestamp()
+                });
                 toast.success('판매 완료하였습니다!');
               } else {
                 toast.error('요청에 문제가 생겼습니다!');
@@ -757,27 +784,29 @@ function Exchange(): JSX.Element {
                       className={`flex items-end space-x-1 ${
                         selectRevenueData > 0 ? 'text-red-500' : 'text-blue-500'
                       }`}>
-                      <span className={`text-[1.5rem]`}>{selectRevenueData.toLocaleString()}원</span>
-                      <span className="text-[1rem]">({sseData?.rate.toFixed(2)}%)</span>
+                      <span className={`text-[1.3rem]`}>{selectRevenueData.toLocaleString()}원</span>
+                      <span className="text-[0.9rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
                     <div className="flex space-x-3 items-end  text-[1.5rem]">
                       {sseData && sseData?.amount > 0 && (
                         <>
                           <div className="flex items-center space-x-1">
-                            <span className="text-[1rem]">보유수량</span>
-                            <span className="text-black">{sseData?.amount.toLocaleString()}</span>
+                            <span className="text-[0.9rem]">보유수량</span>
+                            <span className="text-black text-[1.3rem]">{sseData?.amount.toLocaleString()}</span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <span className=" items-end text-[1rem]">평균단가</span>
-                            <span className="text-black">{sseData?.average?.toLocaleString()}</span>
+                            <span className=" items-end text-[0.9rem]">평균단가</span>
+                            <span className="text-black text-[1.3rem]">{sseData?.average?.toLocaleString()}</span>
                           </div>
                         </>
                       )}
 
                       <div className="flex items-center space-x-1">
-                        <span className="text-[1rem]">현재가</span>
-                        <span className={`text-black`}>{selectCurrentData.priceEnd.toLocaleString()}</span>
-                        <span className="text-black">원</span>
+                        <span className="text-[0.9rem]">현재가</span>
+                        <span className={`text-black text-[1.3rem]`}>
+                          {selectCurrentData.priceEnd.toLocaleString()}
+                        </span>
+                        <span className="text-black text-[1.3rem]">원</span>
                         <span
                           className={`text-[1rem] flex pt-2 items-end ${
                             sseData &&
@@ -937,7 +966,7 @@ function Exchange(): JSX.Element {
                     <div className="flex items-end justify-between w-full font-extrabold">
                       <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
                       <span
-                        className={` text-[0.7rem]
+                        className={` text-[0.8rem]
                           ${
                             parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                               ? 'text-black'

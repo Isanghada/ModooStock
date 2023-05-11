@@ -1,12 +1,10 @@
 import { useGLTF } from '@react-three/drei';
 import { useRef } from 'react';
 function MyHomeAsset({ len, pos, rot }: any): JSX.Element {
-  console.log(pos);
-
-  const { nodes, materials }: any = useGLTF('/assets/house.gltf');
-  console.log(nodes);
-  console.log(materials);
-
+  const li = new Array(20);
+  const { nodes, materials }: any = useGLTF(
+    process.env.REACT_APP_S3_URL + '/assets/mainHouse/house' + Math.floor(Math.random() * li.length) + '.gltf'
+  );
   const ref = useRef(null);
 
   let cnt = -1;
@@ -32,13 +30,7 @@ function MyHomeAsset({ len, pos, rot }: any): JSX.Element {
 
   // 데이터
   const meshData = meshPosition.map((data: any, idx: number) => {
-    return (
-      <mesh
-        geometry={geo[idx]}
-        material={materials._LP_Rooms_Material}
-        position={meshPosition[idx]}
-      />
-    );
+    return <mesh geometry={geo[idx]} material={materials[`${Object.keys(materials)}`]} position={meshPosition[idx]} />;
   });
 
   return (

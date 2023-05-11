@@ -8,6 +8,7 @@ import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 
 import Message from './Message';
 import { useAppDispatch } from 'Store/hooks';
 import { changeChattingStatus } from 'Store/store';
+import { useGetUsersInfoQuery } from 'Store/api';
 
 // 시간 옵션
 const options = {
@@ -17,15 +18,16 @@ const options = {
   day: 'numeric'
 };
 const Chatting = () => {
-  // const roomName = 'chatting';
   const roomName = '전체';
   const dispatch = useAppDispatch();
   // 채팅 div
   const chatDiv = useRef<HTMLDivElement>(null);
+  // 내 정보 API
+  const { data: dataUserInfo } = useGetUsersInfoQuery('');
   // 유저 프로필 데이터
   const myEmail = localStorage.getItem('nickname');
   const nickname = localStorage.getItem('nickname');
-  const profile_img_path = process.env.REACT_APP_S3_URL + '/images/toys/pink.png';
+  const [myProfile, setMyProfile] = useState<string>("");
   // 내 이미지 주소
 
   // 채팅메시지 데이터들
@@ -71,7 +73,7 @@ const Chatting = () => {
       nickname: nickname,
       content: message,
       createdAt: serverTimestamp(),
-      profilePath: profile_img_path
+      profilePath: myProfile
     });
 
     setMessage('');
@@ -79,11 +81,19 @@ const Chatting = () => {
     fileInput.current!.value = '';
   };
 
+
   // 처음 실행하는 곳
   useEffect(() => {
     getContents();
   }, [roomName]);
+  // 프로필 세팅
+  useEffect(() => {
+    if (dataUserInfo) {
+      const { profileImagePath } = dataUserInfo.data;
+      setMyProfile(profileImagePath);
+    }
 
+  }, [dataUserInfo]);
   useEffect(() => {
     // 채팅 스크롤 젤 밑으로
     setTimeout(() => {
@@ -110,7 +120,7 @@ const Chatting = () => {
             dispatch(changeChattingStatus(false));
           }}
           className={`w-3 h-3 lg:min-w-6 lg:min-h-6 lg:w-6 lg:h-6 cursor-pointer hover:scale-105`}
-          src="chatting/cancel.png"
+          src={`${process.env.REACT_APP_S3_URL}/chatting/cancel.png`}
           alt="cancel"
         />
       </div>
