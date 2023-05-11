@@ -1,25 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeMenuStatus, changeUpdateStatus } from 'Store/store';
+import { changeMenuStatus, changePrivacyStatus, changeUpdateStatus } from 'Store/store';
 import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
 import { useLazyGetUsersLogoutQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from 'Components/Common/ConfirmModal';
 import { toast } from 'react-toastify';
+import PrivacyPolicy from 'Components/Common/PrivacyPolicy';
 
 const screenHeight = window.screen.height;
 
 function Menu(): JSX.Element {
   const dispatch = useAppDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isPrivacyLoaded, setIsPrivacyLoaded] = useState(false);
   const [src, setSrc] = useState('');
   const navigate = useNavigate();
   // 모달 관련
   const [modalOpen, setModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   // 모달 창 닫기
   function closeModal() {
     setModalOpen(false);
+  }
+  function closePrivacyModal() {
+    setPrivacyModalOpen(false);
   }
   // 백 그라운드
   const menuRef = useRef<HTMLDivElement>(null);
@@ -29,6 +35,10 @@ function Menu(): JSX.Element {
   // 정보수정 창 상태
   const updateStatus = useAppSelector((state) => {
     return state.updateStatus;
+  });
+  // 개인정보보호방침 창 상태
+  const privacyStatus = useAppSelector((state) => {
+    return state.privacyStatus;
   });
 
   // 배경 클릭시 메뉴 닫기
@@ -57,6 +67,9 @@ function Menu(): JSX.Element {
       case '정보수정':
         dispatch(changeUpdateStatus(true));
         break;
+      case '개인정보처리방침':
+        setPrivacyModalOpen(true);
+        break;
       case '로그아웃':
         setModalOpen(true);
         break;
@@ -68,11 +81,16 @@ function Menu(): JSX.Element {
   // 이미지 로딩상태 체크
   useEffect(() => {
     const img = new Image();
+    const imgPrivacy = new Image();
     img.onload = () => {
       setIsLoaded(true);
       setSrc(process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png');
     };
     img.src = process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png';
+    imgPrivacy.onload = () => {
+      setIsPrivacyLoaded(true);
+    };
+    imgPrivacy.src = '/images/PrivacyPolicy.png';
   }, []);
   return (
     <>
@@ -84,6 +102,11 @@ function Menu(): JSX.Element {
         accept={'나가기'}
         cancel={'남아있기'}
       />
+      {isPrivacyLoaded && <PrivacyPolicy
+        isOpen={privacyModalOpen}
+        closeModal={closePrivacyModal}
+        cancel={'확인'}
+      />}
       {isLoaded && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -127,6 +150,12 @@ function Menu(): JSX.Element {
                 onClick={onClick}
                 className="bg-[#FFD4CD] rounded-xl text-sm lg:text-2xl font-extrabold w-3/4 text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#ffc1b8]">
                 정보수정
+              </div>
+              <div
+                aria-label="개인정보처리방침"
+                onClick={onClick}
+                className="bg-[#d5cdff] rounded-xl text-sm lg:text-2xl font-extrabold w-3/4 text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#c2b6fa]">
+                개인정보처리방침
               </div>
               <div
                 aria-label="로그아웃"
