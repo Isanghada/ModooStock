@@ -74,7 +74,7 @@ public class MyPageServiceImpl implements MyPageService{
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeletedAndIsInRepositoryAndIsAuctioned(myAssetId, IsDeleted.N, IsInRespository.Y, IsAuctioned.N)
+        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeletedAndIsInRepository(myAssetId, IsDeleted.N, IsInRespository.Y)
                 .orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
         // 본인 아니면 접근 제한

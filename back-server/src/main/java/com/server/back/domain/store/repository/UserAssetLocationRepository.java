@@ -12,5 +12,6 @@ import java.util.Optional;
 
 public interface UserAssetLocationRepository extends JpaRepository<UserAssetLocation,Long> {
     Optional<UserAssetLocation> findByIdAndIsDeletedAndIsInRepositoryAndIsAuctioned(Long id, IsDeleted isDeleted, IsInRespository isInRespository, IsAuctioned isAuctioned);
+    Optional<UserAssetLocation> findByIdAndIsDeletedAndIsInRepository(Long id, IsDeleted isDeleted, IsInRespository isInRespository);
     List<UserAssetLocation> findAllByUserAndIsDeletedAndIsAuctionedAndIsInRepository(UserEntity user,IsDeleted isDeleted,IsAuctioned isAuctioned,IsInRespository isInRespository);
 }
