@@ -68,13 +68,13 @@ function Auction(): JSX.Element {
                             </div>
                             <div className="px-2 mx-2 lg:text-[1.5rem] text-[1rem] font-bold">{getAuction?.data[selectNum]?.price.toLocaleString()}원</div>
                             {auctionIds && getAuction && auctionIds?.includes(getAuction?.data[selectNum]?.auctionId) ?     
-                            <div className="bg-[#000000] text-[#ffffff] font-bold mx-2 rounded-lg py-[0.1rem] lg:text-[1.3rem] text-[0.8em] text-center px-3" 
+                            <div className="bg-[#000000] text-[#ffffff] font-bold mx-2 rounded-md py-[0.1rem] lg:text-[1.3rem] text-[0.8em] text-center px-3" 
                                 onClick={() => {
                                     setWhat("판매취소");
                                     setIsOpen(true);
                                 }}>판매 취소</div>
                             : 
-                            <div className="bg-[#000000] text-[#ffffff] font-bold mx-2 rounded-lg py-[0.1rem] lg:text-[1.3rem] text-[0.8em] text-center px-3"
+                            <div className="bg-[#767C77] text-[#ffffff] font-bold mx-2 rounded-md hover:bg-[#000000] py-[0.1rem] lg:text-[1.3rem] text-[0.8em] text-center px-3"
                                 onClick={() => {
                                     setWhat("구매");
                                     setIsOpen(true);
