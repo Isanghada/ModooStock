@@ -1,11 +1,12 @@
-import { Canvas, useFrame } from '@react-three/fiber';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import React, { Suspense, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import ShowMyRoomAssets from './ShowMyRoomAssets';
 import Modal from './Modal';
 import VisitModal from './VisitModal';
 import Guide from './Guide';
+import MyHomeAsset from './MyHomeAsset';
+import AssetLoading from 'Components/Common/AssetLoading';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -55,8 +56,8 @@ function Main(): JSX.Element {
         navigate('/lottery');
         break;
       case '경매장':
-          navigate('/auction');
-          break;
+        navigate('/auction');
+        break;
       case '마이룸':
         navigate('/mypage');
         break;
@@ -289,22 +290,24 @@ function Main(): JSX.Element {
               alt=""
               style={{ bottom: `-${floor}` }}
             />
-            <Canvas
-              style={{ width: '100%', height: '100%' }}
-              orthographic
-              camera={{
-                left: -1,
-                right: 1,
-                top: 1,
-                bottom: -1,
-                near: 0.1,
-                far: 1000,
-                zoom: 100
-              }}>
-              <ambientLight intensity={0.5} />
-              <pointLight distance={2000} position={10} power={8} />
-              <ShowMyRoomAssets len={0.0055} pos={[0, -1.28, -8]} rot={[1.75, 0, 0.2]} />
-            </Canvas>
+            <Suspense fallback={<AssetLoading />}>
+              <Canvas
+                style={{ width: '100%', height: '100%', transition: 'all', transitionDuration: '2s' }}
+                orthographic
+                camera={{
+                  left: -1,
+                  right: 1,
+                  top: 1,
+                  bottom: -1,
+                  near: 0.1,
+                  far: 1000,
+                  zoom: 100
+                }}>
+                <ambientLight intensity={0.5} />
+                <pointLight distance={2000} position={10} power={8} />
+                <MyHomeAsset len={0.006} pos={[0, -1.28, -8]} rot={[1.75, 0, 0.18]} />
+              </Canvas>
+            </Suspense>
           </div>
         </div>
         {/* 3번 구역 */}
@@ -366,22 +369,24 @@ function Main(): JSX.Element {
         </div>
         <div className="h-[10%]"></div>
         <div className="w-[50%] h-[75%] flex justify-center items-center">
-          <Canvas
-            style={{ width: '100%', height: '100%' }}
-            orthographic
-            camera={{
-              left: -1,
-              right: 1,
-              top: 1,
-              bottom: -1,
-              near: 0.1,
-              far: 1000,
-              zoom: 100
-            }}>
-            <ambientLight intensity={0.5} />
-            <pointLight distance={2000} position={10} power={8} />
-            <ShowMyRoomAssets len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
-          </Canvas>
+          <Suspense fallback={<AssetLoading />}>
+            <Canvas
+              style={{ width: '100%', height: '100%' }}
+              orthographic
+              camera={{
+                left: -1,
+                right: 1,
+                top: 1,
+                bottom: -1,
+                near: 0.1,
+                far: 1000,
+                zoom: 100
+              }}>
+              <ambientLight intensity={0.5} />
+              <pointLight distance={2000} position={10} power={8} />
+              <MyHomeAsset len={0.004} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
+            </Canvas>
+          </Suspense>
         </div>
         <div className="w-[50%] h-[15%]"></div>
         {/* 라우터 아이콘 */}
@@ -435,8 +440,8 @@ function Main(): JSX.Element {
           </div>
           {/* 3번째 */}
           <div className="flex flex-col w-[18%] h-full z-20">
-            <div className="h-[9%]"></div>
-            <div className="flex justify-center h-[20%] w-full animate-moving">
+            <div className="h-[8%]"></div>
+            <div className="flex justify-end h-[20%] w-full animate-moving">
               <img
                 aria-label="은행"
                 className="z-10 h-full cursor-pointer hover:scale-[1.2] active:scale-[1.2] transition-all duration-300"
@@ -445,7 +450,7 @@ function Main(): JSX.Element {
                 onClick={click}
               />
             </div>
-            <div className="h-[55%]"></div>
+            <div className="h-[56%]"></div>
             <div className="flex justify-start h-[15%] w-[82%] animate-moving">
               <img
                 aria-label="뽑기 상점"
@@ -538,7 +543,7 @@ function Main(): JSX.Element {
             <div className="h-[2%]"></div>
           </div>
           <div className="w-1/4 h-full">
-            <div className="h-[13%]"></div>
+            <div className="h-[11%]"></div>
             <div className="flex justify-end h-[14%] w-full animate-moving">
               <img
                 aria-label="경매장"
@@ -548,7 +553,7 @@ function Main(): JSX.Element {
                 onClick={click}
               />
             </div>
-            <div className="h-[57%]"></div>
+            <div className="h-[59%]"></div>
             <div className="flex justify-center h-[14%] w-full">
               <img
                 aria-label="미니 게임"

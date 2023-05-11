@@ -3,6 +3,9 @@ import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
+import Modal from 'Components/Main/Modal';
+import GuestBookList from './GuestBookList';
+import { useState } from 'react';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -84,19 +87,43 @@ function BottomButtons(): JSX.Element {
     }
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <div className="absolute flex items-center justify-between w-full mx-auto h-[3rem] md:h-[5rem] lg:h-[rem] bottom-0 lg:bottom-2 z-10 text-white py-2 mx-2 text-[0.9rem] lg:text-[1.1rem] text-center font-bold md:px-2 lg:px-6">
-      <button
-        className="w-[6rem] lg:w-[9.375rem] py-1 rounded-xl bg-[#707070]  drop-shadow-lg hover:scale-105 transition-all duration-300"
-        onClick={() => navigate('/main')}>
-        돌아가기
-      </button>
-      <button
-        className="w-[6rem] lg:w-[9.375rem] py-1 rounded-xl bg-[#ff7b7b]  drop-shadow-lg hover:scale-105 transition-all duration-300"
-        onClick={handleRandomVisit}>
-        랜덤 방문
-      </button>
-    </div>
+    <>
+      <div className="absolute flex items-center justify-start w-[25%] lg:w-[33%] xl:ml-[2%] xl:w-[27%] h-[3rem] md:h-[5rem] bottom-0 lg:bottom-6 py-2 mx-2">
+        <img
+          className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer
+        hover:scale-105 transition-all duration-300"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/backIcon.png'}
+          alt="돌아가기"
+          onClick={() => navigate('/main')}
+        />
+        <img
+          className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/guestBookIcon.png'}
+          alt="방명록"
+          onClick={handleOpenModal}
+        />
+        <img
+          className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
+          src={process.env.REACT_APP_S3_URL + '/images/visits/randomVisit.png'}
+          alt="랜덤방문"
+          onClick={handleRandomVisit}
+        />
+      </div>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={false}>
+        <GuestBookList onClose={handleCloseModal} />
+      </Modal>
+    </>
   );
 }
 
