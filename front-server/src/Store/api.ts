@@ -93,6 +93,8 @@ interface ReturnActionListInterFace {
         assetCategory: string;
         assetNameKor: string;
       },
+      auctionId :string;
+      nickname : string;
       price: number;
     }
   ];
@@ -104,6 +106,7 @@ interface UpdateStateInterFace {
   introduction: string;
   profileImagePath: string;
 }
+
 interface ReturnInfoInterFace {
   data: {
     dateList: [
@@ -595,6 +598,35 @@ export const Api = createApi({
         return [{ type: 'AuctionApi' }];
       }
     }),
+
+    // 2. 내가 올린 경매 물품 리스트 조회
+    getAuctionMy: builder.query<ReturnActionListInterFace, string>({
+      query: () => `/auction/my`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AuctionApi' }];
+      }
+    }),
+
+    // 3. 구매
+    postAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
+      query: (auctionId) => {
+        return {
+          url: `/auction/${auctionId}`,
+          method: 'Post'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+    }),
+    // 4. 판매 취소
+    deleteAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
+      query: (auctionId) => {
+        return {
+          url: `/auction/${auctionId}`,
+          method: 'Delete'
+        };
+      },
+      invalidatesTags: (result, error, arg) =>[ { type: 'AuctionApi' }]
+    }),
   })
 });
 
@@ -654,4 +686,7 @@ export const {
 
   // 경매장
   useGetAuctionQuery,
+  useGetAuctionMyQuery,
+  usePostAuctionAuctionIdMutation,
+  useDeleteAuctionAuctionIdMutation,
 } = Api;
