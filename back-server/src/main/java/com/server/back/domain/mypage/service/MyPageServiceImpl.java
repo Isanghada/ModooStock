@@ -1,9 +1,13 @@
 package com.server.back.domain.mypage.service;
 
 import com.server.back.common.code.commonCode.IsAuctioned;
+import com.server.back.common.code.commonCode.IsCompleted;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.common.service.AuthService;
+import com.server.back.domain.auction.entity.AuctionEntity;
+import com.server.back.domain.auction.repository.AuctionRepository;
+import com.server.back.domain.auction.service.AuctionService;
 import com.server.back.domain.mypage.dto.HomeModifyReqDto;
 import com.server.back.domain.mypage.dto.HomeResDto;
 import com.server.back.domain.store.entity.UserAssetLocation;
@@ -31,8 +35,11 @@ public class MyPageServiceImpl implements MyPageService{
 
     private final UserAssetLocationRepository userAssetLocationRepository;
     private final UserRepository userRepository;
+    private final AuctionRepository auctionRepository;
     private final AuthService authService;
     private final RedisTemplate<String,Object> redisTemplate;
+
+    private final AuctionService auctionService;
 
 
     /**
@@ -72,6 +79,12 @@ public class MyPageServiceImpl implements MyPageService{
 
         // 본인 아니면 접근 제한
         if(!user.equals(userAssetLocation.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
+
+        // 경매장에 등록된 물품일 경우 경매장 취소
+        if(userAssetLocation.getIsAuctioned().equals(IsAuctioned.Y)){
+            AuctionEntity auctionEntity = auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(userAssetLocation.getAsset().getId(), IsCompleted.N, IsDeleted.N).get(0);
+            auctionService.deleteAuction(auctionEntity.getId());
+        }
 
         userAssetLocation.update(IsInRespository.N);
 
