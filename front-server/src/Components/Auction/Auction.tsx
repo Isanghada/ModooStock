@@ -34,7 +34,7 @@ function Auction(): JSX.Element {
     const levelStyle = `rounded-full lg:px-7 px-5 lg:py-1 mr-2 lg:text-[1.1rem] text-[0.9rem] font-bold shadow cursor-pointer`
     return(
         <>
-        <div className = "w-full h-full border-2 lg:pt-[13vh] pt-[14vh] p-2">
+        <div className = "w-full h-full lg:pt-[13vh] pt-[14vh] p-2">
             <div className = "lg:text-[2.2rem] text-[1.5rem] font-bold">경매장
                 <span className='lg:text-[1rem] text-[0.8rem] px-2 text-[#7a7a7a] font-medium'>필요없는 아이템을 팔고, 필요한 아이템을 구매해보세요!</span>
             </div>
