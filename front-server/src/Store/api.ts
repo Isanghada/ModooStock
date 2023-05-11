@@ -87,14 +87,14 @@ interface ReturnActionListInterFace {
   data: [
     {
       assetResDto: {
-        assetId: number
+        assetId: number;
         assetName: string;
         assetLevel: string;
         assetCategory: string;
         assetNameKor: string;
-      },
-      auctionId :string;
-      nickname : string;
+      };
+      auctionId: string;
+      nickname: string;
       price: number;
     }
   ];
@@ -244,6 +244,11 @@ interface PutMypage {
   rot_x: number;
   rot_y: number;
   rot_z: number;
+  userAssetId: number;
+}
+
+interface AuctionReqDtoType {
+  price: number;
   userAssetId: number;
 }
 
@@ -598,6 +603,17 @@ export const Api = createApi({
         return [{ type: 'AuctionApi' }];
       }
     }),
+    // 2. 경매 물품 등록
+    postAuction: builder.mutation<ReturnBasicInterFace, AuctionReqDtoType>({
+      query: (body) => {
+        return {
+          url: `/auction`,
+          method: 'POST',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
 
     // 2. 내가 올린 경매 물품 리스트 조회
     getAuctionMy: builder.query<ReturnActionListInterFace, string>({
@@ -625,8 +641,8 @@ export const Api = createApi({
           method: 'Delete'
         };
       },
-      invalidatesTags: (result, error, arg) =>[ { type: 'AuctionApi' }]
-    }),
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+    })
   })
 });
 
@@ -676,6 +692,7 @@ export const {
   usePostMypageMutation,
   useDeleteMypageMutation,
   usePutMypageMutation,
+  usePostAuctionMutation,
 
   // ------------- 창고 -------------
   useGetStorageQuery,
@@ -688,5 +705,5 @@ export const {
   useGetAuctionQuery,
   useGetAuctionMyQuery,
   usePostAuctionAuctionIdMutation,
-  useDeleteAuctionAuctionIdMutation,
+  useDeleteAuctionAuctionIdMutation
 } = Api;

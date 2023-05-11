@@ -74,12 +74,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
     // if (isClickAsset) {
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
-      console.log('data: ', data);
-
       let geo: any = [];
       data.map((asset, idx) => {
-        console.log(idx, nodes[asset.assetName].geometry);
-
         geo = [...geo, nodes[asset.assetName].geometry];
       });
 
@@ -89,12 +85,12 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
           let isClick = false;
           // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
           // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
-          if (asset.assetName === clickAsseData.assetName) {
+          if (asset.assetName === clickAsseData.assetName && asset.userAssetId === clickAsseData.userAssetId) {
             isClick = true;
           }
           return (
             <mesh
-              key={idx}
+              key={asset.userAssetId}
               geometry={geo[idx]}
               material={materials[Object.keys(materials)[0]]}
               position={

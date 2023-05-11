@@ -6,7 +6,7 @@ import {
   changeClickAsseData,
   changeClickAssetPosition,
   changeClickAssetRotation,
-  changeClickInvenAsset,
+  changeIsAuctionClickInvenAsset,
   changeIsClickInvenAssetStore
 } from 'Store/store';
 
@@ -23,13 +23,12 @@ interface Type {
 }
 
 interface ReturnInven {
-  data: {
-    userAssetId: number;
-    assetName: string;
-    assetLevel: string;
-    assetCategory: string;
-    isAuctioned: string;
-  };
+  userAssetId: number;
+  assetNameKor: string;
+  assetName: string;
+  assetLevel: string;
+  assetCategory: string;
+  isAuctioned: string;
 }
 
 function MypageInven({ setIsClickAsset }: Type): JSX.Element {
@@ -66,7 +65,7 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
     const myInven = async () => {
       const { data, result } = await getLazyStorage('').unwrap();
 
-      let funitureListData: any[] = [];
+      let funitureListData: ReturnInven[] = [];
       switch (clickState) {
         case 0: // ALL
           funitureListData = data;
@@ -111,17 +110,20 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
                       assetLevel: funiture.assetLevel
                     })
                   );
-                  // dispatch(changeClickAssetPosition([0, 0, -200]));
-                  // dispatch(changeClickAssetRotation([0, 0, 0]));
+                  if (funiture.isAuctioned === 'Y') {
+                    dispatch(changeIsAuctionClickInvenAsset(true));
+                  } else {
+                    dispatch(changeIsAuctionClickInvenAsset(false));
+                  }
                 }}
-                onDoubleClick={() => {
-                  setIsClickAsset(true);
-                  const goMypage = async () => {
-                    const { data, result } = await postMypage(funiture.userAssetId).unwrap();
-                  };
-                  goMypage();
-                }}
-                key={idx}
+                // onDoubleClick={() => {
+                //   setIsClickAsset(true);
+                //   const goMypage = async () => {
+                //     const { data, result } = await postMypage(funiture.userAssetId).unwrap();
+                //   };
+                //   goMypage();
+                // }}
+                key={funiture.userAssetId}
                 className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 pb-2 border-[#F0EBE3] rounded-2xl mx-1 lg:mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">
                 {/* 이미지 */}
                 <div className="flex justify-center w-[65%] h-[65%] lg:w-[75%] lg:h-[75%] lg:mb-1">
