@@ -61,4 +61,11 @@ public class AuctionController {
         List<AuctionResDto> auctionListResDto=auctionService.getMyAuctionList();
         return ResponseEntity.ok(ResultDto.of(auctionListResDto));
     }
+
+    @DeleteMapping ("/my/{myAssetId}")
+    @ApiOperation(value = "마이페이지에서 경매장에 등록한 물품을 취소합니다.")
+    public ResponseEntity<ResultDto<Boolean>> deleteMyPageAuction(@PathVariable Long myAssetId){
+        auctionService.deleteMyPageAuction(myAssetId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+    }
 }
