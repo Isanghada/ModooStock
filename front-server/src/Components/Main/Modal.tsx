@@ -8,6 +8,7 @@ type ModalProps = {
   padding?: string;
   canOpenModal?: boolean;
   elementId?: string;
+  styleType?: number;
 };
 
 const Modal: FC<ModalProps> = ({
@@ -16,7 +17,8 @@ const Modal: FC<ModalProps> = ({
   children,
   padding = '',
   canOpenModal = true,
-  elementId = 'modal-root'
+  elementId = 'modal-root',
+  styleType = 1
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const el = document.getElementById(elementId);
@@ -41,14 +43,21 @@ const Modal: FC<ModalProps> = ({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full  overflow-auto bg-gray-800 bg-opacity-50">
-      <div
-        ref={modalRef}
-        className={`relative ${padding} bg-white rounded-xl shadow-2xl`}
-        style={{
-          filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
-        }}>
-        {children}
-      </div>
+      {styleType === 1 && (
+        <div
+          ref={modalRef}
+          className={`relative ${padding} bg-white rounded-xl shadow-2xl`}
+          style={{
+            filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
+          }}>
+          {children}
+        </div>
+      )}
+      {styleType === 2 && (
+        <div ref={modalRef} className={`relative ${padding} rounded-xl`}>
+          {children}
+        </div>
+      )}
     </div>,
     el as HTMLElement
   );

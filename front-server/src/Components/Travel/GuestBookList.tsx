@@ -1,6 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteGuestBookModal from './DeleteGuestBookModal';
 import WriteGuestBookModal from './WirteGuestBookModal';
+import Modal from 'Components/Main/Modal';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
@@ -17,25 +18,25 @@ interface GuestBookItemProps {
     isEditable: boolean;
   };
   handleOpenDeleteModal?: () => void;
-  handleOpenWriteModal?: () => void;
+  handleOpenModifyModal?: () => void;
 }
 
 function GuestBookItem({
   authorResDto: author,
   commentResDto: comment,
   handleOpenDeleteModal,
-  handleOpenWriteModal
+  handleOpenModifyModal
 }: GuestBookItemProps): JSX.Element {
   return (
     <>
-      <div className="w-[208px] h-[204px] rounded-xl bg-white border border-[#fde2e2] p-4">
+      <div className="w-[13rem] h-[12.75rem] rounded-xl bg-white border border-[#fde2e2] p-4">
         <div className="flex flex-row mb-2">
           <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
             <img className="m-1 rounded-full object-contain" src={`${author.profileImagePath}`} alt="프로필 이미지" />
           </div>
-          <p className="w-[95px] h-[26px] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
+          <p className="w-[6rem] h-[1.625rem] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
         </div>
-        <p className="w-[174px] h-[120px] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
+        <p className="w-[10.875rem] h-[7.5rem] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
         {comment.isEditable && (
           <div className="bottom-0 flex justify-start gap-2">
@@ -43,14 +44,14 @@ function GuestBookItem({
               <img
                 alt=""
                 src={process.env.REACT_APP_S3_URL + '/images/visits/delete.png'}
-                className="w-[18px] h-[18px] object-cover"
+                className="w-[1.125rem] h-[1.125rem] object-cover"
               />
             </button>
-            <button className="" onClick={handleOpenWriteModal}>
+            <button className="" onClick={handleOpenModifyModal}>
               <img
                 alt=""
                 src={process.env.REACT_APP_S3_URL + '/images/visits/edit.png'}
-                className="w-[18px] h-[18px] object-cover"
+                className="w-[1.125rem] h-[1.125rem] object-cover"
               />
             </button>
           </div>
@@ -191,34 +192,57 @@ function GuestBookList({ onClose }: Props): JSX.Element {
   const handleOpenDeleteModal = () => {
     setIsShowDeleteModal(true);
   };
+  const handleCloseDeleteModal = () => {
+    setIsShowDeleteModal(false);
+  };
 
   const [isShowWriteModal, setIsShowWriteModal] = useState<boolean>(false);
+  const [type, setType] = useState<'WRITE' | 'MODIFY'>('WRITE');
 
   const handleOpenWriteModal = () => {
+    setType('WRITE');
     setIsShowWriteModal(true);
   };
+  const handleOpenModifyModal = () => {
+    setType('MODIFY');
+    setIsShowWriteModal(true);
+  };
+  const handleCloseWriteModal = () => {
+    setIsShowWriteModal(false);
+  };
+
+  // 전체 스크린 높이
+  const [screenHeight, setScreenHeight] = useState<number>(0);
+
+  useEffect(() => {
+    // 창 높이 변할떄마다 실행
+    const height = window.screen.height;
+    setScreenHeight(height);
+  }, [window.screen.height]);
 
   return (
     <>
-      <div className="flex flex-col w-fit h-[34rem]">
-        <div className="flex w-full h-[5.125rem] rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-8 pr-4 justify-between">
+      <div className={`flex flex-col w-fit `} id="guest-book-modal">
+        <div className="flex w-full rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-4 pr-2 lg:pl-8 lg:pr-4 py-2 justify-between">
           <div className="flex items-center">
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/mailBox.png'}
-              className="w-[60px] h-[60px] object-cover"
+              className="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px] object-cover"
             />
-            <p className="text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
+            <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
           </div>
-          <button className="w-[3rem] h-[3rem] object-cover round-full" onClick={onClose}>
+          <button className="object-cover round-full" onClick={onClose}>
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/multiply.png'}
-              className="w-[3rem] h-[3rem] object-cover round-full"
+              className="w-[2rem] h-[2rem] lg:w-[3rem] lg:h-[3rem] object-cover round-full"
             />
           </button>
         </div>
-        <div className="w-fit h-[28.875rem] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto">
+        <div
+          className="w-fit lg:h-[28.875rem] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto"
+          style={screenHeight > 800 ? { height: '28.875rem' } : { height: '50vh' }}>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
             {/* map */}
             {guestBookList.map((item, index) => (
@@ -226,24 +250,37 @@ function GuestBookList({ onClose }: Props): JSX.Element {
                 authorResDto={item.authorResDto}
                 commentResDto={item.commentResDto}
                 handleOpenDeleteModal={handleOpenDeleteModal}
-                handleOpenWriteModal={handleOpenWriteModal}></GuestBookItem>
+                handleOpenModifyModal={handleOpenModifyModal}></GuestBookItem>
             ))}
           </div>
-          <button className="absolute bottom-4 right-4 flex justify-center items-center w-[3.75rem] h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1">
+          <button
+            className="absolute bottom-4 right-4 flex justify-center items-center w-[2.8rem] h-[2.8rem] lg:w-[3.75rem] lg:h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1"
+            onClick={handleOpenWriteModal}>
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/pencil.png'}
-              className="w-[2.5rem] h-[2.5rem] object-cover"
+              className="w-[2rem] h-[2rem] lg:w-[2.5rem] lg:h-[2.5rem] object-cover"
             />
           </button>
         </div>
       </div>
-      {isShowDeleteModal && (
-        <DeleteGuestBookModal isShowDeleteModal={isShowDeleteModal} setIsShowDeleteModal={setIsShowDeleteModal} />
-      )}
-      {isShowWriteModal && (
-        <WriteGuestBookModal isShowWriteModal={isShowWriteModal} setIsShowWriteModal={setIsShowWriteModal} />
-      )}
+      <Modal
+        isOpen={isShowDeleteModal}
+        onClose={handleCloseDeleteModal}
+        padding={
+          'w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold'
+        }
+        elementId={'guest-book-modal'}>
+        <DeleteGuestBookModal onClose={handleCloseDeleteModal} />
+      </Modal>
+      <Modal
+        isOpen={isShowWriteModal}
+        onClose={handleCloseWriteModal}
+        padding={'align-middle transition-all transform'}
+        elementId={'guest-book-modal'}
+        styleType={2}>
+        <WriteGuestBookModal onClose={handleCloseWriteModal} type={type} />
+      </Modal>
     </>
   );
 }
