@@ -9,27 +9,31 @@ import {
   changeClickAsseData,
   changeClickAssetPosition,
   changeClickAssetRotation,
-  changeClickInvenAsset,
+  changeIsAuctionClickInvenAsset,
   changeIsClickInvenAssetStore
 } from 'Store/store';
 import {
   useDeleteMypageMutation,
   usePostMypageMutation,
   usePostStorageResaleMutation,
-  usePutMypageMutation
+  usePutMypageMutation,
+  usePostAuctionMutation
 } from 'Store/api';
 import { toast } from 'react-toastify';
 import AssetLoading from 'Components/Common/AssetLoading';
 
 function Mypage(): JSX.Element {
   const dispatch = useAppDispatch();
+  const auctionInput = useRef<HTMLInputElement>(null);
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
   const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
+  const [auctionMoney, setAuctionMoney] = useState<number>(0);
   const [postMypage] = usePostMypageMutation();
   const [deleteMypage] = useDeleteMypageMutation();
   const [putMypage] = usePutMypageMutation();
   const [postStorageResale] = usePostStorageResaleMutation();
+  const [postAuction] = usePostAuctionMutation();
   const clickAssetPosition = useAppSelector((state) => {
     return state.clickAssetPosition;
   });
@@ -42,37 +46,9 @@ function Mypage(): JSX.Element {
   const isClickInvenAssetStore = useAppSelector((state) => {
     return state.isClickInvenAssetStore;
   });
-
-  const change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target;
-    const value = target.value as string;
-    switch (target.ariaLabel) {
-      case 'pos1':
-      case 'pos1M':
-        dispatch(changeClickAssetPosition([parseInt(value), clickAssetPosition[1], clickAssetPosition[2]]));
-        break;
-      case 'pos2':
-      case 'pos2M':
-        dispatch(changeClickAssetPosition([clickAssetPosition[0], parseInt(value), clickAssetPosition[2]]));
-        break;
-      case 'pos3':
-      case 'pos3M':
-        dispatch(changeClickAssetPosition([clickAssetPosition[0], clickAssetPosition[1], parseInt(value)]));
-        break;
-      case 'rot1':
-      case 'rot1M':
-        dispatch(changeClickAssetRotation([parseInt(value), clickAssetRotation[1], clickAssetRotation[2]]));
-        break;
-      case 'rot2':
-      case 'rot2M':
-        dispatch(changeClickAssetRotation([clickAssetRotation[0], parseInt(value), clickAssetRotation[2]]));
-        break;
-      case 'rot3':
-      case 'rot3M':
-        dispatch(changeClickAssetRotation([clickAssetRotation[0], clickAssetRotation[1], parseInt(value)]));
-        break;
-    }
-  };
+  const isAuctionClickInvenAsset = useAppSelector((state) => {
+    return state.isAuctionClickInvenAsset;
+  });
 
   // 클릭시에 대한 store 변경 모음 함수
   const settingMethod = () => {
@@ -96,23 +72,57 @@ function Mypage(): JSX.Element {
     setIsClickAsset(false);
   };
 
+  // 문자열 입력 막기
+  const isValidInput = async (input: string) => {
+    const regex = await /^[0-9,]*$/;
+    return regex.test(input);
+  };
+
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
-      case '모달':
+      case '경매장 등록':
+      case '경매장 등록M':
         setIsModalClick((pre) => !pre);
+        // setIsAuction((pre) => !pre);
         break;
-      case '경매장':
-        setIsAuction((pre) => !pre);
+      case '닫기':
+        setIsModalClick(false);
+        break;
+      // case '경매장':
+      //   setIsAuction((pre) => !pre);
+      //   break;
+      case '판매 취소':
+      case '판매 취소M':
         break;
       case '판매등록':
-        setIsModalClick((pre) => !pre);
-        setIsAuction((pre) => !pre);
-        settingMethod();
+        if (auctionInput.current) {
+          isValidInput(auctionInput.current.value).then((r) => {
+            if (r === true && auctionInput.current) {
+              const body = {
+                price: parseInt(auctionInput.current.value.replaceAll(',', '')) * 10000,
+                userAssetId: clickAsseData.userAssetId
+              };
+              const auction = async () => {
+                const { data, result } = await postAuction(body).unwrap();
+                if (data) {
+                  toast.success('price판매등록 되었습니다!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                // setIsModalClick(false);
+                // setIsAuction((pre) => !pre);
+                window.location.reload();
+                // settingMethod();
+              };
+              auction();
+            } else {
+              toast.error('숫자를 입력해주세요!');
+            }
+          });
+        }
         break;
       case '판매':
       case '판매M':
-        console.log('여기는 오냐?');
-
         const resale = async () => {
           const { data, result } = await postStorageResale(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {
@@ -182,6 +192,37 @@ function Mypage(): JSX.Element {
     }
   };
 
+  const change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target;
+    const value = target.value as string;
+    switch (target.ariaLabel) {
+      case 'pos1':
+      case 'pos1M':
+        dispatch(changeClickAssetPosition([parseInt(value), clickAssetPosition[1], clickAssetPosition[2]]));
+        break;
+      case 'pos2':
+      case 'pos2M':
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], parseInt(value), clickAssetPosition[2]]));
+        break;
+      case 'pos3':
+      case 'pos3M':
+        dispatch(changeClickAssetPosition([clickAssetPosition[0], clickAssetPosition[1], parseInt(value)]));
+        break;
+      case 'rot1':
+      case 'rot1M':
+        dispatch(changeClickAssetRotation([parseInt(value), clickAssetRotation[1], clickAssetRotation[2]]));
+        break;
+      case 'rot2':
+      case 'rot2M':
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], parseInt(value), clickAssetRotation[2]]));
+        break;
+      case 'rot3':
+      case 'rot3M':
+        dispatch(changeClickAssetRotation([clickAssetRotation[0], clickAssetRotation[1], parseInt(value)]));
+        break;
+    }
+  };
+
   const Auction = () => {
     const ref = useRef(null);
     return (
@@ -202,27 +243,42 @@ function Mypage(): JSX.Element {
               </span>
             </div>
             <div className="flex justify-center w-full py-4 space-x-6">
-              <div className="flex justify-center items-center w-[35%] bg-white rounded-lg">
+              <div className="flex flex-col justify-center items-center w-[35%] bg-white rounded-lg">
                 <img
-                  className="w-[4rem] h-[9rem] lg:w-[4.5rem] lg:h-[10rem] pb-2"
-                  src={process.env.REACT_APP_S3_URL + '/images/funitures/funiture.png'}
+                  className="w-[10rem] h-[10rem] max-w-[10rem] max-h-[10rem]"
+                  src={process.env.REACT_APP_S3_URL + `/assets/img/${clickAsseData.assetName}.png`}
                   alt="가구"
                 />
               </div>
               <div className="flex justify-start items-start flex-col w-[55%] space-y-2">
-                <div className="bg-[#FFC34F] px-4 py-[1px] text-[0.8rem] lg:text-[1rem] font-semibold text-white rounded-xl">
-                  <span>유니크</span>
-                </div>
+                {clickAsseData.assetLevel === 'RARE' && (
+                  <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>레어</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'EPIC' && (
+                  <div className="bg-[#b73bec] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>에픽</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'UNIQUE' && (
+                  <div className="bg-[#FFC34F] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
+                    <span>유니크</span>
+                  </div>
+                )}
                 <div className="flex flex-col w-full space-y-1">
                   <div className="text-[0.9rem] lg:text-[1.3rem] font-semibold">
                     <span>가격</span>
                   </div>
-                  <div>
+                  <div className="bg-white border-[#FDE2E2] border-2 text-[0.8rem] lg:text-[0.9rem]">
                     <input
-                      className="border-[#FDE2E2] py-[2px] lg:py-2 border-2 rounded-md outline-none pl-2 text-[0.8rem] lg:text-[0.9rem]"
+                      ref={auctionInput}
+                      className="py-[2px] lg:py-2 rounded-md outline-none pr-2  text-end"
                       type="text"
                       placeholder="판매 가격"
+                      maxLength={4}
                     />
+                    <span>만원</span>
                   </div>
                   <div className="w-full flex flex-col text-[0.7rem] space-y-1 lg:text-[0.85em] text-[#8A8A8A] leading-4 py-2">
                     <span>등록시간은 6시간입니다.</span>
@@ -231,7 +287,7 @@ function Mypage(): JSX.Element {
                 </div>
                 <div className="flex w-full space-x-2 text-[0.9rem] lg:text-[1.1rem] text-center font-bold text-white">
                   <div
-                    aria-label="모달"
+                    aria-label="닫기"
                     className="bg-[#858484] cursor-pointer hover:bg-[#6a6868] hover:scale-105 active:bg-[#6a6868] active:scale-105 transition-all duration-300 py-1 w-1/2 rounded-md"
                     onClick={click}>
                     <span>닫기</span>
@@ -275,30 +331,30 @@ function Mypage(): JSX.Element {
               />
             </div>
             <div className="w-[80%] flex justify-center h-[87%] items-center">
-              {/* <Suspense fallback={<AssetLoading />}> */}
-              <Canvas
-                style={{ width: '100%', height: '100%', paddingTop: '6%' }}
-                orthographic
-                camera={{
-                  left: -1,
-                  right: 1,
-                  top: 1,
-                  bottom: -1,
-                  near: 0.1,
-                  far: 1000,
-                  zoom: 100
-                }}>
-                <ambientLight intensity={0.5} />
-                <pointLight distance={2000} position={10} power={8} />
-                <AllAssetsList
-                  len={0.0055}
-                  pos={[0, -0.98, -8]}
-                  rot={[1.75, 0, -0.8]}
-                  isClickAsset={isClickAsset}
-                  setIsClickAsset={setIsClickAsset}
-                />
-              </Canvas>
-              {/* </Suspense> */}
+              <Suspense fallback={<AssetLoading />}>
+                <Canvas
+                  style={{ width: '100%', height: '100%', paddingTop: '6%' }}
+                  orthographic
+                  camera={{
+                    left: -1,
+                    right: 1,
+                    top: 1,
+                    bottom: -1,
+                    near: 0.1,
+                    far: 1000,
+                    zoom: 100
+                  }}>
+                  <ambientLight intensity={0.5} />
+                  <pointLight distance={2000} position={10} power={8} />
+                  <AllAssetsList
+                    len={0.0055}
+                    pos={[0, -0.98, -8]}
+                    rot={[1.75, 0, -0.8]}
+                    isClickAsset={isClickAsset}
+                    setIsClickAsset={setIsClickAsset}
+                  />
+                </Canvas>
+              </Suspense>
             </div>
           </div>
           <div className="flex justify-center items-center lg:w-[33%] lg:pr-[2%] xl:pr-0 xl:w-[27%] pb-10">
@@ -307,7 +363,7 @@ function Mypage(): JSX.Element {
               {/* 에셋 이미지 & 위치 조정 및 배치*/}
               <div className="flex flex-col justify-center items-center border-4 border-[#fb7c7c] rounded-3xl text-white mb-10">
                 {/* 등급 */}
-                <div className="flex items-center justify-between w-full px-2 py-2 z-10">
+                <div className="z-10 flex items-center justify-between w-full px-2 py-2">
                   {/* 희귀도 */}
                   {clickAsseData.assetLevel === 'RARE' && (
                     <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-7 py-[2.5px] rounded-full">
@@ -324,7 +380,7 @@ function Mypage(): JSX.Element {
                       <span>유니크</span>
                     </div>
                   )}
-                  {isAuction !== true && clickAsseData.assetName !== '' ? (
+                  {isAuction !== true && clickAsseData.assetName !== '' && !isAuctionClickInvenAsset ? (
                     <div className="flex items-center justify-between text-white">
                       <div
                         aria-label="판매"
@@ -333,7 +389,7 @@ function Mypage(): JSX.Element {
                         <span>판매</span>
                       </div>
                       <div
-                        aria-label="모달"
+                        aria-label="경매장 등록"
                         className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full"
                         onClick={click}>
                         <span>경매장 등록</span>
@@ -368,19 +424,19 @@ function Mypage(): JSX.Element {
                   )}
                 </div>
                 {/* 포지션 변경 */}
-                {!isAuction ? (
+                {!isAuction && !isAuctionClickInvenAsset ? (
                   // 인벤토리에 있을 경우
                   <>
                     {isClickInvenAssetStore ? (
-                      <div className=" pb-10">
+                      <div className="pb-10 ">
                         <span className="text-[1.3rem] text-black">{clickAsseData.assetNameKor}</span>
                       </div>
                     ) : (
-                      <div className="flex justify-between w-full px-5 py-3 mb-2 text-black z-10">
+                      <div className="z-10 flex justify-between w-full px-5 py-3 mb-2 text-black">
                         {/* Position */}
                         <div className="flex flex-col items-start w-[45%] space-y-1 justify-evenly">
-                          <div className="flex">
-                            <span>POSITION</span>
+                          <div className="flex justify-center w-full">
+                            <span>위치</span>
                           </div>
                           <div className="relative flex items-center w-full space-x-2">
                             <div>
@@ -444,8 +500,8 @@ function Mypage(): JSX.Element {
                         </div>
                         {/* Rotation */}
                         <div className="flex flex-col items-start w-[45%] space-y-1 justify-evenly">
-                          <div className="flex justify-center">
-                            <span>ROTATION</span>
+                          <div className="flex justify-center w-full">
+                            <span>회전</span>
                           </div>
                           <div className="relative flex items-center w-full space-x-2">
                             <div>
@@ -551,22 +607,9 @@ function Mypage(): JSX.Element {
                       <div className="justify-center w-full text-center">
                         <span>경매장에서 판매중인 아이템입니다.</span>
                       </div>
-                      <div className="flex items-end justify-center w-full space-x-2 text">
-                        <span className="text-black">가격:</span>
-                        <span className="font-medium">20,000,000</span>
-                        <span className="text-black">원</span>
-                      </div>
-                      <div className="flex items-end justify-center w-full space-x-2 text">
-                        <span className="text-black">마감일:</span>
-                        <span className="font-medium">2023.04.18</span>
-                        <span className="font-medium">21:04</span>
-                      </div>
                     </div>
-                    <div className="flex justify-center w-full">
-                      <span
-                        aria-label="경매장"
-                        className="px-5 py-1 rounded-full bg-[#EA455D] text-white text-[1.1rem] hover:scale-105 hover:transition duration-300"
-                        onClick={click}>
+                    <div aria-label="판매 취소" className="z-20 flex justify-center w-full" onClick={click}>
+                      <span className="px-5 py-1 cursor-pointer rounded-full bg-[#EA455D] text-white text-[1.1rem] hover:scale-105 hover:transition duration-300">
                         판매 취소
                       </span>
                     </div>
@@ -585,7 +628,7 @@ function Mypage(): JSX.Element {
             duration: 1,
             ease: 'easeInOut'
           }}
-          className="relative flex items-center justify-between w-full h-full overflow-y-hidden lg:hidden mx-auto my-auto">
+          className="relative flex items-center justify-between w-full h-full mx-auto my-auto overflow-y-hidden lg:hidden">
           <div className="flex justify-evenly items-center w-[65%] md:w-[58%] h-full relative">
             <div className="absolute flex items-end justify-center lg:w-[95%] xl:w-[85%] top-[56%]">
               <img
@@ -643,7 +686,7 @@ function Mypage(): JSX.Element {
                   </div>
                 )}
                 {isAuction !== true && clickAsseData.assetName !== '' ? (
-                  <div className="flex items-center justify-between text-white z-20">
+                  <div className="z-20 flex items-center justify-between text-white">
                     <div
                       aria-label="판매"
                       className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1"
@@ -651,7 +694,7 @@ function Mypage(): JSX.Element {
                       <span>판매</span>
                     </div>
                     <div
-                      aria-label="모달M"
+                      aria-label="경매장 등록M"
                       className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full"
                       onClick={click}>
                       <span>경매장 등록</span>
@@ -703,11 +746,8 @@ function Mypage(): JSX.Element {
                       <span className="font-medium">21:04</span>
                     </div>
                   </div>
-                  <div className="flex justify-center w-full pt-1">
-                    <span
-                      aria-label="경매장"
-                      className="px-5 py-1 rounded-full bg-[#EA455D] text-white text-[0.8rem] hover:scale-105 hover:transition duration-300"
-                      onClick={click}>
+                  <div aria-label="판매 취소" className="flex justify-center w-full pt-1" onClick={click}>
+                    <span className="px-5 py-1 rounded-full bg-[#EA455D] text-white text-[0.8rem] hover:scale-105 hover:transition duration-300">
                       판매 취소
                     </span>
                   </div>
@@ -715,14 +755,14 @@ function Mypage(): JSX.Element {
               ) : (
                 <>
                   {isClickInvenAssetStore ? (
-                    <div className=" pb-10">
+                    <div className="pb-10 ">
                       <span className="text-[1rem] text-black">{clickAsseData.assetNameKor}</span>
                     </div>
                   ) : (
                     <div className="flex justify-between w-full px-1 py-3 mb-2 text-black text-[0.6rem]">
                       {/* Position */}
                       <div className="flex flex-col items-start w-[45%] space-y-2 justify-evenly">
-                        <div className="flex w-full justify-center">
+                        <div className="flex justify-center w-full">
                           <span>위치</span>
                         </div>
                         <div className="relative flex items-center w-full space-x-1">

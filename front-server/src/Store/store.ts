@@ -134,18 +134,14 @@ const clickAssetRotation = createSlice({
   }
 });
 
-// 클릭한 인벤 에셋
-const clickInvenAsset = createSlice({
+// 클릭한 인벤 에셋의 옥션 여부
+const isAuctionClickInvenAsset = createSlice({
   name: 'clickInvenAsset',
   initialState: {
-    assetCategory: '',
-    assetLevel: '',
-    assetName: '',
-    isAuctioned: '',
-    userAssetId: 1
+    isAuctioned: 'false'
   },
   reducers: {
-    changeClickInvenAsset(state, action) {
+    changeIsAuctionClickInvenAsset(state, action) {
       return (state = action.payload);
     }
   }
@@ -182,7 +178,7 @@ export const store = configureStore({
     clickAsseData: clickAsseData.reducer,
     clickAssetPosition: clickAssetPosition.reducer,
     clickAssetRotation: clickAssetRotation.reducer,
-    clickInvenAsset: clickInvenAsset.reducer,
+    isAuctionClickInvenAsset: isAuctionClickInvenAsset.reducer,
     isClickInvenAssetStore: isClickInvenAssetStore.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
@@ -205,7 +201,7 @@ export const { getCurrentDataIndex } = currentDataIndex.actions;
 export const { changeClickAsseData } = clickAsseData.actions;
 export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
-export const { changeClickInvenAsset } = clickInvenAsset.actions;
+export const { changeIsAuctionClickInvenAsset } = isAuctionClickInvenAsset.actions;
 export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
 
 // store의 타입 미리 export 해둔 것.
