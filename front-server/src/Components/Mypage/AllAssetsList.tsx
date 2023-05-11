@@ -6,6 +6,7 @@ import {
   changeClickAsseData,
   changeClickAssetPosition,
   changeClickAssetRotation,
+  changeIsAuctionClickInvenAsset,
   changeIsClickInvenAssetStore
 } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
@@ -47,7 +48,9 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
   const clickAssetRotation = useAppSelector((state) => {
     return state.clickAssetRotation;
   });
-
+  const isAuctionClickInvenAsset = useAppSelector((state) => {
+    return state.isAuctionClickInvenAsset;
+  });
   const ref = useRef<any>(null);
   const changeClick = (asset: any, pos: number[], rot: number[]) => {
     dispatch(
@@ -68,6 +71,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
     dispatch(changeClickAssetRotation(rot));
     setIsClickAsset(true);
     dispatch(changeIsClickInvenAssetStore(false));
+    dispatch(changeIsAuctionClickInvenAsset(false));
   };
 
   useEffect(() => {
@@ -90,7 +94,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
           }
           return (
             <mesh
-              key={asset.userAssetId}
+              key={idx}
               geometry={geo[idx]}
               material={materials[Object.keys(materials)[0]]}
               position={

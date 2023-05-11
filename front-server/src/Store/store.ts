@@ -146,9 +146,9 @@ const clickAssetRotation = createSlice({
 
 // 클릭한 인벤 에셋의 옥션 여부
 const isAuctionClickInvenAsset = createSlice({
-  name: 'clickInvenAsset',
+  name: 'isAuctionClickInvenAsset',
   initialState: {
-    isAuctioned: 'false'
+    isAuctioned: false
   },
   reducers: {
     changeIsAuctionClickInvenAsset(state, action) {
