@@ -10,7 +10,6 @@ import com.server.back.domain.auction.repository.AuctionRepository;
 import com.server.back.domain.auction.service.AuctionService;
 import com.server.back.domain.mypage.dto.HomeModifyReqDto;
 import com.server.back.domain.mypage.dto.HomeResDto;
-import com.server.back.domain.store.entity.UserAssetEntity;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.user.entity.UserEntity;
@@ -135,7 +134,7 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     /**
-     * IP주소에 맞게 방문자 수 반환 (쿠키 & redis 사용)
+     * IP,닉네임에 맞게 방문자 수 반환 (쿠키 & redis 사용)
      *
      * @param nickname
      * @param request
@@ -147,6 +146,10 @@ public class MyPageServiceImpl implements MyPageService{
 
         if(userRepository.findByNicknameAndIsDeleted(nickname,IsDeleted.N).isEmpty())throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
+        //현재 유저
+        Long userId=authService.getUserId();
+        UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
         //ip 주소로 홈피마다 방문자수 체크
         String ip = request.getHeader("X-Forwarded-For");
 
@@ -155,11 +158,11 @@ public class MyPageServiceImpl implements MyPageService{
         }
 
         // 쿠키 이름 생성을 위해 IP 주소의 ':' 제거 '_'로 변환
-        String ipStr = "visitor_id_" + ip.replaceAll(":", "_");
+        String ipStr = ip.replaceAll(":", "_")+"to"+nickname;
 
         log.info(ipStr);
 
-        Integer visitorCount=0;
+        int visitorCount=0;
         Cookie[] cookies= request.getCookies();
 
         if(cookies!=null){
