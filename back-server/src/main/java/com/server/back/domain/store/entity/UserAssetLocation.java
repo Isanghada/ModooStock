@@ -39,6 +39,16 @@ public class UserAssetLocation extends UserAssetEntity {
         this.rotZ=0F;
     }
 
+    public void initZero(){
+        this.posX=0F;
+        this.posY=0F;
+        this.posZ=0F;
+        this.rotX=0F;
+        this.rotY=0F;
+        this.rotZ=0F;
+    }
+
+
     public void update(float posX,float posY,float posZ,float rotX,float rotY,float rotZ){
         this.posX=posX;
         this.posY=posY;

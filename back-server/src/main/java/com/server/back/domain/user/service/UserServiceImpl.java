@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService{
                 .isInRepository(IsInRespository.N)
                 .isAuctioned(IsAuctioned.N)
                 .build();
-        userAssetLocation.init();
+        userAssetLocation.initZero();
 
         userAssetLocationRepository.save(userAssetLocation);
     }
