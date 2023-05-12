@@ -84,20 +84,18 @@ interface ReturnRankListInterFace {
 }
 
 interface ReturnActionListInterFace {
-  data: [
-    {
-      assetResDto: {
-        assetId: number;
-        assetName: string;
-        assetLevel: string;
-        assetCategory: string;
-        assetNameKor: string;
-      };
-      auctionId: string;
-      nickname: string;
-      price: number;
-    }
-  ];
+  data: Array<{
+    assetResDto: {
+      assetId: number;
+      assetName: string;
+      assetLevel: string;
+      assetCategory: string;
+      assetNameKor: string;
+    };
+    auctionId: string;
+    nickname: string;
+    price: number;
+  }>;
 }
 
 interface UpdateStateInterFace {
@@ -638,7 +636,7 @@ export const Api = createApi({
           body: body
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }, { type: 'AuctionApi'}]
     }),
 
     // 3. 내가 올린 경매 물품 리스트 조회
@@ -654,7 +652,7 @@ export const Api = createApi({
       query: (auctionId) => {
         return {
           url: `/auction/${auctionId}`,
-          method: 'Post'
+          method: 'POST'
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
@@ -664,7 +662,7 @@ export const Api = createApi({
       query: (auctionId) => {
         return {
           url: `/auction/${auctionId}`,
-          method: 'Delete'
+          method: 'DELETE'
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
@@ -800,6 +798,8 @@ export const {
   usePostAuctionAuctionIdMutation,
   useDeleteAuctionAuctionIdMutation,
   useDeleteAuctionMyAssetIdMutation,
+  useLazyGetAuctionQuery,
+  useLazyGetAuctionMyQuery,
   // ----------- 방문 ------------
   useLazyGetUserMypageQuery,
   useGetUserMypageVisitorsQuery,
