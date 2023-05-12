@@ -181,6 +181,7 @@ function Mypage(): JSX.Element {
           }
         };
         settingAsset();
+
         break;
       case '취소':
         settingMethod();
