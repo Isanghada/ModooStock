@@ -24,6 +24,8 @@ function Navbar(): JSX.Element {
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
   const [isUnmounted, setIsUnmounted] = useState(false);
+  // 가시성 관련
+  const [isPageVisible, setPageVisible] = useState(true);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
 
@@ -172,7 +174,9 @@ function Navbar(): JSX.Element {
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
       if (hour >= 10 && hour < 22 && !isUnmounted) {
-        toast.info('새로운 하루의 정보가 갱신되었습니다');
+        if (isPageVisible) {
+          toast.info('새로운 하루의 정보가 갱신되었습니다');
+        }
         // 내정보 갱신
         setTimeout(async () => {
           getUser();
@@ -185,8 +189,27 @@ function Navbar(): JSX.Element {
       job.cancel();
       setIsUnmounted(true);
     };
+  }, [isPageVisible]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 페이지가 현재 보이는 상태일 때 실행할 작업
+        console.log("보임")
+        setPageVisible(true);
+      } else {
+        // 페이지가 현재 보이지 않는 상태일 때 실행할 작업
+        setPageVisible(false);
+        console.log("안보임")
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
-  
 
   return (
     <>
@@ -290,6 +313,7 @@ function Navbar(): JSX.Element {
           </motion.div>
         </AnimatePresence>
       )}
+      
     </>
   );
 }
