@@ -76,13 +76,14 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
 
   useEffect(() => {
     // if (isClickAsset) {
+    // console.log('clickAsseData: ', clickAsseData);
+
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
       let geo: any = [];
       data.map((asset, idx) => {
         geo = [...geo, nodes[asset.assetName].geometry];
       });
-
       // 데이터
       setMyAssets(
         data.map((asset, idx: number) => {
