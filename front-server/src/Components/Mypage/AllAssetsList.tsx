@@ -6,6 +6,7 @@ import {
   changeClickAsseData,
   changeClickAssetPosition,
   changeClickAssetRotation,
+  changeIsAuctionClickInvenAsset,
   changeIsClickInvenAssetStore
 } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
@@ -47,7 +48,9 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
   const clickAssetRotation = useAppSelector((state) => {
     return state.clickAssetRotation;
   });
-
+  const isAuctionClickInvenAsset = useAppSelector((state) => {
+    return state.isAuctionClickInvenAsset;
+  });
   const ref = useRef<any>(null);
   const changeClick = (asset: any, pos: number[], rot: number[]) => {
     dispatch(
@@ -68,24 +71,26 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
     dispatch(changeClickAssetRotation(rot));
     setIsClickAsset(true);
     dispatch(changeIsClickInvenAssetStore(false));
+    dispatch(changeIsAuctionClickInvenAsset(false));
   };
 
   useEffect(() => {
     // if (isClickAsset) {
+    // console.log('clickAsseData: ', clickAsseData);
+
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
       let geo: any = [];
       data.map((asset, idx) => {
         geo = [...geo, nodes[asset.assetName].geometry];
       });
-
       // 데이터
       setMyAssets(
         data.map((asset, idx: number) => {
           let isClick = false;
           // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
           // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
-          if (asset.assetName === clickAsseData.assetName) {
+          if (asset.assetName === clickAsseData.assetName && asset.userAssetId === clickAsseData.userAssetId) {
             isClick = true;
           }
           return (

@@ -6,17 +6,26 @@ type ModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   padding?: string;
+  canOpenModal?: boolean;
+  elementId?: string;
+  styleType?: number;
 };
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding }) => {
+const Modal: FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+  padding = '',
+  canOpenModal = true,
+  elementId = 'modal-root',
+  styleType = 1
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const el = document.getElementById('modal-root');
-
-  if (padding === undefined) padding = '';
+  const el = document.getElementById(elementId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (canOpenModal && modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -28,20 +37,27 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, padding }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, canOpenModal]);
 
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full  overflow-auto bg-gray-800 bg-opacity-50">
-      <div
-        ref={modalRef}
-        className={`relative ${padding} bg-white rounded-xl shadow-2xl`}
-        style={{
-          filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
-        }}>
-        {children}
-      </div>
+      {styleType === 1 && (
+        <div
+          ref={modalRef}
+          className={`relative ${padding} bg-white rounded-xl shadow-2xl`}
+          style={{
+            filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.25))'
+          }}>
+          {children}
+        </div>
+      )}
+      {styleType === 2 && (
+        <div ref={modalRef} className={`relative ${padding} rounded-xl`}>
+          {children}
+        </div>
+      )}
     </div>,
     el as HTMLElement
   );

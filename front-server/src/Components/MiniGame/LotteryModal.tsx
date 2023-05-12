@@ -13,6 +13,7 @@ interface Props {
     money: number;
   };
   timestamp: number;
+  handleCanOpenModal: (canOpenModal: boolean) => void;
 }
 
 type DateType = Date | string | number;
@@ -52,29 +53,32 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
         isDark ? 'bg-pink-100' : 'bg-sky-100'
       }`}>
       <span className={`${styles.font2} text-lg md:text-2xl text-center`}>최대 당첨금</span>
-      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>{isDark ? '10억' : '5천만'}원!</span>
+      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>{isDark ? '7억' : '3천만'}원!</span>
       <div className={`${styles.font2} flex flex-col text-[0.6rem] md:text-xs text-start mt-2 md:mt-4 text-[#707070]`}>
         {isDark ? (
           <>
-            <span>1등 : 7억 ( 0.7% )</span>
-            <span>2등 : 꽝 ( 99.3% )</span>
+            <span>1등 : 7억 </span>
+            <span>2등 : 꽝 </span>
           </>
         ) : (
           <>
-            <span>1등 : 5천만원 ( 1 % )</span>
-            <span>2등 : 3백만원 ( 2.5% )</span>
-            <span>3등 : 50만원 ( 8% )</span>
-            <span>4등 : 만원 ( 42.5% )</span>
-            <span>5등 : 꽝 ( 46% )</span>
+            <span>1등 : 3천만원 </span>
+            <span>2등 : 3백만원 </span>
+            <span>3등 : 50만원 </span>
+            <span>4등 : 만원 </span>
+            <span>5등 : 꽝 </span>
           </>
         )}
       </div>
-      <img className="w-[80px] md:w-[120px]" src="images/icons/lottoPig.png" alt="로또"></img>
+      <img
+        className="w-[80px] md:w-[120px]"
+        src={process.env.REACT_APP_S3_URL + '/images/icons/lottoPig.png'}
+        alt="로또"></img>
     </div>
   );
 }
 
-function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
+function LotteryModal({ isDark, result, timestamp, handleCanOpenModal }: Props): JSX.Element {
   // 발행 일자
   const curTime = dateFormatter('yyyy. MM. DD H:i:s', timestamp);
 
@@ -206,6 +210,15 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
 
   // ------- (끝) 캔버스 부분 설정 -------
 
+  // ------- 화면밖 클릭시 닫힘 설정 -------
+  useEffect(() => {
+    if (erasedList.length !== 0) {
+      handleCanOpenModal(true);
+    } else {
+      handleCanOpenModal(false);
+    }
+  }, [erasedList, handleCanOpenModal]);
+
   return (
     <>
       <div className={`flex max-w-screen-xl mx-auto rounded-lg h-fit border-4`}>
@@ -220,7 +233,7 @@ function LotteryModal({ isDark, result, timestamp }: Props): JSX.Element {
               </span>
               <br />
               <span className={`${styles.font} text-xl font-medium`}>
-                {result.money === 0 ? '다음 기회에...' : result.money + '원을 획득하셨습니다.'}
+                {result.money === 0 ? '다음 기회에...' : result.money.toLocaleString() + '원을 획득하셨습니다.'}
               </span>
             </div>
             <canvas
