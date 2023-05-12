@@ -1,29 +1,83 @@
 import Error from 'Components/Common/Error';
 import Loading from 'Components/Common/Loading';
-import { useGetAuctionQuery, useGetAuctionMyQuery } from 'Store/api';
-import { useState } from 'react';
+import { useGetAuctionQuery, useGetAuctionMyQuery,useLazyGetAuctionQuery,useLazyGetAuctionMyQuery } from 'Store/api';
+import { useEffect, useState } from 'react';
 import AuctionModal from './AuctionModal';
 
 function Auction(): JSX.Element {
-    const { data: getAuction, isLoading: isLoading1, isError: isError1 } = useGetAuctionQuery('');
-    const { data: myAuction,  isLoading: isLoading2, isError: isError2 } = useGetAuctionMyQuery('');
-
-    let auctionIds = myAuction?.data?.map(item => item.auctionId);
-
-    const [selectNum, setSelectNum] = useState<number>(0);
+    const { data: items, isLoading: isLoading1, isError: isError1 } = useGetAuctionQuery('');
+    const { data: myItems, isLoading: isLoading2, isError: isError2 } = useGetAuctionMyQuery('');
+    const [ getItems, { isLoading: isLoading3, isError: isError3 }] = useLazyGetAuctionQuery();
+    const [ getMyItems, { isLoading: isLoading4, isError: isError4 }] = useLazyGetAuctionMyQuery();
+    const [selectNum, setSelectNum] = useState<any>(undefined);
     const [selectLevel, setSelectLevel] = useState<string>("");
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [what, setWhat] = useState<string>("구매");
+    const [selectSort, setSelectSort] = useState<string>("등록순");
+    const [getAuction, setGetAuction] = useState<any>();
+    const [myAuction, setMyAuction] = useState<any>();
+    const [selectItem, setSelectItem] = useState<any>();
+
+    // getAuction.data를 정렬한 새로운 배열 생성
+    useEffect(() => {
+        getItems('').then((data) => {
+            setGetAuction(data.data);
+        })
+        getMyItems('').then((data) => {
+            setMyAuction(data.data);
+        })
+    },[items, myItems]);
+
+    useEffect(() => {
+        getItems('').then((data) => {
+            setGetAuction(data.data);
+        })
+        getMyItems('').then((data) => {
+            setMyAuction(data.data);
+        })
+    },[])
+
+    useEffect(() => {
+        if(!getAuction) return;
+        if(!myAuction) return;
+        const sortedId = Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => parseInt(a.auctionId) - parseInt(b.auctionId)) : [];
+        const sortedPriceHigh = Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => b.price - a.price) : [];
+        const sortedPriceLow =  Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => a.price - b.price) : [];
+        const sortedData = selectSort === "등록순" ? sortedId : selectSort === "높은가격순" ? sortedPriceHigh : sortedPriceLow;
+        
+        const sortedId2 =  Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => parseInt(a.auctionId) - parseInt(b.auctionId)) : [];
+        const sortedPriceHigh2 = Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => b.price - a.price) : [];
+        const sortedPriceLow2 = Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => a.price - b.price) : [];
+        const sortedData2 = selectSort === "등록순" ? sortedId2 : selectSort === "높은가격순" ? sortedPriceHigh2 : sortedPriceLow2;
+        
+        setMyAuction({...myAuction, data: sortedData2});
+        setSelectNum(undefined);
+
+        setGetAuction({...getAuction, data: sortedData});
+      }, [selectSort, items, myItems]);
+
+      let auctionIds =myAuction && myAuction.data && Array.isArray(myAuction.data) ? myAuction.data.map((item:any) => item.auctionId) : [];
+      
+      useEffect(() => {
+        if(!getAuction) {
+            return setSelectItem(undefined);
+        };
+        if(getAuction.data.length <= 0) {
+            return setSelectItem(undefined);
+        }
+        setSelectItem(selectLevel === "MY" ? myAuction!.data?.length > 0 ? myAuction!.data[selectNum] : undefined : getAuction!.data!.length > 0 ? getAuction?.data[selectNum] : undefined)
+      },[selectNum, getAuction, myAuction, selectLevel])
+
     
 
-    if(isLoading1 || isLoading2) {
+    if(isLoading1 || isLoading2 || isLoading3 || isLoading4) {
         return(
         <>
             <Loading/>
         </>)
     }
 
-    if(isError1 || isError2) {
+    if(isError1 || isError2 || isError3 || isError4) {
         return (
             <>
                 <Error />
@@ -31,9 +85,13 @@ function Auction(): JSX.Element {
         )
     }
 
-    const selectItem = selectLevel === "MY" ? myAuction!.data.length > 0 ? myAuction?.data[selectNum] : undefined : getAuction!.data.length > 0 ? getAuction?.data[selectNum] : undefined
 
-    const levelStyle = `rounded-full lg:px-7 px-5 lg:py-1 mr-2 lg:text-[1.1rem] text-[0.9rem] font-bold shadow cursor-pointer`
+
+
+    
+    const levelStyle = `rounded-full lg:px-7 px-5 lg:py-1 mr-2 lg:text-[1rem] text-[0.8rem] font-bold shadow cursor-pointer`
+
+    const sortStyle = `px-2 text-[#888888] lg:text-[0.8rem] text-[0.7rem] my-auto`
     return(
         <>
         <div className = "w-full h-full lg:pt-[13vh] pt-[14vh] p-2">
@@ -48,15 +106,27 @@ function Auction(): JSX.Element {
                         <div className={`${levelStyle} ${selectLevel === "EPIC" ? "bg-[#FF8C8C] text-[#ffffff]" : "text-[#a5a5a5] bg-[#ffffff]" } `}  onClick={()=> setSelectLevel("EPIC")}>에픽</div>
                         <div className={`${levelStyle} ${selectLevel === "UNIQUE" ? "bg-[#FF8C8C] text-[#ffffff]" : "text-[#a5a5a5] bg-[#ffffff]" }`}  onClick={()=> setSelectLevel("UNIQUE")}>유니크</div>
                     </div>
-                    <div>
+                    <div className = "flex">
+                        <div className={`${sortStyle} ${selectSort === "등록순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
+                            setSelectSort("등록순");
+                            setSelectNum(0);
+                        }}>등록순</div>
+                        <div className={`${sortStyle} ${selectSort === "높은가격순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
+                            setSelectSort("높은가격순");
+                            setSelectNum(0);
+                        }}>높은가격순</div>
+                        <div className={`${sortStyle} ${selectSort === "낮은가격순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
+                            setSelectSort("낮은가격순");
+                            setSelectNum(0);
+                        }}>낮은가격순</div>
                         <div className={`${levelStyle} ${selectLevel === "MY" ? "bg-[#FF8C8C] text-[#ffffff]" : "text-[#a5a5a5] bg-[#ffffff]" } `}  onClick={()=> {setSelectLevel("MY"); setSelectNum(0);}}>판매중</div>
                     </div>
-                                  </div>
+                 </div>
 
                 <div className = "flex justify-between lg:h-[90%] h-[85%] lg:my-2 my-1">
                     <div className="lg:w-[62%] w-[55%] flex justify-start flex-wrap overflow-auto">
 
-                        {selectLevel !== "MY" && getAuction!.data.length > 0 && getAuction?.data?.map((item, index:number) => (
+                        {selectLevel !== "MY" && getAuction && getAuction.data && getAuction?.data?.length > 0 && getAuction?.data?.map((item:any, index:number) => (
                             <div key={index} className = {`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer ${!item?.assetResDto.assetLevel.includes(selectLevel) && 'hidden'}`} onClick={() => setSelectNum(index)}>
                                 <div className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${item?.assetResDto.assetLevel === "RARE" ? 'bg-[#0082ED]': item?.assetResDto.assetLevel === "EPIC" ? 'bg-[#BD00EC]' : 'bg-[#FFC34F]'}`} >{item?.assetResDto.assetLevel}</div>
                                 <img className="block w-full lg:h-[60%] h-[54%] object-cover" src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`} />
@@ -64,7 +134,7 @@ function Auction(): JSX.Element {
                                 <div className="font-bold lg:text-[1.0rem] text-[0.8rem] mx-2">{item?.price / 10000} 만원</div>        
                             </div>
                         ))}
-                        {selectLevel === "MY" &&  myAuction!.data.length > 0 && myAuction?.data?.map((item, index:number) => (
+                        {selectLevel === "MY" &&  myAuction && myAuction?.data && myAuction?.data?.length > 0 && myAuction?.data?.map((item:any, index:number) => (
                             <div key={index} className = {`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer`} onClick={() => setSelectNum(index)}>
                                 <div className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${item?.assetResDto.assetLevel === "RARE" ? 'bg-[#0082ED]': item?.assetResDto.assetLevel === "EPIC" ? 'bg-[#BD00EC]' : 'bg-[#FFC34F]'}`} >{item?.assetResDto.assetLevel}</div>
                                 <img className="block w-full lg:h-[60%] h-[54%] object-cover" src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`} />
@@ -72,8 +142,8 @@ function Auction(): JSX.Element {
                                 <div className="font-bold lg:text-[1.0rem] text-[0.8rem] mx-2">{item?.price / 10000} 만원</div>        
                             </div>
                         ))}
-                        {((myAuction!.data.length <= 0  && selectLevel === "MY") || (getAuction!.data.length <= 0  && selectLevel !== "MY")) && 
-                            <div>
+                        {((myAuction && myAuction?.data.length <= 0  && selectLevel === "MY") || (getAuction && getAuction?.data.length <= 0  && selectLevel !== "MY")) && 
+                            <div className="text-[1.1rem] text-[#7a7a7a] mx-auto my-auto">
                                 등록된 아이템이 없습니다.
                             </div>
                         }
@@ -103,7 +173,7 @@ function Auction(): JSX.Element {
                                     <div>{selectItem?.assetResDto.assetNameKor}</div>
                                 </div>
                                 <div className="px-2 mx-2 lg:text-[1.5rem] text-[1rem] font-bold">{selectItem?.price.toLocaleString()}원</div>
-                                {auctionIds && getAuction && auctionIds?.includes( selectItem!.auctionId) ?     
+                                {auctionIds && getAuction && auctionIds?.includes( selectItem?.auctionId) ?     
                                     <div className="bg-[#000000] cursor-pointer text-[#ffffff] font-bold mx-2 rounded-md py-[0.1rem] lg:text-[1.3rem] text-[0.8em] text-center px-3" 
                                         onClick={() => {
                                             setWhat("판매취소");
