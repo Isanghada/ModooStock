@@ -1,10 +1,14 @@
 package com.server.back.domain.user.service;
 
+import com.server.back.common.code.commonCode.DealType;
 import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.entity.DealEntity;
+import com.server.back.common.repository.DealRepository;
 import com.server.back.common.service.AuthService;
 import com.server.back.common.service.AuthTokenProvider;
 import com.server.back.common.service.RedisService;
 import com.server.back.domain.user.dto.LoginReqDto;
+import com.server.back.domain.user.dto.LoginResDto;
 import com.server.back.domain.user.entity.UserEntity;
 import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.exception.CustomException;
@@ -13,10 +17,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,17 +34,23 @@ public class LoginServiceImpl implements LoginService{
 
     private final AuthTokenProvider authTokenProvider;
     private final UserRepository userRepository;
+    private final DealRepository dealRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
     private final AuthService authService;
+
+    private static final Long DAILY_MONEY = 3_000_000L; // 하루 첫 로그인 300만원 지급 받음
 
     /**
      *
      * @param loginReqDto 계정과 비밀번호 (account, password)
      * @param response    엑세스 토큰을 담을 response
+     * @return 엑세스 토큰 및 리프레시 토큰
+     * 
      */
     @Override
-    public void login(LoginReqDto loginReqDto, HttpServletResponse response) {
+    @Transactional
+    public LoginResDto login(LoginReqDto loginReqDto, HttpServletResponse response) {
         // 유저가 존재하지 않을 때 혹은 탈퇴한 유저 일때 error 발생
         UserEntity user = userRepository.findByAccountAndIsDeleted(loginReqDto.getAccount(), IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -56,6 +72,20 @@ public class LoginServiceImpl implements LoginService{
 
         // refresh token Redis에 저장
         redisService.setDataExpireMilliseconds("RT:" + user.getId(), refreshToken, authTokenProvider.getExpiration(refreshToken));
+
+        // 하루 첫 로그인 인지 확인
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+        Optional<DealEntity> todayLoginUser = dealRepository.findByUserIdAndDealTypeAndCreatedAtGreaterThanEqual(user.getId(), DealType.GET_MONEY_FOR_DAILY, startDatetime);
+
+        if (todayLoginUser.isEmpty()) {
+            // 첫 로그인 이라면
+            dealRepository.save(new DealEntity(user, DealType.GET_MONEY_FOR_DAILY, DAILY_MONEY));
+            user.increaseCurrentMoney(DAILY_MONEY);
+            userRepository.save(user);
+        }
+
+        // 토큰 body에 담아서 전달
+        return LoginResDto.fromEntity(accessToken, refreshToken, user.getNickname());
     }
 
 
@@ -66,7 +96,7 @@ public class LoginServiceImpl implements LoginService{
      * @param response           엑세스 토큰을 담을 response
      */
     @Override
-    public void createAccessToken(Map<String, String> loginRequestHeader, HttpServletResponse response) {
+    public LoginResDto createAccessToken(Map<String, String> loginRequestHeader, HttpServletResponse response) {
         // 로그인 유저 가져오기
         String loginRequestRefreshToken = getHeader(loginRequestHeader, "x-refresh-token");
 
@@ -98,6 +128,8 @@ public class LoginServiceImpl implements LoginService{
         authTokenProvider.setHeaderAccessToken(response, newAccessToken);
         authTokenProvider.setHeaderRefreshToken(response, newRefreshToken);
 
+        // 토큰 body에 담아서 전달
+        return LoginResDto.fromEntity(newAccessToken, newRefreshToken, userNickname);
     }
 
     /**

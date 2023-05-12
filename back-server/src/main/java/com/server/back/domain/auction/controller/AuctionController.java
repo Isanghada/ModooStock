@@ -55,4 +55,17 @@ public class AuctionController {
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
+    @GetMapping("/my")
+    @ApiOperation(value = "내가 올린 경매 물품리스트를 반환합니다.")
+    public ResponseEntity<ResultDto<List<AuctionResDto>>> getMyAuctionList(){
+        List<AuctionResDto> auctionListResDto=auctionService.getMyAuctionList();
+        return ResponseEntity.ok(ResultDto.of(auctionListResDto));
+    }
+
+    @DeleteMapping ("/my/{myAssetId}")
+    @ApiOperation(value = "마이페이지에서 경매장에 등록한 물품을 취소합니다.")
+    public ResponseEntity<ResultDto<Boolean>> deleteMyPageAuction(@PathVariable Long myAssetId){
+        auctionService.deleteMyPageAuction(myAssetId);
+        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+    }
 }
