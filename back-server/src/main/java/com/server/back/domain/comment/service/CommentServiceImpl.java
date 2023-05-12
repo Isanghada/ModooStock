@@ -1,5 +1,6 @@
 package com.server.back.domain.comment.service;
 
+import com.server.back.common.code.commonCode.IsAuthor;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.comment.dto.AuthorResDto;
@@ -42,8 +43,12 @@ public class CommentServiceImpl implements CommentService{
 
         for(CommentEntity comment:commentEntityList){
             UserEntity author=userRepository.findById(comment.getAuthorId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+            IsAuthor isAuthor=IsAuthor.N;
 
-            commentListRes.add(CommentListResDto.toDto(AuthorResDto.fromEntity(author),CommentResDto.fromEntity(comment)));
+            if(author.equals(user)){
+                isAuthor=IsAuthor.Y;
+            }
+            commentListRes.add(CommentListResDto.toDto(AuthorResDto.fromEntity(author),CommentResDto.fromEntity(comment),isAuthor));
         }
 
         return commentListRes;
