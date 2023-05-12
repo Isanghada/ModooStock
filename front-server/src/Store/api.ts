@@ -84,20 +84,18 @@ interface ReturnRankListInterFace {
 }
 
 interface ReturnActionListInterFace {
-  data: [
-    {
-      assetResDto: {
-        assetId: number;
-        assetName: string;
-        assetLevel: string;
-        assetCategory: string;
-        assetNameKor: string;
-      };
-      auctionId: string;
-      nickname: string;
-      price: number;
-    }
-  ];
+  data: Array<{
+    assetResDto: {
+      assetId: number;
+      assetName: string;
+      assetLevel: string;
+      assetCategory: string;
+      assetNameKor: string;
+    };
+    auctionId: string;
+    nickname: string;
+    price: number;
+  }>;
 }
 
 interface UpdateStateInterFace {
@@ -252,6 +250,32 @@ interface AuctionReqDtoType {
   userAssetId: number;
 }
 
+interface ReturnVisitors { 
+  data: number;
+  result: string;
+}
+
+interface ReturnCommentList { 
+  data: Array<
+    {
+      authorResDto: {
+        nickname: string,
+        profileImagePath: string
+      },
+      commentResDto: {
+        commentId: number,
+        content: string,
+      },
+      isAuthor: 'Y' | 'N',
+  }>
+  result: string;
+}
+
+interface PostComment {
+  nickname : string;
+  content:string;
+}
+
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
 
@@ -284,7 +308,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi'],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi', 'UserMypageApi', 'CommentApi',],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -612,7 +636,7 @@ export const Api = createApi({
           body: body
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }, { type: 'AuctionApi'}]
     }),
 
     // 3. 내가 올린 경매 물품 리스트 조회
@@ -628,7 +652,7 @@ export const Api = createApi({
       query: (auctionId) => {
         return {
           url: `/auction/${auctionId}`,
-          method: 'Post'
+          method: 'POST'
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
@@ -638,7 +662,7 @@ export const Api = createApi({
       query: (auctionId) => {
         return {
           url: `/auction/${auctionId}`,
-          method: 'Delete'
+          method: 'DELETE'
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
@@ -652,7 +676,64 @@ export const Api = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'InvenApi' }]
-    })
+    }),
+    // ----------- 방문하기 ------------
+    // 1. 방문한 유저의 마이룸 조회
+    getUserMypage: builder.query<ReturnMyRoomAsset, string>({
+      query: (nickname) => `/mypage/${nickname}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserMypageApi'}];
+      }
+    }),
+    // 2. 마이페이지 방문자 수 조회
+    getUserMypageVisitors: builder.query<ReturnVisitors, string>({
+      query: (nickname) => `/mypage/${nickname}​/visitor`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'UserMypageApi'}];
+      }
+    }),
+
+    // ----------- 방명록 ------------
+    // 1. 방명록 리스트 조회
+    getCommentList: builder.query<ReturnCommentList, string>({
+      query: (nickname) => `/comment?nickname=${nickname}​`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'CommentApi'}];
+      }
+    }),
+    // 2. 방명록 작성
+    postComment: builder.mutation<ReturnBasicInterFace, PostComment>({
+      query: (body) => {
+        return {
+          url: `/comment?nickname=${body.nickname}`,
+          method: 'Post',
+          body: body.content
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+    // 3. 방명록 수정
+    putComment: builder.mutation<ReturnBasicInterFace, {commentId: number, content:string}>({
+      query: (body) => {
+        return {
+          url: `/comment/${body.commentId}`,
+          method: 'Put',
+          body: body.content
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+    // 4. 방명록 삭제
+    deleteComment: builder.mutation<ReturnBasicInterFace, number>({
+      query: (commentId) => {
+        return {
+          url: `/comment/${ commentId }`,
+          method: 'Delete'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+
   })
 });
 
@@ -716,5 +797,16 @@ export const {
   useGetAuctionMyQuery,
   usePostAuctionAuctionIdMutation,
   useDeleteAuctionAuctionIdMutation,
-  useDeleteAuctionMyAssetIdMutation
+  useDeleteAuctionMyAssetIdMutation,
+  useLazyGetAuctionQuery,
+  useLazyGetAuctionMyQuery,
+  // ----------- 방문 ------------
+  useLazyGetUserMypageQuery,
+  useGetUserMypageVisitorsQuery,
+  // ----------- 방명록 ------------
+  useGetCommentListQuery,
+  useLazyGetCommentListQuery,
+  usePostCommentMutation,
+  usePutCommentMutation,
+  useDeleteCommentMutation,
 } = Api;

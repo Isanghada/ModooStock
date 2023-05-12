@@ -7,7 +7,6 @@ import com.server.back.domain.store.entity.UserAssetEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,7 +24,7 @@ public class AuctionEntity extends CommonEntity {
     private UserAssetEntity userAsset;
 
     @Column(nullable = false)
-    private Integer auctionPrice;
+    private Long auctionPrice;
 
     @Column(nullable = false)
     private IsCompleted isCompleted;

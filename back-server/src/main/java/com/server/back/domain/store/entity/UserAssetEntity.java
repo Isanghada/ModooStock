@@ -4,9 +4,11 @@ import com.server.back.common.code.commonCode.IsAuctioned;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.code.commonCode.IsInRespository;
 import com.server.back.domain.user.entity.UserEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
