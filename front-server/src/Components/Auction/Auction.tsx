@@ -13,7 +13,7 @@ function Auction(): JSX.Element {
     const [selectLevel, setSelectLevel] = useState<string>("");
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [what, setWhat] = useState<string>("구매");
-    const [selectSort, setSelectSort] = useState<string>("등록순");
+    const [selectSort, setSelectSort] = useState<string>("최신순");
     const [getAuction, setGetAuction] = useState<any>();
     const [myAuction, setMyAuction] = useState<any>();
     const [selectItem, setSelectItem] = useState<any>();
@@ -43,12 +43,12 @@ function Auction(): JSX.Element {
         const sortedId = Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => parseInt(a.auctionId) - parseInt(b.auctionId)) : [];
         const sortedPriceHigh = Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => b.price - a.price) : [];
         const sortedPriceLow =  Array.isArray(getAuction?.data) ? getAuction?.data.slice().sort((a:any, b:any) => a.price - b.price) : [];
-        const sortedData = selectSort === "등록순" ? sortedId : selectSort === "높은가격순" ? sortedPriceHigh : sortedPriceLow;
+        const sortedData = selectSort === "최신순" ? sortedId : selectSort === "높은가격순" ? sortedPriceHigh : sortedPriceLow;
         
         const sortedId2 =  Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => parseInt(a.auctionId) - parseInt(b.auctionId)) : [];
         const sortedPriceHigh2 = Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => b.price - a.price) : [];
         const sortedPriceLow2 = Array.isArray(myAuction?.data) ? myAuction!.data.slice().sort((a:any, b:any) => a.price - b.price) : [];
-        const sortedData2 = selectSort === "등록순" ? sortedId2 : selectSort === "높은가격순" ? sortedPriceHigh2 : sortedPriceLow2;
+        const sortedData2 = selectSort === "최신순" ? sortedId2 : selectSort === "높은가격순" ? sortedPriceHigh2 : sortedPriceLow2;
         
         setMyAuction({...myAuction, data: sortedData2});
         setSelectNum(undefined);
@@ -107,10 +107,10 @@ function Auction(): JSX.Element {
                         <div className={`${levelStyle} ${selectLevel === "UNIQUE" ? "bg-[#FF8C8C] text-[#ffffff]" : "text-[#a5a5a5] bg-[#ffffff]" }`}  onClick={()=> setSelectLevel("UNIQUE")}>유니크</div>
                     </div>
                     <div className = "flex">
-                        <div className={`${sortStyle} ${selectSort === "등록순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
-                            setSelectSort("등록순");
+                        <div className={`${sortStyle} ${selectSort === "최신순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
+                            setSelectSort("최신순");
                             setSelectNum(0);
-                        }}>등록순</div>
+                        }}>최신순</div>
                         <div className={`${sortStyle} ${selectSort === "높은가격순" ? "font-bold text-[#FF8C8C]" :""}`} onClick={() => {
                             setSelectSort("높은가격순");
                             setSelectNum(0);
@@ -130,7 +130,7 @@ function Auction(): JSX.Element {
                             <div key={index} className = {`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer ${!item?.assetResDto.assetLevel.includes(selectLevel) && 'hidden'}`} onClick={() => setSelectNum(index)}>
                                 <div className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${item?.assetResDto.assetLevel === "RARE" ? 'bg-[#0082ED]': item?.assetResDto.assetLevel === "EPIC" ? 'bg-[#BD00EC]' : 'bg-[#FFC34F]'}`} >{item?.assetResDto.assetLevel}</div>
                                 <img className="block w-full lg:h-[60%] h-[54%] object-cover" src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`} />
-                                <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">[{item?.assetResDto.assetCategory === 'FURNITURE' ? "가구" : item?.assetResDto.assetCategory === 'PROP' ? "소품" : "방"}] {item?.assetResDto.assetNameKor}</div>  
+                                <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">[{item?.assetResDto.assetCategory === 'FURNITURE' ? "가구" : item?.assetResDto.assetCategory === 'PROP' ? "소품" : "집"}] {item?.assetResDto.assetNameKor}</div>  
                                 <div className="font-bold lg:text-[1.0rem] text-[0.8rem] mx-2">{item?.price / 10000} 만원</div>        
                             </div>
                         ))}
@@ -138,7 +138,7 @@ function Auction(): JSX.Element {
                             <div key={index} className = {`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer`} onClick={() => setSelectNum(index)}>
                                 <div className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${item?.assetResDto.assetLevel === "RARE" ? 'bg-[#0082ED]': item?.assetResDto.assetLevel === "EPIC" ? 'bg-[#BD00EC]' : 'bg-[#FFC34F]'}`} >{item?.assetResDto.assetLevel}</div>
                                 <img className="block w-full lg:h-[60%] h-[54%] object-cover" src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`} />
-                                <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">[{item?.assetResDto.assetCategory === 'FURNITURE' ? "가구" : item?.assetResDto.assetCategory === 'PROP' ? "소품" : "방"}] {item?.assetResDto.assetNameKor}</div>  
+                                <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">[{item?.assetResDto.assetCategory === 'FURNITURE' ? "가구" : item?.assetResDto.assetCategory === 'PROP' ? "소품" : "집"}] {item?.assetResDto.assetNameKor}</div>  
                                 <div className="font-bold lg:text-[1.0rem] text-[0.8rem] mx-2">{item?.price / 10000} 만원</div>        
                             </div>
                         ))}
