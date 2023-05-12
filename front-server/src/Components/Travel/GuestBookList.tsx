@@ -2,12 +2,22 @@ import { useEffect, useState } from 'react';
 import DeleteGuestBookModal from './DeleteGuestBookModal';
 import WriteGuestBookModal from './WirteGuestBookModal';
 import Modal from 'Components/Main/Modal';
+import { useParams } from 'react-router-dom';
+import { useGetCommentListQuery } from 'Store/api';
+import Lottie from 'lottie-react';
+import mailbox from 'Components/Common/Lottie/mailbox.json';
+import Loading from 'Components/Common/Loading';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-interface GuestBookItemProps {
+interface CommentResDtoProps {
+  commentId: number;
+  content: string;
+}
+
+interface ReturnGuestBookItem {
   authorResDto: {
     nickname: string;
     profileImagePath: string;
@@ -16,13 +26,18 @@ interface GuestBookItemProps {
     commentId: number;
     content: string;
   };
-  handleOpenDeleteModal?: () => void;
-  handleOpenModifyModal?: () => void;
+  isAuthor: 'Y' | 'N';
+}
+
+interface GuestBookItemProps extends ReturnGuestBookItem {
+  handleOpenDeleteModal: (commentId: number) => void;
+  handleOpenModifyModal: (comment: CommentResDtoProps) => void;
 }
 
 function GuestBookItem({
   authorResDto: author,
   commentResDto: comment,
+  isAuthor,
   handleOpenDeleteModal,
   handleOpenModifyModal
 }: GuestBookItemProps): JSX.Element {
@@ -37,16 +52,16 @@ function GuestBookItem({
         </div>
         <p className="w-[10.875rem] h-[7.5rem] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
-        {localStorage.getItem('nickname') === author.nickname && (
+        {isAuthor === 'Y' && (
           <div className="bottom-0 flex justify-start gap-2">
-            <button className="" onClick={handleOpenDeleteModal}>
+            <button className="" onClick={() => handleOpenDeleteModal(comment.commentId)}>
               <img
                 alt=""
                 src={process.env.REACT_APP_S3_URL + '/images/visits/delete.png'}
                 className="w-[1.125rem] h-[1.125rem] object-cover"
               />
             </button>
-            <button className="" onClick={handleOpenModifyModal}>
+            <button className="" onClick={() => handleOpenModifyModal(comment)}>
               <img
                 alt=""
                 src={process.env.REACT_APP_S3_URL + '/images/visits/edit.png'}
@@ -60,130 +75,38 @@ function GuestBookItem({
   );
 }
 
-const guestBookList: GuestBookItemProps[] = [
-  {
-    authorResDto: {
-      nickname: '오리',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m9.png'
-    },
-    commentResDto: {
-      commentId: 1,
-      content: '안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. 왔다감 안녕하세요. '
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '고양이',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m3.png'
-    },
-    commentResDto: {
-      commentId: 2,
-      content: '냐옹'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 3,
-      content: '일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '톰과젤리',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 4,
-      content: '젤리'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://i.pinimg.com/236x/e4/0d/31/e40d31b6c62a4b11d13b5f0e2d8c7c7e.jpg'
-    },
-    commentResDto: {
-      commentId: 5,
-      content: '멍멍'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '시나몬롤',
-      profileImagePath: 'https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/sinamonroll.png'
-    },
-    commentResDto: {
-      commentId: 6,
-      content: '안녕'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 7,
-      content: '멍멍'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 8,
-      content: '멍멍'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 3,
-      content: '멍멍'
-    }
-  },
-  {
-    authorResDto: {
-      nickname: '강아지',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 3,
-      content: '멍멍'
-    }
-  },
-
-  {
-    authorResDto: {
-      nickname: '병아리',
-      profileImagePath: 'https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/m4.png'
-    },
-    commentResDto: {
-      commentId: 3,
-      content: '삐약삐약'
-    }
-  }
-];
-
 function GuestBookList({ onClose }: Props): JSX.Element {
+  // 방명록 리스트 가져오기
+  const { nickname } = useParams() as { nickname: string };
+  const { data, isLoading: isLoading1, isError: isError1 } = useGetCommentListQuery(nickname);
+  // const [getCommentList, { isLoading: isLoading1, isError: isError1 }] = useLazyGetCommentListQuery();
+
+  // useEffect(() => {
+  //   const getComment = async () => {
+  //     const { data, result } = await getCommentList(nickname).unwrap();
+  //     if (data) {
+  //       setCommentList(commentList);
+  //     }
+  //   };
+  //   getComment();
+  // }, [nickname, commentList, getCommentList]);
+
+  const [commentId, setCommentId] = useState<number>(0);
+  const [comment, setComment] = useState<CommentResDtoProps | undefined>();
+
+  // 삭제 모달 관련
   const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
 
-  const handleOpenDeleteModal = () => {
+  const handleOpenDeleteModal = (commentId: number) => {
+    setCommentId(commentId);
     setIsShowDeleteModal(true);
   };
   const handleCloseDeleteModal = () => {
+    setCommentId(0);
     setIsShowDeleteModal(false);
   };
 
+  // 작성 & 수정 모달 관련
   const [isShowWriteModal, setIsShowWriteModal] = useState<boolean>(false);
   const [type, setType] = useState<'WRITE' | 'MODIFY'>('WRITE');
 
@@ -191,11 +114,14 @@ function GuestBookList({ onClose }: Props): JSX.Element {
     setType('WRITE');
     setIsShowWriteModal(true);
   };
-  const handleOpenModifyModal = () => {
+  const handleOpenModifyModal = (comment: CommentResDtoProps) => {
     setType('MODIFY');
+    setComment(comment);
     setIsShowWriteModal(true);
   };
   const handleCloseWriteModal = () => {
+    setCommentId(0);
+    setComment(undefined);
     setIsShowWriteModal(false);
   };
 
@@ -231,17 +157,36 @@ function GuestBookList({ onClose }: Props): JSX.Element {
         <div
           className="w-fit lg:h-[28.875rem] rounded-bl-lg rounded-br-lg bg-[#fff6f2] border border-[#fde2e2] overflow-auto"
           style={screenHeight > 800 ? { height: '28.875rem' } : { height: '50vh' }}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
+          <>
             {/* map */}
-            {guestBookList.map((item, index) => (
-              <GuestBookItem
-                key={index}
-                authorResDto={item.authorResDto}
-                commentResDto={item.commentResDto}
-                handleOpenDeleteModal={handleOpenDeleteModal}
-                handleOpenModifyModal={handleOpenModifyModal}></GuestBookItem>
-            ))}
-          </div>
+            {data?.data.length !== 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
+                {data?.data.map((item: ReturnGuestBookItem, index) => (
+                  <GuestBookItem
+                    key={index}
+                    authorResDto={item.authorResDto}
+                    commentResDto={item.commentResDto}
+                    isAuthor={item.isAuthor}
+                    handleOpenDeleteModal={handleOpenDeleteModal}
+                    handleOpenModifyModal={handleOpenModifyModal}></GuestBookItem>
+                ))}
+              </div>
+            )}
+            {data?.data.length === 0 && (
+              <div className="w-[456px] md:w-[688px] lg:w-[912px] h-full flex items-center py-2">
+                <div className="w-full flex flex-col justify-center items-center lg: gap-4">
+                  <span className=" font-semibold text-xl text-[#707070]">아직 방명록이 없어요!</span>
+                  <Lottie animationData={mailbox} className="w-[10rem] h-[10rem] lg:w-[12rem] lg:h-[12rem]" />
+                </div>
+              </div>
+            )}
+            {isLoading1 && (
+              <div className="w-[456px] md:w-[688px] lg:w-[912px] h-full flex items-center py-2">
+                <Loading />
+              </div>
+            )}
+          </>
+
           <button
             className="absolute bottom-4 right-4 flex justify-center items-center w-[2.8rem] h-[2.8rem] lg:w-[3.75rem] lg:h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1"
             onClick={handleOpenWriteModal}>
@@ -260,7 +205,7 @@ function GuestBookList({ onClose }: Props): JSX.Element {
           'w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold'
         }
         elementId={'guest-book-modal'}>
-        <DeleteGuestBookModal onClose={handleCloseDeleteModal} />
+        <DeleteGuestBookModal onClose={handleCloseDeleteModal} commentId={commentId} />
       </Modal>
       <Modal
         isOpen={isShowWriteModal}
@@ -268,7 +213,7 @@ function GuestBookList({ onClose }: Props): JSX.Element {
         padding={'align-middle transition-all transform'}
         elementId={'guest-book-modal'}
         styleType={2}>
-        <WriteGuestBookModal onClose={handleCloseWriteModal} type={type} />
+        <WriteGuestBookModal onClose={handleCloseWriteModal} type={type} comment={comment} />
       </Modal>
     </>
   );

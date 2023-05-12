@@ -249,6 +249,27 @@ interface ReturnVisitors {
   result: string;
 }
 
+interface ReturnCommentList { 
+  data: Array<
+    {
+      authorResDto: {
+        nickname: string,
+        profileImagePath: string
+      },
+      commentResDto: {
+        commentId: number,
+        content: string,
+      },
+      isAuthor: 'Y' | 'N',
+  }>
+  result: string;
+}
+
+interface PostComment {
+  nickname : string;
+  content:string;
+}
+
 const fetchAccessToken = async () => {
   const accessToken: string | null = localStorage.getItem('accessToken');
 
@@ -281,7 +302,7 @@ const fetchAccessToken = async () => {
 
 export const Api = createApi({
   reducerPath: 'Api',
-  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi', 'UserMypageApi', ],
+  tagTypes: ['UserApi', 'BankApi', 'StockApi', 'NewsApi', 'MypageApi', 'InvenApi', 'GotchaApi', 'AuctionApi', 'UserMypageApi', 'CommentApi',],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: async (headers) => {
@@ -609,13 +630,54 @@ export const Api = createApi({
       }
     }),
     // 2. 마이페이지 방문자 수 조회
-    // GET ​/api​/mypage​/{nickname}​/visitor
     getUserMypageVisitors: builder.query<ReturnVisitors, string>({
       query: (nickname) => `/mypage/${nickname}​/visitor`,
       providesTags: (result, error, arg) => {
         return [{ type: 'UserMypageApi'}];
       }
     }),
+
+    // ----------- 방명록 ------------
+    // 1. 방명록 리스트 조회
+    getCommentList: builder.query<ReturnCommentList, string>({
+      query: (nickname) => `/comment?nickname=${nickname}​`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'CommentApi'}];
+      }
+    }),
+    // 2. 방명록 작성
+    postComment: builder.mutation<ReturnBasicInterFace, PostComment>({
+      query: (body) => {
+        return {
+          url: `/comment?nickname=${body.nickname}`,
+          method: 'Post',
+          body: body.content
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+    // 3. 방명록 수정
+    putComment: builder.mutation<ReturnBasicInterFace, {commentId: number, content:string}>({
+      query: (body) => {
+        return {
+          url: `/comment/${body.commentId}`,
+          method: 'Put',
+          body: body.content
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+    // 4. 방명록 삭제
+    deleteComment: builder.mutation<ReturnBasicInterFace, number>({
+      query: (commentId) => {
+        return {
+          url: `/comment/${ commentId }`,
+          method: 'Delete'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'CommentApi' }]
+    }),
+
   })
 });
 
@@ -678,4 +740,10 @@ export const {
   // ----------- 방문 ------------
   useLazyGetUserMypageQuery,
   useGetUserMypageVisitorsQuery,
+  // ----------- 방명록 ------------
+  useGetCommentListQuery,
+  useLazyGetCommentListQuery,
+  usePostCommentMutation,
+  usePutCommentMutation,
+  useDeleteCommentMutation,
 } = Api;
