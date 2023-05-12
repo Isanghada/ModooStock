@@ -1,11 +1,11 @@
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
 import { useState } from 'react';
+import AllAssetsList2 from './AllAssetsList2';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -19,6 +19,7 @@ function TravelRoom(): JSX.Element {
         />
       </div>
       <div className="w-[80%] flex justify-center h-[87%] items-center">
+        {/* <Suspense fallback={<AssetLoading />}> */}
         <Canvas
           style={{ width: '100%', height: '100%', paddingTop: '6%' }}
           orthographic
@@ -33,8 +34,9 @@ function TravelRoom(): JSX.Element {
           }}>
           <ambientLight intensity={0.5} />
           <pointLight distance={2000} position={10} power={8} />
-          <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+          <AllAssetsList2 len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
         </Canvas>
+        {/* </Suspense> */}
       </div>
     </div>
   );
@@ -66,7 +68,7 @@ function MobileTravelRoom(): JSX.Element {
           }}>
           <ambientLight intensity={0.5} />
           <pointLight distance={2000} position={10} power={8} />
-          <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+          <AllAssetsList2 len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
         </Canvas>
       </div>
     </div>

@@ -74,7 +74,7 @@ function Layout(): JSX.Element {
         <AnimatePresence>
           {loginStatus && (
             <motion.div
-              className="max-h-screen min-h-full"
+              className="max-h-screen min-h-full overflow-hidden"
               initial={{ width: 0 }}
               animate={screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }}
               exit={{ width: 0, opacity: 0 }}

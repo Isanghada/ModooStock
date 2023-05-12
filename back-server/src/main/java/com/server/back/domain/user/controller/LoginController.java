@@ -3,6 +3,7 @@ package com.server.back.domain.user.controller;
 
 import com.server.back.common.code.dto.ResultDto;
 import com.server.back.domain.user.dto.LoginReqDto;
+import com.server.back.domain.user.dto.LoginResDto;
 import com.server.back.domain.user.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,19 +25,19 @@ public class LoginController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인합니다.", notes = "")
-    public ResponseEntity<ResultDto<Boolean>> login(@RequestBody LoginReqDto loginReqDto, HttpServletResponse response) {
-        loginService.login(loginReqDto, response);
+    public ResponseEntity<ResultDto<LoginResDto>> login(@RequestBody LoginReqDto loginReqDto, HttpServletResponse response) {
+        LoginResDto loginResDto = loginService.login(loginReqDto, response);
 
-        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+        return ResponseEntity.ok().body(ResultDto.of(loginResDto));
     }
 
 
     @PostMapping("/refresh")
     @ApiOperation(value = "엑세스 토큰을 재발급합니다.", notes = "")
-    public ResponseEntity<ResultDto<Boolean>> createAccessToken(@RequestHeader Map<String, String> loginRequestHeader, HttpServletResponse response) {
-        loginService.createAccessToken(loginRequestHeader, response);
+    public ResponseEntity<ResultDto<LoginResDto>> createAccessToken(@RequestHeader Map<String, String> loginRequestHeader, HttpServletResponse response) {
+        LoginResDto loginResDto = loginService.createAccessToken(loginRequestHeader, response);
 
-        return ResponseEntity.ok().body(ResultDto.ofSuccess());
+        return ResponseEntity.ok().body(ResultDto.of(loginResDto));
     }
 
 

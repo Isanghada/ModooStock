@@ -116,6 +116,8 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
                   } else {
                     dispatch(changeIsAuctionClickInvenAsset(false));
                   }
+                  dispatch(changeClickAssetPosition([0, 0, -200]));
+                  dispatch(changeClickAssetRotation([0, 0, 0]));
                 }}
                 key={idx}
                 className="flex flex-col justify-between items-center w-[5rem] lg:w-[10rem] h-[85%] my-auto border-2 pb-2 border-[#F0EBE3] rounded-2xl mx-1 lg:mx-2 bg-[#FFFFFF] hover:scale-105 transition-all duration-500 cursor-pointer hover:drop-shadow-lg hover:border-[#fb7c7c]/40 hover:border-[3px]">

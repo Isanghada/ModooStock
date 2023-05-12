@@ -2,7 +2,6 @@ package com.server.back.domain.store.entity;
 
 import com.server.back.common.code.commonCode.AssetLevelType;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -17,12 +16,16 @@ public class AssetEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String category;
     @Column(nullable = false)
-    private String assetImagePath;
+    private String category;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AssetLevelType assetLevel;
+
+    @Column(nullable = false,unique = true)
+    private String assetName;
+
+    @Column(nullable = false)
+    private String assetNameKor;
 
 }

@@ -22,7 +22,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     List<UserEntity> findByAccountContainingOrNicknameContaining(String accountSearch, String nicknameSearch);
 
-    @Query(value = "SELECT * FROM user_table WHERE id <> :excludeId ORDER BY RAND() LIMIT 1", nativeQuery = true)
-    Optional<UserEntity> findRandomUserExcluding(@Param("excludeId") Long excludeId);
+    List<UserEntity> findByNicknameContaining(String keyword);
+    List<UserEntity> findByAccountContaining(String keyword);
+
+    @Query(value = "SELECT * FROM user_table WHERE id <> :excludeId AND is_deleted = 'N' ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<UserEntity> findRandomUserExcludingAndIsDeleted(@Param("excludeId") Long excludeId);
+
+    List<UserEntity> findAllByIsDeleted(IsDeleted isDeleted);
 
 }
