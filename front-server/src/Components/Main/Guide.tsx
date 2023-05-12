@@ -8,7 +8,6 @@ interface Props {
 }
 
 function Guide({onClose,openGuide}:Props):JSX.Element {
-    console.log(openGuide);
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

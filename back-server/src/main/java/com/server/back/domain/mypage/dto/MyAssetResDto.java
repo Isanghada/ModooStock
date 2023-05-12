@@ -3,8 +3,7 @@ package com.server.back.domain.mypage.dto;
 import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.common.code.commonCode.IsAuctioned;
 import com.server.back.domain.store.entity.UserAssetEntity;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,15 +12,17 @@ import java.util.stream.Collectors;
 @Builder
 public class MyAssetResDto {
     private Long userAssetId;
-    private String assetImagePath;
+    private String assetName;
+    private String assetNameKor;
     private AssetLevelType assetLevel;
     private String assetCategory;
     private IsAuctioned isAuctioned;
 
     public static MyAssetResDto fromEntity(UserAssetEntity userAsset){
         return  MyAssetResDto.builder()
-                .userAssetId(userAsset.getAsset().getId())
-                .assetImagePath(userAsset.getAsset().getAssetImagePath())
+                .userAssetId(userAsset.getId())
+                .assetName(userAsset.getAsset().getAssetName())
+                .assetNameKor(userAsset.getAsset().getAssetNameKor())
                 .assetLevel(userAsset.getAsset().getAssetLevel())
                 .assetCategory(userAsset.getAsset().getCategory())
                 .isAuctioned(userAsset.getIsAuctioned())

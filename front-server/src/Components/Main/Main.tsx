@@ -369,22 +369,24 @@ function Main(): JSX.Element {
         </div>
         <div className="h-[10%]"></div>
         <div className="w-[50%] h-[75%] flex justify-center items-center">
-          <Canvas
-            style={{ width: '100%', height: '100%' }}
-            orthographic
-            camera={{
-              left: -1,
-              right: 1,
-              top: 1,
-              bottom: -1,
-              near: 0.1,
-              far: 1000,
-              zoom: 100
-            }}>
-            <ambientLight intensity={0.5} />
-            <pointLight distance={2000} position={10} power={8} />
-            <MyHomeAsset len={0.004} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
-          </Canvas>
+          <Suspense fallback={<AssetLoading />}>
+            <Canvas
+              style={{ width: '100%', height: '100%' }}
+              orthographic
+              camera={{
+                left: -1,
+                right: 1,
+                top: 1,
+                bottom: -1,
+                near: 0.1,
+                far: 1000,
+                zoom: 100
+              }}>
+              <ambientLight intensity={0.5} />
+              <pointLight distance={2000} position={10} power={8} />
+              <MyHomeAsset len={0.004} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
+            </Canvas>
+          </Suspense>
         </div>
         <div className="w-[50%] h-[15%]"></div>
         {/* 라우터 아이콘 */}

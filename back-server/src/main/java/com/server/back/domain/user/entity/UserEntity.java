@@ -2,16 +2,21 @@ package com.server.back.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.Role;
 import com.server.back.common.entity.CommonEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 
-
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,25 +25,25 @@ import java.util.Collection;
 @Table(name = "user_table")
 public class UserEntity extends CommonEntity implements UserDetails {
 
-    private static String PROFILE_IMAGE_PATH_DEFAULT = "/user/default.jpg";
-    private static String INTRODUCTION_DEFAULT= "때가 올때까지 기다리는 사람이 성공한다!";
+    private static String INTRODUCTION_DEFAULT= "인생 한방";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Size(min = 2, max = 15)
+    @Column(nullable = false, length = 15)
     private String account;
 
-    @Column(nullable = false, unique = true, length = 6)
+    @Size(min = 2, max = 6)
+    @Column(nullable = false, length = 6)
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    @Builder.Default
-    private String profileImagePath= PROFILE_IMAGE_PATH_DEFAULT;
+    private String profileImagePath;
 
     @Column(nullable = false)
     @Builder.Default
@@ -51,12 +56,23 @@ public class UserEntity extends CommonEntity implements UserDetails {
 
     @Column(nullable = false)
     @Builder.Default
-    private Integer currentMoney = 10000_0000;
+    private Long currentMoney = 10_000_000L;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+        for(String role : role.getDescription().split(",")){
+            log.info("[ROLE] role {}", role);
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
     }
 
 
@@ -131,11 +147,13 @@ public class UserEntity extends CommonEntity implements UserDetails {
         this.isDeleted = isDeleted;
     }
 
-    public void increaseCurrentMoney(Integer money) {
+    public void increaseCurrentMoney(Long money) {
         this.currentMoney += money;
     }
 
-    public void decreaseCurrentMoney(Integer money) {
+    public void decreaseCurrentMoney(Long money) {
         this.currentMoney -= money;
     }
+
+    public void updateNicknameByAdmin(String nickname) {this.nickname = nickname;}
 }

@@ -539,6 +539,8 @@ function Exchange(): JSX.Element {
       if (clickNationalName !== '') {
         SetSelectIRData(irData[clickNationalName]);
       }
+      console.log('sseData: ', sseData);
+
       // 수익, 손익 계산을 위한 데이터 추가
       if (stockChartResDto.length > 1) {
         setSelectRevenueData((stockChartResDto[stockChartResDto.length - 1].priceEnd - average) * amount);
@@ -633,6 +635,8 @@ function Exchange(): JSX.Element {
         });
       setUsdData(usdData);
     }
+    console.log('sseData: ', sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd);
+    console.log('selectCurrentData.priceEnd: ', selectCurrentData.priceEnd);
   }, [sseData]);
 
   const selectStockData = (stockId: number) => {
@@ -807,23 +811,57 @@ function Exchange(): JSX.Element {
                           {selectCurrentData.priceEnd.toLocaleString()}
                         </span>
                         <span className="text-black text-[1.3rem]">원</span>
-                        <span
-                          className={`text-[1rem] flex pt-2 items-end ${
-                            sseData &&
-                            selectCurrentData.priceEnd -
-                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
-                              0
-                              ? 'text-red-500'
-                              : 'text-blue-500'
-                          }`}>
-                          (
-                          {sseData &&
-                            (
+                        {/* 현재 주식 데이터가 한개일 경우 */}
+                        {sseData && sseData.stockChartResDto.length === 1 && (
+                          <span
+                            className={`text-[1rem] flex pt-2 items-end ${
+                              sseData &&
                               selectCurrentData.priceEnd -
-                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
-                            ).toLocaleString()}
-                          )
-                        </span>
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                                0
+                                ? 'text-red-500'
+                                : 'text-blue-500'
+                            }`}>
+                            (
+                            {selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                            0
+                              ? selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                              : Math.abs(
+                                  selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                ).toLocaleString()}
+                            )
+                          </span>
+                        )}
+                        {sseData && sseData.stockChartResDto.length >= 1 && (
+                          <span
+                            // 현재 주식 데이터가 여러개일 경우
+                            className={`text-[1rem] flex pt-2 items-end ${
+                              sseData &&
+                              selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd >
+                                0
+                                ? 'text-red-500'
+                                : 'text-blue-500'
+                            }`}>
+                            (
+                            {selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd <
+                            0
+                              ? '-' +
+                                Math.abs(
+                                  selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                ).toLocaleString()
+                              : (
+                                  selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                ).toLocaleString()}
+                            )
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -868,7 +906,7 @@ function Exchange(): JSX.Element {
                       <span className="text-[0.7rem] font-semibold">{clickNationalName}</span>
                     </div>
                     {sseData && sseData?.amount > 0 && (
-                      <div className="flex items-end space-x-1">
+                      <div className="flex items-end space-x-2">
                         <div className="flex items-center space-x-1">
                           <span className="text-[0.7rem]">보유수량</span>
                           <span className="text-black">{sseData?.amount.toLocaleString()}</span>
@@ -897,23 +935,57 @@ function Exchange(): JSX.Element {
                             <span className="text-black">{selectCurrentData.priceEnd.toLocaleString()}</span>
                             <span className="text-black text-[0.7rem]">원</span>
                           </div>
-                          <span
-                            className={`text-[0.6rem] flex  items-end  ${
-                              sseData &&
-                              selectCurrentData.priceEnd -
-                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
-                                0
-                                ? 'text-red-500'
-                                : 'text-blue-500'
-                            }`}>
-                            (
-                            {sseData &&
-                              (
+                          {/* 현재 주식 데이터가 한개일 경우 */}
+                          {sseData && sseData.stockChartResDto.length === 1 && (
+                            <span
+                              className={`text-[0.6rem] pb-1 flex pt-2 items-end ${
+                                sseData &&
                                 selectCurrentData.priceEnd -
-                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
-                              ).toLocaleString()}
-                            )
-                          </span>
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                                  0
+                                  ? 'text-red-500'
+                                  : 'text-blue-500'
+                              }`}>
+                              (
+                              {selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                              0
+                                ? selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                : Math.abs(
+                                    selectCurrentData.priceEnd -
+                                      sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                  ).toLocaleString()}
+                              )
+                            </span>
+                          )}
+                          {sseData && sseData.stockChartResDto.length >= 1 && (
+                            <span
+                              // 현재 주식 데이터가 여러개일 경우
+                              className={`text-[0.6rem] pb-1 flex pt-2 items-end ${
+                                sseData &&
+                                selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd >
+                                  0
+                                  ? 'text-red-500'
+                                  : 'text-blue-500'
+                              }`}>
+                              (
+                              {selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd <
+                              0
+                                ? '-' +
+                                  Math.abs(
+                                    selectCurrentData.priceEnd -
+                                      sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                  ).toLocaleString()
+                                : (
+                                    selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                  ).toLocaleString()}
+                              )
+                            </span>
+                          )}
                         </>
                       )}
                     </div>
@@ -965,17 +1037,7 @@ function Exchange(): JSX.Element {
                   <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
                     <div className="flex items-end justify-between w-full font-extrabold">
                       <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
-                      <span
-                        className={` text-[0.8rem]
-                          ${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'text-black'
-                              : 'text-red-500'
-                          }`}>
-                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                          ? `구매 금액: ${afterMoney}원`
-                          : `한도 초과: ${afterMoney}원`}
-                      </span>
+                      <span className={` text-[0.8rem]`}>금액: {afterMoney}원</span>
                     </div>
                     <div className="hidden lg:flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
                       <input
@@ -1019,9 +1081,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          sseData && sseData.amount > 0
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매도</span>
@@ -1031,7 +1093,7 @@ function Exchange(): JSX.Element {
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
                           parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매수</span>
@@ -1171,17 +1233,7 @@ function Exchange(): JSX.Element {
                   <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
                     <div className="flex items-end justify-between w-full font-extrabold">
                       <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
-                      <span
-                        className={` text-[0.7rem]
-                          ${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'text-black'
-                              : 'text-red-500'
-                          }`}>
-                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                          ? `구매 금액: ${afterMoney}원`
-                          : `한도 초과: ${afterMoney}원`}
-                      </span>
+                      <span className={` text-[0.7rem] `}>금액: {afterMoney}원</span>
                     </div>
                     <div className="flex lg:hidden justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
                       <input
@@ -1225,9 +1277,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도2"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          sseData && sseData?.amount > 0
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매도</span>
@@ -1237,7 +1289,7 @@ function Exchange(): JSX.Element {
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
                           parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매수</span>

@@ -57,6 +57,16 @@ const updateStatus = createSlice({
     }
   }
 });
+// 개인정보보호 상태관리
+const privacyStatus = createSlice({
+  name: 'privacyStatus',
+  initialState: false,
+  reducers: {
+    changePrivacyStatus(state, action) {
+      return (state = action.payload);
+    }
+  }
+});
 // 소지 금액 상태관리
 const currentMoneyStatus = createSlice({
   name: 'currentMoneyStatus',
@@ -134,18 +144,14 @@ const clickAssetRotation = createSlice({
   }
 });
 
-// 클릭한 인벤 에셋
-const clickInvenAsset = createSlice({
-  name: 'clickInvenAsset',
+// 클릭한 인벤 에셋의 옥션 여부
+const isAuctionClickInvenAsset = createSlice({
+  name: 'isAuctionClickInvenAsset',
   initialState: {
-    assetCategory: '',
-    assetLevel: '',
-    assetName: '',
-    isAuctioned: '',
-    userAssetId: 1
+    isAuctioned: false
   },
   reducers: {
-    changeClickInvenAsset(state, action) {
+    changeIsAuctionClickInvenAsset(state, action) {
       return (state = action.payload);
     }
   }
@@ -175,6 +181,7 @@ export const store = configureStore({
     chattingStatus: chattingStatus.reducer,
     menuStatus: menuStatus.reducer,
     updateStatus: updateStatus.reducer,
+    privacyStatus: privacyStatus.reducer,
     currentMoneyStatus: currentMoneyStatus.reducer,
     getCurrentDataIndex: currentDataIndex.reducer,
     currentMoneyHideStatus: currentMoneyHideStatus.reducer,
@@ -182,7 +189,7 @@ export const store = configureStore({
     clickAsseData: clickAsseData.reducer,
     clickAssetPosition: clickAssetPosition.reducer,
     clickAssetRotation: clickAssetRotation.reducer,
-    clickInvenAsset: clickInvenAsset.reducer,
+    isAuctionClickInvenAsset: isAuctionClickInvenAsset.reducer,
     isClickInvenAssetStore: isClickInvenAssetStore.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
@@ -197,6 +204,7 @@ export const { changeSignUpStatus } = signUpStatus.actions;
 export const { changeChattingStatus } = chattingStatus.actions;
 export const { changeMenuStatus } = menuStatus.actions;
 export const { changeUpdateStatus } = updateStatus.actions;
+export const { changePrivacyStatus } = privacyStatus.actions;
 export const { changeCurrentMoneyStatusStatus } = currentMoneyStatus.actions;
 export const { changeCurrentMoneyHideStatus } = currentMoneyHideStatus.actions;
 // ------------- 정보상 -------------
@@ -205,7 +213,7 @@ export const { getCurrentDataIndex } = currentDataIndex.actions;
 export const { changeClickAsseData } = clickAsseData.actions;
 export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
-export const { changeClickInvenAsset } = clickInvenAsset.actions;
+export const { changeIsAuctionClickInvenAsset } = isAuctionClickInvenAsset.actions;
 export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
 
 // store의 타입 미리 export 해둔 것.

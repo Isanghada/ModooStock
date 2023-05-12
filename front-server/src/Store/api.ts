@@ -87,12 +87,14 @@ interface ReturnActionListInterFace {
   data: [
     {
       assetResDto: {
-        assetId: number
+        assetId: number;
         assetName: string;
         assetLevel: string;
         assetCategory: string;
         assetNameKor: string;
-      },
+      };
+      auctionId: string;
+      nickname: string;
       price: number;
     }
   ];
@@ -104,6 +106,7 @@ interface UpdateStateInterFace {
   introduction: string;
   profileImagePath: string;
 }
+
 interface ReturnInfoInterFace {
   data: {
     dateList: [
@@ -241,6 +244,11 @@ interface PutMypage {
   rot_x: number;
   rot_y: number;
   rot_z: number;
+  userAssetId: number;
+}
+
+interface AuctionReqDtoType {
+  price: number;
   userAssetId: number;
 }
 
@@ -621,6 +629,56 @@ export const Api = createApi({
         return [{ type: 'AuctionApi' }];
       }
     }),
+    // 2. 경매 물품 등록
+    postAuction: builder.mutation<ReturnBasicInterFace, AuctionReqDtoType>({
+      query: (body) => {
+        return {
+          url: `/auction`,
+          method: 'POST',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'MypageApi' }, { type: 'InvenApi' }]
+    }),
+
+    // 3. 내가 올린 경매 물품 리스트 조회
+    getAuctionMy: builder.query<ReturnActionListInterFace, string>({
+      query: () => `/auction/my`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AuctionApi' }];
+      }
+    }),
+
+    // 4. 구매
+    postAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
+      query: (auctionId) => {
+        return {
+          url: `/auction/${auctionId}`,
+          method: 'Post'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+    }),
+    // 5. 판매 취소
+    deleteAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
+      query: (auctionId) => {
+        return {
+          url: `/auction/${auctionId}`,
+          method: 'Delete'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+    }),
+    // 6. 마이페이지에서 판매 취소
+    deleteAuctionMyAssetId: builder.mutation<ReturnBasicInterFace, number>({
+      query: (myAssetId) => {
+        return {
+          url: `/auction/my/${myAssetId}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'InvenApi' }]
+    }),
     // ----------- 방문하기 ------------
     // 1. 방문한 유저의 마이룸 조회
     getUserMypage: builder.query<ReturnMyRoomAsset, string>({
@@ -727,6 +785,7 @@ export const {
   usePostMypageMutation,
   useDeleteMypageMutation,
   usePutMypageMutation,
+  usePostAuctionMutation,
 
   // ------------- 창고 -------------
   useGetStorageQuery,
@@ -737,6 +796,10 @@ export const {
 
   // 경매장
   useGetAuctionQuery,
+  useGetAuctionMyQuery,
+  usePostAuctionAuctionIdMutation,
+  useDeleteAuctionAuctionIdMutation,
+  useDeleteAuctionMyAssetIdMutation,
   // ----------- 방문 ------------
   useLazyGetUserMypageQuery,
   useGetUserMypageVisitorsQuery,
