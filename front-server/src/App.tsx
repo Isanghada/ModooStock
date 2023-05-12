@@ -1,10 +1,9 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import Main from './Components/Main/Main';
-import Bank from './Components/Bank/Bank';
+import Main from 'Components/Main/Main';
+import Bank from 'Components/Bank/Bank';
 import Layout from './Layout';
-import Intro from './Components/Intro/Intro';
-import Chatting from './Components/Chatting/Chatting';
+import Intro from 'Components/Intro/Intro';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Mypage from 'Components/Mypage/Mypage';
@@ -17,8 +16,19 @@ import Loading from 'Components/Common/Loading';
 import GachaShop from 'Components/GachaShop/GachaShop';
 import Lottery from 'Components/MiniGame/Lottery';
 import Auction from 'Components/Auction/Auction';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    if (window.screen && window.screen.orientation) {
+      window.screen.orientation
+        .lock("landscape")
+        .catch(function (error) {
+          console.error("Failed to lock the orientation:", error);
+        });
+    }
+  }, []);
+
   return (
     <>
       <ToastContainer position="top-left" autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={true} limit={1} />
