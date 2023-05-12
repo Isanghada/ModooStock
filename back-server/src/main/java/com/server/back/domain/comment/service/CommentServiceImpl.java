@@ -38,6 +38,10 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<CommentListResDto> getCommentList(String nickname) {
         UserEntity user=userRepository.findByNicknameAndIsDeleted(nickname, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Long userId= authService.getUserId();
+        UserEntity currentUser=userRepository.findByIdAndIsDeleted(userId, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         List<CommentEntity> commentEntityList=commentRepository.findAllByOwnerIdAndIsDeletedOrderByCreatedAtDesc(user.getId(),IsDeleted.N);
         List<CommentListResDto> commentListRes=new ArrayList<>();
 
@@ -45,7 +49,7 @@ public class CommentServiceImpl implements CommentService{
             UserEntity author=userRepository.findById(comment.getAuthorId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
             IsAuthor isAuthor=IsAuthor.N;
 
-            if(author.equals(user)){
+            if(author.equals(currentUser)){
                 isAuthor=IsAuthor.Y;
             }
             commentListRes.add(CommentListResDto.toDto(AuthorResDto.fromEntity(author),CommentResDto.fromEntity(comment),isAuthor));
