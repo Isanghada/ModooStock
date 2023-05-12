@@ -53,7 +53,7 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
         isDark ? 'bg-pink-100' : 'bg-sky-100'
       }`}>
       <span className={`${styles.font2} text-lg md:text-2xl text-center`}>최대 당첨금</span>
-      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>{isDark ? '7억' : '5천만'}원!</span>
+      <span className={`${styles.font2} text-lg md:text-2xl text-center`}>{isDark ? '7억' : '3천만'}원!</span>
       <div className={`${styles.font2} flex flex-col text-[0.6rem] md:text-xs text-start mt-2 md:mt-4 text-[#707070]`}>
         {isDark ? (
           <>
@@ -62,7 +62,7 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
           </>
         ) : (
           <>
-            <span>1등 : 5천만원 </span>
+            <span>1등 : 3천만원 </span>
             <span>2등 : 3백만원 </span>
             <span>3등 : 50만원 </span>
             <span>4등 : 만원 </span>
