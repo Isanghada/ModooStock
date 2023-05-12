@@ -16,39 +16,74 @@ import Loading from 'Components/Common/Loading';
 import GachaShop from 'Components/GachaShop/GachaShop';
 import Lottery from 'Components/MiniGame/Lottery';
 import Auction from 'Components/Auction/Auction';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import RotateDevice from 'Components/Common/RotateDevice';
 
 function App() {
+  const [isLandScape, setIsLandScape] = useState<boolean>(true);
+  // 현재 브라우저 윈도우 너비 값
+  const [screenWidth, setScreenWidth] = useState<number>(0);
+  // 현재 브라우저 윈도우 너비 값
+  const [screenHeight, setScreenHeight] = useState<number>(0);
+
   useEffect(() => {
-    if (window.screen && window.screen.orientation) {
-      window.screen.orientation
-        .lock("landscape")
-        .catch(function (error) {
-          console.error("Failed to lock the orientation:", error);
-        });
+
+    if (screenWidth >= screenHeight) {
+      setIsLandScape(true);
+      console.log('가로모드얌');
+    } else {
+      setIsLandScape(false);
+      console.log('세로모드얌');
     }
+  }, [window.innerWidth,  window.innerHeight]);
+
+  useEffect(() => {
+    // 창크기 변할때마다 실행
+    const updateScreenWidth = () => {
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      setScreenWidth(newWidth);
+      setScreenHeight(newHeight);
+    };
+    // 처음 한번 실행
+    updateScreenWidth();
+
+    window.addEventListener('resize', updateScreenWidth);
+    return () => window.removeEventListener('resize', updateScreenWidth);
   }, []);
 
   return (
     <>
-      <ToastContainer position="top-left" autoClose={1000} hideProgressBar={true} pauseOnFocusLoss={true} limit={1} />
-      <Routes>
-        <Route path="" element={<Layout />}>
-          <Route path="/" element={<Intro />} />
-          <Route path="/main" element={<Main />} />
-          <Route path="/bank" element={<Bank />} />
-          <Route path="/mypage" element={<Mypage />} />
-          <Route path="/exchange" element={<Exchange />} />
-          <Route path="/travel/:nickname" element={<Travel />} />
-          <Route path="/rank" element={<Rank />} />
-          <Route path="/infoshop" element={<InfoShop />} />
-          <Route path="/gachashop" element={<GachaShop />} />
-          <Route path="/lottery" element={<Lottery />} />
-          <Route path="/auction" element={<Auction />} />
-        </Route>
-        <Route path="/error" element={<Error />} />
-        <Route path="/loading" element={<Loading />} />
-      </Routes>
+      {isLandScape ? (
+        <>
+          <ToastContainer
+            position="top-left"
+            autoClose={1000}
+            hideProgressBar={true}
+            pauseOnFocusLoss={true}
+            limit={1}
+          />
+          <Routes>
+            <Route path="" element={<Layout />}>
+              <Route path="/" element={<Intro />} />
+              <Route path="/main" element={<Main />} />
+              <Route path="/bank" element={<Bank />} />
+              <Route path="/mypage" element={<Mypage />} />
+              <Route path="/exchange" element={<Exchange />} />
+              <Route path="/travel/:nickname" element={<Travel />} />
+              <Route path="/rank" element={<Rank />} />
+              <Route path="/infoshop" element={<InfoShop />} />
+              <Route path="/gachashop" element={<GachaShop />} />
+              <Route path="/lottery" element={<Lottery />} />
+              <Route path="/auction" element={<Auction />} />
+            </Route>
+            <Route path="/error" element={<Error />} />
+            <Route path="/loading" element={<Loading />} />
+          </Routes>
+        </>
+      ) : (
+        <RotateDevice />
+      )}
     </>
   );
 }
