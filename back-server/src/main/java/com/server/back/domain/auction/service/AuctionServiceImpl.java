@@ -169,6 +169,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @return
      */
     @Override
+    @Transactional
     public void deleteMyPageAuction(Long myAssetId) {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
