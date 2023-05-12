@@ -75,22 +75,11 @@ public class MyPageServiceImpl implements MyPageService{
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeleted(myAssetId, IsDeleted.N)
+        UserAssetLocation userAssetLocation=userAssetLocationRepository.findByIdAndIsDeletedAndIsInRepositoryAndIsAuctioned(myAssetId, IsDeleted.N, IsInRespository.Y, IsAuctioned.N)
                 .orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
         // 본인 아니면 접근 제한
         if(!user.equals(userAssetLocation.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
-
-        // 경매장에 등록된 물품일 경우 경매장 취소
-        if(userAssetLocation.getIsAuctioned().equals(IsAuctioned.Y)){
-            AuctionEntity auctionEntity = auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(userAssetLocation.getAsset().getId(), IsCompleted.N, IsDeleted.N).get(0);
-
-            AuctionEntity auction=auctionRepository.findByIdAndIsDeletedAndIsCompleted(auctionEntity.getId(),IsDeleted.N,IsCompleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
-
-            //경매유무 변경
-            userAssetLocation.update(IsAuctioned.N);
-            auction.update(IsDeleted.Y);
-        }
 
         userAssetLocation.update(IsInRespository.N);
 
