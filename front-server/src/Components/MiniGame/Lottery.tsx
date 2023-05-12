@@ -118,7 +118,7 @@ function Lottery(): JSX.Element {
           backgroundImage={process.env.REACT_APP_S3_URL + '/images/logos/IntroBG2.png'}
           color="#F0A633"
           onClick={() => handleLotteryClick(false)}
-          description={['긁어봐 당첨 복권!', '만원으로 최대 오천만원까지']}
+          description={['긁어봐 당첨 복권!', '5만원으로 최대 3천만원까지']}
           descriptionColor="#707070"
         />
         {/* 2. 어둠의 복권 */}

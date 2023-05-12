@@ -15,11 +15,7 @@ function Intro(): JSX.Element {
     dispatch(changeLoginStatus(true));
     setShowLogin(false);
   };
-  // 로그인 창 닫기
-  const closeLogIn = () => {
-    dispatch(changeLoginStatus(false));
-    setShowLogin(true);
-  };
+
   useEffect(() => {
     // beforeinstallprompt 이벤트 핸들러 등록
     window.addEventListener('beforeinstallprompt', handleInstallPrompt);
@@ -34,7 +30,6 @@ function Intro(): JSX.Element {
   const handleInstallPrompt = (event : any) => {
     // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
     event.preventDefault();
-    console.log("event")
     let deferredPrompt = event;
     deferredPrompt.prompt();
   }
@@ -42,6 +37,7 @@ function Intro(): JSX.Element {
     <AnimatePresence>
       {/* 전체 배경 */}
       <motion.div
+        onClick={showLogIn}
         className="flex flex-col justify-center items-center w-full h-full text-xl bg-center bg-[url('/src/intro/IntroBG.png')] bg-no-repeat bg-contain lg:min-h-[38rem]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -53,7 +49,6 @@ function Intro(): JSX.Element {
         }}>
         {/* 로고 */}
         <motion.div
-          onClick={closeLogIn}
           className="flex items-center w-1/3 h-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

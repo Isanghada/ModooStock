@@ -66,7 +66,6 @@ function Login(): JSX.Element {
           vapidKey: process.env.REACT_APP_FCM_VAPID
         });
         if (token) {
-          console.log('token: ', token);
           SetPushToken(nickname, token);
         } else {
           console.log('Can not get Token');

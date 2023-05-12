@@ -172,7 +172,7 @@ function Mypage(): JSX.Element {
             rot_z: clickAssetRotation[2],
             userAssetId: clickAsseData.userAssetId
           };
-          settingMethod();
+          // settingMethod();
           const { data, result } = await putMypage(body).unwrap();
           if (result === 'SUCCESS') {
             toast.success('배치 완료!');
@@ -181,6 +181,7 @@ function Mypage(): JSX.Element {
           }
         };
         settingAsset();
+
         break;
       case '취소':
         settingMethod();
@@ -260,25 +261,28 @@ function Mypage(): JSX.Element {
                   alt="가구"
                 />
               </div>
-              <div className="flex justify-start items-start flex-col w-[55%] space-y-2">
+              <div className="flex justify-start items-start flex-col w-[55%] space-y-2 ">
                 {clickAsseData.assetLevel === 'RARE' && (
-                  <div className="bg-[#4fb3ff] shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                  <div className="bg-[#4fb3ff] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
                     <span>레어</span>
                   </div>
                 )}
                 {clickAsseData.assetLevel === 'EPIC' && (
-                  <div className="bg-[#b73bec] shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                  <div className="bg-[#b73bec] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
                     <span>에픽</span>
                   </div>
                 )}
                 {clickAsseData.assetLevel === 'UNIQUE' && (
-                  <div className="bg-[#FFC34F] shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                  <div className="bg-[#FFC34F] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
                     <span>유니크</span>
                   </div>
                 )}
                 <div className="flex flex-col w-full space-y-1">
-                  <div className="text-[0.9rem] lg:text-[1.3rem] font-semibold">
-                    <span>가격</span>
+                  <div className="flex items-end justify-start w-full space-x-2">
+                    <span className="text-[0.9rem] lg:text-[1.3rem] font-semibold">가격</span>
+                    <span className="text-[0.6rem] lg:text-[0.6rem] pb-[3px] text-[#6c6c6c]">
+                      1만원 ~ 1억 미만으로 등록 가능합니다
+                    </span>
                   </div>
                   <div className="bg-white border-[#FDE2E2] border-2 text-[0.8rem] lg:text-[0.9rem]">
                     <input
@@ -920,7 +924,7 @@ function Mypage(): JSX.Element {
                     <span>경매장에서 판매중인 아이템입니다.</span>
                   </div>
                 </div>
-                <div aria-label="판매 취소" className="flex z-20 justify-center cur w-full pt-1" onClick={click}>
+                <div aria-label="판매 취소" className="z-20 flex justify-center w-full pt-1 cur" onClick={click}>
                   <span className="px-5 py-1 rounded-full bg-[#EA455D] cursor-pointer text-white text-[0.8rem] hover:scale-105 active:scale-105 transition-all duration-300">
                     판매 취소
                   </span>
