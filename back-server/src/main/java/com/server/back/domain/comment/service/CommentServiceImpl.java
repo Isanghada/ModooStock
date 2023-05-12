@@ -1,5 +1,6 @@
 package com.server.back.domain.comment.service;
 
+import com.server.back.common.code.commonCode.IsAuthor;
 import com.server.back.common.code.commonCode.IsDeleted;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.comment.dto.AuthorResDto;
@@ -37,13 +38,21 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<CommentListResDto> getCommentList(String nickname) {
         UserEntity user=userRepository.findByNicknameAndIsDeleted(nickname, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Long userId= authService.getUserId();
+        UserEntity currentUser=userRepository.findByIdAndIsDeleted(userId, IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         List<CommentEntity> commentEntityList=commentRepository.findAllByOwnerIdAndIsDeletedOrderByCreatedAtDesc(user.getId(),IsDeleted.N);
         List<CommentListResDto> commentListRes=new ArrayList<>();
 
         for(CommentEntity comment:commentEntityList){
             UserEntity author=userRepository.findById(comment.getAuthorId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+            IsAuthor isAuthor=IsAuthor.N;
 
-            commentListRes.add(CommentListResDto.toDto(AuthorResDto.fromEntity(author),CommentResDto.fromEntity(comment)));
+            if(author.equals(currentUser)){
+                isAuthor=IsAuthor.Y;
+            }
+            commentListRes.add(CommentListResDto.toDto(AuthorResDto.fromEntity(author),CommentResDto.fromEntity(comment),isAuthor));
         }
 
         return commentListRes;

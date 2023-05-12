@@ -57,9 +57,11 @@ public class StoreServiceImpl implements StoreService {
             if(user.getCurrentMoney()<price)throw new CustomException(ErrorCode.LACK_OF_MONEY);
             Random random=new Random();
             int rd=random.nextInt(100);
-            if(rd<10){
+            if(rd<1){
+              asset=assetRepository.findByAssetLevelAndLimit("LEGENDARY");
+            } else if(rd>=1&&rd<11){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=10&&rd<40){
+            }else if(rd>=11&&rd<46){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset=assetRepository.findByAssetLevelAndLimit("RARE");

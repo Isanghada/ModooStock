@@ -1,9 +1,6 @@
 package com.server.back.domain.auction.service;
 
-import com.server.back.common.code.commonCode.DealType;
-import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.common.code.commonCode.IsCompleted;
-import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.*;
 import com.server.back.common.entity.DealEntity;
 import com.server.back.common.repository.DealRepository;
 import com.server.back.common.service.AuthService;
@@ -137,11 +134,14 @@ public class AuctionServiceImpl implements AuctionService {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserAssetEntity userAsset=userAssetLocationRepository.findById(auctionReqDto.getUserAssetId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        UserAssetLocation userAsset=userAssetLocationRepository.findById(auctionReqDto.getUserAssetId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
         if(!user.equals(userAsset.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
 
         //경매 유무
         userAsset.update(IsAuctioned.Y);
+        userAsset.init();
+        userAsset.update(IsInRespository.Y);
+
         //경매repository에 저장
         AuctionEntity auction= auctionReqDto.toEntity(userAsset);
         auctionRepository.save(auction);
@@ -169,6 +169,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @return
      */
     @Override
+    @Transactional
     public void deleteMyPageAuction(Long myAssetId) {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
