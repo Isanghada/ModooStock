@@ -71,7 +71,6 @@ function Navbar(): JSX.Element {
   // 유저 정보 가져오기
   const getUser = async () => {
     const { data } = await getUsersInfo('');
-    console.log(data, "내정보")
     if (data) {
       const { nickname, currentMoney, totalStockReturn, profileImagePath } = data.data;
       setMyProfile(profileImagePath);
@@ -203,7 +202,7 @@ function Navbar(): JSX.Element {
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
               onClick={click}>
-              <img className="w-2/3" src={myProfile} alt="profile" />
+              <img className="w-2/3 duration-150 hover:scale-105" src={myProfile} alt="profile" />
             </div>
             <div
               className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${
