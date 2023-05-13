@@ -1,8 +1,23 @@
+import { useDeleteCommentMutation } from 'Store/api';
+import { toast } from 'react-toastify';
 interface InfoModalType {
   onClose: () => void;
+  commentId: number;
 }
 
-function DeleteGuestBookModal({ onClose }: InfoModalType): JSX.Element {
+function DeleteGuestBookModal({ onClose, commentId }: InfoModalType): JSX.Element {
+  const [deleteComment, { isLoading, isError }] = useDeleteCommentMutation();
+
+  const handleDeleteComment = async (commentId: number) => {
+    const { data, result } = await deleteComment(commentId).unwrap();
+    if (data) {
+      toast.success('방명록 삭제가 완료되었습니다!');
+    } else {
+      toast.error('방명록 삭제에 실패했습니다...');
+    }
+    onClose();
+  };
+
   return (
     <>
       <div className="flex justify-center w-full my-2 lg:my-4">
@@ -23,7 +38,7 @@ function DeleteGuestBookModal({ onClose }: InfoModalType): JSX.Element {
         <button
           type="button"
           className="inline-flex justify-center px-2 lg:px-4 py-[2px] lg:py-1 min-w-[4.5rem] w-[40%] text-xs font-medium lg:text-base lg:font-semibold text-white bg-[#1971C2]/80 border border-transparent rounded-md hover:bg-[#1971C2] focus:outline-none "
-          onClick={onClose}>
+          onClick={() => handleDeleteComment(commentId)}>
           확인
         </button>
       </div>

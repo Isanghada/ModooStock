@@ -1,11 +1,11 @@
 import { Canvas } from '@react-three/fiber';
-import Bathroom from 'Components/Main/ShowMyRoomAssets';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
+import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useGetUserMypageVisitorsQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
 import { useState } from 'react';
+import AllAssetsList2 from './AllAssetsList2';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -19,6 +19,7 @@ function TravelRoom(): JSX.Element {
         />
       </div>
       <div className="w-[80%] flex justify-center h-[87%] items-center">
+        {/* <Suspense fallback={<AssetLoading />}> */}
         <Canvas
           style={{ width: '100%', height: '100%', paddingTop: '6%' }}
           orthographic
@@ -33,8 +34,9 @@ function TravelRoom(): JSX.Element {
           }}>
           <ambientLight intensity={0.5} />
           <pointLight distance={2000} position={10} power={8} />
-          <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+          <AllAssetsList2 len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
         </Canvas>
+        {/* </Suspense> */}
       </div>
     </div>
   );
@@ -66,7 +68,7 @@ function MobileTravelRoom(): JSX.Element {
           }}>
           <ambientLight intensity={0.5} />
           <pointLight distance={2000} position={10} power={8} />
-          <Bathroom len={0.0055} pos={[0, -1, -8]} rot={[1.75, 0, 0.2]} />
+          <AllAssetsList2 len={0.0055} pos={[0, -0.98, -8]} rot={[1.75, 0, -0.8]} />
         </Canvas>
       </div>
     </div>
@@ -130,6 +132,7 @@ function BottomButtons(): JSX.Element {
 function Travel(): JSX.Element {
   const { nickname } = useParams() as { nickname: string };
   const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
+  const { data: visitor, isLoading: isLoading1, isError: isError1 } = useGetUserMypageVisitorsQuery(nickname);
 
   const navigate = useNavigate();
 
@@ -144,6 +147,10 @@ function Travel(): JSX.Element {
         <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
           <div className="flex justify-center items-center lg:w-[33%] lg:pl-[2%] xl:pl-0 xl:w-[27%]">
             <div className="flex flex-col w-full font-extrabold justify-center items-center rounded-3xl bg-white p-2 drop-shadow-lg">
+              {/* 방문자수 */}
+              <div className="flex w-full justify-end px-2">
+                <p className="font-base text-center text-[#707070]">{visitor?.data}명 방문 👀</p>
+              </div>
               {/* 프로필 이미지 */}
               <div className="flex justify-center mt-5 p-2 w-[5rem] h-[5rem] lg:w-[8rem] lg:h-[8rem] max-w-[10rem] max-h-[10rem] rounded-full  bg-[#fb7c7c]">
                 <img
@@ -157,13 +164,14 @@ function Travel(): JSX.Element {
                 <p className="text-[2.25rem] font-bold text-center text-[#0e0e0e]">{user?.data.nickname}</p>
               </div>
               {/* 한줄 소개 */}
-              <div className="w-5/6 h-[12.5rem] rounded-[0.625rem] bg-[#fff6f2] p-2">
+              <div className="w-5/6 h-[12rem] rounded-[0.625rem] bg-[#fff6f2] p-2">
                 <p className="w-full 3rem text-[1.5rem] font-bold text-center">
                   <span className="w-full h-[3rem] text-[#707070]">“</span>
                   <span className="w-full h-[3rem] text-[#ff7b7b]"> {user?.data.introduction} </span>
                   <span className="w-full h-[3rem] text-[#707070]">”</span>
                 </p>
               </div>
+              <div></div>
               {/* 라인 */}
               <div className="w-5/6 text-center mt-4 border-b border-solid border-[#E0E0E0] leading-[0.1em]" />
               <div className="flex items-center justify-between w-5/6 px-2 py-2">
@@ -189,8 +197,12 @@ function Travel(): JSX.Element {
               {/* 여기에 넣음 */}
               <div className="flex flex-col w-full font-extrabold">
                 <div className="flex flex-col justify-center items-center rounded-2xl bg-white py-2 px-6 drop-shadow-lg">
+                  {/* 방문자수 */}
+                  <div className="flex w-full justify-end mt-1">
+                    <p className="text-xs text-center text-[#707070]">{visitor?.data}명 방문 👀</p>
+                  </div>
                   {/* 프로필 이미지 */}
-                  <div className="flex justify-center mt-3 p-2 w-[5.5rem] h-[5.5rem] lg:w-[8rem] lg:h-[8rem] max-w-[8rem] max-h-[8rem] rounded-full  bg-[#fb7c7c]">
+                  <div className="flex justify-center p-2 w-[5rem] h-[5rem] lg:w-[7rem] lg:h-[7rem] max-w-[7rem] max-h-[7rem] rounded-full  bg-[#fb7c7c]">
                     <img
                       className="m-2 rounded-full object-contain"
                       src={user?.data.profileImagePath}
@@ -198,11 +210,11 @@ function Travel(): JSX.Element {
                     />
                   </div>
                   {/* 닉네임 */}
-                  <div className="flex items-center justify-center w-full px-2 py-2">
+                  <div className="flex items-center justify-center w-full p-1">
                     <p className="text-lg font-bold text-center text-[#0e0e0e]">{user?.data.nickname}</p>
                   </div>
                   {/* 한줄 소개 */}
-                  <div className="w-full h-3/4 rounded-[0.625rem] bg-[#fff6f2] p-2">
+                  <div className="w-full h-3/4 rounded-[0.625rem] bg-[#fff6f2] p-1">
                     <p className="w-full h-[3rem] text-md font-bold text-center">
                       <span className="w-full text-[#707070]">“</span>
                       <span className="w-full text-[#ff7b7b]"> {user?.data.introduction} </span>
