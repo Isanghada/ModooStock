@@ -307,7 +307,7 @@ interface ReturnAdminDealType {
     dealId: number;
     dealType: string;
     interest: number;
-    isCompleted: 'N';
+    isCompleted: string;
     marketId: number;
     price: number;
     stockAmount: number;
@@ -331,9 +331,35 @@ interface ReturnAdminUserSelectType {
     introduction: string;
     nickname: string;
     profileImagePath: string;
-    userId: string;
+    userId: number;
   };
   result: string;
+}
+
+interface ReturnAdminPutUserType {
+  nickname: string;
+  userId: number;
+}
+
+interface AdminAssetType {
+  assetLevel: string;
+  category: string;
+}
+
+interface ReturnAdminAssetType {
+  data: Array<{
+    assetCategory: string;
+    assetId: number;
+    assetImagePath: string;
+    assetLevel: string;
+  }>;
+  result: string;
+}
+
+interface AdaminAssetPUtType {
+  assetId: number;
+  assetLevel: string;
+  category: string;
 }
 
 const fetchAccessToken = async () => {
@@ -379,7 +405,8 @@ export const Api = createApi({
     'AuctionApi',
     'UserMypageApi',
     'CommentApi',
-    'AdminUserApi'
+    'AdminUserApi',
+    'AdminAssetApi'
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
@@ -836,6 +863,35 @@ export const Api = createApi({
         return [];
       }
     }),
+
+    // ----------- 관리장 에셋 ------------
+    // 1. 검색한 에셋 정보 조회
+    getAdminAsset: builder.query<ReturnAdminAssetType, AdminAssetType>({
+      query: (body) => {
+        return {
+          url: `/admin/asset`,
+          method: 'GET',
+          params: {
+            body
+          }
+        };
+      },
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AdminAssetApi' }];
+      }
+    }),
+    // 2. 선택한 에셋 정보 수정
+    putAdminAssetSelect: builder.mutation<ReturnBasicInterFace, AdaminAssetPUtType>({
+      query: (body) => {
+        return {
+          url: '/admin/asset',
+          method: 'PUT',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AdminAssetApi' }]
+    }),
+
     // ----------- 관리장 유저 ------------
     // 1. 전체 회원 목록 조회
     getAdminUser: builder.query<ReturnAdminUserType, string>({
@@ -847,6 +903,34 @@ export const Api = createApi({
     // 2. 선택한 회원 상세 정보 조회
     getAdminUserSelect: builder.query<ReturnAdminUserSelectType, string>({
       query: (account) => `/admin/user/${account}`,
+      providesTags: (result, error, arg) => {
+        return [{ type: 'AdminUserApi' }];
+      }
+    }),
+    // 3. 선택한 회원 정보 수정
+    putAdminUserSelect: builder.mutation<ReturnBasicInterFace, ReturnAdminPutUserType>({
+      query: (body) => {
+        return {
+          url: '/admin/user',
+          method: 'PUT',
+          body: body
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AdminUserApi' }]
+    }),
+    // 4. 선택한 회원 탈퇴
+    deleteAdminUserSelect: builder.mutation<ReturnBasicInterFace, string>({
+      query: (account) => {
+        return {
+          url: `/admin/user/${account}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: 'AdminUserApi' }]
+    }),
+    // 5. 닉네임으로 회원 목록 검색
+    getAdminUserNick: builder.query<ReturnAdminUserType, string>({
+      query: (nickname) => `/admin/user/nick/${nickname}`,
       providesTags: (result, error, arg) => {
         return [{ type: 'AdminUserApi' }];
       }
@@ -933,7 +1017,17 @@ export const {
   // ----------- 관리자 거래 내역 ------------
   useLazyGetAdminDealQuery,
   useLazyGetAdminDealSelectQuery,
+  // ----------- 관리자 에셋 내역 ------------
+  useGetAdminAssetQuery,
+  useLazyGetAdminAssetQuery,
+  usePutAdminAssetSelectMutation,
   // ----------- 관리자 유저 ------------
+  useGetAdminUserQuery,
   useLazyGetAdminUserQuery,
-  useLazyGetAdminUserSelectQuery
+  useGetAdminUserSelectQuery,
+  useLazyGetAdminUserSelectQuery,
+  usePutAdminUserSelectMutation,
+  useDeleteAdminUserSelectMutation,
+  useLazyGetAdminUserNickQuery,
+  useGetAdminUserNickQuery
 } = Api;

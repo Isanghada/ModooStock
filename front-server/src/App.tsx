@@ -23,6 +23,7 @@ import AdminMarket from 'Components/Admin/AdminMarket';
 import AdminMain from 'Components/Admin/AdminMain';
 import AdminDeal from 'Components/Admin/AdminDeal';
 import AdminUser from 'Components/Admin/AdminUser';
+import AdminAsset from 'Components/Admin/AdminAsset';
 
 function App() {
   const [isLandScape, setIsLandScape] = useState<boolean>(true);
@@ -85,6 +86,7 @@ function App() {
                 <Route path="market" element={<AdminMarket />} />
                 <Route path="deal" element={<AdminDeal />} />
                 <Route path="user" element={<AdminUser />} />
+                <Route path="asset" element={<AdminAsset />} />
               </Route>
             </Route>
             <Route path="/error" element={<Error />} />
