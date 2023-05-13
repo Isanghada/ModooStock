@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import AdminMarketModal from './AdminMarketModal';
 import { useLazyGetAdminDealQuery, useLazyGetAdminDealSelectQuery } from 'Store/api';
+import Loading from 'Components/Common/Loading';
+import AdminDealModal from './AdminDealModal';
 
 interface SelectDealDataType {
   account: string;
@@ -47,17 +49,17 @@ function AdminDeal(): JSX.Element {
                 setIsClick(true);
               }}>
               <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.account}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.companyKind}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.companyName}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.createAt}</th>
+              {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.companyKind}</th>
+              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.companyName}</th> */}
+              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.createAt.split('T')[0]}</th>
               <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.dealCode}</th>
               <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.dealId}</th>
               <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.dealType}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.interest}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.isCompleted}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.marketId}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.price}</th>
-              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.stockAmount}</th>
+              {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.interest}</th> */}
+              {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.isCompleted}</th>
+              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.marketId}</th> */}
+              <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.price}원</th>
+              {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">{deal.stockAmount}</th> */}
             </tr>
           );
         })
@@ -68,36 +70,42 @@ function AdminDeal(): JSX.Element {
 
   return (
     <>
-      {/* {isClick && <AdminMarketModal setSelectDealData={setSelectDealData} setIsClick={setIsClick} />} */}
-      <div className="w-full flex-col flex justify-center items-center">
-        <div className="w-full flex justify-center text-[2.2rem] text-[#A87E6E] font-bold mb-3">거래 내역 관리</div>
-        <div className="w-full mb-4 font-bold flex justify-between">
-          <span className="text-[1.4rem] text-[#A87E6E] border-b-4 border-b-[#A87E6E]/70">내역</span>
-        </div>
-        <div className="overflow-y-auto h-[50vh] w-full">
-          <div className="flex justify-center items-start ">
-            <table className="w-full">
-              <thead>
-                <tr className="border-y-4 border-y-[#A87E6E] lg:text-[0.8rem] xl:text-[1.2rem] text-[#A87E6E] bg-[#ffe8d5]">
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">account</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">companyKind</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">companyName</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">createAt</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealCode</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealId</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealType</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">interest</th>
+      {isLoading1 ? (
+        <Loading />
+      ) : (
+        <>
+          {isClick && <AdminDealModal selectDealData={selectDealData} setIsClick={setIsClick} />}
+          <div className="w-full flex-col flex justify-center items-center">
+            <div className="w-full flex justify-center text-[2.2rem] text-[#A87E6E] font-bold mb-3">거래 내역 관리</div>
+            <div className="w-full mb-4 font-bold flex justify-between">
+              <span className="text-[1.4rem] text-[#A87E6E] border-b-4 border-b-[#A87E6E]/70">내역</span>
+            </div>
+            <div className="overflow-y-auto h-[50vh] w-full">
+              <div className="flex justify-center items-start ">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-y-4 border-y-[#A87E6E] lg:text-[0.8rem] xl:text-[1.2rem] text-[#A87E6E] bg-[#ffe8d5]">
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">account</th>
+                      {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">companyKind</th>
+                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">companyName</th> */}
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">createAt</th>
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealCode</th>
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealId</th>
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">dealType</th>
+                      {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">interest</th>
                   <th className="py-1 border-x-4 border-x-[#A87E6E]/80">isCompleted</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">marketId</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">price</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">stockAmount</th>
-                </tr>
-              </thead>
-              <tbody>{tbodyData}</tbody>
-            </table>
+                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">marketId</th> */}
+                      <th className="py-1 border-x-4 border-x-[#A87E6E]/80">price</th>
+                      {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">stockAmount</th> */}
+                    </tr>
+                  </thead>
+                  <tbody>{tbodyData}</tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 }

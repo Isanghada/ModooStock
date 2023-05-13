@@ -11,6 +11,7 @@ function AdminMain(): JSX.Element {
         navigate('/admin/market');
         break;
       case '에셋':
+        navigate('/admin/asset');
         break;
       case '거래':
         navigate('/admin/deal');
