@@ -83,6 +83,13 @@ function Navbar(): JSX.Element {
   };
 
   useEffect(() => {
+    const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
+    modoostockBGM.loop = true;
+    modoostockBGM.volume = 0.5;
+    modoostockBGM.play();
+  }, []);
+
+  useEffect(() => {
     if (dataUserInfo) {
       const { nickname, currentMoney, totalStockReturn } = dataUserInfo.data;
       setMyNickName(nickname);
