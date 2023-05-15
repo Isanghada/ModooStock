@@ -165,7 +165,7 @@ function Travel(): JSX.Element {
             <div className="flex flex-col items-center justify-center w-full p-2 font-extrabold bg-white rounded-3xl drop-shadow-lg">
               {/* 방문자수 */}
               <div className="flex justify-end w-full px-2">
-                <p className="font-base text-center text-[#707070]">{visitor?.data}명 방문 👀</p>
+                <p className="font-base text-center text-[#707070]">{visitor?.data || 1}명 방문 👀</p>
               </div>
               {/* 프로필 이미지 */}
               <div className="flex justify-center mt-5 p-2 w-[5rem] h-[5rem] lg:w-[8rem] lg:h-[8rem] max-w-[10rem] max-h-[10rem] rounded-full  bg-[#fb7c7c]">

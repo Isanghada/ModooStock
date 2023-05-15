@@ -8,16 +8,19 @@ import Guide from './Guide';
 import MyHomeAsset from './MyHomeAsset';
 import AssetLoading from 'Components/Common/AssetLoading';
 import MyHomeAsset2 from './MyHomeAsset2';
+import { useGetAdminUserCheckQuery } from 'Store/api';
 
 function Main(): JSX.Element {
+  const navigate = useNavigate();
   const [floor, setFloor] = useState(
     window.screen.width <= 1280 ? `${2 + (window.screen.width - 1024) * (1 / 140)}rem` : '4rem'
   );
-  const navigate = useNavigate();
+  const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
+  if (getAdmin !== undefined) {
+    navigate('/admin');
+  }
 
   useEffect(() => {
-    // console.log(window.screen.width - 1024);
-
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
