@@ -61,7 +61,6 @@ function Login(): JSX.Element {
       if (permission === 'denied') {
         console.log('알림 권한 허용 안됨');
       } else if (permission === 'granted') {
-        console.log('알림 권한 허용 됨!!! ');
         const token = await getToken(messaging, {
           vapidKey: process.env.REACT_APP_FCM_VAPID
         });

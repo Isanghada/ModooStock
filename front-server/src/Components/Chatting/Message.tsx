@@ -77,9 +77,9 @@ function Message({
               {checkSameNick ? (
                 <div className="flex items-center w-fit">
                   {data.profilePath && (
-                    <div className="w-6 h-6 overflow-hidden rounded-full lg:w-10 lg:h-10">
+                    <div className="w-6 h-6 rounded-full lg:w-10 lg:h-10">
                       <img
-                        className="object-fill"
+                        className="w-6 h-6 lg:w-10 lg:h-10"
                         src={data.profilePath}
                         alt={data.profilePath}
                       />
