@@ -107,6 +107,12 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
   const handleMyRoomVisit = () => {
     navigate('/mypage');
   };
+
+  // naviage로 이동 시 모달 닫기
+  useEffect(() => {
+    handleCloseModal();
+  }, [nickname]);
+
   return (
     <>
       <div className="absolute flex items-center justify-start w-[25%] lg:w-[33%] xl:ml-[2%] xl:w-[27%] h-[3rem] md:h-[5rem] bottom-0 lg:bottom-6 py-2 mx-2">
