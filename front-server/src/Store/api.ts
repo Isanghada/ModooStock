@@ -798,7 +798,7 @@ export const Api = createApi({
     }),
     // 2. 마이페이지 방문자 수 조회
     getUserMypageVisitors: builder.query<ReturnVisitors, string>({
-      query: (nickname) => `/mypage/${nickname}​/visitor`,
+      query: (nickname) => `/mypage/visit?nickname=${nickname}`,
       providesTags: (result, error, arg) => {
         return [{ type: 'UserMypageApi' }];
       }
@@ -946,6 +946,15 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'AdminUserApi' }];
       }
+    }),
+
+    // ----------- 어드민 유저 판별 ------------
+    // 1. 닉네임으로 회원 목록 검색
+    getAdminUserCheck: builder.query<ReturnBasicInterFace, string>({
+      query: () => `/admin/user/isadmin`,
+      providesTags: (result, error, arg) => {
+        return [];
+      }
     })
   })
 });
@@ -1042,5 +1051,8 @@ export const {
   usePutAdminUserSelectMutation,
   useDeleteAdminUserSelectMutation,
   useLazyGetAdminUserNickQuery,
-  useGetAdminUserNickQuery
+  useGetAdminUserNickQuery,
+  // ----------- 관리자 유저 체크 ------------
+  useGetAdminUserCheckQuery,
+  useLazyGetAdminUserCheckQuery
 } = Api;

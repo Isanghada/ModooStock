@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { getToken } from 'firebase/messaging';
 import { messaging } from '../../firebase';
 import SetPushToken from 'Components/Common/SetPushToken';
+import { useLazyGetAdminUserCheckQuery } from 'Store/api';
 
 interface LoginInterFace {
   account: string;
