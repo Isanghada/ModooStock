@@ -475,6 +475,18 @@ export const Api = createApi({
         return [{ type: 'UserApi' }];
       }
     }),
+    // 6. 회원탈퇴
+    deleteUsers: builder.mutation<ReturnBasicInterFace, string>({
+      query: () => {
+        return {
+          url: `/users`,
+          method: 'DELETE',
+        };
+      },
+      invalidatesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
 
     getUsersTravelInfo: builder.query<ReturnTravelInfoInterFace, string>({
       query: (nickname) => `/users/info/${nickname}`,
@@ -948,6 +960,7 @@ export const {
   useLazyGetUsersLogoutQuery,
   useLazyGetUsersNicknameQuery,
   usePutUsersInfoMutation,
+  useDeleteUsersMutation,
   useGetUsersTravelInfoQuery,
 
   // ------------- 은행 -------------

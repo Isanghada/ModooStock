@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeMenuStatus, changePrivacyStatus, changeUpdateStatus } from 'Store/store';
 import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
-import { useLazyGetUsersLogoutQuery } from 'Store/api';
+import { useLazyGetUsersLogoutQuery, useDeleteUsersMutation } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from 'Components/Common/ConfirmModal';
 import { toast } from 'react-toastify';
@@ -19,10 +19,16 @@ function Menu(): JSX.Element {
   const navigate = useNavigate();
   // 모달 관련
   const [modalOpen, setModalOpen] = useState(false);
+  // 회원탈퇴 모달 관련
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   // 모달 창 닫기
   function closeModal() {
     setModalOpen(false);
+  }
+  // 회원탈퇴 창 닫기
+  function closeDeleteModal() {
+    setDeleteModalOpen(false);
   }
   function closePrivacyModal() {
     setPrivacyModalOpen(false);
@@ -31,14 +37,12 @@ function Menu(): JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null);
   // 로그아웃 API
   const [getUsersLogout] = useLazyGetUsersLogoutQuery();
+  // 회원탈퇴 API
+  const [postDeleteUsers] = useDeleteUsersMutation();
 
   // 정보수정 창 상태
   const updateStatus = useAppSelector((state) => {
     return state.updateStatus;
-  });
-  // 개인정보보호방침 창 상태
-  const privacyStatus = useAppSelector((state) => {
-    return state.privacyStatus;
   });
 
   // 배경 클릭시 메뉴 닫기
@@ -57,6 +61,19 @@ function Menu(): JSX.Element {
     toast.info('로그아웃 하셨습니다');
     navigate('/');
   };
+  // 회원탈퇴
+  const deleteUser = async () => {
+    try {
+      await postDeleteUsers("").unwrap();
+      // 메뉴 닫기
+      dispatch(changeMenuStatus(false));
+      localStorage.clear();
+      toast.info('회원탈퇴 하셨습니다');
+      navigate('/');
+    } catch (error) {
+      console.log(error, '회원탈퇴 에러');
+    }
+  };
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
@@ -66,6 +83,9 @@ function Menu(): JSX.Element {
         break;
       case '정보수정':
         dispatch(changeUpdateStatus(true));
+        break;
+      case '회원탈퇴':
+        setDeleteModalOpen(true);
         break;
       case '개인정보처리방침':
         setPrivacyModalOpen(true);
@@ -102,11 +122,15 @@ function Menu(): JSX.Element {
         accept={'나가기'}
         cancel={'남아있기'}
       />
-      {isPrivacyLoaded && <PrivacyPolicy
-        isOpen={privacyModalOpen}
-        closeModal={closePrivacyModal}
-        cancel={'확인'}
-      />}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        msg={'정말 탈퇴하실건가요? o(TヘTo)'}
+        propsFunction={deleteUser}
+        closeModal={closeDeleteModal}
+        accept={'탈퇴하기'}
+        cancel={'남아있기'}
+      />
+      {isPrivacyLoaded && <PrivacyPolicy isOpen={privacyModalOpen} closeModal={closePrivacyModal} cancel={'확인'} />}
       {isLoaded && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -133,10 +157,9 @@ function Menu(): JSX.Element {
                 className="absolute w-2 h-2 cursor-pointer opacity-60 lg:w-6 lg:h-6 top-2 right-2 hover:opacity-80"
                 alt="cancelBlack"
               />
-              <div className="w-1/2">
+              <div className="w-1/2 mb-2 lg:mb-4">
                 <img className="w-full" src={src} alt="logo" />
               </div>
-              <div className="text-base font-extrabold text-gray-600 lg:text-2xl h-1/6">설정</div>
               <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%]">
                 <a
                   target="_blank"
@@ -145,11 +168,19 @@ function Menu(): JSX.Element {
                   문의 : 천재 기타리스트 HMinor
                 </a>
               </div>
-              <div
-                aria-label="정보수정"
-                onClick={onClick}
-                className="bg-[#FFD4CD] rounded-xl text-sm lg:text-2xl font-extrabold w-3/4 text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#ffc1b8]">
-                정보수정
+              <div className="flex justify-between w-3/4">
+                <div
+                  aria-label="정보수정"
+                  onClick={onClick}
+                  className="bg-[#ffc1b8] rounded-xl text-sm lg:text-2xl font-extrabold w-[48%]  text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#ffb3a8]">
+                  정보수정
+                </div>
+                <div
+                  aria-label="회원탈퇴"
+                  onClick={onClick}
+                  className="bg-[#b7c4cb] rounded-xl text-sm lg:text-2xl font-extrabold w-[48%]  text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#98aab4]">
+                  회원탈퇴
+                </div>
               </div>
               <div
                 aria-label="개인정보처리방침"
