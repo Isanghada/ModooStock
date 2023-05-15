@@ -7,6 +7,9 @@ interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
   IntAfterCurrentMoney: number;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  // successFx: HTMLAudioElement;
 }
 
 // 출금

@@ -54,7 +54,7 @@ function Layout(): JSX.Element {
   useEffect(() => {
     // 레이아웃 최소값 세팅
     const height = window.screen.height;
-    setScreenHeight(`${height * 3/10}px`);
+    setScreenHeight(`${(height * 3) / 10}px`);
   }, [window.screen.height]);
 
   return (

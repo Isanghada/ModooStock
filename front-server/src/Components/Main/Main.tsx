@@ -16,7 +16,9 @@ function Main(): JSX.Element {
     window.screen.width <= 1280 ? `${2 + (window.screen.width - 1024) * (1 / 140)}rem` : '4rem'
   );
   const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
-  if (getAdmin !== undefined) {
+  console.log('getAdmin: ', getAdmin);
+
+  if (getAdmin?.data === true) {
     navigate('/admin');
   }
 
