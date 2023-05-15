@@ -6,7 +6,7 @@
 
 ### [2. 빌드 방법](#빌드-방법)
 
-### [3. Docker & Jenkins (서버 배포)](#docker--jenkins-서버-배포)
+### [3. Docker & Jenkins (서버 배포)](#docker-jenkins-서버-배포)
 
 ### [4. MySQL 모니터링](#mysql-모니터링)
 
@@ -448,7 +448,7 @@ echo "Run front-server"
 - Exporter에서 사용할 계정 생성(읽기만 하면 되는 계정)
 
 ```Sql
-CREATE USER '[Username]'@'%' IDENTIFIED BY '[Password]' WITH MAX_USER_CONNECTIONS 3;
+CREATE USER '[DB-Username]'@'%' IDENTIFIED BY '[DB-Password]' WITH MAX_USER_CONNECTIONS 3;
 GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'test'@'localhost';
 FLUSH PRIVILEGES;
 ```
