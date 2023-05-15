@@ -219,7 +219,8 @@ function Exchange(): JSX.Element {
       setSseData(JSON.parse(event.data));
     };
 
-    eventSource.onerror = (event: any) => {
+    eventSource.onerror = () => {
+
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
@@ -928,7 +929,7 @@ function Exchange(): JSX.Element {
                       <span className="text-[0.7rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
                     <div className="flex space-x-1 items-center text-[0.8rem] md:text-[1rem]">
-                      {sseData && sseData?.amount > 0 && (
+                      {sseData && (
                         <>
                           <div className="flex items-center">
                             <span className=" items-end text-[0.7rem] pr-1">현재가</span>
