@@ -73,7 +73,7 @@ public class StoreServiceImpl implements StoreService {
             int rd=random.nextInt(100);
             if(rd<3){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=3&&rd<30){
+            }else if(rd>=3&&rd<35){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset=assetRepository.findByAssetLevelAndLimit("RARE");
@@ -86,7 +86,7 @@ public class StoreServiceImpl implements StoreService {
             int rd=random.nextInt(100);
             if(rd<1){
                 asset=assetRepository.findByAssetLevelAndLimit("UNIQUE");
-            }else if(rd>=1&&rd<15){
+            }else if(rd>=1&&rd<17){
                 asset=assetRepository.findByAssetLevelAndLimit("EPIC");
             }else {
                 asset = assetRepository.findByAssetLevelAndLimit("RARE");
