@@ -7,6 +7,7 @@ import GuestBookList from './GuestBookList';
 import { Suspense, useEffect, useState } from 'react';
 import AllAssetsList2 from './AllAssetsList2';
 import AssetLoading from 'Components/Common/AssetLoading';
+import { motion } from 'framer-motion';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -159,7 +160,15 @@ function Travel(): JSX.Element {
   return (
     <>
       {/* 데스크탑 */}
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: 1,
+          ease: 'easeInOut'
+        }}
+        className="w-full">
         <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
           <div className="flex justify-center items-center lg:w-[33%] lg:pl-[2%] xl:pl-0 xl:w-[27%]">
             <div className="flex flex-col items-center justify-center w-full p-2 font-extrabold bg-white rounded-3xl drop-shadow-lg">
@@ -259,7 +268,7 @@ function Travel(): JSX.Element {
             <MobileTravelRoom />
           </div>
         </div>
-      </>
+      </motion.div>
 
       {/* 돌아가기 & 랜덤 방문 버튼 */}
       <BottomButtons nickname={nickname} />
