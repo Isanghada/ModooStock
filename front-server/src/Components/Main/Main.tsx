@@ -7,6 +7,7 @@ import VisitModal from './VisitModal';
 import Guide from './Guide';
 import MyHomeAsset from './MyHomeAsset';
 import AssetLoading from 'Components/Common/AssetLoading';
+import MyHomeAsset2 from './MyHomeAsset2';
 
 function Main(): JSX.Element {
   const [floor, setFloor] = useState(
@@ -59,7 +60,7 @@ function Main(): JSX.Element {
         navigate('/auction');
         break;
       case '마이룸':
-        navigate('/mypage');
+        navigate(`/travel/${localStorage.getItem('nickname')}`);
         break;
 
       default:
@@ -384,7 +385,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <MyHomeAsset len={0.004} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
+              <MyHomeAsset2 len={0.004} pos={[0, -1.02, -8]} rot={[1.75, 0, 0.2]} />
             </Canvas>
           </Suspense>
         </div>
