@@ -50,9 +50,9 @@ public class MyPageController {
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }
 
-    @GetMapping("/{nickname}/visitor")
+    @GetMapping("visit")
     @ApiOperation(value = "마이페이지 방문자 수 반환")
-    public ResponseEntity<ResultDto<Long>> getVisitorCount(@PathVariable String nickname, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<ResultDto<Long>> getVisitorCount(@RequestParam String nickname, HttpServletRequest request, HttpServletResponse response){
         Long visitorCount=myPageService.getVisitorCount(nickname,request,response);
         return ResponseEntity.ok(ResultDto.of(visitorCount));
     }
