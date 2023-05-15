@@ -20,12 +20,16 @@ function Navbar(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [myNickName, setMyNickName] = useState<string>('');
+  const [myProfile, setMyProfile] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
-
+  const [isUnmounted, setIsUnmounted] = useState(false);
+  // 가시성 관련
+  const [isPageVisible, setPageVisible] = useState(true);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
-  // 내 정보 이벤트실행시 API
+
+  // 내 정보 이벤트실행시 API 
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   // 전체 스크린 높이
@@ -66,6 +70,18 @@ function Navbar(): JSX.Element {
   const showMenu = () => {
     dispatch(changeMenuStatus(true));
   };
+  // 유저 정보 가져오기
+  const getUser = async () => {
+    const { data } = await getUsersInfo('');
+    if (data) {
+      const { nickname, currentMoney, totalStockReturn, profileImagePath } = data.data;
+      setMyProfile(profileImagePath);
+      setMyNickName(nickname);
+      setCurrentMoney(currentMoney.toLocaleString());
+      dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
+      setTotalStockReturn(totalStockReturn);
+    }
+  }
 
   useEffect(() => {
     if (dataUserInfo) {
@@ -74,7 +90,6 @@ function Navbar(): JSX.Element {
       setCurrentMoney(currentMoney.toLocaleString());
       dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
       setTotalStockReturn(totalStockReturn);
-      localStorage.setItem('nickname', nickname);
     }
     // 현재 잔액 변경될 때 실행되도록 추가
   }, [currentMoneyStatus, dataUserInfo]);
@@ -86,6 +101,8 @@ function Navbar(): JSX.Element {
   }, [window.screen.height]);
 
   useEffect(() => {
+    // 첫 내정보 실행
+    getUser();
     // 창 넓이 변할때마다 실행
     const updateScreenWidth = () => {
       const newWidth = window.innerWidth;
@@ -153,28 +170,45 @@ function Navbar(): JSX.Element {
   useEffect(() => {
     const now = new Date();
     const hour = now.getHours();
-    console.log(hour);
-
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
-      const currentDate = new Date().toLocaleString('ko-kr');
-      if (hour >= 10 && hour < 22) {
-        toast.info('새로운 하루의 정보가 갱신되었습니다');
+      if (hour >= 10 && hour < 22 && !isUnmounted) {
+        if (isPageVisible) {
+          toast.info('새로운 하루의 정보가 갱신되었습니다');
+        }
         // 내정보 갱신
         setTimeout(async () => {
-          const { data } = await getUsersInfo('');
-          if (data) {
-            const { nickname, currentMoney, totalStockReturn } = data.data;
-            setMyNickName(nickname);
-            setCurrentMoney(currentMoney.toLocaleString());
-            dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
-            setTotalStockReturn(totalStockReturn);
-          }
+          getUser();
         }, 1000);
       }
     });
     getIndex();
+
+    return () => {
+      job.cancel();
+      setIsUnmounted(true);
+    };
+  }, [isPageVisible]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 페이지가 현재 보이는 상태일 때 실행할 작업
+        console.log("보임")
+        setPageVisible(true);
+      } else {
+        // 페이지가 현재 보이지 않는 상태일 때 실행할 작업
+        setPageVisible(false);
+        console.log("안보임")
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (
@@ -191,7 +225,7 @@ function Navbar(): JSX.Element {
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
               onClick={click}>
-              <img className="w-5/6" src={`/images/toys/pink.png`} alt="money" />
+              <img className="w-2/3 duration-150 hover:scale-105" src={myProfile} alt="profile" />
             </div>
             <div
               className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${
@@ -202,20 +236,24 @@ function Navbar(): JSX.Element {
           </div>
           <div className={`flex items-center min-w-fit w-[20vw] h-full`}>
             <div className="min-w-[10vh] w-[5vw]">
-              <img className="w-full" src="/images/icons/money.png" alt="money" />
+              <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/icons/money.png'} alt="money" />
             </div>
             <div
               className={`bg-[#FFBF4D] grow min-w-fit px-2 h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold flex justify-center items-center shadow-md shadow-gray-400 ${
                 screenHeight >= 800 ? 'max-w-[20vw]' : ''
               }`}>
-              {currentMoneyHideStatus ? currentMoney : '??????'}원
+              {currentMoneyHideStatus ? '??????' : currentMoney}원
             </div>
           </div>
           <div className={`flex items-center w-[18vw] h-full`}>
             <div className="min-w-[9vh] w-[4vw]">
               <img
                 className="w-full "
-                src={`${totalStockReturn >= 0 ? `/images/icons/upgold.png` : `/images/icons/downgold.png`}`}
+                src={`${
+                  totalStockReturn >= 0
+                    ? process.env.REACT_APP_S3_URL + '/images/icons/upgold.png'
+                    : process.env.REACT_APP_S3_URL + '/images/icons/downgold.png'
+                }`}
                 alt="money"
               />
             </div>
@@ -229,13 +267,13 @@ function Navbar(): JSX.Element {
         </div>
         <div className={`mt-2 w-[20vw] lg:w-[16vw] h-full justify-evenly items-center flex `}>
           <div aria-label="채팅" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
-            <img className="w-full" src="/images/icons/chat2.png" alt="chat" />
+            <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/icons/chat2.png'} alt="chat" />
           </div>
           <div aria-label="홈" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
-            <img className="w-full" src="/images/icons/home.png" alt="home" />
+            <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/icons/home.png'} alt="home" />
           </div>
           <div aria-label="메뉴" onClick={click} className="min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
-            <img className="w-full" src="/images/icons/setting.png" alt="setting" />
+            <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/icons/setting.png'} alt="setting" />
           </div>
         </div>
       </div>
@@ -275,6 +313,7 @@ function Navbar(): JSX.Element {
           </motion.div>
         </AnimatePresence>
       )}
+      
     </>
   );
 }

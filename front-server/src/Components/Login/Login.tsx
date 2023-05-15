@@ -5,7 +5,9 @@ import { changeLoginStatus, changeSignUpStatus } from 'Store/store';
 import { usePostUsersLoginMutation } from 'Store/NonAuthApi';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../../firebase';
+import SetPushToken from 'Components/Common/SetPushToken';
 
 interface LoginInterFace {
   account: string;
@@ -49,13 +51,32 @@ function Login(): JSX.Element {
     // 로그인 시도후 처리
     if (loginData.data) {
       // 토큰 세팅
-      const { accessToken, refreshToken } = loginData.data.data;
+      const { accessToken, refreshToken, nickname } = loginData.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-
+      localStorage.setItem('nickname', nickname);
+      // 웹푸시용 토큰
+      const permission = await Notification.requestPermission();
+      if (permission === 'denied') {
+        console.log('알림 권한 허용 안됨');
+      } else if (permission === 'granted') {
+        console.log('알림 권한 허용 됨!!! ');
+        const token = await getToken(messaging, {
+          vapidKey: process.env.REACT_APP_FCM_VAPID
+        });
+        if (token) {
+          SetPushToken(nickname, token);
+        } else {
+          console.log('Can not get Token');
+        }
+      }
       closeLogin();
       toast.success('어서오세요!!');
-      navigate('/main');
+      if (nickname === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/main');
+      }
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
       console.log('로그인 에러 :', loginData.error);
@@ -87,7 +108,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="account"
             type="text"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
             placeholder="아이디"
             required
           />
@@ -95,7 +116,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="password"
             type="password"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
             placeholder="비밀번호"
             required
           />

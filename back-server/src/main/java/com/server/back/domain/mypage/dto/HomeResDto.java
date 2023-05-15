@@ -1,7 +1,9 @@
 package com.server.back.domain.mypage.dto;
 
+import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.domain.store.entity.UserAssetLocation;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +13,8 @@ import java.util.stream.Collectors;
 public class HomeResDto {
     private Long userAssetId;
     private String assetName;
-    private String assetImagePath;
+    private String assetNameKor;
+    private AssetLevelType assetLevel;
     private float pos_x;
     private float pos_y;
     private float pos_z;
@@ -21,8 +24,9 @@ public class HomeResDto {
 
     public static HomeResDto fromEntity(UserAssetLocation userAssetLocation){
         return HomeResDto.builder()
-                .assetImagePath(userAssetLocation.getAsset().getAssetImagePath())
                 .assetName(userAssetLocation.getAsset().getAssetName())
+                .assetNameKor(userAssetLocation.getAsset().getAssetNameKor())
+                .assetLevel(userAssetLocation.getAsset().getAssetLevel())
                 .userAssetId(userAssetLocation.getId())
                 .pos_x(userAssetLocation.getPosX())
                 .pos_y(userAssetLocation.getPosY())

@@ -54,12 +54,12 @@ function Layout(): JSX.Element {
   useEffect(() => {
     // 레이아웃 최소값 세팅
     const height = window.screen.height;
-    setScreenHeight(`${height * 7/10}px`);
+    setScreenHeight(`${height * 3/10}px`);
   }, [window.screen.height]);
 
   return (
     <>
-      <div className="bg-[#FEF3F3] w-screen relative flex">
+      <div className="bg-[#FFF9F9] w-screen relative flex">
         <div
           style={window.screen.height >= 800 ? { minHeight: screenHeight } : {}}
           className={`${
@@ -74,7 +74,7 @@ function Layout(): JSX.Element {
         <AnimatePresence>
           {loginStatus && (
             <motion.div
-              className="max-h-screen min-h-full"
+              className="max-h-screen min-h-full overflow-hidden"
               initial={{ width: 0 }}
               animate={screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }}
               exit={{ width: 0, opacity: 0 }}

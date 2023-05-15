@@ -3,6 +3,10 @@ import { toast } from 'react-toastify';
 import { useLazyGetUsersNicknameQuery, usePostBankTransferMutation } from 'Store/api';
 import { useAppDispatch } from 'Store/hooks';
 import { changeCurrentMoneyStatusStatus } from 'Store/store';
+// 파이어 베이스
+import { doc, getDoc } from 'firebase/firestore';
+import { dbService } from '../../firebase';
+import { usePostSendPushMutation } from 'Store/FirebaseApi';
 
 interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,6 +25,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
 
   const [postBankTransfer, { isLoading: isLoading1, isError: isError1 }] = usePostBankTransferMutation();
   const [getUsersNickname, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUsersNicknameQuery();
+  const [postSendPushMessage ] = usePostSendPushMutation();
 
   useEffect(() => {
     if (IntAfterCurrentMoney > 0) {
@@ -102,6 +107,25 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
         toast.success('송금을 성공했습니다!');
         setIsClick(false);
+        // 웹 푸시용
+        const docRef = doc(dbService, 'PushToken', receiver);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const pushToken = docSnap.data().token;
+          const message = {
+            notification: {
+              title: '모두의 주식',
+              body: `${localStorage.getItem("nickname")}님이 당신에게 송금하였습니다`,
+              icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
+            },
+            to: pushToken
+          };
+          const {data} = await postSendPushMessage(message).unwrap()
+          console.log(data, "푸쉬후 데이터");
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log('No such document!');
+        }
       } else if (nicknameCheck === false) {
         toast.error('닉네임을 확인해주세요!');
       } else {

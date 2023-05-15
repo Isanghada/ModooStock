@@ -85,7 +85,7 @@ public class LoginServiceImpl implements LoginService{
         }
 
         // 토큰 body에 담아서 전달
-        return LoginResDto.fromEntity(accessToken, refreshToken);
+        return LoginResDto.fromEntity(accessToken, refreshToken, user.getNickname());
     }
 
 
@@ -129,7 +129,7 @@ public class LoginServiceImpl implements LoginService{
         authTokenProvider.setHeaderRefreshToken(response, newRefreshToken);
 
         // 토큰 body에 담아서 전달
-        return LoginResDto.fromEntity(newAccessToken, newRefreshToken);
+        return LoginResDto.fromEntity(newAccessToken, newRefreshToken, userNickname);
     }
 
     /**

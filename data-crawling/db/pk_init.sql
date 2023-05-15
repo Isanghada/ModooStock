@@ -1,0 +1,3 @@
+ALTER TABLE [table] AUTO_INCREMENT=1;
+SET @COUNT = 0;
+UPDATE [table] SET [col_name] = @COUNT:=@COUNT+1;

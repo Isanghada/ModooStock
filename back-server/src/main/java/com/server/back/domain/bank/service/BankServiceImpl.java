@@ -74,6 +74,12 @@ public class BankServiceImpl implements BankService {
         
         // 통장에서 돈 출금
         BankEntity bank = bankRepository.findByIdAndAndIsCompleted(bankId, IsCompleted.N).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 본인이 예금한 경우만 출금 가능.
+        if(!user.getId().equals(bank.getUser().getId())){
+            throw new CustomException(ErrorCode.NO_ACCESS);
+        }
+
         bank.setIsCompleted(IsCompleted.Y);
         bankRepository.save(bank);
 

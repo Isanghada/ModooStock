@@ -1,9 +1,6 @@
 package com.server.back.domain.user.service;
 
-import com.server.back.common.code.commonCode.DealType;
-import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.common.code.commonCode.IsCompleted;
-import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.*;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.auction.entity.AuctionEntity;
 import com.server.back.domain.auction.repository.AuctionRepository;
@@ -20,7 +17,11 @@ import com.server.back.domain.stock.repository.ChartRepository;
 import com.server.back.domain.stock.repository.DealStockRepository;
 import com.server.back.domain.stock.repository.StockRepository;
 import com.server.back.domain.stock.repository.UserDealRepository;
+import com.server.back.domain.store.entity.AssetEntity;
 import com.server.back.domain.store.entity.UserAssetEntity;
+import com.server.back.domain.store.entity.UserAssetLocation;
+import com.server.back.domain.store.repository.AssetRepository;
+import com.server.back.domain.store.repository.UserAssetLocationRepository;
 import com.server.back.domain.store.repository.UserAssetRepository;
 import com.server.back.domain.user.dto.*;
 import com.server.back.domain.user.entity.UserEntity;
@@ -54,6 +55,9 @@ public class UserServiceImpl implements UserService{
     private final ChartRepository chartRepository;
     private final DealStockRepository dealStockRepository;
     private final BankRepository bankRepository;
+    private final AssetRepository assetRepository;
+    private final UserAssetLocationRepository userAssetLocationRepository;
+    private final static String PROFILE_IMAGE_PATH = "https://modoostock.s3.ap-northeast-2.amazonaws.com/images/navImg/";
 
     @Override
     public UserEntity getUserById(Long id) {
@@ -74,12 +78,12 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void createUser(UsersRegisterReqDto usersRegisterReqDto) {
         // 이미 존재하는 계정인지 다시 한번 확인
-        if (userRepository.findByAccount(usersRegisterReqDto.getAccount()).isPresent()) {
+        if (!checkAccount(usersRegisterReqDto.getAccount())) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
         // 이미 존재하는 닉네임인지 다시 한번 확인
-        if (userRepository.findByNickname(usersRegisterReqDto.getNickname()).isPresent()) {
+        if (!checkNickname(usersRegisterReqDto.getNickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
@@ -93,9 +97,26 @@ public class UserServiceImpl implements UserService{
         int rd =random.nextInt(6);
 
         String[] imageArray = {"f1.png", "f6.png", "f7.png", "m3.png", "m4.png", "m9.png"};
-        String profileImagePath = "https://raw.githubusercontent.com/hyeonaseome/trycatchAnswer/main/";
 
-        userRepository.save(usersRegisterReqDto.toEntity(profileImagePath + imageArray[rd]));
+        userRepository.save(usersRegisterReqDto.toEntity(PROFILE_IMAGE_PATH + imageArray[rd]));
+
+        // 기본 base asset 추가
+        AssetEntity asset = assetRepository.findById(351L).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 회원가입한 유저 가져오기
+        UserEntity user = getUserByNickname(usersRegisterReqDto.getNickname());
+        
+        // 회원 가입 시 기본 에셋 추가
+        UserAssetLocation userAssetLocation=UserAssetLocation.builder()
+                .asset(asset)
+                .user(user)
+                .isDeleted(IsDeleted.N)
+                .isInRepository(IsInRespository.N)
+                .isAuctioned(IsAuctioned.N)
+                .build();
+        userAssetLocation.initZero();
+
+        userAssetLocationRepository.save(userAssetLocation);
     }
 
     /**
@@ -122,8 +143,8 @@ public class UserServiceImpl implements UserService{
             Optional<UserDealEntity> userDeal = userDealRepository.findByUserIdAndStockId(userId, stock.getId());
 
             if (userDeal.isPresent() && userDeal.get().getTotalAmount() != 0L) {
-                totalStockReturn += userDeal.get().getRate();
-                count++;
+                totalStockReturn += userDeal.get().getRate() * userDeal.get().getTotalAmount();
+                count += userDeal.get().getTotalAmount();
             }
         }
 
@@ -184,10 +205,6 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public void deleteUser() {
-        /* TODO
-        - table 삭제: 거래, 은행, 주식거래, 보유주식, 보유 뉴스
-        - isDeleted.Y: 회원에셋, 회원
-         */
         Long userId = authService.getUserId();
         UserEntity user = getUserById(userId);
 
@@ -265,8 +282,6 @@ public class UserServiceImpl implements UserService{
         for ( BankEntity userBank : userBankList ) {
             userBank.setIsCompleted(IsCompleted.Y);
         }
-
-        //
 
         // 회원 삭제
         user.setIsDeleted(IsDeleted.Y);

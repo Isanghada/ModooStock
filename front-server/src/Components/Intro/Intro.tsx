@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import money from 'Components/Common/Lottie/money.json';
+// import money from 'Components/Common/Lottie/money.json';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'Store/hooks';
@@ -15,16 +15,29 @@ function Intro(): JSX.Element {
     dispatch(changeLoginStatus(true));
     setShowLogin(false);
   };
-  // 로그인 창 닫기
-  const closeLogIn = () => {
-    dispatch(changeLoginStatus(false));
-    setShowLogin(true);
-  };
 
+  useEffect(() => {
+    // beforeinstallprompt 이벤트 핸들러 등록
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+    // 컴포넌트가 unmount될 때 이벤트 핸들러 해제
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
+  }, []);
+
+  // beforeinstallprompt 이벤트 핸들러
+  const handleInstallPrompt = (event : any) => {
+    // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
+    event.preventDefault();
+    let deferredPrompt = event;
+    deferredPrompt.prompt();
+  }
   return (
     <AnimatePresence>
       {/* 전체 배경 */}
       <motion.div
+        onClick={showLogIn}
         className="flex flex-col justify-center items-center w-full h-full text-xl bg-center bg-[url('/src/intro/IntroBG.png')] bg-no-repeat bg-contain lg:min-h-[38rem]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -36,7 +49,6 @@ function Intro(): JSX.Element {
         }}>
         {/* 로고 */}
         <motion.div
-          onClick={closeLogIn}
           className="flex items-center w-1/3 h-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -46,7 +58,7 @@ function Intro(): JSX.Element {
             delay: 1.5,
             ease: 'easeInOut'
           }}>
-          <img className="w-full" src="/images/logos/LogoEarth.png" alt="logo" />
+          <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/logos/LogoEarth.png'} alt="logo" />
         </motion.div>
         {/* 캐릭터 */}
         <motion.div
@@ -59,7 +71,11 @@ function Intro(): JSX.Element {
             delay: 1,
             ease: 'easeInOut'
           }}>
-          <img className="w-full max-h-full lg:w-3/4" src="/images/intro/characters.png" alt="characters" />
+          <img
+            className="w-full max-h-full lg:w-3/4"
+            src={process.env.REACT_APP_S3_URL + '/images/intro/characters.png'}
+            alt="characters"
+          />
         </motion.div>
         {/* 돈 뿌리기 */}
         <motion.div
@@ -86,7 +102,11 @@ function Intro(): JSX.Element {
               repeat: Infinity,
               ease: 'linear'
             }}>
-            <img className="w-full h-full hover:scale-105" src="/images/intro/increase.png" alt="arrow" />
+            <img
+              className="w-full h-full hover:scale-105"
+              src={process.env.REACT_APP_S3_URL + '/images/intro/increase.png'}
+              alt="arrow"
+            />
             {/* <div className='text-sm font-medium text-red-700 lg:font-bold lg:text-xl'>화성</div> */}
           </motion.div>
         )}

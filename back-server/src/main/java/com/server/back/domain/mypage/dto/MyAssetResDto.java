@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 public class MyAssetResDto {
     private Long userAssetId;
     private String assetName;
-    private String assetImagePath;
+    private String assetNameKor;
     private AssetLevelType assetLevel;
     private String assetCategory;
     private IsAuctioned isAuctioned;
 
     public static MyAssetResDto fromEntity(UserAssetEntity userAsset){
         return  MyAssetResDto.builder()
-                .userAssetId(userAsset.getAsset().getId())
+                .userAssetId(userAsset.getId())
                 .assetName(userAsset.getAsset().getAssetName())
-                .assetImagePath(userAsset.getAsset().getAssetImagePath())
+                .assetNameKor(userAsset.getAsset().getAssetNameKor())
                 .assetLevel(userAsset.getAsset().getAssetLevel())
                 .assetCategory(userAsset.getAsset().getCategory())
                 .isAuctioned(userAsset.getIsAuctioned())

@@ -1,9 +1,6 @@
 package com.server.back.domain.admin.service;
 
-import com.server.back.common.code.commonCode.DealType;
-import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.common.code.commonCode.IsCompleted;
-import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.*;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.admin.dto.AdminUserInfoResDto;
 import com.server.back.domain.admin.dto.AdminUserModifyReqDto;
@@ -203,5 +200,17 @@ public class AdminUserServiceImpl implements AdminUserService{
         user.setIsDeleted(IsDeleted.Y);
 
         userRepository.save(user);
+    }
+
+    /**
+     * 어드민 여부를 체크 합니다.
+     *
+     */
+    @Override
+    public void getUserIsAdmin() {
+        Long userId = authService.getUserId();
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if(!user.getRole().equals(Role.ADMIN)) throw new CustomException(ErrorCode.NO_ACCESS);
     }
 }
