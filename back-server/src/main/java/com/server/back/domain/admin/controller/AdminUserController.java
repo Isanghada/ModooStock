@@ -19,7 +19,7 @@ import java.util.List;
 @Api(tags="관리자 유저 API")
 public class AdminUserController {
     private final AdminUserService adminUserService;
-    @GetMapping
+    @GetMapping("/isadmin")
     @ApiOperation(value = "관리자 여부를 체크합니다.", notes = "")
     public ResponseEntity<ResultDto<Boolean>> getUserIsAdmin(){
         adminUserService.getUserIsAdmin();
