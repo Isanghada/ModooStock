@@ -480,7 +480,7 @@ export const Api = createApi({
       query: () => {
         return {
           url: `/users`,
-          method: 'DELETE',
+          method: 'DELETE'
         };
       },
       invalidatesTags: (result, error, arg) => {
