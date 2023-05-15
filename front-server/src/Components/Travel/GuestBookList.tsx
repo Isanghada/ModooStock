@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import DeleteGuestBookModal from './DeleteGuestBookModal';
 import WriteGuestBookModal from './WirteGuestBookModal';
 import Modal from 'Components/Main/Modal';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetCommentListQuery } from 'Store/api';
 import Lottie from 'lottie-react';
 import mailbox from 'Components/Common/Lottie/mailbox.json';
 import Loading from 'Components/Common/Loading';
 
 interface Props {
-  onClose: React.MouseEventHandler<HTMLButtonElement>;
+  onClose: () => void;
 }
 
 interface CommentResDtoProps {
@@ -41,14 +41,20 @@ function GuestBookItem({
   handleOpenDeleteModal,
   handleOpenModifyModal
 }: GuestBookItemProps): JSX.Element {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="w-[13rem] h-[12.75rem] rounded-xl bg-white border border-[#fde2e2] p-4">
-        <div className="flex flex-row mb-2">
+        <div
+          className="flex flex-row mb-2 w-fit hover:scale-105 transition-all duration-300 cursor-pointer"
+          onClick={() => navigate(`/travel/${author.nickname}`)}>
           <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
             <img className="m-1 rounded-full object-contain" src={`${author.profileImagePath}`} alt="프로필 이미지" />
           </div>
-          <p className="w-[6rem] h-[1.625rem] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
+          <p className="h-[1.625rem] text-base font-semibold text-left text-[#454545] hover:font-bold">
+            {author.nickname}
+          </p>
         </div>
         <p className="w-[10.875rem] h-[7.5rem] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
@@ -79,17 +85,6 @@ function GuestBookList({ onClose }: Props): JSX.Element {
   // 방명록 리스트 가져오기
   const { nickname } = useParams() as { nickname: string };
   const { data, isLoading: isLoading1, isError: isError1 } = useGetCommentListQuery(nickname);
-  // const [getCommentList, { isLoading: isLoading1, isError: isError1 }] = useLazyGetCommentListQuery();
-
-  // useEffect(() => {
-  //   const getComment = async () => {
-  //     const { data, result } = await getCommentList(nickname).unwrap();
-  //     if (data) {
-  //       setCommentList(commentList);
-  //     }
-  //   };
-  //   getComment();
-  // }, [nickname, commentList, getCommentList]);
 
   const [commentId, setCommentId] = useState<number>(0);
   const [comment, setComment] = useState<CommentResDtoProps | undefined>();
@@ -168,7 +163,8 @@ function GuestBookList({ onClose }: Props): JSX.Element {
                     commentResDto={item.commentResDto}
                     isAuthor={item.isAuthor}
                     handleOpenDeleteModal={handleOpenDeleteModal}
-                    handleOpenModifyModal={handleOpenModifyModal}></GuestBookItem>
+                    handleOpenModifyModal={handleOpenModifyModal}
+                  />
                 ))}
               </div>
             )}
