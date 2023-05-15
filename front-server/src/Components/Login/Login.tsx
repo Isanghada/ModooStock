@@ -72,11 +72,7 @@ function Login(): JSX.Element {
       }
       closeLogin();
       toast.success('어서오세요!!');
-      if (nickname === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/main');
-      }
+      navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
       console.log('로그인 에러 :', loginData.error);

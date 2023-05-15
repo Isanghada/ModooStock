@@ -198,11 +198,11 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
+      heartbeatTimeout: 300000,
       withCredentials: true
     });
 
     newEventSource.addEventListener('connect', (e: any) => {
-      // console.log(e);
     });
     setEventSource(newEventSource);
 
@@ -220,7 +220,6 @@ function Exchange(): JSX.Element {
     };
 
     eventSource.onerror = () => {
-
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
@@ -231,6 +230,7 @@ function Exchange(): JSX.Element {
           Authorization: `Bearer ${token}`,
           'Cache-Control': 'no-cache'
         },
+        heartbeatTimeout: 300000,
         withCredentials: true
       });
 
@@ -327,23 +327,26 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
-            const { data, result } = await postStock(body).unwrap();
-            if (inputRef.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                // 시스템 메시지에 추가
-                await addDoc(collection(dbService, 'system'), {
-                  nickname: localStorage.getItem('nickname'),
-                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
-                  createdAt: serverTimestamp()
-                });
-                toast.success('구매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await postStock(body).unwrap();
+              if (inputRef.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매수하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('매수 완료하였습니다!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef.current.value = '0';
               }
-              inputRef.current.value = '0';
-            } else {
+            } catch {
+              toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
           posrStock();
@@ -356,23 +359,26 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
-            const { data, result } = await postStock(body).unwrap();
-            if (inputRef2.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                // 시스템 메시지에 추가
-                await addDoc(collection(dbService, 'system'), {
-                  nickname: localStorage.getItem('nickname'),
-                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
-                  createdAt: serverTimestamp()
-                });
-                toast.success('구매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await postStock(body).unwrap();
+              if (inputRef2.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('구매 완료하였습니다!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef2.current.value = '0';
               }
-              inputRef2.current.value = '0';
-            } else {
+            } catch {
+              toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
           posrStock();
@@ -385,22 +391,27 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
-            const { data, result } = await deleteStock(body).unwrap();
-            if (inputRef.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                // 시스템 메시지에 추가
-                await addDoc(collection(dbService, 'system'), {
-                  nickname: localStorage.getItem('nickname'),
-                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
-                  createdAt: serverTimestamp()
-                });
-                toast.success('판매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await deleteStock(body).unwrap();
+
+              if (inputRef.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('매도를 완료하였습니다!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef.current.value = '0';
               }
-              inputRef.current.value = '0';
+            } catch {
+              toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
           stockDelete();
@@ -413,22 +424,26 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
-            const { data, result } = await deleteStock(body).unwrap();
-            if (inputRef2.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                // 시스템 메시지에 추가
-                await addDoc(collection(dbService, 'system'), {
-                  nickname: localStorage.getItem('nickname'),
-                  content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 판매하셨습니다`,
-                  createdAt: serverTimestamp()
-                });
-                toast.success('판매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await deleteStock(body).unwrap();
+              if (inputRef2.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('매도를 완료하였습니다!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef2.current.value = '0';
               }
-              inputRef2.current.value = '0';
+            } catch {
+              toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
           stockDelete();
@@ -540,7 +555,6 @@ function Exchange(): JSX.Element {
       if (clickNationalName !== '') {
         SetSelectIRData(irData[clickNationalName]);
       }
-      console.log('sseData: ', sseData);
 
       // 수익, 손익 계산을 위한 데이터 추가
       if (stockChartResDto.length > 1) {
@@ -636,19 +650,11 @@ function Exchange(): JSX.Element {
         });
       setUsdData(usdData);
     }
-    console.log('sseData: ', sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd);
-    console.log('selectCurrentData.priceEnd: ', selectCurrentData.priceEnd);
   }, [sseData]);
 
   const selectStockData = (stockId: number) => {
     getStockSelect(stockId);
   };
-
-  // if (eventSource) {
-  //   eventSource.onmessage = (event: any) => {
-  //     setSseData(JSON.parse(event.data));
-  //   };
-  // }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
