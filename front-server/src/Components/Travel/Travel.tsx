@@ -190,15 +190,18 @@ function Travel(): JSX.Element {
               <div></div>
               {/* 라인 */}
               <div className="w-5/6 text-center mt-4 border-b border-solid border-[#E0E0E0] leading-[0.1em]" />
-              <div className="flex items-center justify-between w-5/6 px-2 py-2">
-                <img
+              <div
+                className="flex items-center justify-between w-5/6 px-2 py-2"
+                title="주식, 은행, 소품을 포함한 금액 입니다!">
+                {/* <img
                   className="w-[2rem] h-[1.5rem] object-contain"
                   src={process.env.REACT_APP_S3_URL + '/images/icons/coin.png'}
                   alt="돈"
-                />
-                <p className="w-[17.5rem] text-xl font-bold text-right text-black">
+                /> */}
+                <span className="text-base min-w-fit">총 자산</span>
+                <span className="w-[17.5rem] font-bold text-right text-black text-lg">
                   {user?.data.totalCash?.toLocaleString()}원
-                </p>
+                </span>
               </div>
             </div>
           </div>
