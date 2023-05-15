@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.sql.rowset.CachedRowSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -205,12 +204,14 @@ public class AdminUserServiceImpl implements AdminUserService{
     /**
      * 어드민 여부를 체크 합니다.
      *
+     * @return
      */
     @Override
-    public void getUserIsAdmin() {
+    public boolean getUserIsAdmin() {
         Long userId = authService.getUserId();
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if(!user.getRole().equals(Role.ADMIN)) throw new CustomException(ErrorCode.NO_ACCESS);
+        if(!user.getRole().equals(Role.ADMIN)) return false;
+        return true;
     }
 }

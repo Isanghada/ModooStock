@@ -80,6 +80,7 @@ public class SpringSecurity {
 			.antMatchers("/login/**", "/users/nickname/{nickname}", "/users/account/{account}", "/refresh").permitAll()
 			.antMatchers(HttpMethod.POST, "/users").permitAll()
 			.antMatchers("/swagger-resources/**", "/swagger-ui", "/swagger-ui/**").permitAll()
+			.antMatchers("/admin/user/isadmin").hasRole("USER")	// 어드민인지 확인하는 api는 모든 USER 인증
 			.antMatchers("/admin/**").hasRole("ADMIN") // 괄호의 권한을 가진 유저만 접근가능, ROLE_가 붙어서 적용 됨. 즉, 테이블에 ROLE_권한명 으로 저장해야 함.
 			.anyRequest().hasRole("USER")//.authenticated()   // 나머지 API 는 전부 인증 필요
 
