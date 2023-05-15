@@ -59,6 +59,7 @@ function UpdateInfo(): JSX.Element {
   //input에 입력될 때마다 account state값 변경되게 하는 함수
   const onChangeAccount = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+    console.log(value,"밸류")
     // 케이스에 따른 api 요청
     if (value.length >= 2) {
       setMinValue({
@@ -131,7 +132,6 @@ function UpdateInfo(): JSX.Element {
       introduction: account.introduction,
       profileImagePath: ""
     };
-
     try {
       await putUsersInfo(accoutData).unwrap();
       dispatch(changeUpdateStatus(false));
@@ -225,6 +225,7 @@ function UpdateInfo(): JSX.Element {
           </label>
           <input
             onChange={onChangeAccount}
+            name="introduction"
             id="introduction"
             className="w-full lg:w-3/4 h-3/4 text-xs lg:text-base border-2 border-[#FFC1B7] rounded-md p-2 outline-none focus:border-[#f98270]"
             placeholder="자기소개"

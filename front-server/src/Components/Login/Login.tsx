@@ -7,8 +7,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from 'firebase/messaging';
 import { messaging } from '../../firebase';
-import SetPushToken from 'Components/Common/SetPushToken'
-
+import SetPushToken from 'Components/Common/SetPushToken';
 
 interface LoginInterFace {
   account: string;
@@ -48,7 +47,7 @@ function Login(): JSX.Element {
   const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // 로그인 시도 API
-    const loginData : any = await postUsersLogin(loginAccount);
+    const loginData: any = await postUsersLogin(loginAccount);
     // 로그인 시도후 처리
     if (loginData.data) {
       // 토큰 세팅
@@ -73,7 +72,11 @@ function Login(): JSX.Element {
       }
       closeLogin();
       toast.success('어서오세요!!');
-      navigate('/main');
+      if (nickname === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/main');
+      }
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
       console.log('로그인 에러 :', loginData.error);

@@ -18,6 +18,12 @@ import Lottery from 'Components/MiniGame/Lottery';
 import Auction from 'Components/Auction/Auction';
 import { useEffect, useState } from 'react';
 import RotateDevice from 'Components/Common/RotateDevice';
+import AdminPage from 'Components/Admin/AdminPage';
+import AdminMarket from 'Components/Admin/AdminMarket';
+import AdminMain from 'Components/Admin/AdminMain';
+import AdminDeal from 'Components/Admin/AdminDeal';
+import AdminUser from 'Components/Admin/AdminUser';
+import AdminAsset from 'Components/Admin/AdminAsset';
 
 function App() {
   const [isLandScape, setIsLandScape] = useState<boolean>(true);
@@ -27,15 +33,12 @@ function App() {
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
   useEffect(() => {
-
     if (screenWidth >= screenHeight) {
       setIsLandScape(true);
-      console.log('가로모드얌');
     } else {
       setIsLandScape(false);
-      console.log('세로모드얌');
     }
-  }, [window.innerWidth,  window.innerHeight]);
+  }, [window.innerWidth, window.innerHeight]);
 
   useEffect(() => {
     // 창크기 변할때마다 실행
@@ -44,6 +47,11 @@ function App() {
       const newHeight = window.innerHeight;
       setScreenWidth(newWidth);
       setScreenHeight(newHeight);
+      if (newWidth >= newHeight) {
+        setIsLandScape(true);
+      } else {
+        setIsLandScape(false);
+      }
     };
     // 처음 한번 실행
     updateScreenWidth();
@@ -76,6 +84,13 @@ function App() {
               <Route path="/gachashop" element={<GachaShop />} />
               <Route path="/lottery" element={<Lottery />} />
               <Route path="/auction" element={<Auction />} />
+              <Route path="/admin" element={<AdminPage />}>
+                <Route path="" element={<AdminMain />} />
+                <Route path="market" element={<AdminMarket />} />
+                <Route path="deal" element={<AdminDeal />} />
+                <Route path="user" element={<AdminUser />} />
+                <Route path="asset" element={<AdminAsset />} />
+              </Route>
             </Route>
             <Route path="/error" element={<Error />} />
             <Route path="/loading" element={<Loading />} />
