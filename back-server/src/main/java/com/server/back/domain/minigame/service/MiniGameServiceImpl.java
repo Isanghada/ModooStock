@@ -108,11 +108,11 @@ public class MiniGameServiceImpl implements MiniGameService{
         Integer ranking=2;
         Long money=0L;
         if(rd<5) {
-            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, 10_000_000_000L);
-            dealRepository.save(dealPlus);
-            user.increaseCurrentMoney(700_000_000L);
-            ranking=1;
             money=700_000_000L;
+            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, money);
+            dealRepository.save(dealPlus);
+            user.increaseCurrentMoney(money);
+            ranking=1;
         }
 
         return new MiniGameResDto(ranking,money);
