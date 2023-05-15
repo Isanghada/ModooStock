@@ -168,6 +168,25 @@ const isClickInvenAssetStore = createSlice({
   }
 });
 
+// 클릭 버튼
+const clickBtn = createSlice({
+  name: 'clickBtn',
+  initialState: process.env.REACT_APP_S3_URL + '/sound/fx/click.wav',
+  reducers: {}
+});
+// 취소 클릭 버튼
+const cancelClick = createSlice({
+  name: 'cancelClick',
+  initialState: process.env.REACT_APP_S3_URL + '/sound/fx/cancelClick.wav',
+  reducers: {}
+});
+// 요청 성공 FX
+const successFx = createSlice({
+  name: 'successFx',
+  initialState: process.env.REACT_APP_S3_URL + '/sound/fx/success.wav',
+  reducers: {}
+});
+
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
   reducer: {
@@ -190,7 +209,11 @@ export const store = configureStore({
     clickAssetPosition: clickAssetPosition.reducer,
     clickAssetRotation: clickAssetRotation.reducer,
     isAuctionClickInvenAsset: isAuctionClickInvenAsset.reducer,
-    isClickInvenAssetStore: isClickInvenAssetStore.reducer
+    isClickInvenAssetStore: isClickInvenAssetStore.reducer,
+    // ------------- 사운드 -------------
+    clickBtn: clickBtn.reducer,
+    cancelClick: cancelClick.reducer,
+    successFx: successFx.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
