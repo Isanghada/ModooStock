@@ -20,6 +20,12 @@ import java.util.List;
 public class AdminUserController {
     private final AdminUserService adminUserService;
     @GetMapping
+    @ApiOperation(value = "관리자 여부를 체크합니다.", notes = "")
+    public ResponseEntity<ResultDto<Boolean>> getUserIsAdmin(){
+        adminUserService.getUserIsAdmin();
+        return ResponseEntity.ok(ResultDto.ofSuccess());
+    }
+    @GetMapping
     @ApiOperation(value = "전체 회원 목록을 반환합니다.", notes = "")
     public ResponseEntity<ResultDto<List<AdminUserResDto>>> getUserList(){
         List<AdminUserResDto> userList= adminUserService.getUserList();
