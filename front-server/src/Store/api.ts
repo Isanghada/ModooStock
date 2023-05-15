@@ -786,7 +786,7 @@ export const Api = createApi({
     }),
     // 2. 마이페이지 방문자 수 조회
     getUserMypageVisitors: builder.query<ReturnVisitors, string>({
-      query: (nickname) => `/mypage/${nickname}​/visitor`,
+      query: (nickname) => `/mypage/visit?nickname=${nickname}`,
       providesTags: (result, error, arg) => {
         return [{ type: 'UserMypageApi' }];
       }
