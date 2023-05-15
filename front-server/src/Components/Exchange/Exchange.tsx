@@ -219,7 +219,8 @@ function Exchange(): JSX.Element {
       setSseData(JSON.parse(event.data));
     };
 
-    eventSource.onerror = (event: any) => {
+    eventSource.onerror = () => {
+
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
