@@ -40,7 +40,6 @@ public class StockController {
     @GetMapping(value="/{stockId}")
     @ApiOperation(value="선택한 주식 차트 및 나의 주식 정보")
     public  ResponseEntity<ResultDto<Boolean>>  getStock(@PathVariable("stockId") Long stockId){
-        System.out.println("here");
         stockService.getStockChart(stockId);
         return ResponseEntity.ok().body(ResultDto.ofSuccess());
     }

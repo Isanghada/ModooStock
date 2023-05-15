@@ -38,18 +38,22 @@ public class StockServiceImpl implements StockService {
     private final AuthService authService;
     private final UserService userService;
 
+
     // 연결된 사용자 목록을 저장할 맵
     private Map<Long, SseEmitter> userEmitterMap = new ConcurrentHashMap<>();
+
     // 사용자가 선택한 주식 종목을 저장할 맵
     private Map<Long, Long> userStockIdMap = new ConcurrentHashMap<>();
+
 
 //    public Long select;
 
     public SseEmitter subscribe(){
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(4L * 60 * 1000);
 
         Long userId = authService.getUserId();
 
+        userEmitterMap.remove(userId);
         // 연결된 사용자 목록에 userId와 SseEmitter 추가
         userEmitterMap.put(userId, emitter);
 
@@ -66,6 +70,7 @@ public class StockServiceImpl implements StockService {
         try {
             emitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
+            System.out.println("here");
             throw new RuntimeException(e);
         }
         return emitter;
@@ -85,10 +90,32 @@ public class StockServiceImpl implements StockService {
     // 스케쥴링을 써서 data 가져오기
     @Transactional
     public void schedularData(){
+        // 장 정보 가져오기
+        List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
+        LocalDate startDate = stockList.get(0).getMarket().getStartAt();
+        LocalDate gameDate = stockList.get(0).getMarket().getGameDate();
+
+        // 주식 chart
+        List<ChartEntity> stockChartList1 = chartRepository.findAllByCompanyIdAndDateBetween(stockList.get(0).getCompany().getId(), startDate, gameDate);
+        List<ChartEntity> stockChartList2 = chartRepository.findAllByCompanyIdAndDateBetween(stockList.get(1).getCompany().getId(), startDate, gameDate);
+        List<ChartEntity> stockChartList3 = chartRepository.findAllByCompanyIdAndDateBetween(stockList.get(2).getCompany().getId(), startDate, gameDate);
+        List<ChartEntity> stockChartList4 = chartRepository.findAllByCompanyIdAndDateBetween(stockList.get(3).getCompany().getId(), startDate, gameDate);
+
 
         Set<Long> userIds = userEmitterMap.keySet();
         for(Long userId: userIds){
-            getData(userId, userStockIdMap.get(userId));
+            if(stockList.get(0).getId() == userStockIdMap.get(userId) ){
+                getData(userId, userStockIdMap.get(userId), stockChartList1);
+            }
+            else if(stockList.get(1).getId() == userStockIdMap.get(userId) ){
+                getData(userId, userStockIdMap.get(userId), stockChartList2);
+            }
+            else if(stockList.get(2).getId() == userStockIdMap.get(userId) ){
+                getData(userId, userStockIdMap.get(userId), stockChartList3);
+            }
+            else {
+                getData(userId, userStockIdMap.get(userId), stockChartList4);
+            }
         }
     }
 
@@ -97,13 +124,6 @@ public class StockServiceImpl implements StockService {
 
         Long userId = authService.getUserId();
         userStockIdMap.put(userId, stockId);
-        getData(userId, stockId);
-
-}
-
-    @Transactional
-    public void getData(Long userId, Long stockId){
-        SseEmitter emitter = userEmitterMap.get(userId);
 
         // 장 정보 가져오기
         StockEntity stock = stockRepository.findById(stockId).get();
@@ -115,15 +135,25 @@ public class StockServiceImpl implements StockService {
         // 주식 chart
         List<ChartEntity> stockChartList = chartRepository.findAllByCompanyIdAndDateBetween(companyId, startDate, gameDate);
 
+        getData(userId, stockId , stockChartList);
+}
+
+    @Transactional
+    public void getData(Long userId, Long stockId , List<ChartEntity> stockChartList){
+        SseEmitter emitter = userEmitterMap.get(userId);
+
         // 유저 보유 주식
         Optional<UserDealEntity> optUserDeal = userDealRepository.findByUserIdAndStockId(userId, stockId);
 
         StockResDto stockResDto = StockResDto.fromEntity(stockId,optUserDeal, stockChartList);
 
-        try {
-            emitter.send(SseEmitter.event().data(stockResDto));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().data(stockResDto));
+            } catch (IOException e) {
+                System.out.println("here2");
+                throw new RuntimeException(e);
+            }
         }
     }
 
