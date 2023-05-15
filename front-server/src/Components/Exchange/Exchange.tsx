@@ -198,11 +198,11 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
+      heartbeatTimeout: 300000,
       withCredentials: true
     });
 
     newEventSource.addEventListener('connect', (e: any) => {
-      // console.log(e);
     });
     setEventSource(newEventSource);
 
@@ -230,6 +230,7 @@ function Exchange(): JSX.Element {
           Authorization: `Bearer ${token}`,
           'Cache-Control': 'no-cache'
         },
+        heartbeatTimeout: 300000,
         withCredentials: true
       });
 
@@ -367,7 +368,7 @@ function Exchange(): JSX.Element {
                   // 시스템 메시지에 추가
                   await addDoc(collection(dbService, 'system'), {
                     nickname: localStorage.getItem('nickname'),
-                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매수하셨습니다`,
                     createdAt: serverTimestamp()
                   });
                   toast.success('구매 완료하였습니다!');
@@ -554,7 +555,6 @@ function Exchange(): JSX.Element {
       if (clickNationalName !== '') {
         SetSelectIRData(irData[clickNationalName]);
       }
-      console.log('sseData: ', sseData);
 
       // 수익, 손익 계산을 위한 데이터 추가
       if (stockChartResDto.length > 1) {
@@ -650,19 +650,11 @@ function Exchange(): JSX.Element {
         });
       setUsdData(usdData);
     }
-    console.log('sseData: ', sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd);
-    console.log('selectCurrentData.priceEnd: ', selectCurrentData.priceEnd);
   }, [sseData]);
 
   const selectStockData = (stockId: number) => {
     getStockSelect(stockId);
   };
-
-  // if (eventSource) {
-  //   eventSource.onmessage = (event: any) => {
-  //     setSseData(JSON.parse(event.data));
-  //   };
-  // }
 
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
