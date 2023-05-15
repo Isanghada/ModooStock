@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService{
 
         // 본인 닉네임을 수정 시 이미 존재하는 경우 에러 발생
         if (!usersModifyReqDto.getNickname().equals(user.getNickname())
-                && userRepository.findByNickname(usersModifyReqDto.getNickname()).isPresent()) {
+                && userRepository.findByNicknameAndIsDeleted(usersModifyReqDto.getNickname(),IsDeleted.N).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         }
 
@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserResDto> getUserList(String search) {
-        List<UserEntity> userList= userRepository.findByAccountContainingOrNicknameContaining(search, search);
+        List<UserEntity> userList= userRepository.findByAccountContainingOrNicknameContainingAndIsDeleted(search, search,IsDeleted.N);
         return UserResDto.fromEnityList(userList);
     }
 
