@@ -3,12 +3,18 @@ import Lottie from 'lottie-react';
 // import money from 'Components/Common/Lottie/money.json';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeLoginStatus } from 'Store/store';
 
 function Intro(): JSX.Element {
   const [showLogin, setShowLogin] = useState<boolean>(true);
   const dispatch = useAppDispatch();
+
+  // useEffect(() => {
+  //   const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/intro.mp3');
+  //   modoostockBGM.loop = true;
+  //   modoostockBGM.play()
+  // }, []);
 
   // 로그인 창 띄우기
   const showLogIn = () => {
@@ -27,12 +33,12 @@ function Intro(): JSX.Element {
   }, []);
 
   // beforeinstallprompt 이벤트 핸들러
-  const handleInstallPrompt = (event : any) => {
+  const handleInstallPrompt = (event: any) => {
     // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
     event.preventDefault();
     let deferredPrompt = event;
     deferredPrompt.prompt();
-  }
+  };
   return (
     <AnimatePresence>
       {/* 전체 배경 */}

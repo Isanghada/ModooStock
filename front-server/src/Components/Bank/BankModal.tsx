@@ -10,15 +10,22 @@ interface ModalType {
   currentMoney: string;
   clickBtn: HTMLAudioElement;
   cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
-function BankModal({ clickNum, setIsClick, currentMoney, clickBtn, cancelClickBtn }: ModalType): JSX.Element {
+function BankModal({
+  clickNum,
+  setIsClick,
+  currentMoney,
+  clickBtn,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: ModalType): JSX.Element {
   const ref = useRef(null);
   let money = '';
   currentMoney.split(',').map((liMoney: string) => (money += liMoney));
-  const successFx = useAppSelector((state) => {
-    return state.successFx;
-  });
   return (
     <>
       <div
@@ -36,7 +43,8 @@ function BankModal({ clickNum, setIsClick, currentMoney, clickBtn, cancelClickBt
             IntAfterCurrentMoney={parseInt(money)}
             clickBtn={clickBtn}
             cancelClickBtn={cancelClickBtn}
-            // successFx={successFx}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
           />
         )}
         {clickNum === 2 && (
@@ -46,7 +54,8 @@ function BankModal({ clickNum, setIsClick, currentMoney, clickBtn, cancelClickBt
             IntAfterCurrentMoney={parseInt(money)}
             clickBtn={clickBtn}
             cancelClickBtn={cancelClickBtn}
-            // successFx={successFx}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
           />
         )}
         {clickNum === 3 && (
@@ -56,7 +65,8 @@ function BankModal({ clickNum, setIsClick, currentMoney, clickBtn, cancelClickBt
             IntAfterCurrentMoney={parseInt(money)}
             clickBtn={clickBtn}
             cancelClickBtn={cancelClickBtn}
-            // successFx={successFx}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
           />
         )}
       </div>

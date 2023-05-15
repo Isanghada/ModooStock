@@ -9,11 +9,20 @@ interface SetIsClickType {
   IntAfterCurrentMoney: number;
   clickBtn: HTMLAudioElement;
   cancelClickBtn: HTMLAudioElement;
-  // successFx: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
 // 출금
-function BankSection2({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClickType): JSX.Element {
+function BankSection2({
+  setIsClick,
+  currentMoney,
+  IntAfterCurrentMoney,
+  clickBtn,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: SetIsClickType): JSX.Element {
   const dispatch = useAppDispatch();
   const [deleteBank, { isLoading: isLoading1, isError: isError1 }] = useDeleteBankMutation();
   const { data: getBankList, isLoading: isLoading2, isError: isError2 } = useGetBankListQuery('');
@@ -37,7 +46,9 @@ function BankSection2({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         if (data) {
           dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney + price).toLocaleString()));
           toast.success('출금이 완료되었습니다!');
+          successFxSound.play();
         } else {
+          errorFxSound.play();
           toast.error('요청에 실패했습니다...');
         }
       };
@@ -120,7 +131,10 @@ function BankSection2({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         <div className="flex justify-center pb-4 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0">
           <div
             className="bg-[#B2B9C2] px-8 lg:px-10 rounded-full drop-shadow-lg py-1 hover:scale-105 transition-all duration-300 cursor-pointer"
-            onClick={() => setIsClick((pre) => !pre)}>
+            onClick={() => {
+              setIsClick((pre) => !pre);
+              cancelClickBtn.play();
+            }}>
             <span>닫기</span>
           </div>
         </div>

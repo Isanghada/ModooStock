@@ -10,7 +10,8 @@ interface SetIsClickType {
   IntAfterCurrentMoney: number;
   clickBtn: HTMLAudioElement;
   cancelClickBtn: HTMLAudioElement;
-  // successFx: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
 // 예금
@@ -19,9 +20,10 @@ function BankSection1({
   currentMoney,
   IntAfterCurrentMoney,
   clickBtn,
-  cancelClickBtn
-}: // successFx
-SetIsClickType): JSX.Element {
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: SetIsClickType): JSX.Element {
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const [afterMoney, setAfterMoney] = useState<string>('0');
@@ -65,14 +67,16 @@ SetIsClickType): JSX.Element {
     if (price > 0) {
       const { data, result } = await postBank(price).unwrap();
       if (data) {
-        // successFx.play();
+        successFxSound.play();
         dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - price).toLocaleString()));
         toast.success('개설에 성공했습니다!');
         setIsClick((pre) => !pre);
       } else {
+        errorFxSound.play();
         toast.error('요청에 실패했습니다...');
       }
     } else {
+      errorFxSound.play();
       toast.error('금액을 입력해주세요!');
     }
   };
@@ -110,13 +114,13 @@ SetIsClickType): JSX.Element {
   };
 
   const click = (e: React.MouseEvent) => {
-    clickBtn.play();
     const target = e.currentTarget;
     let money: string = '';
     afterMoney.split(',').map((liMoney) => (money += liMoney));
     const intMoney: number = parseInt(money);
     switch (target.ariaLabel) {
       case '지우기':
+        clickBtn.play();
         if (ref.current) {
           if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
@@ -128,21 +132,27 @@ SetIsClickType): JSX.Element {
         }
         break;
       case '1만원':
+        clickBtn.play();
         clickDeposit(intMoney, 10000);
         break;
       case '5만원':
+        clickBtn.play();
         clickDeposit(intMoney, 50000);
         break;
       case '10만원':
+        clickBtn.play();
         clickDeposit(intMoney, 100000);
         break;
       case '100만원':
+        clickBtn.play();
         clickDeposit(intMoney, 1000000);
         break;
       case '1000만원':
+        clickBtn.play();
         clickDeposit(intMoney, 10000000);
         break;
       case '전액':
+        clickBtn.play();
         clickDeposit(intMoney, intMoney);
         break;
       case '개설 하기':

@@ -1,7 +1,7 @@
 import { useGetStorageQuery, useLazyGetStorageQuery, usePostMypageMutation } from 'Store/api';
 import styled from './Mypage.module.css';
 import React, { useEffect, useRef, useState } from 'react';
-import { useAppDispatch } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   changeClickAsseData,
@@ -11,16 +11,9 @@ import {
   changeIsClickInvenAssetStore
 } from 'Store/store';
 
-interface ReturnInvenType {
-  userAssetId: number;
-  assetImagePath: string;
-  assetLevel: string;
-  assetCategory: null;
-  isAuctioned: string;
-}
-
 interface Type {
   setIsClickAsset: React.Dispatch<React.SetStateAction<boolean>>;
+  clickBtn: HTMLAudioElement;
 }
 
 interface ReturnInven {
@@ -32,7 +25,7 @@ interface ReturnInven {
   isAuctioned: string;
 }
 
-function MypageInven({ setIsClickAsset }: Type): JSX.Element {
+function MypageInven({ setIsClickAsset, clickBtn }: Type): JSX.Element {
   const dispatch = useAppDispatch();
   const containerRef = useRef<any>(null);
   const [dragging, setDragging] = useState<boolean>(false);
@@ -46,6 +39,7 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
   const [postMypage, { isLoading: isLoading3, isError: isError3 }] = usePostMypageMutation();
 
   const click = (e: React.MouseEvent) => {
+    clickBtn.play();
     switch (e.currentTarget.ariaLabel) {
       case 'ALL':
         setClickState(0);
@@ -94,6 +88,7 @@ function MypageInven({ setIsClickAsset }: Type): JSX.Element {
             return (
               <div
                 onClick={() => {
+                  clickBtn.play();
                   // 에셋을 클릭했는지 체크
                   dispatch(changeIsClickInvenAssetStore(true));
                   // 클릭한 에셋 이름, 레벨, 이미지 보여주면서 state 변경해서 넣을지 확인하는 작은 창 만들기

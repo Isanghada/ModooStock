@@ -12,9 +12,18 @@ function Bank(): JSX.Element {
   const cancelClickSound = useAppSelector((state) => {
     return state.cancelClick;
   });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
 
   const clickBtn = new Audio(clickSound);
   const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
+
   const [isClick, setIsClick] = useState<boolean>(false);
   const [clickNum, setClickNum] = useState<number>(0);
   // 소지 금액 상태
@@ -156,6 +165,8 @@ function Bank(): JSX.Element {
           currentMoney={currentMoney}
           clickBtn={clickBtn}
           cancelClickBtn={cancelClickBtn}
+          successFxSound={successFxSound}
+          errorFxSound={errorFxSound}
         />
       )}
     </>
