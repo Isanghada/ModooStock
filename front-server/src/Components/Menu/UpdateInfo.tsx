@@ -135,6 +135,7 @@ function UpdateInfo(): JSX.Element {
     try {
       await putUsersInfo(accoutData).unwrap();
       dispatch(changeUpdateStatus(false));
+      localStorage.setItem("nickname", account.nickname);
       toast.success('회원정보수정 완료!');
     } catch (error) {
       toast.error('회원정보수정을 실패하였습니다.');

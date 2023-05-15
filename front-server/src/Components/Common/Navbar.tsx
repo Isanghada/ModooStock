@@ -29,7 +29,7 @@ function Navbar(): JSX.Element {
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
 
-  // 내 정보 이벤트실행시 API 
+  // 내 정보 이벤트실행시 API
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   // 전체 스크린 높이
@@ -81,7 +81,7 @@ function Navbar(): JSX.Element {
       dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
       setTotalStockReturn(totalStockReturn);
     }
-  }
+  };
 
   useEffect(() => {
     if (dataUserInfo) {
@@ -120,7 +120,7 @@ function Navbar(): JSX.Element {
     const target = e.currentTarget as HTMLElement;
     switch (target.ariaLabel) {
       case '마이페이지':
-        navigate('/mypage');
+        navigate(`/travel/${localStorage.getItem('nickname')}`);
         break;
       case '홈':
         navigate('/main');
@@ -195,12 +195,12 @@ function Navbar(): JSX.Element {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         // 페이지가 현재 보이는 상태일 때 실행할 작업
-        console.log("보임")
+        console.log('보임');
         setPageVisible(true);
       } else {
         // 페이지가 현재 보이지 않는 상태일 때 실행할 작업
         setPageVisible(false);
-        console.log("안보임")
+        console.log('안보임');
       }
     };
 
@@ -313,7 +313,6 @@ function Navbar(): JSX.Element {
           </motion.div>
         </AnimatePresence>
       )}
-      
     </>
   );
 }

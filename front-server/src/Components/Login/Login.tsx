@@ -61,7 +61,6 @@ function Login(): JSX.Element {
       if (permission === 'denied') {
         console.log('알림 권한 허용 안됨');
       } else if (permission === 'granted') {
-        console.log('알림 권한 허용 됨!!! ');
         const token = await getToken(messaging, {
           vapidKey: process.env.REACT_APP_FCM_VAPID
         });
@@ -73,11 +72,7 @@ function Login(): JSX.Element {
       }
       closeLogin();
       toast.success('어서오세요!!');
-      if (nickname === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/main');
-      }
+      navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
       console.log('로그인 에러 :', loginData.error);
