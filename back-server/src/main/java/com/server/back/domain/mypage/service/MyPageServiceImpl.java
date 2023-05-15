@@ -129,7 +129,8 @@ public class MyPageServiceImpl implements MyPageService{
      * @return
      */
     @Override
-    public Long getVisitorCount(String nickname,HttpServletRequest request, HttpServletResponse response){
+    public Long getVisitorCount(String nickname, HttpServletRequest request, HttpServletResponse response) {
+        log.info(nickname);
         UserEntity user = userRepository.findByNicknameAndIsDeleted(nickname, IsDeleted.N)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -137,12 +138,15 @@ public class MyPageServiceImpl implements MyPageService{
         String ipAddress = getClientIpAddress(request);
         String cookieName = "visitor_id_" + ipAddress.replaceAll(":", "_") + "_to_" + userId;
 
+        log.info(cookieName);
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(cookieName)) {
                     // 이미 쿠키가 발급되어 있음
-                    return redisTemplate.opsForValue().increment(cookieName);
+                    Long visitorCount = Long.parseLong(String.valueOf(redisTemplate.opsForValue().get(cookieName)));
+                    return visitorCount;
                 }
             }
         }
@@ -151,8 +155,8 @@ public class MyPageServiceImpl implements MyPageService{
         visitorCookie.setMaxAge(90 * 24 * 60 * 60); // 쿠키 만료 시간: 90일
         response.addCookie(visitorCookie);
 
-        redisTemplate.opsForValue().set(cookieName, 1L);
-        return 1L;
+        redisTemplate.opsForValue().increment(cookieName, 1L);
+        return Long.parseLong(String.valueOf(redisTemplate.opsForValue().get(cookieName)));
     }
 
     private String getClientIpAddress(HttpServletRequest request) {
