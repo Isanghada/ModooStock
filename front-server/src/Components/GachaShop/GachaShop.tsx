@@ -53,7 +53,7 @@ function GachaShop(): JSX.Element {
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
-    const currentMoney = Number(currentMoneyStatus.replaceAll(",", ''));
+    const currentMoney = Number(currentMoneyStatus.replaceAll(',', ''));
     switch (target.ariaLabel) {
       case '일반':
         if (currentMoney < 500000) {
@@ -154,6 +154,10 @@ function GachaShop(): JSX.Element {
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
               break;
+            case 'LEGENDARY':
+              setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(000,255,000)]');
+              setGiftGradeName('bg-[#09811f]');
+              break;
           }
           setGiftOpenStatus(true);
           break;
@@ -191,7 +195,7 @@ function GachaShop(): JSX.Element {
               onClick={onClick}
               onMouseEnter={hoverOn}
               onMouseLeave={hoverOut}
-              className="border-2 lg:border-4 border-[#b3dcf8] rounded-3xl w-1/4 h-[75%] flex flex-col justify-evenly items-center bg-[#e4f4ff] hover:border-[#75c5fa]  shadow-md shadow-gray-400 cursor-pointer">
+              className="border-2 lg:border-4 border-[#a5dafd] rounded-3xl w-1/4 h-[75%] flex flex-col justify-evenly items-center bg-[#e4f4ff] hover:border-[#75c5fa]  shadow-md shadow-gray-400 cursor-pointer">
               <div className="text-lg lg:text-4xl font-extrabold text-[#748DA6]">일반상자</div>
               <div className="w-[60%] lg:w-[70%]">
                 <img

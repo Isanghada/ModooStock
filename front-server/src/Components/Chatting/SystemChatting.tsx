@@ -111,7 +111,7 @@ const SystemChatting = () => {
                         </span>
                       </div>
                       <div className="flex flex-col items-center justify-center w-full lg:w-11/12">
-                        <div className={`${msg.content.includes("구매") ? "bg-red-700" : "bg-blue-700" } w-full px-2 py-1 text-xs text-center  rounded-lg h-fit lg:text-sm`}>
+                        <div className={`${msg.content.includes("매수") ? "bg-red-700" : "bg-blue-700" } w-full px-2 py-1 text-xs text-center  rounded-lg h-fit lg:text-sm`}>
                           {msg.content}
                         </div>
                         <div className="text-xs text-slate-500 min-w-fit grow">{date}</div>
@@ -123,7 +123,7 @@ const SystemChatting = () => {
               // 전날과 같지 않으면
               return (
                 <div className="flex flex-col items-center justify-center w-full lg:w-11/12">
-                  <div className={`${msg.content.includes("구매") ? "bg-red-700" : "bg-blue-700" }  w-full px-2 py-1 text-xs text-center  rounded-lg lg:text-sm h-fit`}>
+                  <div className={`${msg.content.includes("매수") ? "bg-red-700" : "bg-blue-700" }  w-full px-2 py-1 text-xs text-center  rounded-lg lg:text-sm h-fit`}>
                     {msg.content}
                   </div>
                   <div className="w-full text-xs text-slate-500 min-w-fit text-end">{date}</div>

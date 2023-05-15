@@ -368,7 +368,7 @@ function Exchange(): JSX.Element {
                   // 시스템 메시지에 추가
                   await addDoc(collection(dbService, 'system'), {
                     nickname: localStorage.getItem('nickname'),
-                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 구매하셨습니다`,
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매수하셨습니다`,
                     createdAt: serverTimestamp()
                   });
                   toast.success('구매 완료하였습니다!');
