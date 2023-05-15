@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLazyGetUsersSearchQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
@@ -163,7 +164,15 @@ const VisitModal = ({ onClose }: Props) => {
   };
 
   return (
-    <div className="max-h-screen min-h-full">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: 0.7,
+        ease: 'easeInOut'
+      }}
+      className="max-h-screen min-h-full">
       <Container>
         <Title title={title} />
         <Description description={description} />
@@ -186,7 +195,7 @@ const VisitModal = ({ onClose }: Props) => {
           </button>
         </div>
       </Container>
-    </div>
+    </motion.div>
   );
 };
 
