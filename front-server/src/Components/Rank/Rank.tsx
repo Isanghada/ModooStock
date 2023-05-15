@@ -36,7 +36,7 @@ function Rank(): JSX.Element {
             </svg>
           </div>
         </div>
-        <div className="bg-[#FEF3F3] flex lg:flex-row flex-col overflow-auto p-2 lg:h-fit h-[55vh] w-full rounded-b-lg">
+        <div className="bg-[#FEF3F3] flex lg:flex-row flex-col overflow-auto p-2 lg:h-fit h-[60vh] w-full rounded-b-lg">
           <div className="lg:w-1/2 w-full">
             {getStock?.data?.slice(0, 5).map((item, idx: number) => (
               <div className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto my-2">
