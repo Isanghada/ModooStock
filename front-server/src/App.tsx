@@ -35,10 +35,8 @@ function App() {
   useEffect(() => {
     if (screenWidth >= screenHeight) {
       setIsLandScape(true);
-      console.log('가로모드얌');
     } else {
       setIsLandScape(false);
-      console.log('세로모드얌');
     }
   }, [window.innerWidth, window.innerHeight]);
 
@@ -49,6 +47,11 @@ function App() {
       const newHeight = window.innerHeight;
       setScreenWidth(newWidth);
       setScreenHeight(newHeight);
+      if (newWidth >= newHeight) {
+        setIsLandScape(true);
+      } else {
+        setIsLandScape(false);
+      }
     };
     // 처음 한번 실행
     updateScreenWidth();
