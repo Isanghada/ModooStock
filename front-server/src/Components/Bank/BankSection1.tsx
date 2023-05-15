@@ -8,10 +8,20 @@ interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
   IntAfterCurrentMoney: number;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  // successFx: HTMLAudioElement;
 }
 
 // 예금
-function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClickType): JSX.Element {
+function BankSection1({
+  setIsClick,
+  currentMoney,
+  IntAfterCurrentMoney,
+  clickBtn,
+  cancelClickBtn
+}: // successFx
+SetIsClickType): JSX.Element {
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const [afterMoney, setAfterMoney] = useState<string>('0');
@@ -55,6 +65,7 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     if (price > 0) {
       const { data, result } = await postBank(price).unwrap();
       if (data) {
+        // successFx.play();
         dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - price).toLocaleString()));
         toast.success('개설에 성공했습니다!');
         setIsClick((pre) => !pre);
@@ -99,6 +110,7 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
   };
 
   const click = (e: React.MouseEvent) => {
+    clickBtn.play();
     const target = e.currentTarget;
     let money: string = '';
     afterMoney.split(',').map((liMoney) => (money += liMoney));
@@ -236,7 +248,10 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         <div className="flex justify-center pb-4 space-x-3 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0 mt-1">
           <div
             className="bg-[#B2B9C2] px-8 lg:px-10 rounded-full drop-shadow-lg py-1 hover:scale-105 transition-all duration-300 cursor-pointer"
-            onClick={() => setIsClick((pre) => !pre)}>
+            onClick={() => {
+              cancelClickBtn.play();
+              setIsClick((pre) => !pre);
+            }}>
             <span>닫기</span>
           </div>
           <div

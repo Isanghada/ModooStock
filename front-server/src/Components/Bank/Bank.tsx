@@ -6,9 +6,17 @@ import { motion } from 'framer-motion';
 import Loading from 'Components/Common/Loading';
 
 function Bank(): JSX.Element {
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
   const [isClick, setIsClick] = useState<boolean>(false);
   const [clickNum, setClickNum] = useState<number>(0);
-
   // 소지 금액 상태
   const { data: getBank, isLoading: isLoading1, isError: isError1 } = useGetBankQuery('');
   const currentMoney = useAppSelector((state) => {
@@ -16,10 +24,9 @@ function Bank(): JSX.Element {
   });
 
   const click = (e: React.MouseEvent) => {
+    clickBtn.play();
     const target = e.target as HTMLElement;
     setIsClick((pre) => !pre);
-    console.log(target.ariaLabel);
-
     switch (target.ariaLabel) {
       case '예금':
         setClickNum(1);
@@ -142,7 +149,15 @@ function Bank(): JSX.Element {
           </motion.div>
         </>
       )}
-      {isClick && <BankModal clickNum={clickNum} setIsClick={setIsClick} currentMoney={currentMoney} />}
+      {isClick && (
+        <BankModal
+          clickNum={clickNum}
+          setIsClick={setIsClick}
+          currentMoney={currentMoney}
+          clickBtn={clickBtn}
+          cancelClickBtn={cancelClickBtn}
+        />
+      )}
     </>
   );
 }

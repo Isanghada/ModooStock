@@ -12,6 +12,9 @@ interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
   IntAfterCurrentMoney: number;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  // successFx: HTMLAudioElement;
 }
 
 // 송금
@@ -25,7 +28,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
 
   const [postBankTransfer, { isLoading: isLoading1, isError: isError1 }] = usePostBankTransferMutation();
   const [getUsersNickname, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUsersNicknameQuery();
-  const [postSendPushMessage ] = usePostSendPushMutation();
+  const [postSendPushMessage] = usePostSendPushMutation();
 
   useEffect(() => {
     if (IntAfterCurrentMoney > 0) {
@@ -115,13 +118,13 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
           const message = {
             notification: {
               title: '모두의 주식',
-              body: `${localStorage.getItem("nickname")}님이 당신에게 송금하였습니다`,
+              body: `${localStorage.getItem('nickname')}님이 당신에게 송금하였습니다`,
               icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
             },
             to: pushToken
           };
-          const {data} = await postSendPushMessage(message).unwrap()
-          console.log(data, "푸쉬후 데이터");
+          const { data } = await postSendPushMessage(message).unwrap();
+          console.log(data, '푸쉬후 데이터');
         } else {
           // docSnap.data() will be undefined in this case
           console.log('No such document!');

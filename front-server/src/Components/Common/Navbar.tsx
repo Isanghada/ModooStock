@@ -24,7 +24,6 @@ function Navbar(): JSX.Element {
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
   const [isUnmounted, setIsUnmounted] = useState(false);
-  // 가시성 관련
   const [isPageVisible, setPageVisible] = useState(true);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
