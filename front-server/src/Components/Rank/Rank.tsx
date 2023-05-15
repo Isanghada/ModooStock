@@ -15,10 +15,10 @@ function Rank(): JSX.Element {
     <>
       <div className={`${styles.font} max-w-screen-xl w-11/12 mx-auto my-auto rounded-lg h-fit`}>
         <div className="flex bg-[#FCCACA] rounded-t-lg">
-          <div className="w-fit bg-[#F99F9F] rounded-t-lg md:py-2 py-1 md:px-16 px-10 md:text-[1.6rem] text-[1rem] font-bold text-[#ffffff]">
+          <div className="w-fit bg-[#F99F9F] rounded-t-lg lg:py-2 py-1 lg:px-16 px-10 lg:text-[1.6rem] text-[1rem] font-bold text-[#ffffff]">
             랭킹
           </div>
-          <div className="flex justify-center px-4 md:text-[0.8rem] text-[0.7rem] my-auto text-[#7a7a7a]">
+          <div className="flex justify-center px-4 lg:text-[0.8rem] text-[0.7rem] my-auto text-[#7a7a7a]">
             4분마다 랭킹이 갱신됩니다.
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@ function Rank(): JSX.Element {
               viewBox="0 0 27 27"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="md:w-5 md:h-5 w-4 h-4 cursor-pointer mx-1"
+              className="lg:w-5 lg:h-5 w-4 h-4 cursor-pointer mx-1"
               onClick={() => window.location.reload()}>
               <path
                 strokeLinecap="round"
@@ -44,31 +44,31 @@ function Rank(): JSX.Element {
                   {idx <= 2 ? (
                     <div
                       style={{ backgroundImage: `url(${process.env.REACT_APP_S3_URL}/images/icons/RankBadge.png)` }}
-                      className="font-bold md:text-[1.6rem] text-[1.3rem] bg-contain md:w-16 md:h-16 w-12 h-12 text-[#ffffff] bg-no-repeat flex justify-center md:pt-2 pt-1">
+                      className="font-bold lg:text-[1.6rem] text-[1.3rem] bg-contain lg:w-16 lg:h-16 w-12 h-12 text-[#ffffff] bg-no-repeat flex justify-center lg:pt-2 pt-1">
                       {idx + 1}
                     </div>
                   ) : (
-                    <div className="font-bold md:text-[1.8rem] text-[1.4rem] md:w-16 md:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
+                    <div className="font-bold lg:text-[1.8rem] text-[1.4rem] lg:w-16 lg:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
                       {idx + 1}
                     </div>
                   )}
-                  <div className="flex justify-center w-12 h-12 md:w-16 md:h-16 rounded-full  bg-[#FCCACA] mx-2">
+                  <div className="flex justify-center w-12 h-12 lg:w-16 lg:h-16 rounded-full  bg-[#FCCACA] mx-2">
                     <img
-                      className="md:m-2 m-1 rounded-full object-contain"
+                      className="lg:m-2 m-1 rounded-full object-contain"
                       src={`${item.profileImagePath}`}
                       alt="프로필 이미지"
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="md:text-[1.1rem] text-[0.9rem] font-bold">
+                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold">
                       {item.nickname}
                       <span
-                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full md:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
+                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
                         onClick={() => navigate(`/travel/${item.nickname}`)}>
                         방문하기
                       </span>
                     </div>
-                    <div className="md:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
+                    <div className="lg:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
                   </div>
                 </div>
                 <div
@@ -83,7 +83,7 @@ function Rank(): JSX.Element {
                         : process.env.REACT_APP_S3_URL + '/images/icons/Crown4.png'
                     }')`
                   }}
-                  className="bg-contain bg-center bg-no-repeat md:w-16 md:h-16 w-10 h-10"></div>
+                  className="bg-contain bg-center bg-no-repeat lg:w-16 lg:h-16 w-10 h-10"></div>
               </div>
             ))}
           </div>
@@ -92,31 +92,31 @@ function Rank(): JSX.Element {
             {getStock?.data?.slice(5).map((item, idx: number) => (
               <div className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto lg:my-2 mb-2">
                 <div className="flex">
-                  <div className="font-bold md:text-[1.8rem] text-[1.4rem] md:w-16 md:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
+                  <div className="font-bold lg:text-[1.8rem] text-[1.4rem] lg:w-16 lg:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
                     {idx + 6}
                   </div>
-                  <div className="flex justify-center  w-12 h-12 md:w-16 md:h-16  rounded-full  bg-[#FCCACA] mx-2">
+                  <div className="flex justify-center  w-12 h-12 lg:w-16 lg:h-16  rounded-full  bg-[#FCCACA] mx-2">
                     <img
-                      className="md:m-2 m-1 rounded-full object-contain"
+                      className="lg:m-2 m-1 rounded-full object-contain"
                       src={`${item.profileImagePath}`}
                       alt="프로필 이미지"
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="md:text-[1.1rem] text-[0.9rem] font-bold">
+                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold">
                       {item.nickname}
                       <span
-                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full md:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
+                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
                         onClick={() => navigate(`/travel/${item.nickname}`)}>
                         방문하기
                       </span>
                     </div>
-                    <div className="md:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
+                    <div className="lg:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
                   </div>
                 </div>
                 <div
                   style={{ backgroundImage: `url('${process.env.REACT_APP_S3_URL}/images/icons/Crown4.png')` }}
-                  className="bg-contain bg-center bg-no-repeat md:w-16 md:h-16 w-12 h-12"></div>
+                  className="bg-contain bg-center bg-no-repeat lg:w-16 lg:h-16 w-12 h-12"></div>
               </div>
             ))}
           </div>
