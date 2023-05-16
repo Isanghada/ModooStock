@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService{
                         .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
                 Long chartPrice = chart.getPriceEnd();
 
-                totalStockReturn += (userDeal.get().getAverage() - chartPrice) * userDeal.get().getTotalAmount();
-                count += (int) (userDeal.get().getAverage() * userDeal.get().getTotalAmount());
+                totalStockReturn += userDeal.get().getTotalPrice() * userDeal.get().getRate();
+                count += Math.round(userDeal.get().getTotalPrice());
             }
         }
 
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService{
             totalStockReturn /= count;
         }
 
-        return UserInfoLoginResDto.fromEntity(user, totalStockReturn * 100);
+        return UserInfoLoginResDto.fromEntity(user, totalStockReturn);
     }
 
 
