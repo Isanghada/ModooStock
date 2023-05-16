@@ -16,11 +16,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByAccountAndIsDeleted(String account, IsDeleted isDeleted);
 
-    Optional<UserEntity> findByNickname(String nickname);
-
     Optional<UserEntity> findByNicknameAndIsDeleted(String nickname, IsDeleted isDeleted);
 
-    List<UserEntity> findByAccountContainingOrNicknameContaining(String accountSearch, String nicknameSearch);
+    List<UserEntity> findByAccountContainingOrNicknameContainingAndIsDeleted(String accountSearch, String nicknameSearch,IsDeleted isDeleted);
 
     List<UserEntity> findByNicknameContaining(String keyword);
     List<UserEntity> findByAccountContaining(String keyword);
