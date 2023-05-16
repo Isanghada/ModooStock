@@ -183,11 +183,11 @@ function Navbar(): JSX.Element {
         if (isPageVisible) {
           toast.info('새로운 하루의 정보가 갱신되었습니다');
         }
-        // 내정보 갱신
-        setTimeout(async () => {
-          getUser();
-        }, 1000);
       }
+      // 내정보 갱신 (백에서 갱신되어야 하기떄문에 약간 시간초)
+      setTimeout(async () => {
+        await getUser();
+      }, 2000);
     });
     getUser();
     getIndex();

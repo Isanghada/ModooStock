@@ -1,4 +1,4 @@
-
+import axios from 'axios';
 
 self.addEventListener('message', (event) => {
   console.log(event.data)
@@ -30,6 +30,12 @@ self.addEventListener('push', function (e) {
     ...resultData
   };
   console.log('2 push: ', { resultData, notificationTitle, notificationOptions });
+  // 내 정보 이벤트실행시 API
+  const getUsers = () => {
+    console.log("유저정보가져오기")
+  }
+  getUsers();
+
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
