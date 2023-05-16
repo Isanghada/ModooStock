@@ -1026,7 +1026,7 @@ export const {
   useLazyGetAuctionMyQuery,
   // ----------- 방문 ------------
   useLazyGetUserMypageQuery,
-  useGetUserMypageVisitorsQuery,
+  useLazyGetUserMypageVisitorsQuery,
   // ----------- 방명록 ------------
   useGetCommentListQuery,
   useLazyGetCommentListQuery,
