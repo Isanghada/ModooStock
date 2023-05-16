@@ -9,6 +9,7 @@ import MyHomeAsset from './MyHomeAsset';
 import AssetLoading from 'Components/Common/AssetLoading';
 import MyHomeAsset2 from './MyHomeAsset2';
 import { useGetAdminUserCheckQuery } from 'Store/api';
+import { useAppSelector } from 'Store/hooks';
 
 function Main(): JSX.Element {
   const navigate = useNavigate();
@@ -16,7 +17,10 @@ function Main(): JSX.Element {
     window.screen.width <= 1280 ? `${2 + (window.screen.width - 1024) * (1 / 140)}rem` : '4rem'
   );
   const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
-  console.log('getAdmin: ', getAdmin);
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const clickBtn = new Audio(clickSound);
 
   if (getAdmin?.data === true) {
     navigate('/admin');
@@ -42,6 +46,7 @@ function Main(): JSX.Element {
 
   const click = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
+    clickBtn.play();
     switch (target.ariaLabel) {
       case '은행':
         navigate('/bank');

@@ -1,9 +1,6 @@
 package com.server.back.domain.admin.service;
 
-import com.server.back.common.code.commonCode.DealType;
-import com.server.back.common.code.commonCode.IsAuctioned;
-import com.server.back.common.code.commonCode.IsCompleted;
-import com.server.back.common.code.commonCode.IsDeleted;
+import com.server.back.common.code.commonCode.*;
 import com.server.back.common.service.AuthService;
 import com.server.back.domain.admin.dto.AdminUserInfoResDto;
 import com.server.back.domain.admin.dto.AdminUserModifyReqDto;
@@ -31,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.sql.rowset.CachedRowSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -203,5 +199,19 @@ public class AdminUserServiceImpl implements AdminUserService{
         user.setIsDeleted(IsDeleted.Y);
 
         userRepository.save(user);
+    }
+
+    /**
+     * 어드민 여부를 체크 합니다.
+     *
+     * @return
+     */
+    @Override
+    public boolean getUserIsAdmin() {
+        Long userId = authService.getUserId();
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if(!user.getRole().equals(Role.ADMIN)) return false;
+        return true;
     }
 }

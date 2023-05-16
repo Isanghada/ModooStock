@@ -16,4 +16,6 @@ public interface AdminUserService {
     void updateUser(AdminUserModifyReqDto reqDto);
 
     void deleteUser(String account);
+
+    boolean getUserIsAdmin();
 }

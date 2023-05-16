@@ -12,9 +12,19 @@ interface WriteGuestBookModalType {
         content: string;
       }
     | undefined;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
-function WriteGuestBookModal({ onClose, type, comment }: WriteGuestBookModalType): JSX.Element {
+function WriteGuestBookModal({
+  onClose,
+  type,
+  comment,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: WriteGuestBookModalType): JSX.Element {
   const [postComment, { isLoading: isLoading2, isError: isError2 }] = usePostCommentMutation();
   const [putComment, { isLoading: isLoading3, isError: isError3 }] = usePutCommentMutation();
 
@@ -31,16 +41,20 @@ function WriteGuestBookModal({ onClose, type, comment }: WriteGuestBookModalType
       try {
         const { data, result } = await postComment({ content: content, nickname: nickname }).unwrap();
         if (data) {
+          successFxSound.play();
           toast.success('방명록 작성 완료되었습니다!');
         }
       } catch (error) {
+        errorFxSound.play();
         toast.error('방명록 작성에 실패했습니다...');
       }
     } else if (type === 'MODIFY') {
       const { data, result } = await putComment({ content: content, commentId: comment?.commentId! }).unwrap();
       if (data) {
+        successFxSound.play();
         toast.success('방명록 수정 완료되었습니다!');
       } else {
+        errorFxSound.play();
         toast.error('방명록 작성에 실패했습니다...');
       }
     }
@@ -51,13 +65,13 @@ function WriteGuestBookModal({ onClose, type, comment }: WriteGuestBookModalType
     <>
       <div className="w-[28rem] h-[12rem] lg:w-[31.25rem] lg:h-[18rem] relative">
         <div className="absolute w-[40%] h-fit rounded-t-xl bg-[#ff7b7b] pb-4">
-          <div className="flex justify-start w-full text-start leading-6 lg:text-xl lg:font-bold items-center ml-4">
+          <div className="flex items-center justify-start w-full ml-4 leading-6 text-start lg:text-xl lg:font-bold">
             <img
               className="scale-50 w-[18%]"
               src={process.env.REACT_APP_S3_URL + '/images/visits/pencil.png'}
               alt="pencil"
             />
-            <span className="text-lg md:text-xl lg:text-2xl font-semibold text-center text-white">
+            <span className="text-lg font-semibold text-center text-white md:text-xl lg:text-2xl">
               방명록&nbsp;{type === 'WRITE' ? '작성' : '수정'}
             </span>
           </div>
@@ -81,7 +95,10 @@ function WriteGuestBookModal({ onClose, type, comment }: WriteGuestBookModalType
             <button
               type="button"
               className="inline-flex justify-center px-2 lg:px-4 py-[0.125rem] lg:py-1 min-w-[4.5rem] w-[30%] text-xs font-medium lg:text-base lg:font-semibold text-white bg-[#ED0000]/80 border border-transparent rounded-md hover:bg-[#ED0000] focus:outline-none "
-              onClick={onClose}>
+              onClick={() => {
+                cancelClickBtn.play();
+                onClose();
+              }}>
               취소
             </button>
             <button

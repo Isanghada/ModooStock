@@ -8,9 +8,11 @@ interface IRModalType {
   selectIRData: any;
   // 날짜는 parse() 해서 보냄
   date: string[];
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
 }
 
-function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): JSX.Element {
+function IRModal({ isIRClick, setIsIRClick, selectIRData, date, clickBtn, cancelClickBtn }: IRModalType): JSX.Element {
   const navigate = useNavigate();
   const ref = useRef(null);
   const quarterRef = useRef<HTMLSelectElement>(null);
@@ -99,15 +101,18 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
+        cancelClickBtn.play();
         setIsIRClick((pre) => !pre);
         break;
       case '정보상':
+        clickBtn.play();
         navigate('/infoshop');
     }
   };
 
   const change = (e: ChangeEvent<HTMLSelectElement>) => {
     if (e.currentTarget.ariaLabel === '연도') {
+      clickBtn.play();
       setSelectYear(e.currentTarget.value);
       setQuarterClick(0);
       if (quarterRef.current !== null) {
@@ -116,18 +121,22 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date }: IRModalType): 
     } else {
       switch (e.currentTarget.value) {
         case '1분기 보고서':
+          clickBtn.play();
           setQuarterClick(0);
           changeQuarterData();
           break;
         case '반기 보고서':
+          clickBtn.play();
           setQuarterClick(1);
           changeQuarterData();
           break;
         case '3분기 보고서':
+          clickBtn.play();
           setQuarterClick(2);
           changeQuarterData();
           break;
         case '사업 보고서':
+          clickBtn.play();
           setQuarterClick(3);
           changeQuarterData();
           break;
