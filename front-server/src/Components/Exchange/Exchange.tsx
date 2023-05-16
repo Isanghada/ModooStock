@@ -247,7 +247,7 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
-      heartbeatTimeout: 3600000,
+      heartbeatTimeout: 300000,
       withCredentials: true
     });
     setEventSource(newEventSource);
