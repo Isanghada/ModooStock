@@ -13,7 +13,7 @@ public class CorsConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		//todo
 		registry.addMapping("/**")
-			.allowedOrigins("http://localhost:8080", "http://localhost:3000", "https://k8e206.p.ssafy.io", "http://localhost:63342")
+			.allowedOrigins("http://localhost:8080", "http://localhost:3000", "https://k8e206.p.ssafy.io", "https://modoostock.com", "http://localhost:63342")
 			.allowedMethods("GET", "POST", "PUT", "DELETE")
 			.exposedHeaders("Access-Control-Allow-Headers, Authorization, X-Refresh-Token")
 			.allowCredentials(true);
