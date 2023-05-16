@@ -220,6 +220,7 @@ interface ReturnMyRoomAsset {
     rot_x: number;
     rot_y: number;
     rot_z: number;
+    type: string;
   }>;
   result: string;
 }
