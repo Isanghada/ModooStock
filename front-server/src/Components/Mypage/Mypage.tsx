@@ -140,16 +140,16 @@ function Mypage(): JSX.Element {
                 userAssetId: clickAsseData.userAssetId
               };
               const auction = async () => {
-                const { data, result } = await postAuction(body).unwrap();
-                if (data) {
-                  toast.success('판매등록 되었습니다!');
+                await postAuction(body).unwrap().then(result => {
+                  toast.info("판매등록");
                   successFxSound.play();
-                } else {
-                  toast.error('요청 실패!');
+                  dispatch(changeIsAuctionClickInvenAsset(true));
+                }).catch(error => {
+                  toast.error(error.data.message);
                   errorFxSound.play();
-                }
+                })
+
                 setIsModalClick(false);
-                dispatch(changeIsAuctionClickInvenAsset(true));
               };
               auction().catch((e: any) => {
                 toast.error(e.data?.message);

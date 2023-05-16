@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router';
 import styles from './Rank.module.css';
+import { useAppSelector } from 'Store/hooks';
 import { useGetRankQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import { motion } from 'framer-motion';
 
 function Rank(): JSX.Element {
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+
+  const clickBtn = new Audio(clickSound);
+
   const { data: getStock, isLoading, isError } = useGetRankQuery('');
   const navigate = useNavigate();
 
@@ -69,13 +76,15 @@ function Rank(): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold">
+                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold flex">
                       {item.nickname}
-                      <span
-                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
-                        onClick={() => navigate(`/travel/${item.nickname}`)}>
-                        방문하기
-                      </span>
+                      <div className="hover:scale-110 active:scale-110">
+                        <span
+                          className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
+                          onClick={() => {clickBtn.play(); navigate(`/travel/${item.nickname}`)}}>
+                          방문하기
+                        </span>
+                      </div>
                     </div>
                     <div className="lg:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
                   </div>
@@ -112,13 +121,15 @@ function Rank(): JSX.Element {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold">
+                    <div className="lg:text-[1.1rem] text-[0.9rem] font-bold flex">
                       {item.nickname}
-                      <span
-                        className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
-                        onClick={() => navigate(`/travel/${item.nickname}`)}>
-                        방문하기
-                      </span>
+                      <div className="hover:scale-110 active:scale-110">
+                        <span
+                          className="px-2 bg-[#F99F9F] mx-2 text-[#ffffff] rounded-full lg:text-[0.95rem] text-[0.7rem] py-[0.1rem] cursor-pointer"
+                          onClick={() => navigate(`/travel/${item.nickname}`)}>
+                          방문하기
+                        </span>
+                      </div>
                     </div>
                     <div className="lg:text-[1.3rem] text-[1rem] font-bold">{item?.totalMoney?.toLocaleString()}원</div>
                   </div>
