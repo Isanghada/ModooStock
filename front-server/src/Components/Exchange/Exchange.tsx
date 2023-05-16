@@ -95,6 +95,23 @@ function Exchange(): JSX.Element {
   const currentMoney = useAppSelector((state) => {
     return state.currentMoneyStatus;
   });
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
+
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
   const [isPossibleStockTime, setIsPossibleStockTime] = useState<boolean>(false);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
@@ -202,8 +219,7 @@ function Exchange(): JSX.Element {
       withCredentials: true
     });
 
-    newEventSource.addEventListener('connect', (e: any) => {
-    });
+    newEventSource.addEventListener('connect', (e: any) => {});
     setEventSource(newEventSource);
 
     return () => {
@@ -279,45 +295,59 @@ function Exchange(): JSX.Element {
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '1개':
+        clickBtn.play();
         clickButtonEvent(1);
         break;
       case '10개':
+        clickBtn.play();
         clickButtonEvent(10);
         break;
       case '100개':
+        clickBtn.play();
         clickButtonEvent(100);
         break;
       case '1000개':
+        clickBtn.play();
         clickButtonEvent(1000);
         break;
       case '1개M':
+        clickBtn.play();
         clickButtonEventM(1);
         break;
       case '10개M':
+        clickBtn.play();
         clickButtonEventM(10);
         break;
       case '100개M':
+        clickBtn.play();
         clickButtonEventM(100);
         break;
       case '1000개M':
+        clickBtn.play();
         clickButtonEventM(1000);
         break;
       case '신문':
+        clickBtn.play();
         setIsNewsClick((pre) => !pre);
         break;
       case '정보':
+        clickBtn.play();
         setIsMobileInfo((pre) => !pre);
         break;
       case '기업활동':
+        clickBtn.play();
         setIsIRClick((pre) => !pre);
         break;
       case '미국':
+        clickBtn.play();
         setClickNational(0);
         break;
       case '일본':
+        clickBtn.play();
         setClickNational(1);
         break;
       case '유럽연합':
+        clickBtn.play();
         setClickNational(2);
         break;
       case '매수':
@@ -340,12 +370,15 @@ function Exchange(): JSX.Element {
                     createdAt: serverTimestamp()
                   });
                   toast.success('매수 완료하였습니다!');
+                  successFxSound.play();
                 } else {
+                  errorFxSound.play();
                   toast.error('요청에 문제가 생겼습니다!');
                 }
                 inputRef.current.value = '0';
               }
             } catch {
+              errorFxSound.play();
               toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
@@ -372,12 +405,15 @@ function Exchange(): JSX.Element {
                     createdAt: serverTimestamp()
                   });
                   toast.success('구매 완료하였습니다!');
+                  successFxSound.play();
                 } else {
+                  errorFxSound.play();
                   toast.error('요청에 문제가 생겼습니다!');
                 }
                 inputRef2.current.value = '0';
               }
             } catch {
+              errorFxSound.play();
               toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
@@ -404,13 +440,16 @@ function Exchange(): JSX.Element {
                     content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
                     createdAt: serverTimestamp()
                   });
+                  successFxSound.play();
                   toast.success('매도를 완료하였습니다!');
                 } else {
+                  errorFxSound.play();
                   toast.error('요청에 문제가 생겼습니다!');
                 }
                 inputRef.current.value = '0';
               }
             } catch {
+              errorFxSound.play();
               toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
@@ -436,13 +475,16 @@ function Exchange(): JSX.Element {
                     content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
                     createdAt: serverTimestamp()
                   });
+                  successFxSound.play();
                   toast.success('매도를 완료하였습니다!');
                 } else {
+                  errorFxSound.play();
                   toast.error('요청에 문제가 생겼습니다!');
                 }
                 inputRef2.current.value = '0';
               }
             } catch {
+              errorFxSound.play();
               toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
@@ -707,9 +749,18 @@ function Exchange(): JSX.Element {
               setIsIRClick={setIsIRClick}
               selectIRData={selectIRData}
               date={selectCurrentData.date.split('-')}
+              clickBtn={clickBtn}
+              cancelClickBtn={cancelClickBtn}
             />
           )}
-          {isNewsClick && <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />}
+          {isNewsClick && (
+            <NewsModal
+              isNewsClick={isNewsClick}
+              setIsNewsClick={setIsNewsClick}
+              clickBtn={clickBtn}
+              cancelClickBtn={cancelClickBtn}
+            />
+          )}
           {isMobileInfo && (
             <MobileInfo
               isMobileInfo={isMobileInfo}

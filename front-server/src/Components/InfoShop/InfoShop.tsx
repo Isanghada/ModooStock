@@ -37,6 +37,15 @@ function InfoShop(): JSX.Element {
     setModalOpen(false);
   }
 
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
   // 뉴스 창 모달
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
 
@@ -103,7 +112,12 @@ function InfoShop(): JSX.Element {
         accept={'구매하기'}
         cancel={'취소'}
       />
-      <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />
+      <NewsModal
+        isNewsClick={isNewsClick}
+        setIsNewsClick={setIsNewsClick}
+        clickBtn={clickBtn}
+        cancelClickBtn={cancelClickBtn}
+      />
       {newsData ? (
         <motion.div
           initial={{ opacity: 0 }}
