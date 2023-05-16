@@ -8,6 +8,7 @@ import { Suspense, useEffect, useState } from 'react';
 import AllAssetsList2 from './AllAssetsList2';
 import AssetLoading from 'Components/Common/AssetLoading';
 import { motion } from 'framer-motion';
+import { useAppSelector } from 'Store/hooks';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -113,6 +114,22 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
     handleCloseModal();
   }, [nickname]);
 
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
   return (
     <>
       <div className="absolute flex items-center justify-start w-[25%] lg:w-[33%] xl:ml-[2%] xl:w-[27%] h-[3rem] md:h-[5rem] bottom-0 lg:bottom-6 py-2 mx-2">
@@ -120,33 +137,51 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer
         hover:scale-105 transition-all duration-300"
           src={process.env.REACT_APP_S3_URL + '/images/visits/back.png'}
-          alt="돌아가기"
-          onClick={() => navigate('/main')}
+          alt="뒤로가기"
+          onClick={() => {
+            cancelClickBtn.play();
+            navigate('/main');
+          }}
         />
         <img
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
           src={process.env.REACT_APP_S3_URL + '/images/visits/guestBookIcon.png'}
           alt="방명록"
-          onClick={handleOpenModal}
+          onClick={() => {
+            clickBtn.play();
+            handleOpenModal();
+          }}
         />
         {nickname.nickname === localStorage.getItem('nickname') ? (
           <img
             className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
             src={process.env.REACT_APP_S3_URL + '/images/visits/makeupRoom.png'}
             alt="마이룸"
-            onClick={handleMyRoomVisit}
+            onClick={() => {
+              clickBtn.play();
+              handleMyRoomVisit();
+            }}
           />
         ) : (
           <img
             className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
             src={process.env.REACT_APP_S3_URL + '/images/visits/randomVisit.png'}
             alt="랜덤방문"
-            onClick={handleRandomVisit}
+            onClick={() => {
+              clickBtn.play();
+              handleRandomVisit();
+            }}
           />
         )}
       </div>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={false}>
-        <GuestBookList onClose={handleCloseModal} />
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={true}>
+        <GuestBookList
+          onClose={handleCloseModal}
+          clickBtn={clickBtn}
+          cancelClickBtn={cancelClickBtn}
+          successFxSound={successFxSound}
+          errorFxSound={errorFxSound}
+        />
       </Modal>
     </>
   );

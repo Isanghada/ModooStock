@@ -87,8 +87,6 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
       // 데이터
       setMyAssets(
         data.map((asset, idx: number) => {
-          console.log(asset);
-
           let isClick = false;
           // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
           // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
