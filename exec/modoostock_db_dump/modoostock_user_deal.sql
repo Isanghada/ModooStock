@@ -1,0 +1,60 @@
+-- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+--
+-- Host: k8e206.p.ssafy.io    Database: modoostock
+-- ------------------------------------------------------
+-- Server version	8.0.33
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `user_deal`
+--
+
+DROP TABLE IF EXISTS `user_deal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_deal` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `average` bigint NOT NULL,
+  `total_amount` int NOT NULL,
+  `total_price` float NOT NULL,
+  `stock_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `rate` float NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKaqk0r101mf30jwi2rl55e3a43` (`stock_id`),
+  KEY `FK44vmlhqdunin78tv0wev7yjpd` (`user_id`),
+  CONSTRAINT `FK44vmlhqdunin78tv0wev7yjpd` FOREIGN KEY (`user_id`) REFERENCES `user_table` (`id`),
+  CONSTRAINT `FKaqk0r101mf30jwi2rl55e3a43` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_deal`
+--
+
+LOCK TABLES `user_deal` WRITE;
+/*!40000 ALTER TABLE `user_deal` DISABLE KEYS */;
+INSERT INTO `user_deal` VALUES (84,638000,65,41470000,25,59,-2.03762),(85,630000,14,8820000,25,66,-0.793651),(86,236500,54,12771000,28,67,-5.074),(87,67900,190,12901000,27,57,-1.32548),(88,68552,92,6306800,27,59,-2.26397),(89,597000,10,5970000,25,63,4.69012),(90,299500,33,9883500,26,56,-3.50584),(91,223000,1,223000,28,64,0.672646);
+/*!40000 ALTER TABLE `user_deal` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-05-15 11:06:09

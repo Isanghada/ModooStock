@@ -1,7 +1,6 @@
 package com.server.back.common.code.commonCode;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
@@ -9,7 +8,8 @@ import lombok.ToString;
 public enum AssetLevelType implements TypeModel{
     RARE("낮은 단계"),
     EPIC("증간 단계"),
-    UNIQUE("높은 단계");
+    UNIQUE("높은 단계"),
+    LEGENDARY("가장 높은 단계");
 
     private final String description;
 

@@ -48,7 +48,7 @@ function Rank(): JSX.Element {
         <div className="bg-[#FEF3F3] flex lg:flex-row flex-col overflow-auto p-2 lg:h-fit h-[60vh] w-full rounded-b-lg">
           <div className="w-full lg:w-1/2">
             {getStock?.data?.slice(0, 5).map((item, idx: number) => (
-              <div className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto my-2">
+              <div key={idx} className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto my-2">
                 <div className="flex">
                   {idx <= 2 ? (
                     <div
@@ -99,7 +99,7 @@ function Rank(): JSX.Element {
 
           <div className="w-full lg:w-1/2">
             {getStock?.data?.slice(5).map((item, idx: number) => (
-              <div className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto lg:my-2 mb-2">
+              <div key={idx} className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto lg:my-2 mb-2">
                 <div className="flex">
                   <div className="font-bold lg:text-[1.8rem] text-[1.4rem] lg:w-16 lg:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
                     {idx + 6}

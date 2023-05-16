@@ -218,8 +218,6 @@ function Exchange(): JSX.Element {
       heartbeatTimeout: 300000,
       withCredentials: true
     });
-
-    newEventSource.addEventListener('connect', (e: any) => {});
     setEventSource(newEventSource);
 
     return () => {
@@ -236,6 +234,7 @@ function Exchange(): JSX.Element {
     };
 
     eventSource.onerror = () => {
+      console.log('연결에러 재연결.');
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
@@ -252,6 +251,23 @@ function Exchange(): JSX.Element {
 
       setEventSource(newEventSource);
     };
+  }
+
+  if (!eventSource) {
+    console.log('연결 안되어있음.');
+    const token = localStorage.getItem('accessToken');
+
+    const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache'
+      },
+      heartbeatTimeout: 300000,
+      withCredentials: true
+    });
+    setEventSource(newEventSource);
   }
 
   const clickButtonEvent = (number: number) => {
