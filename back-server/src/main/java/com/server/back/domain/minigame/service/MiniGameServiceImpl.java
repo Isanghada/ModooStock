@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 
@@ -36,6 +38,10 @@ public class MiniGameServiceImpl implements MiniGameService{
     public MiniGameResDto createBrightLotto() {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         if(user.getCurrentMoney()<50000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(50000L);
@@ -94,6 +100,10 @@ public class MiniGameServiceImpl implements MiniGameService{
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+
         if(user.getCurrentMoney()<1000_000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(1000_000L);
 
@@ -108,11 +118,11 @@ public class MiniGameServiceImpl implements MiniGameService{
         Integer ranking=2;
         Long money=0L;
         if(rd<5) {
-            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, 10_000_000_000L);
-            dealRepository.save(dealPlus);
-            user.increaseCurrentMoney(700_000_000L);
-            ranking=1;
             money=700_000_000L;
+            DealEntity dealPlus = new DealEntity(user, DealType.GET_MONEY_FOR_DLOTTO, money);
+            dealRepository.save(dealPlus);
+            user.increaseCurrentMoney(money);
+            ranking=1;
         }
 
         return new MiniGameResDto(ranking,money);

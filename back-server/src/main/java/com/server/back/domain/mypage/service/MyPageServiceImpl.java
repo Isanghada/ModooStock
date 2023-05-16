@@ -114,7 +114,7 @@ public class MyPageServiceImpl implements MyPageService{
      */
     @Override
     public List<HomeResDto> geMyPageMyRoom(String nickname) {
-        UserEntity user=userRepository.findByNickname(nickname).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserEntity user=userRepository.findByNicknameAndIsDeleted(nickname,IsDeleted.N).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         List<UserAssetLocation> userAssetLocationList=userAssetLocationRepository.findAllByUserAndIsDeletedAndIsAuctionedAndIsInRepository(user,IsDeleted.N,IsAuctioned.N,IsInRespository.N);
 
         return HomeResDto.fromEntityList(userAssetLocationList);
