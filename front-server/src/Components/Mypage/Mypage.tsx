@@ -151,7 +151,9 @@ function Mypage(): JSX.Element {
 
                 setIsModalClick(false);
               };
-              auction();
+              auction().catch((e: any) => {
+                toast.error(e.data?.message);
+              });
             } else {
               toast.error('숫자를 입력해주세요!');
               errorFxSound.play();

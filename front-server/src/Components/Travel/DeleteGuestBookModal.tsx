@@ -3,16 +3,27 @@ import { toast } from 'react-toastify';
 interface InfoModalType {
   onClose: () => void;
   commentId: number;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
-function DeleteGuestBookModal({ onClose, commentId }: InfoModalType): JSX.Element {
+function DeleteGuestBookModal({
+  onClose,
+  commentId,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: InfoModalType): JSX.Element {
   const [deleteComment, { isLoading, isError }] = useDeleteCommentMutation();
 
   const handleDeleteComment = async (commentId: number) => {
     const { data, result } = await deleteComment(commentId).unwrap();
     if (data) {
+      successFxSound.play();
       toast.success('방명록 삭제가 완료되었습니다!');
     } else {
+      errorFxSound.play();
       toast.error('방명록 삭제에 실패했습니다...');
     }
     onClose();
@@ -32,7 +43,10 @@ function DeleteGuestBookModal({ onClose, commentId }: InfoModalType): JSX.Elemen
         <button
           type="button"
           className="inline-flex justify-center px-2 lg:px-4 py-[2px] lg:py-1 min-w-[4.5rem] w-[40%] text-xs font-medium lg:text-base lg:font-semibold text-white bg-[#ED0000]/80 border border-transparent rounded-md hover:bg-[#ED0000] focus:outline-none "
-          onClick={onClose}>
+          onClick={() => {
+            cancelClickBtn.play();
+            onClose();
+          }}>
           취소
         </button>
         <button

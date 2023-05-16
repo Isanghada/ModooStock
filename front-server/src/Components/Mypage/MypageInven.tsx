@@ -37,7 +37,6 @@ function MypageInven({ setIsClickAsset, clickBtn }: Type): JSX.Element {
   const { data: getStorage, isLoading: isLoading1, isError: isError1 } = useGetStorageQuery('');
   const [getLazyStorage, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStorageQuery();
   const [postMypage, { isLoading: isLoading3, isError: isError3 }] = usePostMypageMutation();
-  console.log('getStorage: ', getStorage);
 
   const click = (e: React.MouseEvent) => {
     clickBtn.play();
