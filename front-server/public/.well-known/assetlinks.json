@@ -1,6 +1,6 @@
 [{
         "relation": ["delegate_permission/common.handle_all_urls"],
-        "target" : { "namespace": "android_app", "package_name": "io.ssafy.p.k8e206.twa",
-                     "sha256_cert_fingerprints": ["0B:D7:1F:A0:D0:99:EE:DF:71:E2:EC:7F:AC:56:17:84:A8:A4:F6:00:22:A3:34:95:72:88:A9:54:12:12:6F:A4"] }
+        "target" : { "namespace": "android_app", "package_name": "com.modoostock.twa",
+                     "sha256_cert_fingerprints": ["48:65:7F:6D:E3:54:5B:53:CB:AC:1D:93:8F:EC:9B:C7:B2:4B:EF:C5:6B:B9:39:CB:1C:EA:87:AD:20:79:1F:71"] }
       }
 ]
