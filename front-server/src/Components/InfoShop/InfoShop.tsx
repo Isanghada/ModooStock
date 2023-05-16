@@ -2,6 +2,7 @@ import Loading from 'Components/Common/Loading';
 import NewsModal from 'Components/Exchange/NewsModal';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGetNewsInfoQuery } from 'Store/api';
 import { useAppSelector } from 'Store/hooks';
 import InfoModal from './InfoModal';
@@ -28,6 +29,7 @@ interface newsInterFace {
 }
 
 function InfoShop(): JSX.Element {
+  const navigate = useNavigate();
   // 모달 전달 데이터
   const [modalData, setModalData] = useState<infoDataInterFace>({ name: '', color: '', price: 0, id: 0 });
   // 모달 관련
@@ -68,6 +70,9 @@ function InfoShop(): JSX.Element {
     const id = Number(target.dataset.key);
     if (name === '뉴스스크랩') {
       setIsNewsClick(true);
+    }
+    if (name === '주식거래소') {
+      navigate('/exchange');
     }
     if (name && color) {
       switch (color) {
@@ -139,6 +144,21 @@ function InfoShop(): JSX.Element {
             </div>
             <div
               onClick={onClick}
+              aria-label="주식거래소"
+              className="flex justify-center items-center w-[70%] h-[10%] bg-white shadow-md shadow-gray-400 cursor-pointer hover:bg-slate-100">
+              <div className="w-[22%] h-[90%] flex justify-center">
+                <img
+                  className="w-auto h-full"
+                  src={process.env.REACT_APP_S3_URL + '/images/icons/stockBorder.png'}
+                  alt="stock"
+                />
+              </div>
+              <div className="flex items-center justify-center w-2/3 h-full text-sm font-bold lg:w-1/2 lg:text-xl">
+                주식 거래소
+              </div>
+            </div>
+            <div
+              onClick={onClick}
               aria-label="뉴스스크랩"
               className="flex justify-center w-[70%] h-[10%] bg-white shadow-md shadow-gray-400 cursor-pointer hover:bg-slate-100">
               <img className="w-auto h-full" src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'} alt="news" />
@@ -149,7 +169,8 @@ function InfoShop(): JSX.Element {
             <div className="my-2 text-[0.5rem] lg:text-sm font-semibold text-gray-600 break-keep w-2/3 lg:w-full text-center">
               구매한 뉴스는 뉴스 스크랩에서 확인 가능합니다
             </div>
-            <div className="flex flex-col items-center justify-end h-[60%]">
+
+            <div className="flex flex-col items-center justify-end h-[50%]">
               <div className="text-2xl font-bold lg:text-3xl">
                 {newsData?.dateList[currentDataIndex].date.slice(5, 7)}월
               </div>
