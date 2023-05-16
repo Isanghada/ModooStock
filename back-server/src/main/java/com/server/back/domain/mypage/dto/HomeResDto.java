@@ -1,5 +1,6 @@
 package com.server.back.domain.mypage.dto;
 
+import com.server.back.common.code.commonCode.AssetColorType;
 import com.server.back.common.code.commonCode.AssetLevelType;
 import com.server.back.domain.store.entity.UserAssetLocation;
 import lombok.Builder;
@@ -22,7 +23,12 @@ public class HomeResDto {
     private float rot_y;
     private float rot_z;
 
+    private AssetColorType type;
+
     public static HomeResDto fromEntity(UserAssetLocation userAssetLocation){
+
+        AssetColorType type = userAssetLocation.getAsset().getId() > 356 ? AssetColorType.Material : AssetColorType.LP_Rooms;
+
         return HomeResDto.builder()
                 .assetName(userAssetLocation.getAsset().getAssetName())
                 .assetNameKor(userAssetLocation.getAsset().getAssetNameKor())
@@ -34,6 +40,7 @@ public class HomeResDto {
                 .rot_x(userAssetLocation.getRotX())
                 .rot_y(userAssetLocation.getRotY())
                 .rot_z(userAssetLocation.getRotZ())
+                .type(type)
                 .build();
     }
 
