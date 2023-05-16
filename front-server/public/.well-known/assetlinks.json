@@ -1,6 +1,6 @@
 [{
         "relation": ["delegate_permission/common.handle_all_urls"],
         "target" : { "namespace": "android_app", "package_name": "com.modoostock.twa",
-                     "sha256_cert_fingerprints": ["48:65:7F:6D:E3:54:5B:53:CB:AC:1D:93:8F:EC:9B:C7:B2:4B:EF:C5:6B:B9:39:CB:1C:EA:87:AD:20:79:1F:71"] }
+                     "sha256_cert_fingerprints": ["6A:96:0E:5B:B4:0E:7C:29:42:BF:B1:F1:10:AC:86:20:6A:F8:9B:A6:39:51:91:82:60:C8:EC:37:17:D6:FE:D2"] }
       }
 ]
