@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 
@@ -36,6 +38,10 @@ public class MiniGameServiceImpl implements MiniGameService{
     public MiniGameResDto createBrightLotto() {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         if(user.getCurrentMoney()<50000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(50000L);
@@ -93,6 +99,10 @@ public class MiniGameServiceImpl implements MiniGameService{
     public MiniGameResDto createDarkLotto() {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         if(user.getCurrentMoney()<1000_000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(1000_000L);
