@@ -18,5 +18,15 @@
         "46:CC:26:2C:F6:E2:17:E2:85:EC:98:88:AE:4B:FC:56:83:EC:0E:16:0E:92:17:E0:6E:D5:0D:E3:6F:D2:55:78"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.modoostock.twa",
+      "sha1_cert_fingerprints": [
+        "C3:89:F8:36:98:0B:5E:7F:84:0D:30:B5:77:0A:20:5C:25:9B:DA:C3"
+      ]
+    }
   }
 ]
