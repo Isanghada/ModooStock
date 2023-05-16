@@ -2,6 +2,7 @@ import Error from "Components/Common/Error";
 import Loading from "Components/Common/Loading";
 import { useEffect, useRef } from "react";
 import { toast } from 'react-toastify';
+import { useAppSelector } from 'Store/hooks';
 import { usePostAuctionAuctionIdMutation,useDeleteAuctionAuctionIdMutation } from 'Store/api';
 
 interface ReturnActionListInterFace {
@@ -26,6 +27,23 @@ interface Props {
 
 function AuctionModal({isOpen, setIsOpen,item ,what}:Props): JSX.Element {
 
+    const cancelClickSound = useAppSelector((state) => {
+        return state.cancelClick;
+      });
+      const successFx = useAppSelector((state) => {
+        return state.successFx;
+      });
+      const errorFx = useAppSelector((state) => {
+        return state.errorFx;
+      });
+
+
+    const cancelClickBtn = new Audio(cancelClickSound);
+    const successFxSound = new Audio(successFx);
+    const errorFxSound = new Audio(errorFx);
+
+
+
     const modalRef = useRef<HTMLDivElement>(null);
     const [buyItem, { data:result1, isLoading: isLoading1, isError: isError1, error: error1 }] = usePostAuctionAuctionIdMutation();
     const [cancleSell, { data:result2 , isLoading: isLoading2, isError: isError2 , error : error2}] = useDeleteAuctionAuctionIdMutation();
@@ -49,21 +67,27 @@ function AuctionModal({isOpen, setIsOpen,item ,what}:Props): JSX.Element {
         if(what === "구매"){
             buyItem(auctionId).unwrap().then(result => {
                 toast.info("구매완료!")
+                successFxSound.play();
             })
             .catch(error => {
                 toast.error(error.data.message);
+                errorFxSound.play();
             })
         }
         else if(what === "판매취소"){
             cancleSell(auctionId).unwrap().then(result => {
                 toast.info("판매를 취소하였습니다.")
+                successFxSound.play();
             })
             .catch(error => {
                 toast.error(error.data.message);
+                errorFxSound.play();
             })
         }
         else {
             toast.error("잘못된 접근입니다!");
+            errorFxSound.play();
+            
         }
 
         setIsOpen(false);
@@ -81,7 +105,7 @@ function AuctionModal({isOpen, setIsOpen,item ,what}:Props): JSX.Element {
                 <div className="text-[1.2rem]">{item?.assetResDto.assetNameKor}를 <span className="text-red-700 font-bold">{what}</span>하시겠습니까?</div>
                 <div className="py-3 font-bold">가격 : {item?.price && item?.price /10000}만원</div>
                 <div className="flex text-[#ffffff] font-bold justify-around">
-                    <div className="w-[48%] rounded-md bg-[#b81212] p-1 cursor-pointer" onClick={()=>setIsOpen(false)}>취소</div>
+                    <div className="w-[48%] rounded-md bg-[#b81212] p-1 cursor-pointer" onClick={()=> {setIsOpen(false); cancelClickBtn.play();}}>취소</div>
                     <div className="w-[48%] rounded-md bg-[#001dbe] p-1 cursor-pointer" onClick={()=>{
                         item?.auctionId && handleWhat(item?.auctionId)
                         }
