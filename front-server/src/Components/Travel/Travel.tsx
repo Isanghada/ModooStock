@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useGetUserMypageVisitorsQuery } from 'Store/api';
+import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useLazyGetUserMypageVisitorsQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
@@ -108,7 +108,7 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
     navigate('/mypage');
   };
 
-  // naviage로 이동 시 모달 닫기
+  // navigate로 이동 시 모달 닫기
   useEffect(() => {
     handleCloseModal();
   }, [nickname]);
@@ -155,7 +155,18 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
 function Travel(): JSX.Element {
   const { nickname } = useParams() as { nickname: string };
   const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
-  const { data: visitor, isLoading: isLoading1, isError: isError1 } = useGetUserMypageVisitorsQuery(nickname);
+  const [visitor, setVisitor] = useState<number>(1);
+  const [getVisitors, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUserMypageVisitorsQuery();
+
+  useEffect(() => {
+    const getVisit = async () => {
+      const { data, result } = await getVisitors(nickname).unwrap();
+      if (data) {
+        setVisitor(data);
+      }
+    };
+    getVisit();
+  }, [nickname, getVisitors]);
 
   const navigate = useNavigate();
 
@@ -180,7 +191,7 @@ function Travel(): JSX.Element {
             <div className="flex flex-col items-center justify-center w-full p-2 font-extrabold bg-white rounded-3xl drop-shadow-lg">
               {/* 방문자수 */}
               <div className="flex justify-end w-full px-2">
-                <p className="font-base text-center text-[#707070]">{visitor?.data || 1}명 방문 👀</p>
+                <p className="font-base text-center text-[#707070]">{visitor}명 방문 👀</p>
               </div>
               {/* 프로필 이미지 */}
               <div className="flex justify-center mt-5 p-2 w-[5rem] h-[5rem] lg:w-[8rem] lg:h-[8rem] max-w-[10rem] max-h-[10rem] rounded-full  bg-[#fb7c7c]">
@@ -233,7 +244,7 @@ function Travel(): JSX.Element {
                 <div className="flex flex-col items-center justify-center px-6 py-2 bg-white rounded-2xl drop-shadow-lg">
                   {/* 방문자수 */}
                   <div className="flex justify-end w-full mt-1">
-                    <p className="text-xs text-center text-[#707070]">{visitor?.data}명 방문 👀</p>
+                    <p className="text-xs text-center text-[#707070]">{visitor}명 방문 👀</p>
                   </div>
                   {/* 프로필 이미지 */}
                   <div className="flex justify-center p-2 w-[5rem] h-[5rem] lg:w-[7rem] lg:h-[7rem] max-w-[7rem] max-h-[7rem] rounded-full  bg-[#fb7c7c]">
