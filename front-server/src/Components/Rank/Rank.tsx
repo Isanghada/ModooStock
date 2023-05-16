@@ -99,7 +99,7 @@ function Rank(): JSX.Element {
 
           <div className="w-full lg:w-1/2">
             {getStock?.data?.slice(5).map((item, idx: number) => (
-              <div className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto lg:my-2 mb-2">
+              <div key={idx} className="bg-[#ffffff] rounded-lg flex justify-between lg:w-11/12 w-full py-2 px-4 mx-auto lg:my-2 mb-2">
                 <div className="flex">
                   <div className="font-bold lg:text-[1.8rem] text-[1.4rem] lg:w-16 lg:h-16 w-12 h-12 text-[#F99F9F] bg-no-repeat flex justify-center pt-2">
                     {idx + 6}
