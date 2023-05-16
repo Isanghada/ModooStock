@@ -309,6 +309,11 @@ function Mypage(): JSX.Element {
                     <span>유니크</span>
                   </div>
                 )}
+                {clickAsseData.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>레전더리</span>
+                  </div>
+                )}
                 <div className="flex flex-col w-full space-y-1">
                   <div className="flex items-end justify-start w-full space-x-2">
                     <span className="text-[0.9rem] lg:text-[1.3rem] font-semibold">가격</span>
