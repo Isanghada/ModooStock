@@ -37,6 +37,7 @@ function MypageInven({ setIsClickAsset, clickBtn }: Type): JSX.Element {
   const { data: getStorage, isLoading: isLoading1, isError: isError1 } = useGetStorageQuery('');
   const [getLazyStorage, { isLoading: isLoading2, isError: isError2 }] = useLazyGetStorageQuery();
   const [postMypage, { isLoading: isLoading3, isError: isError3 }] = usePostMypageMutation();
+  console.log('getStorage: ', getStorage);
 
   const click = (e: React.MouseEvent) => {
     clickBtn.play();
@@ -138,6 +139,11 @@ function MypageInven({ setIsClickAsset, clickBtn }: Type): JSX.Element {
                 {funiture.assetLevel === 'UNIQUE' && (
                   <div className="bg-[#FFC34F] shadow-md shadow-gray-400 px-3 lg:px-7 mb-[5%] text-[0.6rem] lg:text-[1rem] rounded-full font-extrabold flex">
                     <span>유니크</span>
+                  </div>
+                )}
+                {funiture.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] shadow-md shadow-gray-400 px-3 lg:px-7 mb-[5%] text-[0.6rem] lg:text-[1rem] rounded-full font-extrabold flex">
+                    <span>레전더리</span>
                   </div>
                 )}
               </div>

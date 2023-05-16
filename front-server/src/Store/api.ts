@@ -220,6 +220,7 @@ interface ReturnMyRoomAsset {
     rot_x: number;
     rot_y: number;
     rot_z: number;
+    type: string;
   }>;
   result: string;
 }
@@ -766,7 +767,7 @@ export const Api = createApi({
           method: 'POST'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'UserApi' }]
     }),
     // 5. 판매 취소
     deleteAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
@@ -776,7 +777,7 @@ export const Api = createApi({
           method: 'DELETE'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'InvenApi' }]
     }),
     // 6. 마이페이지에서 판매 취소
     deleteAuctionMyAssetId: builder.mutation<ReturnBasicInterFace, number>({
