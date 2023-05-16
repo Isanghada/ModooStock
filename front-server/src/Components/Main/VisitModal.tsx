@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLazyGetUsersSearchQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 interface Props {
   onClose: React.MouseEventHandler<HTMLButtonElement>;
@@ -130,7 +131,6 @@ const VisitModal = ({ onClose }: Props) => {
   const getUsers = async () => {
     // 유저 검색 API
     const { data } = await getUsersSearch(encodeURIComponent(searchQuery));
-    console.log(data);
 
     if (data) {
       setsUsers(data.data);
@@ -146,7 +146,7 @@ const VisitModal = ({ onClose }: Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    getUsers();
+    if (searchQuery.length !== 0) getUsers();
     setSearchQuery('');
   };
 

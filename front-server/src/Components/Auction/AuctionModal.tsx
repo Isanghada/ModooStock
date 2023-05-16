@@ -81,8 +81,8 @@ function AuctionModal({isOpen, setIsOpen,item ,what}:Props): JSX.Element {
                 <div className="text-[1.2rem]">{item?.assetResDto.assetNameKor}를 <span className="text-red-700 font-bold">{what}</span>하시겠습니까?</div>
                 <div className="py-3 font-bold">가격 : {item?.price && item?.price /10000}만원</div>
                 <div className="flex text-[#ffffff] font-bold justify-around">
-                    <div className="w-[48%] rounded-md bg-[#b81212] p-1" onClick={()=>setIsOpen(false)}>취소</div>
-                    <div className="w-[48%] rounded-md bg-[#001dbe] p-1" onClick={()=>{
+                    <div className="w-[48%] rounded-md bg-[#b81212] p-1 cursor-pointer" onClick={()=>setIsOpen(false)}>취소</div>
+                    <div className="w-[48%] rounded-md bg-[#001dbe] p-1 cursor-pointer" onClick={()=>{
                         item?.auctionId && handleWhat(item?.auctionId)
                         }
                         }>확인</div>

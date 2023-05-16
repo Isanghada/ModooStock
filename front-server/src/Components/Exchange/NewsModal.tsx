@@ -6,6 +6,8 @@ import { useGetNewsInfoQuery, useGetNewsListQuery } from 'Store/api';
 interface NewsModalType {
   isNewsClick: boolean;
   setIsNewsClick: React.Dispatch<React.SetStateAction<boolean>>;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
 }
 interface NewsPropsInterFace {
   color: string;
@@ -28,7 +30,7 @@ interface newsInterFace {
   ];
 }
 
-function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element {
+function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: NewsModalType): JSX.Element {
   const navigate = useNavigate();
   // 뉴스 데이터 API
   const { data: dataNewsInfo } = useGetNewsInfoQuery('');
@@ -130,28 +132,36 @@ function NewsModal({ isNewsClick, setIsNewsClick }: NewsModalType): JSX.Element 
     const number = Number(target.dataset.number);
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
+        cancelClickBtn.play();
         setIsNewsClick((pre) => !pre);
         break;
       case '전체':
+        clickBtn.play();
         setIsClickNum(0);
         break;
       case '정보상':
+        clickBtn.play();
         setIsNewsClick(false);
         navigate('/infoshop');
         break;
     }
     // 부득이하게 숫자로 구분
+
     switch (number) {
       case 0:
+        clickBtn.play();
         setIsClickNum(1);
         break;
       case 1:
+        clickBtn.play();
         setIsClickNum(2);
         break;
       case 2:
+        clickBtn.play();
         setIsClickNum(3);
         break;
       case 3:
+        clickBtn.play();
         setIsClickNum(4);
         break;
     }

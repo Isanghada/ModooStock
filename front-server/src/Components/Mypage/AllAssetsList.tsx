@@ -11,6 +11,7 @@ import {
 } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
 import Loading from 'Components/Common/Loading';
+import texture from '/Texture_2048.png';
 interface AssetType {
   userAssetId: number;
   assetName: string;
@@ -21,6 +22,7 @@ interface AssetType {
   rot_x: number;
   rot_y: number;
   rot_z: number;
+  type: string;
 }
 
 interface AllAssetsListType {
@@ -95,7 +97,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
             <mesh
               key={idx}
               geometry={geo[idx]}
-              material={materials[Object.keys(materials)[2]]}
+              // material={materials['Material']} // funiture
+              material={materials[asset.type]} // funiture
               position={
                 isClick
                   ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]

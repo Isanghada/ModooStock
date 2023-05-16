@@ -101,44 +101,49 @@ function BankSection3({
 
   // 송금
   const postTransfer = async (money: number, receiver: string) => {
-    if (money > 0) {
-      const body = {
-        money: money,
-        receiver: receiver
-      };
-      const { data, result } = await postBankTransfer(body).unwrap();
-      if (result === 'SUCCESS' && nicknameCheck) {
-        dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
-        toast.success('송금을 성공했습니다!');
-        successFxSound.play();
-        setIsClick(false);
-        // 웹 푸시용
-        const docRef = doc(dbService, 'PushToken', receiver);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const pushToken = docSnap.data().token;
-          const message = {
-            notification: {
-              title: '모두의 주식',
-              body: `${localStorage.getItem('nickname')}님이 당신에게 송금하였습니다`,
-              icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
-            },
-            to: pushToken
-          };
-          const { data } = await postSendPushMessage(message).unwrap();
+    try {
+      if (money > 0) {
+        const body = {
+          money: money,
+          receiver: receiver
+        };
+
+        const { data, result } = await postBankTransfer(body).unwrap();
+        if (result === 'SUCCESS' && nicknameCheck) {
+          dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
+          toast.success('송금을 성공했습니다!');
+          successFxSound.play();
+          setIsClick(false);
+          // 웹 푸시용
+          const docRef = doc(dbService, 'PushToken', receiver);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const pushToken = docSnap.data().token;
+            const message = {
+              notification: {
+                title: '모두의 주식',
+                body: `${localStorage.getItem('nickname')}님이 당신에게 송금하였습니다`,
+                icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
+              },
+              to: pushToken
+            };
+            const { data } = await postSendPushMessage(message).unwrap();
+          } else {
+            // docSnap.data() will be undefined in this case
+          }
+        } else if (nicknameCheck === false) {
+          errorFxSound.play();
+          toast.error('닉네임을 확인해주세요!');
         } else {
-          // docSnap.data() will be undefined in this case
+          errorFxSound.play();
+          toast.error('요청에 실패했습니다!');
         }
-      } else if (nicknameCheck === false) {
-        errorFxSound.play();
-        toast.error('닉네임을 확인해주세요!');
       } else {
+        toast.error('금액을 입력해주세요!');
         errorFxSound.play();
-        toast.error('요청에 실패했습니다!');
       }
-    } else {
-      toast.error('금액을 입력해주세요!');
-      errorFxSound.play();
+    } catch (e: any) {
+      toast.error(e.data?.message);
     }
   };
 

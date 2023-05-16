@@ -172,6 +172,15 @@ function Auction(): JSX.Element {
                 onClick={() => setSelectLevel('UNIQUE')}>
                 유니크
               </div>
+              <div
+                className={`${levelStyle} ${
+                  selectLevel === 'LEGENDARY'
+                    ? 'bg-[#FF8C8C] text-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
+                    : 'text-[#a5a5a5] bg-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
+                }`}
+                onClick={() => setSelectLevel('LEGENDARY')}>
+                레전더리
+              </div>
             </div>
             <div className="flex">
               <div
@@ -218,7 +227,7 @@ function Auction(): JSX.Element {
           </div>
 
           <div className="flex justify-between lg:h-[90%] h-[85%] lg:my-2 my-1">
-            <div className="lg:w-[62%] w-[55%] flex justify-start flex-wrap overflow-auto">
+            <div className="lg:w-[63%] w-[55%] flex justify-start flex-wrap overflow-auto">
               {selectLevel !== 'MY' &&
                 getAuction &&
                 getAuction.data &&
@@ -236,6 +245,8 @@ function Auction(): JSX.Element {
                           ? 'bg-[#0082ED]'
                           : item?.assetResDto.assetLevel === 'EPIC'
                           ? 'bg-[#BD00EC]'
+                          : item?.assetResDto.assetLevel === 'LEGENDARY'
+                          ? 'bg-[#26c744]'
                           : 'bg-[#FFC34F]'
                       }`}>
                       {item?.assetResDto.assetLevel}
@@ -271,6 +282,8 @@ function Auction(): JSX.Element {
                           ? 'bg-[#0082ED]'
                           : item?.assetResDto.assetLevel === 'EPIC'
                           ? 'bg-[#BD00EC]'
+                          : item?.assetResDto.assetLevel === 'LEGENDARY'
+                          ? 'bg-[#26c744]'
                           : 'bg-[#FFC34F]'
                       }`}>
                       {item?.assetResDto.assetLevel}
@@ -327,6 +340,8 @@ function Auction(): JSX.Element {
                         ? 'bg-[#0082ED]'
                         : selectItem?.assetResDto.assetLevel === 'EPIC'
                         ? 'bg-[#BD00EC]'
+                        : selectItem?.assetResDto.assetLevel === 'LEGENDARY'
+                        ? 'bg-[#26c744]'
                         : 'bg-[#FFC34F]'
                     } `}>
                     {selectItem?.assetResDto.assetLevel}

@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useGetUserMypageVisitorsQuery } from 'Store/api';
+import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useLazyGetUserMypageVisitorsQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
@@ -8,6 +8,7 @@ import { Suspense, useEffect, useState } from 'react';
 import AllAssetsList2 from './AllAssetsList2';
 import AssetLoading from 'Components/Common/AssetLoading';
 import { motion } from 'framer-motion';
+import { useAppSelector } from 'Store/hooks';
 
 function TravelRoom(): JSX.Element {
   return (
@@ -107,6 +108,28 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
   const handleMyRoomVisit = () => {
     navigate('/mypage');
   };
+
+  // navigate로 이동 시 모달 닫기
+  useEffect(() => {
+    handleCloseModal();
+  }, [nickname]);
+
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
   return (
     <>
       <div className="absolute flex items-center justify-start w-[25%] lg:w-[33%] xl:ml-[2%] xl:w-[27%] h-[3rem] md:h-[5rem] bottom-0 lg:bottom-6 py-2 mx-2">
@@ -114,33 +137,51 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer
         hover:scale-105 transition-all duration-300"
           src={process.env.REACT_APP_S3_URL + '/images/visits/back.png'}
-          alt="돌아가기"
-          onClick={() => navigate('/main')}
+          alt="뒤로가기"
+          onClick={() => {
+            cancelClickBtn.play();
+            navigate('/main');
+          }}
         />
         <img
           className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
           src={process.env.REACT_APP_S3_URL + '/images/visits/guestBookIcon.png'}
           alt="방명록"
-          onClick={handleOpenModal}
+          onClick={() => {
+            clickBtn.play();
+            handleOpenModal();
+          }}
         />
         {nickname.nickname === localStorage.getItem('nickname') ? (
           <img
             className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
             src={process.env.REACT_APP_S3_URL + '/images/visits/makeupRoom.png'}
             alt="마이룸"
-            onClick={handleMyRoomVisit}
+            onClick={() => {
+              clickBtn.play();
+              handleMyRoomVisit();
+            }}
           />
         ) : (
           <img
             className="object-contain w-[2rem] md:w-[3rem] lg:w-[4rem] h-[2rem] md:h-[3rem] lg:h-[4rem] my-4 mx-auto cursor-pointer hover:scale-105 transition-all duration-300"
             src={process.env.REACT_APP_S3_URL + '/images/visits/randomVisit.png'}
             alt="랜덤방문"
-            onClick={handleRandomVisit}
+            onClick={() => {
+              clickBtn.play();
+              handleRandomVisit();
+            }}
           />
         )}
       </div>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={false}>
-        <GuestBookList onClose={handleCloseModal} />
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={true}>
+        <GuestBookList
+          onClose={handleCloseModal}
+          clickBtn={clickBtn}
+          cancelClickBtn={cancelClickBtn}
+          successFxSound={successFxSound}
+          errorFxSound={errorFxSound}
+        />
       </Modal>
     </>
   );
@@ -149,7 +190,18 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
 function Travel(): JSX.Element {
   const { nickname } = useParams() as { nickname: string };
   const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
-  const { data: visitor, isLoading: isLoading1, isError: isError1 } = useGetUserMypageVisitorsQuery(nickname);
+  const [visitor, setVisitor] = useState<number>(1);
+  const [getVisitors, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUserMypageVisitorsQuery();
+
+  useEffect(() => {
+    const getVisit = async () => {
+      const { data, result } = await getVisitors(nickname).unwrap();
+      if (data) {
+        setVisitor(data);
+      }
+    };
+    getVisit();
+  }, [nickname, getVisitors]);
 
   const navigate = useNavigate();
 
@@ -174,7 +226,7 @@ function Travel(): JSX.Element {
             <div className="flex flex-col items-center justify-center w-full p-2 font-extrabold bg-white rounded-3xl drop-shadow-lg">
               {/* 방문자수 */}
               <div className="flex justify-end w-full px-2">
-                <p className="font-base text-center text-[#707070]">{visitor?.data || 1}명 방문 👀</p>
+                <p className="font-base text-center text-[#707070]">{visitor}명 방문 👀</p>
               </div>
               {/* 프로필 이미지 */}
               <div className="flex justify-center mt-5 p-2 w-[5rem] h-[5rem] lg:w-[8rem] lg:h-[8rem] max-w-[10rem] max-h-[10rem] rounded-full  bg-[#fb7c7c]">
@@ -227,7 +279,7 @@ function Travel(): JSX.Element {
                 <div className="flex flex-col items-center justify-center px-6 py-2 bg-white rounded-2xl drop-shadow-lg">
                   {/* 방문자수 */}
                   <div className="flex justify-end w-full mt-1">
-                    <p className="text-xs text-center text-[#707070]">{visitor?.data}명 방문 👀</p>
+                    <p className="text-xs text-center text-[#707070]">{visitor}명 방문 👀</p>
                   </div>
                   {/* 프로필 이미지 */}
                   <div className="flex justify-center p-2 w-[5rem] h-[5rem] lg:w-[7rem] lg:h-[7rem] max-w-[7rem] max-h-[7rem] rounded-full  bg-[#fb7c7c]">

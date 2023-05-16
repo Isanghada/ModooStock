@@ -140,6 +140,11 @@ function MypageInven({ setIsClickAsset, clickBtn }: Type): JSX.Element {
                     <span>유니크</span>
                   </div>
                 )}
+                {funiture.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] shadow-md shadow-gray-400 px-3 lg:px-7 mb-[5%] text-[0.6rem] lg:text-[1rem] rounded-full font-extrabold flex">
+                    <span>레전더리</span>
+                  </div>
+                )}
               </div>
             );
           })

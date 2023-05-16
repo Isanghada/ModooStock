@@ -151,7 +151,9 @@ function Mypage(): JSX.Element {
                 setIsModalClick(false);
                 dispatch(changeIsAuctionClickInvenAsset(true));
               };
-              auction();
+              auction().catch((e: any) => {
+                toast.error(e.data?.message);
+              });
             } else {
               toast.error('숫자를 입력해주세요!');
               errorFxSound.play();
@@ -307,6 +309,11 @@ function Mypage(): JSX.Element {
                 {clickAsseData.assetLevel === 'UNIQUE' && (
                   <div className="bg-[#FFC34F] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
                     <span>유니크</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>레전더리</span>
                   </div>
                 )}
                 <div className="flex flex-col w-full space-y-1">
