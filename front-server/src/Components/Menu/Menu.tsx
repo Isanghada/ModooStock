@@ -167,6 +167,7 @@ function Menu(): JSX.Element {
                   className="decoration-transparent hover:text-red-300">
                   확률정보
                 </a>
+                <span>문의 : cinamon3344@gmail.com</span>
               </div>
               <div className="flex justify-between w-3/4">
                 <div
