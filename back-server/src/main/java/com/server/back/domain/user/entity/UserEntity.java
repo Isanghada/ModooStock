@@ -56,7 +56,7 @@ public class UserEntity extends CommonEntity implements UserDetails {
 
     @Column(nullable = false)
     @Builder.Default
-    private Long currentMoney = 50_000_000L;
+    private Long currentMoney = 20_000_000L;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

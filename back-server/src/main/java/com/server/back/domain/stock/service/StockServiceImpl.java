@@ -49,7 +49,7 @@ public class StockServiceImpl implements StockService {
 //    public Long select;
 
     public SseEmitter subscribe(){
-        SseEmitter emitter = new SseEmitter(4L * 60 * 1000);
+        SseEmitter emitter = new SseEmitter(5L * 60 * 1000);
 
         Long userId = authService.getUserId();
 
@@ -70,7 +70,6 @@ public class StockServiceImpl implements StockService {
         try {
             emitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
-            System.out.println("here");
             throw new RuntimeException(e);
         }
         return emitter;
@@ -123,6 +122,13 @@ public class StockServiceImpl implements StockService {
     public void getStockChart(Long stockId) {
 
         Long userId = authService.getUserId();
+        SseEmitter emitter = userEmitterMap.get(userId);
+        if(emitter == null) {
+            System.out.println("emitter가 없대 재연결!");
+            SseEmitter emitter2 = new SseEmitter(5L * 60 * 1000);
+            // 연결된 사용자 목록에 userId와 SseEmitter 추가
+            userEmitterMap.put(userId, emitter2);
+        }
         userStockIdMap.put(userId, stockId);
 
         // 장 정보 가져오기
@@ -151,10 +157,10 @@ public class StockServiceImpl implements StockService {
             try {
                 emitter.send(SseEmitter.event().data(stockResDto));
             } catch (IOException e) {
-                System.out.println("here2");
                 throw new RuntimeException(e);
             }
         }
+
     }
 
 

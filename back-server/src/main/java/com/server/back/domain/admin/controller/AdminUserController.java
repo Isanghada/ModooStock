@@ -22,8 +22,8 @@ public class AdminUserController {
     @GetMapping("/isadmin")
     @ApiOperation(value = "관리자 여부를 체크합니다.", notes = "")
     public ResponseEntity<ResultDto<Boolean>> getUserIsAdmin(){
-        adminUserService.getUserIsAdmin();
-        return ResponseEntity.ok(ResultDto.ofSuccess());
+        if(adminUserService.getUserIsAdmin()) return ResponseEntity.ok(ResultDto.ofSuccess());
+        else return ResponseEntity.ok(ResultDto.ofFail());
     }
     @GetMapping
     @ApiOperation(value = "전체 회원 목록을 반환합니다.", notes = "")

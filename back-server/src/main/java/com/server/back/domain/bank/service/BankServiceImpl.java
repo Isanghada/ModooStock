@@ -16,12 +16,11 @@ import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.domain.user.service.UserService;
 import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +33,8 @@ public class BankServiceImpl implements BankService {
     private final AuthService authService;
     private final UserService userService;
 
-    public static Integer BANK_PERIOD = 6;
+    // 3시간이후 이자 지급
+    public static Integer BANK_PERIOD = 3;
 
     /**
      * 예금하기
@@ -142,6 +142,13 @@ public class BankServiceImpl implements BankService {
         UserEntity sender = userService.getUserById(userId);
         // 돈을 받는 사람
         UserEntity receiver = userService.getUserByNickname(transferReqDto.getReceiver());
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration sendorDuration = Duration.between(sender.getCreatedAt(), now);
+        Duration receiverDuration = Duration.between(receiver.getCreatedAt(), now);
+        if(sendorDuration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+        if(receiverDuration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_TRANSFER);
+
 
         // 돈을 보내는 사람의 현재 보유돈 보다 작은지 확인
         if(sender.getCurrentMoney() < transferReqDto.getMoney()) {

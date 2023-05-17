@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -70,7 +72,13 @@ public class AuctionServiceImpl implements AuctionService {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        AuctionEntity auction=auctionRepository.findByIdAndIsDeletedAndIsCompleted(auctionId,IsDeleted.N,IsCompleted.N).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+
+        AuctionEntity auction=auctionRepository.findById(auctionId).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+        if(auction.getIsCompleted().equals(IsCompleted.Y)) throw new CustomException(ErrorCode.SOLD_ENTITY);
+        if(auction.getIsDeleted().equals(IsDeleted.Y)) throw new CustomException(ErrorCode.CANCELED_ENTITY);
 
         //잔액 부족
         if(auction.getAuctionPrice()>user.getCurrentMoney())throw new CustomException(ErrorCode.LACK_OF_MONEY);
@@ -133,6 +141,10 @@ public class AuctionServiceImpl implements AuctionService {
     public void createAuction(AuctionReqDto auctionReqDto) {
         Long userId=authService.getUserId();
         UserEntity user=userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(user.getCreatedAt(), now);
+        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         UserAssetLocation userAsset=userAssetLocationRepository.findById(auctionReqDto.getUserAssetId()).orElseThrow(()->new CustomException(ErrorCode.ENTITY_NOT_FOUND));
         if(!user.equals(userAsset.getUser()))throw new CustomException(ErrorCode.NO_ACCESS);
