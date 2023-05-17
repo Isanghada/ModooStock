@@ -6,8 +6,7 @@ interface PrivacyInterFace {
   cancel: string;
   isOpen: boolean;
 }
-function PrivacyPolicy({closeModal, isOpen, cancel }: PrivacyInterFace): JSX.Element {
-
+function PrivacyPolicy({ closeModal, isOpen, cancel }: PrivacyInterFace): JSX.Element {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-[70]" onClose={closeModal}>
@@ -38,9 +37,12 @@ function PrivacyPolicy({closeModal, isOpen, cancel }: PrivacyInterFace): JSX.Ele
                   className="text-base font-semibold leading-6 text-center text-gray-600 lg:text-lg lg:font-bold">
                   
                 </Dialog.Title> */}
-                <div className='overflow-y-auto max-h-[70vh]'>
-                <img className='h-full' src="/images/PrivacyPolicy.png" alt="privacy" />
-
+                <div className="overflow-y-auto max-h-[70vh]">
+                  <img
+                    className="h-full"
+                    src={process.env.REACT_APP_S3_URL + '/images/privacyPolicy/PrivacyPolicy.png'}
+                    alt="privacy"
+                  />
                 </div>
 
                 <div className="flex justify-between mt-4 lg:mt-8 ">
