@@ -26,7 +26,6 @@ function AdminMarket(): JSX.Element {
   useEffect(() => {
     const getMarket = async () => {
       const { data, result } = await getAdminMarket('').unwrap();
-      console.log(data);
       setTbodyData(
         data.map((market, idx) => {
           return (
@@ -53,13 +52,13 @@ function AdminMarket(): JSX.Element {
   return (
     <>
       {isClick && <AdminMarketModal selectMarketData={selectMarketData} setIsClick={setIsClick} />}
-      <div className="w-full flex-col flex justify-center items-center">
+      <div className="flex flex-col items-center justify-center w-full">
         <div className="w-full flex justify-center text-[2.2rem] text-[#A87E6E] font-bold mb-3">주식 시즌 관리</div>
-        <div className="w-full mb-4 font-bold flex justify-between">
+        <div className="flex justify-between w-full mb-4 font-bold">
           <span className="text-[1.4rem] text-[#A87E6E] border-b-4 border-b-[#A87E6E]/70">시즌</span>
         </div>
         <div className="overflow-y-auto h-[50vh] w-full">
-          <div className="flex justify-center items-start ">
+          <div className="flex items-start justify-center ">
             <table className="w-full">
               <thead>
                 <tr className="border-y-4 border-y-[#A87E6E] lg:text-[0.8rem] xl:text-[1.2rem] text-[#A87E6E] bg-[#ffe8d5]">

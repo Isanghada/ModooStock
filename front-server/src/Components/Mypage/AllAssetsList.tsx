@@ -81,7 +81,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
 
   const handleClick = () => {
     const box = boxRef.current;
-    console.log('box: ', box);
+    // console.log('box: ', box);
 
     // 클릭한 asset의 테두리 스타일 설정
     // box.material.color.set(0xff0000);

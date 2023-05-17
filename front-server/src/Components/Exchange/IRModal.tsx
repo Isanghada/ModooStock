@@ -145,7 +145,7 @@ function IRModal({ isIRClick, setIsIRClick, selectIRData, date, clickBtn, cancel
   };
 
   const changeQuarterData = () => {
-    console.log(selectIRData[parseInt(selectYear)]);
+    // console.log(selectIRData[parseInt(selectYear)]);
 
     setShowQuarterData(selectIRData[parseInt(selectYear)][quarterClick]);
   };

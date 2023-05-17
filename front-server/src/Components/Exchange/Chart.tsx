@@ -1,8 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 
 function Chart({ data }: any) {
-  console.log('data: ', data);
-
   const formatYAxis = (tickItem: any) => tickItem.toLocaleString() + '원';
   const formatTooltip = (tickItem: any) => tickItem.toLocaleString();
 
