@@ -128,9 +128,9 @@ const VisitModal = ({ onClose }: Props) => {
   const [users, setsUsers] = useState<Array<UserInfo>>([]);
   const [getUsersSearch] = useLazyGetUsersSearchQuery();
 
-  const getUsers = async () => {
+  const getUsers = async (search: string) => {
     // 유저 검색 API
-    const { data } = await getUsersSearch(encodeURIComponent(searchQuery));
+    const { data } = await getUsersSearch(encodeURIComponent(search));
 
     if (data) {
       setsUsers(data.data);
@@ -141,12 +141,20 @@ const VisitModal = ({ onClose }: Props) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    if (event.target.value.length !== 0) {
+      getUsers(event.target.value);
+    } else {
+      setSearchQuery('');
+      setsUsers([]);
+    }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (searchQuery.length !== 0) getUsers();
+    if (searchQuery.length !== 0) {
+      getUsers(searchQuery);
+    } else setsUsers([]);
     setSearchQuery('');
   };
 
