@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getMessaging, onMessage } from 'firebase/messaging';
+import { getMessaging } from 'firebase/messaging';
 // import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -39,10 +39,6 @@ async function requestPermission() {
   //   console.log('Can not get Token');
   // }
 
-  onMessage(messaging, (payload) => {
-    console.log("메시지가 도착했습니다.", payload);
-    // ...
-  });
 }
 requestPermission();
 
