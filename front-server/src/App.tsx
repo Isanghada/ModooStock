@@ -60,19 +60,19 @@ function App() {
     return () => window.removeEventListener('resize', updateScreenWidth);
   }, []);
 
-  useEffect(() => {
-    const handleOrientationChange = () => {
-      setIsLandScape(window.matchMedia('(orientation: landscape)').matches);
-    };
+  // useEffect(() => {
+  //   const handleOrientationChange = () => {
+  //     setIsLandScape(window.matchMedia('(orientation: landscape)').matches);
+  //   };
 
-    handleOrientationChange(); // 초기 로딩 시 방향 상태 설정
+  //   handleOrientationChange(); // 초기 로딩 시 방향 상태 설정
 
-    window.addEventListener('orientationchange', handleOrientationChange);
+  //   window.addEventListener('orientationchange', handleOrientationChange);
 
-    return () => {
-      window.removeEventListener('orientationchange', handleOrientationChange);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('orientationchange', handleOrientationChange);
+  //   };
+  // }, []);
 
   return (
     <>

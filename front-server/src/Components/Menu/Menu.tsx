@@ -58,8 +58,8 @@ function Menu(): JSX.Element {
     // 메뉴 닫기
     dispatch(changeMenuStatus(false));
     localStorage.clear();
-    window.location.replace('/')
-    toast.info('로그아웃 하셨습니다')
+    toast.info('로그아웃 하셨습니다');
+    navigate('/');
   };
   // 회원탈퇴
   const deleteUser = async () => {
@@ -68,8 +68,8 @@ function Menu(): JSX.Element {
       // 메뉴 닫기
       dispatch(changeMenuStatus(false));
       localStorage.clear();
-      window.location.replace('/')
       toast.info('회원탈퇴 하셨습니다');
+      navigate('/');
     } catch (error) {
       console.log(error, '회원탈퇴 에러');
     }
