@@ -393,7 +393,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매수할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매수할 개수를 입력해주세요!');
+                } else {
+                  toast.error('매수할 수 있는 개수를 초과했습니다!');
+                }
+              }
             }
           };
           posrStock();
@@ -428,7 +434,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매수할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매수할 개수를 입력해주세요!');
+                } else {
+                  toast.error('매수할 수 있는 개수를 초과했습니다!');
+                }
+              }
             }
           };
           posrStock();
@@ -464,7 +476,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매도할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매도할 개수를 입력해주세요!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+              }
             }
           };
           stockDelete();
@@ -499,7 +517,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매도할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매도할 개수를 입력해주세요!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+              }
             }
           };
           stockDelete();
@@ -585,6 +609,8 @@ function Exchange(): JSX.Element {
 
   // 차트 데이터
   useEffect(() => {
+    console.log(inputRef.current && typeof inputRef.current.value);
+
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
@@ -1152,8 +1178,8 @@ function Exchange(): JSX.Element {
                     <div className="flex items-center justify-between w-full text-center text-[1rem] lg:text-[1.5rem] text-white font-semibold pt-1">
                       <div
                         aria-label="매도"
-                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          sseData && sseData.amount > 0
+                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400 ${
+                          sseData && sseData.amount > 0 && inputRef.current && inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}
@@ -1162,11 +1188,13 @@ function Exchange(): JSX.Element {
                       </div>
                       <div
                         aria-label="매수"
-                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400  ${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', '')) &&
+                          inputRef.current &&
+                          inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
-                        }`}
+                        } `}
                         onClick={click}>
                         <span>매수</span>
                       </div>
@@ -1349,7 +1377,7 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도2"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          sseData && sseData?.amount > 0
+                          sseData && sseData?.amount > 0 && inputRef.current && inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}
@@ -1359,7 +1387,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매수2"
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', '')) &&
+                          inputRef.current &&
+                          inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}
