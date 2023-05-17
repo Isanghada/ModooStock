@@ -27,7 +27,7 @@ CREATE TABLE `asset_price` (
   `asset_level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `price` bigint NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `asset_price` (
 
 LOCK TABLES `asset_price` WRITE;
 /*!40000 ALTER TABLE `asset_price` DISABLE KEYS */;
-INSERT INTO `asset_price` VALUES (1,'RARE',500000),(2,'EPIC',1500000),(3,'UNIQUE',5000000);
+INSERT INTO `asset_price` VALUES (1,'RARE',500000),(2,'EPIC',1500000),(3,'UNIQUE',5000000),(4,'LEGENDARY',10000000);
 /*!40000 ALTER TABLE `asset_price` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-15 11:06:11
+-- Dump completed on 2023-05-17  9:37:52

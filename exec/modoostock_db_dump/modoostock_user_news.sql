@@ -31,7 +31,7 @@ CREATE TABLE `user_news` (
   KEY `FKrq0mct9mfkcd8y67xq6nmlg2j` (`user_id`),
   CONSTRAINT `FKb8go94ohx3ucvudssnjpfj5b9` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`),
   CONSTRAINT `FKrq0mct9mfkcd8y67xq6nmlg2j` FOREIGN KEY (`user_id`) REFERENCES `user_table` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=276 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,6 @@ CREATE TABLE `user_news` (
 
 LOCK TABLES `user_news` WRITE;
 /*!40000 ALTER TABLE `user_news` DISABLE KEYS */;
-INSERT INTO `user_news` VALUES (219,92903,59),(220,92906,59),(221,116818,56),(222,133540,59),(223,116823,56);
 /*!40000 ALTER TABLE `user_news` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-15 11:06:01
+-- Dump completed on 2023-05-17  9:37:56
