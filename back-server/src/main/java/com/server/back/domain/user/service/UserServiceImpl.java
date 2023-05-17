@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService{
         Float totalStockReturn = 0.0f;
         Integer count = 0;
 
-        // 장 정보 가져오기
+        // 현재 주식 종목 가져오기.
         List<StockEntity> stockList = stockRepository.findTop4ByOrderByIdDesc();
 
         for ( StockEntity stock : stockList ) {
@@ -143,8 +143,13 @@ public class UserServiceImpl implements UserService{
             Optional<UserDealEntity> userDeal = userDealRepository.findByUserIdAndStockId(userId, stock.getId());
 
             if (userDeal.isPresent() && userDeal.get().getTotalAmount() != 0L) {
-                totalStockReturn += userDeal.get().getRate() * userDeal.get().getTotalAmount();
-                count += userDeal.get().getTotalAmount();
+                // 원본 종가
+                ChartEntity chart = chartRepository.findByCompanyIdAndDate(stock.getCompany().getId(), stock.getMarket().getGameDate())
+                        .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+                Long chartPrice = chart.getPriceEnd();
+
+                totalStockReturn += userDeal.get().getTotalPrice() * userDeal.get().getRate();
+                count += Math.round(userDeal.get().getTotalPrice());
             }
         }
 
@@ -154,6 +159,7 @@ public class UserServiceImpl implements UserService{
 
         return UserInfoLoginResDto.fromEntity(user, totalStockReturn);
     }
+
 
     /**
      * 계정 중복을 확인합니다

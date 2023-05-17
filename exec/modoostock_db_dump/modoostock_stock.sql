@@ -32,7 +32,7 @@ CREATE TABLE `stock` (
   KEY `FKqkljcdurtmoxxm5k8ktfwytmm` (`market_id`),
   CONSTRAINT `FK9r297vk0rghnrccw09x0qybfj` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`),
   CONSTRAINT `FKqkljcdurtmoxxm5k8ktfwytmm` FOREIGN KEY (`market_id`) REFERENCES `market` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `stock` (
 
 LOCK TABLES `stock` WRITE;
 /*!40000 ALTER TABLE `stock` DISABLE KEYS */;
-INSERT INTO `stock` VALUES (25,1,7,735727),(26,3,7,249276),(27,6,7,66548),(28,9,7,248788);
+INSERT INTO `stock` VALUES (25,1,7,735727),(26,3,7,249276),(27,6,7,66548),(28,9,7,248788),(29,2,8,1279355),(30,3,8,264280),(31,6,8,55285),(32,8,8,185022);
 /*!40000 ALTER TABLE `stock` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-15 11:06:02
+-- Dump completed on 2023-05-17  9:37:59
