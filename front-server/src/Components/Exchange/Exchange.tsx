@@ -234,7 +234,6 @@ function Exchange(): JSX.Element {
     };
 
     eventSource.onerror = () => {
-      console.log('연결에러 재연결.');
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
@@ -254,7 +253,6 @@ function Exchange(): JSX.Element {
   }
 
   if (!eventSource) {
-    console.log('연결 안되어있음.');
     const token = localStorage.getItem('accessToken');
 
     const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
@@ -909,7 +907,7 @@ function Exchange(): JSX.Element {
                             )
                           </span>
                         )}
-                        {sseData && sseData.stockChartResDto.length >= 1 && (
+                        {sseData && sseData.stockChartResDto.length > 1 && (
                           <span
                             // 현재 주식 데이터가 여러개일 경우
                             className={`text-[1rem] flex pt-2 items-end ${
@@ -1033,7 +1031,7 @@ function Exchange(): JSX.Element {
                               )
                             </span>
                           )}
-                          {sseData && sseData.stockChartResDto.length >= 1 && (
+                          {sseData && sseData.stockChartResDto.length >= 2 && (
                             <span
                               // 현재 주식 데이터가 여러개일 경우
                               className={`text-[0.6rem] pb-1 flex pt-2 items-end ${

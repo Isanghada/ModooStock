@@ -72,7 +72,7 @@ function Bank(): JSX.Element {
                   </span>
                 </div>
                 <div className="font-medium leading-5 text-[#707070] text-[0.7rem] md:text-[0.8rem] lg:text-[0.9rem]">
-                  <span>6시간마다 1%의</span> <br />
+                  <span>6시간후 1%의</span> <br />
                   <span>이자를 받을 수 있어요.</span>
                 </div>
                 <div className="py-4 mx-auto lg:py-8">
