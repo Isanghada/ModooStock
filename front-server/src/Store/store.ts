@@ -94,6 +94,7 @@ const currentDataIndex = createSlice({
   initialState: 0,
   reducers: {
     getCurrentDataIndex(state, action) {
+      // console.log(action.payload, '인덱스');
       return (state = action.payload);
     }
   }

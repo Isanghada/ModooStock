@@ -45,7 +45,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   const [buyNews] = usePostNewsBuyMutation();
   // 뉴스 구입 요청
   const buyNewsPaper = async (price: number, color: string) => {
-    const currentMoney = Number(currentMoneyStatus.replaceAll(",", ''));
+    const currentMoney = Number(currentMoneyStatus.replaceAll(',', ''));
     const newColor = color.replace('text', 'bg');
     if (currentMoney < price) {
       toast.error('소지하신 잔액이 부족합니다!');
@@ -59,7 +59,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
       setNewsModalOpen(true);
       setNewsModalData({ ...buyNewsData, color: newColor });
     } catch (error) {
-      console.log(error, '정보 구입 실패');
+      // console.log(error, '정보 구입 실패');
     }
   };
   // 이미지 로딩상태 체크
