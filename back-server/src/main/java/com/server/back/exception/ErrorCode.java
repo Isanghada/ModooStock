@@ -43,6 +43,8 @@ public enum ErrorCode {
 
 	/* 404 NOT_FOUND : 대상이 존재하지 않음 */
 	ENTITY_NOT_FOUND(NOT_FOUND, "엔티티가 존재하지 않습니다."),
+	SOLD_ENTITY(NOT_FOUND, "판매 완료된 상품입니다."),
+	CANCELED_ENTITY(NOT_FOUND, "판매 취소된 상품입니다."),
 	USER_NOT_FOUND(NOT_FOUND, "대상이 존재하지 않습니다.");
 
 	/* 500 INTERNAL_SERVER_ERROR : 서버 오류 - 정말 필요한 거 외엔 되도록 쓰지 않는 걸 권장*/
