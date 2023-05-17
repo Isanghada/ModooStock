@@ -59,7 +59,7 @@ function Menu(): JSX.Element {
     dispatch(changeMenuStatus(false));
     localStorage.clear();
     toast.info('로그아웃 하셨습니다');
-    navigate('/');
+    window.location.replace('/');
   };
   // 회원탈퇴
   const deleteUser = async () => {
@@ -69,7 +69,7 @@ function Menu(): JSX.Element {
       dispatch(changeMenuStatus(false));
       localStorage.clear();
       toast.info('회원탈퇴 하셨습니다');
-      navigate('/');
+      window.location.replace('/');
     } catch (error) {
       console.log(error, '회원탈퇴 에러');
     }
