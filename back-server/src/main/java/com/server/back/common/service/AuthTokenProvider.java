@@ -171,7 +171,7 @@ public class AuthTokenProvider {
 	 */
 	public UsernamePasswordAuthenticationToken getAuthentication(String token) {
 		UserDetails userDetails = customUserDetailsService.loadUserByUsername(this.getUserId(token).toString());
-		log.info("getAuthentication: {}, token: {}", userDetails.getUsername(), token);
+		// log.info("getAuthentication: {}, token: {}", userDetails.getUsername(), token);
 		return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 	}
 
