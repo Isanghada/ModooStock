@@ -10,7 +10,8 @@ import redopen from 'Components/Common/Lottie/redopen.json';
 import { useEffect, useState } from 'react';
 import { usePostGotchaLevelMutation } from 'Store/api';
 import { toast } from 'react-toastify';
-import { useAppSelector } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { openPlay } from 'Store/store';
 
 interface AssetDataInterFace {
   assetCategory: string;
@@ -21,6 +22,7 @@ interface AssetDataInterFace {
 }
 
 function GachaShop(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [isHover, setIsHover] = useState<string | null>('');
   const [giftWaitData, setGiftWaitData] = useState<any>(null);
   const [giftOpenData, setGiftOpenData] = useState<any>(null);
@@ -180,6 +182,7 @@ function GachaShop(): JSX.Element {
   useEffect(() => {
     if (giftOpenStatus) {
       setTimeout(() => {
+        dispatch(openPlay("play"));
         setGiftOpenStatus(false);
         setItemOpenStatus(true);
       }, 3900);

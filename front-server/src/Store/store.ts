@@ -94,7 +94,6 @@ const currentDataIndex = createSlice({
   initialState: 0,
   reducers: {
     getCurrentDataIndex(state, action) {
-      console.log(action.payload, '인덱스');
       return (state = action.payload);
     }
   }
@@ -193,6 +192,19 @@ const errorFx = createSlice({
   initialState: process.env.REACT_APP_S3_URL + '/sound/fx/error.wav',
   reducers: {}
 });
+// 뽑기 짜잔 FX
+const openFx = createSlice({
+  name: 'openFx',
+  initialState: '',
+  reducers: {
+    openPlay(state, action) {
+      const openSound = new Audio("/open.wav");
+      openSound.play();
+      return (state = action.payload);
+    }
+
+  }
+});
 
 // ------------------------ BGM ------------------------
 
@@ -223,7 +235,8 @@ export const store = configureStore({
     clickBtn: clickBtn.reducer,
     cancelClick: cancelClick.reducer,
     successFx: successFx.reducer,
-    errorFx: errorFx.reducer
+    errorFx: errorFx.reducer,
+    openFx: openFx.reducer,
     // ------------- BGM -------------
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
@@ -249,6 +262,8 @@ export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
 export const { changeIsAuctionClickInvenAsset } = isAuctionClickInvenAsset.actions;
 export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
+// ------------- 음악 -------------
+export const { openPlay } = openFx.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

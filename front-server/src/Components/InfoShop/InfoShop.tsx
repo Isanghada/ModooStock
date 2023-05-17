@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetNewsInfoQuery } from 'Store/api';
-import { useAppSelector } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import InfoModal from './InfoModal';
 
 interface infoDataInterFace {
@@ -29,6 +29,7 @@ interface newsInterFace {
 }
 
 function InfoShop(): JSX.Element {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate();
   // 모달 전달 데이터
   const [modalData, setModalData] = useState<infoDataInterFace>({ name: '', color: '', price: 0, id: 0 });
@@ -45,6 +46,7 @@ function InfoShop(): JSX.Element {
   const cancelClickSound = useAppSelector((state) => {
     return state.cancelClick;
   });
+
 
   const clickBtn = new Audio(clickSound);
   const cancelClickBtn = new Audio(cancelClickSound);
