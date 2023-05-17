@@ -304,7 +304,8 @@ function Auction(): JSX.Element {
                 myAuction?.data?.map((item: any, index: number) => (
                   <div
                     key={index}
-                    className={`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer`}
+                    className={`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer ${
+                      !item?.assetResDto.assetNameKor.includes(search) && 'hidden' }`}
                     onClick={() => setSelectNum(index)}>
                     <div
                       className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${
