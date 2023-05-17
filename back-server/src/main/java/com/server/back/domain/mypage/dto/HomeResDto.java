@@ -27,7 +27,7 @@ public class HomeResDto {
 
     public static HomeResDto fromEntity(UserAssetLocation userAssetLocation){
 
-        AssetColorType type = userAssetLocation.getAsset().getId() > 370 ? AssetColorType.Material : AssetColorType.LP_Rooms;
+        AssetColorType type = userAssetLocation.getAsset().getId() > 370 && 422 > userAssetLocation.getAsset().getId() ? AssetColorType.Material : AssetColorType.LP_Rooms;
 
         return HomeResDto.builder()
                 .assetName(userAssetLocation.getAsset().getAssetName())
