@@ -33,6 +33,8 @@ function GachaShop(): JSX.Element {
   const [giftGradeShadow, setGiftGradeShadow] = useState<string>('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
   // 선물 등급에 따른 레벨가격
   const [giftGradeName, setGiftGradeName] = useState<string>('bg-[#2079c2]');
+  // 선물 등급이름
+  const [giftLevel, setGiftLevel] = useState<string>('');
   // 아이템 확인 딜레이
   const [ItemCloseDelay, setItemCloseDelay] = useState<boolean>(false);
 
@@ -103,14 +105,17 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
           }
           setGiftOpenStatus(true);
@@ -124,14 +129,17 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
           }
           setGiftOpenStatus(true);
@@ -145,18 +153,22 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
             case 'LEGENDARY':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(000,255,000)]');
               setGiftGradeName('bg-[#09811f]');
+              setGiftLevel('레전더리');
               break;
           }
           setGiftOpenStatus(true);
@@ -292,7 +304,7 @@ function GachaShop(): JSX.Element {
             enterTo={`${giftGradeShadow} opacity-100`}>
             <div
               className={`${giftGradeName} py-1 px-4 text-sm border-2 lg:border-[3px] lg:px-8 lg:text-lg font-bold text-white rounded-3xl`}>
-              {assetData?.assetLevel}
+              {giftLevel}
             </div>
           </Transition.Child>
           <Transition.Child
