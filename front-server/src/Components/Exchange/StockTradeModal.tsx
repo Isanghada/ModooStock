@@ -18,7 +18,7 @@ function StockTradeModal({ tradeStockModalData, isShowStockModal, setIsShowStock
   const [isLoaded, setIsLoaded] = useState(false);
   const [src, setSrc] = useState('');
   useEffect(() => {
-    console.log('tradeStockModalData: ', tradeStockModalData);
+    // console.log('tradeStockModalData: ', tradeStockModalData);
 
     const img = new Image();
     img.onload = () => {

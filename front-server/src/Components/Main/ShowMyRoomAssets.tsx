@@ -52,7 +52,7 @@ function ShowMyRoomAssets({ len, pos, rot }: any): JSX.Element {
       ref={ref}
       onClick={(e) => {
         e.stopPropagation();
-        console.log('집');
+        // console.log('집');
       }}>
       <group position={pos} rotation={rot} scale={scale}>
         {meshData}

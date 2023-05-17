@@ -71,7 +71,7 @@ function Menu(): JSX.Element {
       toast.info('회원탈퇴 하셨습니다');
       window.location.replace('/');
     } catch (error) {
-      console.log(error, '회원탈퇴 에러');
+      // console.log(error, '회원탈퇴 에러');
     }
   };
   // 클릭 이벤트 처리

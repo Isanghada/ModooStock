@@ -125,7 +125,7 @@ function Mypage(): JSX.Element {
       case '판매 취소':
         const deleteAuction = async () => {
           const { data, result } = await deleteAuctionMyAssetId(clickAsseData.userAssetId).unwrap();
-          console.log(data, result);
+          // console.log(data, result);
           if (result === 'SUCCESS') {
             toast.success('물품을 반환했습니다.');
             successFxSound.play();
@@ -191,7 +191,7 @@ function Mypage(): JSX.Element {
         break;
       case '창고':
       case '창고M':
-        console.log('clickAsseData: ', clickAsseData.userAssetId);
+        // console.log('clickAsseData: ', clickAsseData.userAssetId);
         const goInven = async () => {
           const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {

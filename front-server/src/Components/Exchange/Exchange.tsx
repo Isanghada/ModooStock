@@ -938,7 +938,7 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                   {/* 차트 */}
-                  <div className="w-full h-[15rem] text-[0.6rem] bg-white">
+                  <div className="w-full h-[15rem] text-[0.6rem] bg-white font-semibold">
                     <Chart data={selectChartData} />
                   </div>
                 </div>
@@ -951,7 +951,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(oilData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={oilData} />
                     </div>
                   </div>
@@ -963,7 +963,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(goldData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={goldData} />
                     </div>
                   </div>
@@ -1236,7 +1236,7 @@ function Exchange(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-[9rem] text-[0.75rem] font-normal">
+                  <div className="w-full h-[9rem] text-[0.75rem] font-medium">
                     {clickNational === 0 && <Chart data={usdData} />}
                     {clickNational === 1 && <Chart data={jypData} />}
                     {clickNational === 2 && <Chart data={euroData} />}
