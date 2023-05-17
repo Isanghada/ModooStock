@@ -112,10 +112,6 @@ function Lottery(): JSX.Element {
     setCanOpenModal(canOpenModal);
   };
 
-  if (isError1 || isError2) {
-    toast.error('오류 발생....');
-  }
-
   useEffect(() => {
     if (isOpen) {
       dispatch(changeCurrentMoneyHideStatus(true));
