@@ -65,9 +65,9 @@ function Lottery(): JSX.Element {
   const [postMiniGameDark, { isError: isError2 }] = usePostMiniGameDarkMutation();
 
   const handleOpenModal = async (isDark: boolean) => {
-    const moneyLimit = isDark ? 100_0000 : 1_0000;
+    const moneyLimit = isDark ? 100_0000 : 5_0000;
     if (currentMoneyStatus < moneyLimit) {
-      toast.error(`보유돈이 ${moneyLimit}원보다 작습니다...`);
+      toast.error(`보유돈이 ${moneyLimit.toLocaleString()}원보다 작습니다...`);
       return;
     }
 

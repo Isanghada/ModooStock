@@ -49,7 +49,7 @@ let dateFormatter = (format: string, date: DateType): string => {
 function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
   return (
     <div
-      className={`flex flex-col items-center justify-center w-[160px] h-[240px] md:w-[200px] md:h-[300px] rounded-lg px-2 pt-4 ${
+      className={`flex flex-col items-center justify-center w-[10rem] h-[15rem] md:w-[12.5rem] md:h-[18.75rem] rounded-lg px-2 pt-4 ${
         isDark ? 'bg-pink-100' : 'bg-sky-100'
       }`}>
       <span className={`${styles.font2} text-lg md:text-2xl text-center`}>최대 당첨금</span>
@@ -71,7 +71,7 @@ function LeftDescription({ isDark }: { isDark: boolean }): JSX.Element {
         )}
       </div>
       <img
-        className="w-[80px] md:w-[120px]"
+        className="w-[5rem]] md:w-[7.5rem]"
         src={process.env.REACT_APP_S3_URL + '/images/icons/lottoPig.png'}
         alt="로또"></img>
     </div>
@@ -223,7 +223,7 @@ function LotteryModal({ isDark, result, timestamp, handleCanOpenModal }: Props):
     <>
       <div className={`flex max-w-screen-xl mx-auto rounded-lg h-fit border-4`}>
         <LeftDescription isDark={isDark} />
-        <div className="flex items-center flex-col justify-center w-[372px] h-[240px] md:w-[466px] md:h-[300px] bg-white rounded-lg">
+        <div className="flex items-center flex-col justify-center w-[23.25rem] h-[15rem] md:w-[29.125rem] md:h-[18.75rem] bg-white rounded-lg">
           <div className="w-11/12 text-right pr-5 text-xs text-[#707070]">발행일시 : {curTime}</div>
           <div className="relative my-2">
             <div
