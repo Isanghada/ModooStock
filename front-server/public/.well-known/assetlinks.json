@@ -1,0 +1,32 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.modoostock.twa",
+      "sha256_cert_fingerprints": [
+        "6A:96:0E:5B:B4:0E:7C:29:42:BF:B1:F1:10:AC:86:20:6A:F8:9B:A6:39:51:91:82:60:C8:EC:37:17:D6:FE:D2"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.modoostock.twa",
+      "sha256_cert_fingerprints": [
+        "46:CC:26:2C:F6:E2:17:E2:85:EC:98:88:AE:4B:FC:56:83:EC:0E:16:0E:92:17:E0:6E:D5:0D:E3:6F:D2:55:78"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.modoostock.twa",
+      "sha1_cert_fingerprints": [
+        "C3:89:F8:36:98:0B:5E:7F:84:0D:30:B5:77:0A:20:5C:25:9B:DA:C3"
+      ]
+    }
+  }
+]

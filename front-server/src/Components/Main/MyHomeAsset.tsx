@@ -1,12 +1,8 @@
 import { useGLTF } from '@react-three/drei';
 import { useRef } from 'react';
 function MyHomeAsset({ len, pos, rot }: any): JSX.Element {
-  console.log(pos);
-
-  const { nodes, materials }: any = useGLTF('/assets/house.gltf');
-  console.log(nodes);
-  console.log(materials);
-
+  const li = Math.floor(Math.random() * new Array(20).length);
+  const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + `/assets/mainHouse/house${li}.gltf`);
   const ref = useRef(null);
 
   let cnt = -1;
@@ -34,21 +30,17 @@ function MyHomeAsset({ len, pos, rot }: any): JSX.Element {
   const meshData = meshPosition.map((data: any, idx: number) => {
     return (
       <mesh
+        key={idx}
         geometry={geo[idx]}
-        material={materials._LP_Rooms_Material}
+        material={materials[`${Object.keys(materials)}`]}
         position={meshPosition[idx]}
       />
     );
   });
 
   return (
-    <group
-      ref={ref}
-      onClick={(e) => {
-        e.stopPropagation();
-        console.log('집');
-      }}>
-      <group position={pos} rotation={rot} scale={len}>
+    <group ref={ref}>
+      <group position={li === 10 ? [-0.35, -1.28, -8] : pos} rotation={rot} scale={len}>
         {meshData}
       </group>
     </group>

@@ -27,7 +27,7 @@ const screenHeight = window.screen.height;
 
 function UpdateInfo(): JSX.Element {
   const dispatch = useAppDispatch();
-  const myNickName = localStorage.getItem("nickname");
+  const myNickName = localStorage.getItem('nickname');
   // 빈값 체크
   const [emptyValue, setEmptyValue] = useState<ValueInterFace>({
     account: false,
@@ -59,6 +59,7 @@ function UpdateInfo(): JSX.Element {
   //input에 입력될 때마다 account state값 변경되게 하는 함수
   const onChangeAccount = async (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+    // console.log(value,"밸류")
     // 케이스에 따른 api 요청
     if (value.length >= 2) {
       setMinValue({
@@ -68,7 +69,7 @@ function UpdateInfo(): JSX.Element {
       switch (name) {
         case 'nickname':
           // 정보수정때는 내 닉네임 한번더 입력해도 괜찮음
-          if(myNickName === value) {
+          if (myNickName === value) {
             break;
           }
           const nickData = await getUsersNickCheck(value).unwrap();
@@ -129,12 +130,12 @@ function UpdateInfo(): JSX.Element {
       nickname: account.nickname,
       password: account.password,
       introduction: account.introduction,
-      profileImagePath: ""
+      profileImagePath: ''
     };
-
     try {
       await putUsersInfo(accoutData).unwrap();
       dispatch(changeUpdateStatus(false));
+      localStorage.setItem('nickname', account.nickname);
       toast.success('회원정보수정 완료!');
     } catch (error) {
       toast.error('회원정보수정을 실패하였습니다.');
@@ -225,6 +226,7 @@ function UpdateInfo(): JSX.Element {
           </label>
           <input
             onChange={onChangeAccount}
+            name="introduction"
             id="introduction"
             className="w-full lg:w-3/4 h-3/4 text-xs lg:text-base border-2 border-[#FFC1B7] rounded-md p-2 outline-none focus:border-[#f98270]"
             placeholder="자기소개"
@@ -238,11 +240,10 @@ function UpdateInfo(): JSX.Element {
             취소
           </div>
           <input
-            type='submit'
+            type="submit"
             className="bg-[#FFD4CD] rounded-xl text-sm lg:text-2xl font-extrabold w-[48%] text-center text-white py-1 lg:py-2 my-1 lg:my-2 cursor-pointer hover:bg-[#ffc1b8]"
             value="정보수정완료"
-            />
-            
+          />
         </div>
       </form>
     </motion.div>

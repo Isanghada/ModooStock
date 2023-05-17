@@ -7,8 +7,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from 'firebase/messaging';
 import { messaging } from '../../firebase';
-import SetPushToken from 'Components/Common/SetPushToken'
-
+import SetPushToken from 'Components/Common/SetPushToken';
+import { useLazyGetAdminUserCheckQuery } from 'Store/api';
 
 interface LoginInterFace {
   account: string;
@@ -48,7 +48,7 @@ function Login(): JSX.Element {
   const onSubmitLoginForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // 로그인 시도 API
-    const loginData : any = await postUsersLogin(loginAccount);
+    const loginData: any = await postUsersLogin(loginAccount);
     // 로그인 시도후 처리
     if (loginData.data) {
       // 토큰 세팅
@@ -57,27 +57,25 @@ function Login(): JSX.Element {
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('nickname', nickname);
       // 웹푸시용 토큰
-      const permission = await Notification.requestPermission();
-      if (permission === 'denied') {
-        console.log('알림 권한 허용 안됨');
-      } else if (permission === 'granted') {
-        console.log('알림 권한 허용 됨!!! ');
-        const token = await getToken(messaging, {
-          vapidKey: process.env.REACT_APP_FCM_VAPID
-        });
-        if (token) {
-          console.log('token: ', token);
-          SetPushToken(nickname, token);
-        } else {
-          console.log('Can not get Token');
-        }
-      }
+      // const permission = await Notification.requestPermission();
+      // if (permission === 'denied') {
+      //   console.log('알림 권한 허용 안됨');
+      // } else if (permission === 'granted') {
+      //   const token = await getToken(messaging, {
+      //     vapidKey: process.env.REACT_APP_FCM_VAPID
+      //   });
+      //   if (token) {
+      //     SetPushToken(nickname, token);
+      //   } else {
+      //     console.log('Can not get Token');
+      //   }
+      // }
       closeLogin();
       toast.success('어서오세요!!');
       navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
-      console.log('로그인 에러 :', loginData.error);
+      // console.log('로그인 에러 :', loginData.error);
     }
   };
 
@@ -106,7 +104,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="account"
             type="text"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-[transparent] p-2 outline-none focus:border-[#f98270]`}
             placeholder="아이디"
             required
           />
@@ -114,7 +112,7 @@ function Login(): JSX.Element {
             onChange={onChangeAccount}
             name="password"
             type="password"
-            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-12 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
+            className={`border-2 border-[#FFC1B7] w-full h-8 lg:h-10 rounded-md bg-transparent p-2 outline-none focus:border-[#f98270]`}
             placeholder="비밀번호"
             required
           />

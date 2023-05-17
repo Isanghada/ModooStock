@@ -193,7 +193,7 @@ function MobileInfo({
               )}
             </div>
             {/* 선택한 것에 대한 차트 변경 */}
-            <div className="w-full h-[11rem] text-[0.8rem]">
+            <div className="w-full h-[11rem] text-[0.8rem] font-medium">
               <Chart data={clickData} />
             </div>
             <div className="flex items-end justify-between w-full px-2">

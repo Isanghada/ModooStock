@@ -20,6 +20,9 @@ import CountdownTimer from './CountdownTimer';
 import IRModal from './IRModal';
 import StockTradeModal from './StockTradeModal';
 import Loading from 'Components/Common/Loading';
+// 파이어베이스
+import { dbService } from '../../firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 interface CahrtDataType {
   일자: string;
@@ -92,6 +95,23 @@ function Exchange(): JSX.Element {
   const currentMoney = useAppSelector((state) => {
     return state.currentMoneyStatus;
   });
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
+
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
   const [isPossibleStockTime, setIsPossibleStockTime] = useState<boolean>(false);
   const [isNewsClick, setIsNewsClick] = useState<boolean>(false);
   const [isMobileInfo, setIsMobileInfo] = useState<boolean>(false);
@@ -195,11 +215,8 @@ function Exchange(): JSX.Element {
         Authorization: `Bearer ${token}`,
         'Cache-Control': 'no-cache'
       },
+      heartbeatTimeout: 300000,
       withCredentials: true
-    });
-
-    newEventSource.addEventListener('connect', (e: any) => {
-      // console.log(e);
     });
     setEventSource(newEventSource);
 
@@ -210,29 +227,46 @@ function Exchange(): JSX.Element {
     };
   }, []);
 
-    if (eventSource) {
-      eventSource.onmessage = (event: any) => {
-        // toast.info('sse 데이터 받기');
-        setSseData(JSON.parse(event.data));
-      };
+  if (eventSource) {
+    eventSource.onmessage = (event: any) => {
+      // toast.info('sse 데이터 받기');
+      setSseData(JSON.parse(event.data));
+    };
 
-      eventSource.onerror = (event:any) => {
-        eventSource.close();
-        const token = localStorage.getItem('accessToken');
+    eventSource.onerror = () => {
+      eventSource.close();
+      const token = localStorage.getItem('accessToken');
 
-        const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${token}`,
-            'Cache-Control': 'no-cache'
-          },
-          withCredentials: true
-        });
+      const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
+        heartbeatTimeout: 300000,
+        withCredentials: true
+      });
 
-        setEventSource(newEventSource);
-      }
-    }
+      setEventSource(newEventSource);
+    };
+  }
+
+  if (!eventSource) {
+    const token = localStorage.getItem('accessToken');
+
+    const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache'
+      },
+      heartbeatTimeout: 300000,
+      withCredentials: true
+    });
+    setEventSource(newEventSource);
+  }
 
   const clickButtonEvent = (number: number) => {
     if (inputRef.current) {
@@ -275,45 +309,59 @@ function Exchange(): JSX.Element {
   const click = (e: React.MouseEvent) => {
     switch (e.currentTarget.ariaLabel) {
       case '1개':
+        clickBtn.play();
         clickButtonEvent(1);
         break;
       case '10개':
+        clickBtn.play();
         clickButtonEvent(10);
         break;
       case '100개':
+        clickBtn.play();
         clickButtonEvent(100);
         break;
       case '1000개':
+        clickBtn.play();
         clickButtonEvent(1000);
         break;
       case '1개M':
+        clickBtn.play();
         clickButtonEventM(1);
         break;
       case '10개M':
+        clickBtn.play();
         clickButtonEventM(10);
         break;
       case '100개M':
+        clickBtn.play();
         clickButtonEventM(100);
         break;
       case '1000개M':
+        clickBtn.play();
         clickButtonEventM(1000);
         break;
       case '신문':
+        clickBtn.play();
         setIsNewsClick((pre) => !pre);
         break;
       case '정보':
+        clickBtn.play();
         setIsMobileInfo((pre) => !pre);
         break;
       case '기업활동':
+        clickBtn.play();
         setIsIRClick((pre) => !pre);
         break;
       case '미국':
+        clickBtn.play();
         setClickNational(0);
         break;
       case '일본':
+        clickBtn.play();
         setClickNational(1);
         break;
       case '유럽연합':
+        clickBtn.play();
         setClickNational(2);
         break;
       case '매수':
@@ -323,17 +371,29 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
-            const { data, result } = await postStock(body).unwrap();
-            if (inputRef.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                toast.success('구매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await postStock(body).unwrap();
+              if (inputRef.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매수하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('매수 완료하였습니다!');
+                  successFxSound.play();
+                } else {
+                  errorFxSound.play();
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef.current.value = '0';
               }
-              inputRef.current.value = '0';
-            } else {
+            } catch {
+              errorFxSound.play();
+              toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
           posrStock();
@@ -346,17 +406,29 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const posrStock = async () => {
-            const { data, result } = await postStock(body).unwrap();
-            if (inputRef2.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                toast.success('구매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await postStock(body).unwrap();
+              if (inputRef2.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매수하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  toast.success('구매 완료하였습니다!');
+                  successFxSound.play();
+                } else {
+                  errorFxSound.play();
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef2.current.value = '0';
               }
-              inputRef2.current.value = '0';
-            } else {
+            } catch {
+              errorFxSound.play();
+              toast.error('매수할 수 있는 개수를 초과했습니다!');
             }
           };
           posrStock();
@@ -369,16 +441,30 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
-            const { data, result } = await deleteStock(body).unwrap();
-            if (inputRef.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                toast.success('판매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await deleteStock(body).unwrap();
+
+              if (inputRef.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  successFxSound.play();
+                  toast.success('매도를 완료하였습니다!');
+                } else {
+                  errorFxSound.play();
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef.current.value = '0';
               }
-              inputRef.current.value = '0';
+            } catch {
+              errorFxSound.play();
+              toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
           stockDelete();
@@ -391,16 +477,29 @@ function Exchange(): JSX.Element {
             stockId: sseData?.stockId
           };
           const stockDelete = async () => {
-            const { data, result } = await deleteStock(body).unwrap();
-            if (inputRef2.current) {
-              if (result === 'SUCCESS') {
-                setTradeStockModalData(data);
-                setIsShowStockModal(true);
-                toast.success('판매 완료하였습니다!');
-              } else {
-                toast.error('요청에 문제가 생겼습니다!');
+            try {
+              const { data, result } = await deleteStock(body).unwrap();
+              if (inputRef2.current) {
+                if (result === 'SUCCESS') {
+                  setTradeStockModalData(data);
+                  setIsShowStockModal(true);
+                  // 시스템 메시지에 추가
+                  await addDoc(collection(dbService, 'system'), {
+                    nickname: localStorage.getItem('nickname'),
+                    content: `누군가 ${data.kind}의 주식을 ${data.amount.toLocaleString()}개 매도하셨습니다`,
+                    createdAt: serverTimestamp()
+                  });
+                  successFxSound.play();
+                  toast.success('매도를 완료하였습니다!');
+                } else {
+                  errorFxSound.play();
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+                inputRef2.current.value = '0';
               }
-              inputRef2.current.value = '0';
+            } catch {
+              errorFxSound.play();
+              toast.error('매도할 수 있는 개수를 초과했습니다!');
             }
           };
           stockDelete();
@@ -512,6 +611,7 @@ function Exchange(): JSX.Element {
       if (clickNationalName !== '') {
         SetSelectIRData(irData[clickNationalName]);
       }
+
       // 수익, 손익 계산을 위한 데이터 추가
       if (stockChartResDto.length > 1) {
         setSelectRevenueData((stockChartResDto[stockChartResDto.length - 1].priceEnd - average) * amount);
@@ -612,12 +712,6 @@ function Exchange(): JSX.Element {
     getStockSelect(stockId);
   };
 
-  // if (eventSource) {
-  //   eventSource.onmessage = (event: any) => {
-  //     setSseData(JSON.parse(event.data));
-  //   };
-  // }
-
   const clickStock = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -669,9 +763,18 @@ function Exchange(): JSX.Element {
               setIsIRClick={setIsIRClick}
               selectIRData={selectIRData}
               date={selectCurrentData.date.split('-')}
+              clickBtn={clickBtn}
+              cancelClickBtn={cancelClickBtn}
             />
           )}
-          {isNewsClick && <NewsModal isNewsClick={isNewsClick} setIsNewsClick={setIsNewsClick} />}
+          {isNewsClick && (
+            <NewsModal
+              isNewsClick={isNewsClick}
+              setIsNewsClick={setIsNewsClick}
+              clickBtn={clickBtn}
+              cancelClickBtn={cancelClickBtn}
+            />
+          )}
           {isMobileInfo && (
             <MobileInfo
               isMobileInfo={isMobileInfo}
@@ -757,49 +860,85 @@ function Exchange(): JSX.Element {
                       className={`flex items-end space-x-1 ${
                         selectRevenueData > 0 ? 'text-red-500' : 'text-blue-500'
                       }`}>
-                      <span className={`text-[1.5rem]`}>{selectRevenueData.toLocaleString()}원</span>
-                      <span className="text-[1rem]">({sseData?.rate.toFixed(2)}%)</span>
+                      <span className={`text-[1.3rem]`}>{selectRevenueData.toLocaleString()}원</span>
+                      <span className="text-[0.9rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
                     <div className="flex space-x-3 items-end  text-[1.5rem]">
                       {sseData && sseData?.amount > 0 && (
                         <>
                           <div className="flex items-center space-x-1">
-                            <span className="text-[1rem]">보유수량</span>
-                            <span className="text-black">{sseData?.amount.toLocaleString()}</span>
+                            <span className="text-[0.9rem]">보유수량</span>
+                            <span className="text-black text-[1.3rem]">{sseData?.amount.toLocaleString()}</span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <span className=" items-end text-[1rem]">평균단가</span>
-                            <span className="text-black">{sseData?.average?.toLocaleString()}</span>
+                            <span className=" items-end text-[0.9rem]">평균단가</span>
+                            <span className="text-black text-[1.3rem]">{sseData?.average?.toLocaleString()}</span>
                           </div>
                         </>
                       )}
 
                       <div className="flex items-center space-x-1">
-                        <span className="text-[1rem]">현재가</span>
-                        <span className={`text-black`}>{selectCurrentData.priceEnd.toLocaleString()}</span>
-                        <span className="text-black">원</span>
-                        <span
-                          className={`text-[1rem] flex pt-2 items-end ${
-                            sseData &&
-                            selectCurrentData.priceEnd -
-                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
-                              0
-                              ? 'text-red-500'
-                              : 'text-blue-500'
-                          }`}>
-                          (
-                          {sseData &&
-                            (
-                              selectCurrentData.priceEnd -
-                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
-                            ).toLocaleString()}
-                          )
+                        <span className="text-[0.9rem]">현재가</span>
+                        <span className={`text-black text-[1.3rem]`}>
+                          {selectCurrentData.priceEnd.toLocaleString()}
                         </span>
+                        <span className="text-black text-[1.3rem]">원</span>
+                        {/* 현재 주식 데이터가 한개일 경우 */}
+                        {sseData && sseData.stockChartResDto.length === 1 && (
+                          <span
+                            className={`text-[1rem] flex pt-2 items-end ${
+                              sseData &&
+                              selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                                0
+                                ? 'text-red-500'
+                                : 'text-blue-500'
+                            }`}>
+                            (
+                            {selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                            0
+                              ? selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                              : Math.abs(
+                                  selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                ).toLocaleString()}
+                            )
+                          </span>
+                        )}
+                        {sseData && sseData.stockChartResDto.length > 1 && (
+                          <span
+                            // 현재 주식 데이터가 여러개일 경우
+                            className={`text-[1rem] flex pt-2 items-end ${
+                              sseData &&
+                              selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd >
+                                0
+                                ? 'text-red-500'
+                                : 'text-blue-500'
+                            }`}>
+                            (
+                            {selectCurrentData.priceEnd -
+                              sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd <
+                            0
+                              ? '-' +
+                                Math.abs(
+                                  selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                ).toLocaleString()
+                              : (
+                                  selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                ).toLocaleString()}
+                            )
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                   {/* 차트 */}
-                  <div className="w-full h-[15rem] text-[0.6rem] bg-white">
+                  <div className="w-full h-[15rem] text-[0.6rem] bg-white font-semibold">
                     <Chart data={selectChartData} />
                   </div>
                 </div>
@@ -812,7 +951,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(oilData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={oilData} />
                     </div>
                   </div>
@@ -824,7 +963,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(goldData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={goldData} />
                     </div>
                   </div>
@@ -839,7 +978,7 @@ function Exchange(): JSX.Element {
                       <span className="text-[0.7rem] font-semibold">{clickNationalName}</span>
                     </div>
                     {sseData && sseData?.amount > 0 && (
-                      <div className="flex items-end space-x-1">
+                      <div className="flex items-end space-x-2">
                         <div className="flex items-center space-x-1">
                           <span className="text-[0.7rem]">보유수량</span>
                           <span className="text-black">{sseData?.amount.toLocaleString()}</span>
@@ -861,30 +1000,64 @@ function Exchange(): JSX.Element {
                       <span className="text-[0.7rem]">({sseData?.rate.toFixed(2)}%)</span>
                     </div>
                     <div className="flex space-x-1 items-center text-[0.8rem] md:text-[1rem]">
-                      {sseData && sseData?.amount > 0 && (
+                      {sseData && (
                         <>
                           <div className="flex items-center">
                             <span className=" items-end text-[0.7rem] pr-1">현재가</span>
                             <span className="text-black">{selectCurrentData.priceEnd.toLocaleString()}</span>
                             <span className="text-black text-[0.7rem]">원</span>
                           </div>
-                          <span
-                            className={`text-[0.6rem] flex  items-end  ${
-                              sseData &&
-                              selectCurrentData.priceEnd -
-                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
-                                0
-                                ? 'text-red-500'
-                                : 'text-blue-500'
-                            }`}>
-                            (
-                            {sseData &&
-                              (
+                          {/* 현재 주식 데이터가 한개일 경우 */}
+                          {sseData && sseData.stockChartResDto.length === 1 && (
+                            <span
+                              className={`text-[0.6rem] pb-1 flex pt-2 items-end ${
+                                sseData &&
                                 selectCurrentData.priceEnd -
-                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
-                              ).toLocaleString()}
-                            )
-                          </span>
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                                  0
+                                  ? 'text-red-500'
+                                  : 'text-blue-500'
+                              }`}>
+                              (
+                              {selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore >
+                              0
+                                ? selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                : Math.abs(
+                                    selectCurrentData.priceEnd -
+                                      sseData?.stockChartResDto[sseData?.stockChartResDto.length - 1].priceBefore
+                                  ).toLocaleString()}
+                              )
+                            </span>
+                          )}
+                          {sseData && sseData.stockChartResDto.length >= 2 && (
+                            <span
+                              // 현재 주식 데이터가 여러개일 경우
+                              className={`text-[0.6rem] pb-1 flex pt-2 items-end ${
+                                sseData &&
+                                selectCurrentData.priceEnd -
+                                  sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd >
+                                  0
+                                  ? 'text-red-500'
+                                  : 'text-blue-500'
+                              }`}>
+                              (
+                              {selectCurrentData.priceEnd -
+                                sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd <
+                              0
+                                ? '-' +
+                                  Math.abs(
+                                    selectCurrentData.priceEnd -
+                                      sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                  ).toLocaleString()
+                                : (
+                                    selectCurrentData.priceEnd -
+                                    sseData?.stockChartResDto[sseData?.stockChartResDto.length - 2].priceEnd
+                                  ).toLocaleString()}
+                              )
+                            </span>
+                          )}
                         </>
                       )}
                     </div>
@@ -936,17 +1109,7 @@ function Exchange(): JSX.Element {
                   <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
                     <div className="flex items-end justify-between w-full font-extrabold">
                       <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
-                      <span
-                        className={` text-[0.7rem]
-                          ${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'text-black'
-                              : 'text-red-500'
-                          }`}>
-                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                          ? `구매 금액: ${afterMoney}원`
-                          : `한도 초과: ${afterMoney}원`}
-                      </span>
+                      <span className={` text-[0.8rem]`}>금액: {afterMoney}원</span>
                     </div>
                     <div className="hidden lg:flex justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
                       <input
@@ -990,9 +1153,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          sseData && sseData.amount > 0
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매도</span>
@@ -1002,7 +1165,7 @@ function Exchange(): JSX.Element {
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
                           parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매수</span>
@@ -1073,7 +1236,7 @@ function Exchange(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-[9rem] text-[0.75rem] font-normal">
+                  <div className="w-full h-[9rem] text-[0.75rem] font-medium">
                     {clickNational === 0 && <Chart data={usdData} />}
                     {clickNational === 1 && <Chart data={jypData} />}
                     {clickNational === 2 && <Chart data={euroData} />}
@@ -1142,17 +1305,7 @@ function Exchange(): JSX.Element {
                   <div className="flex flex-col items-start justify-start w-full px-3 py-1 space-y-1 lg:space-y-2">
                     <div className="flex items-end justify-between w-full font-extrabold">
                       <span className="text-[1rem] lg:text-[1.5rem] ">주식 거래</span>
-                      <span
-                        className={` text-[0.7rem]
-                          ${
-                            parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                              ? 'text-black'
-                              : 'text-red-500'
-                          }`}>
-                        {parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
-                          ? `구매 금액: ${afterMoney}원`
-                          : `한도 초과: ${afterMoney}원`}
-                      </span>
+                      <span className={` text-[0.7rem] `}>금액: {afterMoney}원</span>
                     </div>
                     <div className="flex lg:hidden justify-end items-center w-full bg-[#FFF2F0] border-[#ECB7BB] border-2 rounded-md pr-3">
                       <input
@@ -1196,9 +1349,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도2"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          sseData && sseData?.amount > 0
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매도</span>
@@ -1208,7 +1361,7 @@ function Exchange(): JSX.Element {
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
                           parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
-                            : 'cursor-not-allowed'
+                            : 'disabled cursor-not-allowed'
                         }`}
                         onClick={click}>
                         <span>매수</span>

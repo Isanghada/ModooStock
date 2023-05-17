@@ -21,6 +21,12 @@ public enum ErrorCode {
 
 	/* 400 BAD REQUEST : 잘못된 요청. 입력된 데이터에 문제가 있음 */
 	PASSWORD_NOT_MATCH(BAD_REQUEST, "패스워드가 일치하지 않습니다."),
+	LACK_OF_MONEY(BAD_REQUEST, "잔액이 부족합니다."),
+	FULL_OF_MONEY(BAD_REQUEST,"지갑이 꽉찼습니다."),
+	LACK_OF_STOCK(BAD_REQUEST,"매도할 주식이 없습니다."),
+	IMPOSSIBLE_FUNCTION(BAD_REQUEST, "가입 후 3시간 뒤 이용할 수 있는 기능입니다."),
+	IMPOSSIBLE_TRANSFER(BAD_REQUEST, "가입 후 3시간이 지난 사용자에게 송금할 수 있습니다."),
+
 
 	/* 401 UNAUTHORIZED : 권한 인증 문제. JWT 토큰과 관련된 에러 */
 	UNAUTHORIZED_USER(UNAUTHORIZED, "권한이 허용되지 않은 유저입니다."),

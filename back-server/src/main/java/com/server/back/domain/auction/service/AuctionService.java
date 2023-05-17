@@ -16,4 +16,8 @@ public interface AuctionService {
     void deleteAuction(Long auctionId);
 
     void createAuction(AuctionReqDto auctionReqDto);
+
+    List<AuctionResDto> getMyAuctionList();
+
+    void deleteMyPageAuction(Long myAssetId);
 }

@@ -1,8 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { getMessaging } from 'firebase/messaging';
 // import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,7 +18,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const dbService = getFirestore(app);
 const messaging = getMessaging(app);
 // const storageService = getStorage(app);
@@ -31,7 +29,6 @@ async function requestPermission() {
     console.log('알림 권한 허용 안됨');
     return;
   }
-  console.log('알림 권한 허용 됨!!! ');
 
   // const token = await getToken(messaging, {
   //   vapidKey: process.env.REACT_APP_FCM_VAPID
@@ -42,10 +39,6 @@ async function requestPermission() {
   //   console.log('Can not get Token');
   // }
 
-  onMessage(messaging, (payload) => {
-    console.log("메시지가 도착했습니다.", payload);
-    // ...
-  });
 }
 requestPermission();
 

@@ -18,7 +18,7 @@ function StockTradeModal({ tradeStockModalData, isShowStockModal, setIsShowStock
   const [isLoaded, setIsLoaded] = useState(false);
   const [src, setSrc] = useState('');
   useEffect(() => {
-    console.log('tradeStockModalData: ', tradeStockModalData);
+    // console.log('tradeStockModalData: ', tradeStockModalData);
 
     const img = new Image();
     img.onload = () => {
@@ -33,7 +33,7 @@ function StockTradeModal({ tradeStockModalData, isShowStockModal, setIsShowStock
   };
   return (
     <>
-      {isShowStockModal && (
+      {isLoaded && isShowStockModal && (
         <div
           ref={ref}
           className="relative z-[60]"
@@ -45,7 +45,7 @@ function StockTradeModal({ tradeStockModalData, isShowStockModal, setIsShowStock
           <div className="fixed inset-0 bg-black bg-opacity-25" />
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex items-center justify-center min-h-full p-4 text-center">
-              <div className="w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold">
+              <div className="w-full max-w-xs p-4 overflow-hidden text-sm font-semibold leading-6 text-center align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl lg:text-xl lg:font-bold">
                 <div className="flex justify-center w-full my-2 lg:my-4">
                   <img className="w-[12%] h-auto" src={src} alt="info" />
                 </div>

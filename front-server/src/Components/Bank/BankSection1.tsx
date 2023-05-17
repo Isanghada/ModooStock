@@ -8,10 +8,22 @@ interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
   IntAfterCurrentMoney: number;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
 // 예금
-function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClickType): JSX.Element {
+function BankSection1({
+  setIsClick,
+  currentMoney,
+  IntAfterCurrentMoney,
+  clickBtn,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: SetIsClickType): JSX.Element {
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const [afterMoney, setAfterMoney] = useState<string>('0');
@@ -55,20 +67,23 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     if (price > 0) {
       const { data, result } = await postBank(price).unwrap();
       if (data) {
+        successFxSound.play();
         dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - price).toLocaleString()));
         toast.success('개설에 성공했습니다!');
         setIsClick((pre) => !pre);
       } else {
+        errorFxSound.play();
         toast.error('요청에 실패했습니다...');
       }
     } else {
+      errorFxSound.play();
       toast.error('금액을 입력해주세요!');
     }
   };
 
   const isValidInput = async (input: string) => {
     const regex = await /^[0-9,]*$/;
-    console.log('regex: ', regex);
+    // console.log('regex: ', regex);
     return regex.test(input);
   };
 
@@ -79,7 +94,7 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         if (target.value !== '' && ref.current) {
           await isValidInput(ref.current.value).then((r) => {
             if (r === true && ref.current) {
-              console.log(ref.current.value);
+              // console.log(ref.current.value);
 
               const intValue = parseInt(ref.current.value.replaceAll(',', ''));
               const checkMoney: number = IntAfterCurrentMoney - intValue;
@@ -105,6 +120,7 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     const intMoney: number = parseInt(money);
     switch (target.ariaLabel) {
       case '지우기':
+        clickBtn.play();
         if (ref.current) {
           if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
@@ -116,21 +132,27 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         }
         break;
       case '1만원':
+        clickBtn.play();
         clickDeposit(intMoney, 10000);
         break;
       case '5만원':
+        clickBtn.play();
         clickDeposit(intMoney, 50000);
         break;
       case '10만원':
+        clickBtn.play();
         clickDeposit(intMoney, 100000);
         break;
       case '100만원':
+        clickBtn.play();
         clickDeposit(intMoney, 1000000);
         break;
       case '1000만원':
+        clickBtn.play();
         clickDeposit(intMoney, 10000000);
         break;
       case '전액':
+        clickBtn.play();
         clickDeposit(intMoney, intMoney);
         break;
       case '개설 하기':
@@ -236,7 +258,10 @@ function BankSection1({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         <div className="flex justify-center pb-4 space-x-3 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0 mt-1">
           <div
             className="bg-[#B2B9C2] px-8 lg:px-10 rounded-full drop-shadow-lg py-1 hover:scale-105 transition-all duration-300 cursor-pointer"
-            onClick={() => setIsClick((pre) => !pre)}>
+            onClick={() => {
+              cancelClickBtn.play();
+              setIsClick((pre) => !pre);
+            }}>
             <span>닫기</span>
           </div>
           <div

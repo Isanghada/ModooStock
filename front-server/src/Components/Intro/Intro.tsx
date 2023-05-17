@@ -1,30 +1,49 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import money from 'Components/Common/Lottie/money.json';
+// import money from 'Components/Common/Lottie/money.json';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { changeLoginStatus } from 'Store/store';
 
 function Intro(): JSX.Element {
   const [showLogin, setShowLogin] = useState<boolean>(true);
   const dispatch = useAppDispatch();
 
+  // useEffect(() => {
+  //   const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/intro.mp3');
+  //   modoostockBGM.loop = true;
+  //   modoostockBGM.play()
+  // }, []);
+
   // 로그인 창 띄우기
   const showLogIn = () => {
     dispatch(changeLoginStatus(true));
     setShowLogin(false);
   };
-  // 로그인 창 닫기
-  const closeLogIn = () => {
-    dispatch(changeLoginStatus(false));
-    setShowLogin(true);
-  };
 
+  useEffect(() => {
+    // beforeinstallprompt 이벤트 핸들러 등록
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+    // 컴포넌트가 unmount될 때 이벤트 핸들러 해제
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
+  }, []);
+
+  // beforeinstallprompt 이벤트 핸들러
+  const handleInstallPrompt = (event: any) => {
+    // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
+    event.preventDefault();
+    let deferredPrompt = event;
+    deferredPrompt.prompt();
+  };
   return (
     <AnimatePresence>
       {/* 전체 배경 */}
       <motion.div
+        onClick={showLogIn}
         className="flex flex-col justify-center items-center w-full h-full text-xl bg-center bg-[url('/src/intro/IntroBG.png')] bg-no-repeat bg-contain lg:min-h-[38rem]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -36,7 +55,6 @@ function Intro(): JSX.Element {
         }}>
         {/* 로고 */}
         <motion.div
-          onClick={closeLogIn}
           className="flex items-center w-1/3 h-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

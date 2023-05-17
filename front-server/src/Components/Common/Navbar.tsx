@@ -20,13 +20,15 @@ function Navbar(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [myNickName, setMyNickName] = useState<string>('');
+  const [myProfile, setMyProfile] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
-
+  const [isUnmounted, setIsUnmounted] = useState(false);
+  const [isPageVisible, setPageVisible] = useState(true);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
 
-  // 내 정보 이벤트실행시 API 
+  // 내 정보 이벤트실행시 API
   const [getUsersInfo] = useLazyGetUsersInfoQuery();
 
   // 전체 스크린 높이
@@ -71,13 +73,14 @@ function Navbar(): JSX.Element {
   const getUser = async () => {
     const { data } = await getUsersInfo('');
     if (data) {
-      const { nickname, currentMoney, totalStockReturn } = data.data;
+      const { nickname, currentMoney, totalStockReturn, profileImagePath } = data.data;
+      setMyProfile(profileImagePath);
       setMyNickName(nickname);
       setCurrentMoney(currentMoney.toLocaleString());
       dispatch(changeCurrentMoneyStatusStatus(currentMoney.toLocaleString()));
       setTotalStockReturn(totalStockReturn);
     }
-  }
+  };
 
   useEffect(() => {
     if (dataUserInfo) {
@@ -116,7 +119,7 @@ function Navbar(): JSX.Element {
     const target = e.currentTarget as HTMLElement;
     switch (target.ariaLabel) {
       case '마이페이지':
-        navigate('/mypage');
+        navigate(`/travel/${localStorage.getItem('nickname')}`);
         break;
       case '홈':
         navigate('/main');
@@ -169,18 +172,41 @@ function Navbar(): JSX.Element {
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
-      const currentDate = new Date().toLocaleString('ko-kr');
       if (hour >= 10 && hour < 22) {
-        toast.info('새로운 하루의 정보가 갱신되었습니다');
-        // 내정보 갱신
-        setTimeout(async () => {
-          getUser();
-        }, 1000);
+        if (isPageVisible) {
+          toast.info('새로운 하루의 정보가 갱신되었습니다');
+        }
       }
+      // 내정보 갱신 (백에서 갱신되어야 하기떄문에 약간 시간초)
+      setTimeout(async () => {
+        await getUser();
+      }, 2000);
     });
+    getUser();
     getIndex();
+
+    return () => {
+      job.cancel();
+    };
+  }, [isPageVisible]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 페이지가 현재 보이는 상태일 때 실행할 작업
+        setPageVisible(true);
+      } else {
+        // 페이지가 현재 보이지 않는 상태일 때 실행할 작업
+        setPageVisible(false);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
-  
 
   return (
     <>
@@ -196,7 +222,7 @@ function Navbar(): JSX.Element {
                 screenHeight >= 800 ? 'min-w-[3rem] max-w-[5rem]' : ''
               }`}
               onClick={click}>
-              <img className="w-5/6" src={process.env.REACT_APP_S3_URL + `/images/toys/pink.png`} alt="money" />
+              <img className="w-2/3 duration-150 hover:scale-105" src={myProfile} alt="profile" />
             </div>
             <div
               className={`bg-[#FB6B9F] w-[18vw] h-[57%] lg:h-1/2 rounded-2xl text-xs lg:text-2xl text-white font-semibold lg:font-bold cursor-pointer flex justify-center items-center absolute -z-10 shadow-md shadow-gray-400 ${

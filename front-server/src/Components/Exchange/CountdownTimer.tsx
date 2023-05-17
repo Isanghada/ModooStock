@@ -23,7 +23,7 @@ function CountdownTimer({ setIsPossibleStockTime, isPossibleStockTime }: Countdo
         if (!isPossibleStockTime) {
           setIsPossibleStockTime(true);
         }
-        return `${22 - hours - 1 + 12} : ${
+        return `${(22 - hours - 1 + 12).toString()} : ${
           (60 - d.getMinutes() - 1).toString().length === 1 ? `0${60 - d.getMinutes() - 1}` : 60 - d.getMinutes() - 1
         } : ${
           (60 - d.getSeconds() - 1).toString().length === 1 ? `0${60 - d.getSeconds() - 1}` : 60 - d.getSeconds() - 1
@@ -44,7 +44,7 @@ function CountdownTimer({ setIsPossibleStockTime, isPossibleStockTime }: Countdo
         if (!isPossibleStockTime) {
           setIsPossibleStockTime(true);
         }
-        return `${22 - hours - 1} : ${
+        return `${(22 - hours - 1).toString().length === 1 ? `0${22 - hours - 1}` : 22 - hours - 1} : ${
           (60 - d.getMinutes() - 1).toString().length === 1 ? `0${60 - d.getMinutes() - 1}` : 60 - d.getMinutes() - 1
         } : ${
           (60 - d.getSeconds() - 1).toString().length === 1 ? `0${60 - d.getSeconds() - 1}` : 60 - d.getSeconds() - 1

@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -46,8 +48,13 @@ public class BankServiceImpl implements BankService {
     public void createBankAccount(BankReqDto bankReqDto) {
         Long userId = authService.getUserId();
         UserEntity user = userService.getUserById(userId);
-        
-        // 유자가 보유한 돈 빼내기
+
+        // 회원의 현재 보유돈보다 작은지 확인
+        if(user.getCurrentMoney() < bankReqDto.getPrice()){
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
+        }
+
+        // 회원이 보유한 돈 빼내기
         user.decreaseCurrentMoney(bankReqDto.getPrice());
         userRepository.save(user);
         
@@ -69,11 +76,17 @@ public class BankServiceImpl implements BankService {
         
         // 통장에서 돈 출금
         BankEntity bank = bankRepository.findByIdAndAndIsCompleted(bankId, IsCompleted.N).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
+
+        // 본인이 예금한 경우만 출금 가능.
+        if(!user.getId().equals(bank.getUser().getId())){
+            throw new CustomException(ErrorCode.NO_ACCESS);
+        }
+
         bank.setIsCompleted(IsCompleted.Y);
         bankRepository.save(bank);
 
         // 기본으로 은행에 넣었던 돈 얻기
-        Integer getMoney = bank.getPrice();
+        Long getMoney = bank.getPrice();
         // 만기일
         LocalDateTime endDate = bank.getCreatedAt().plusHours(BANK_PERIOD);
         
@@ -114,7 +127,7 @@ public class BankServiceImpl implements BankService {
         Long userId = authService.getUserId();
 
         // 총 예금 금액
-        Integer currentMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0);
+        Long currentMoney = bankRepository.getPriceSumByUserIdAndIsCompleted(userId, IsCompleted.N).orElse(0L);
         return MyTotalResDto.fromEntity(currentMoney);
     }
 
@@ -132,9 +145,16 @@ public class BankServiceImpl implements BankService {
         // 돈을 받는 사람
         UserEntity receiver = userService.getUserByNickname(transferReqDto.getReceiver());
 
+        LocalDateTime now = LocalDateTime.now();
+        Duration sendorDuration = Duration.between(sender.getCreatedAt(), now);
+        Duration receiverDuration = Duration.between(receiver.getCreatedAt(), now);
+        if(sendorDuration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+        if(receiverDuration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_TRANSFER);
+
+
         // 돈을 보내는 사람의 현재 보유돈 보다 작은지 확인
-        if(sender.getCurrentMoney() < transferReqDto.getMoney()){
-            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
+        if(sender.getCurrentMoney() < transferReqDto.getMoney()) {
+            throw new CustomException(ErrorCode.LACK_OF_MONEY);
         }
         
         // 현재 보유돈 보다 작을 경우 돈을 보냄
