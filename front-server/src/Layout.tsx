@@ -28,7 +28,7 @@ function Layout(): JSX.Element {
 
   const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
   modoostockBGM.loop = true;
-  modoostockBGM.volume = 0.05;
+  modoostockBGM.volume = 0.15;
 
   useEffect(() => {
     modoostockBGM.play();

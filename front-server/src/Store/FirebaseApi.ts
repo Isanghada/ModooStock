@@ -26,7 +26,6 @@ export const FirebaseApi = createApi({
     // 1. 웹 푸시용
     postSendPush: builder.mutation<any, any>({
       query: (data) => {
-        console.log("샌드푸쉬 : ", data);
         return {
           url: ``,
           method: 'POST',
