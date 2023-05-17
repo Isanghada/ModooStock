@@ -388,10 +388,12 @@ function Auction(): JSX.Element {
                         ? '레전더리'
                         : '유니크'}
                   </div>
-                  <img
-                    className="block w-full lg:h-[60%] h-[54%] object-cover scale-125"
-                    src={process.env.REACT_APP_S3_URL + `/assets/img/${selectItem?.assetResDto.assetName}.png`}
-                  />
+                  <div className='overflow-hidden'>
+                    <img
+                      className="block w-full object-cover lg:scale-125 scale-110"
+                      src={process.env.REACT_APP_S3_URL + `/assets/img/${selectItem?.assetResDto.assetName}.png`}
+                    />
+                  </div>
                   <div className="mb-2">
                     <div className="lg:block flex px-2 border-t-[0.01rem] mx-2 lg:text-[1.2rem] text-[0.8rem]">
                       <div>
