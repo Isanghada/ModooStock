@@ -22,23 +22,23 @@ function Intro(): JSX.Element {
     setShowLogin(false);
   };
 
-  useEffect(() => {
-    // beforeinstallprompt 이벤트 핸들러 등록
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+  // useEffect(() => {
+  //   // beforeinstallprompt 이벤트 핸들러 등록
+  //   window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
-    // 컴포넌트가 unmount될 때 이벤트 핸들러 해제
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
-    };
-  }, []);
+  //   // 컴포넌트가 unmount될 때 이벤트 핸들러 해제
+  //   return () => {
+  //     window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+  //   };
+  // }, []);
 
-  // beforeinstallprompt 이벤트 핸들러
-  const handleInstallPrompt = (event: any) => {
-    // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
-    event.preventDefault();
-    let deferredPrompt = event;
-    deferredPrompt.prompt();
-  };
+  // // beforeinstallprompt 이벤트 핸들러
+  // const handleInstallPrompt = (event: any) => {
+  //   // 설치 메시지 띄우기를 지연시키기 위해 이벤트를 저장
+  //   event.preventDefault();
+  //   let deferredPrompt = event;
+  //   deferredPrompt.prompt();
+  // };
   return (
     <AnimatePresence>
       {/* 전체 배경 */}
