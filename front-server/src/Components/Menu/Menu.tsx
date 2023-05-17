@@ -160,14 +160,14 @@ function Menu(): JSX.Element {
               <div className="w-1/2 mb-2 lg:mb-4">
                 <img className="w-full" src={src} alt="logo" />
               </div>
-              <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%]">
+              <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%] flex flex-col justify-center">
                 <a
                   target="_blank"
                   href="https://general-library-f31.notion.site/2febe6c2eb7f4be68f4d6d2391504d29"
                   className="decoration-transparent hover:text-red-300">
                   확률정보
                 </a>
-                <span>문의 : cinamon3344@gmail.com</span>
+                    <div>문의 : cinamon3344@gmail.com</div>
               </div>
               <div className="flex justify-between w-3/4">
                 <div
