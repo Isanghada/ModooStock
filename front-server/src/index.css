@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@media screen and (orientation: portrait) {
+/* @media screen and (orientation: portrait) {
   body {
     transform: rotate(90deg);
     transform-origin: top left;
@@ -14,7 +14,7 @@
     left: 0;
     content: '뒤로 돌아가';
   }
-}
+} */
 * {
   touch-action: manipulation;
 }
