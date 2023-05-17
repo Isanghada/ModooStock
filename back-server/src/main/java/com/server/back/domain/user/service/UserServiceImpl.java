@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserResDto> getUserList(String search) {
-        List<UserEntity> userList= userRepository.findByAccountContainingOrNicknameContainingAndIsDeleted(search, search,IsDeleted.N);
+        List<UserEntity> userList= userRepository.findByAccountContainingAndIsDeletedOrNicknameContainingAndIsDeleted(search,IsDeleted.N, search,IsDeleted.N);
         return UserResDto.fromEnityList(userList);
     }
 
