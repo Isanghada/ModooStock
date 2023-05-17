@@ -24,6 +24,8 @@ public enum ErrorCode {
 	LACK_OF_MONEY(BAD_REQUEST, "잔액이 부족합니다."),
 	FULL_OF_MONEY(BAD_REQUEST,"지갑이 꽉찼습니다."),
 	LACK_OF_STOCK(BAD_REQUEST,"매도할 주식이 없습니다."),
+	IMPOSSIBLE_FUNCTION(BAD_REQUEST, "가입 후 3시간 뒤 이용할 수 있는 기능입니다."),
+	IMPOSSIBLE_TRANSFER(BAD_REQUEST, "가입 후 3시간이 지난 사용자에게 송금할 수 있습니다."),
 
 
 	/* 401 UNAUTHORIZED : 권한 인증 문제. JWT 토큰과 관련된 에러 */
@@ -41,6 +43,8 @@ public enum ErrorCode {
 
 	/* 404 NOT_FOUND : 대상이 존재하지 않음 */
 	ENTITY_NOT_FOUND(NOT_FOUND, "엔티티가 존재하지 않습니다."),
+	SOLD_ENTITY(NOT_FOUND, "판매 완료된 상품입니다."),
+	CANCELED_ENTITY(NOT_FOUND, "판매 취소된 상품입니다."),
 	USER_NOT_FOUND(NOT_FOUND, "대상이 존재하지 않습니다.");
 
 	/* 500 INTERNAL_SERVER_ERROR : 서버 오류 - 정말 필요한 거 외엔 되도록 쓰지 않는 걸 권장*/

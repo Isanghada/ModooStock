@@ -17,5 +17,5 @@ public interface AdminUserService {
 
     void deleteUser(String account);
 
-    void getUserIsAdmin();
+    boolean getUserIsAdmin();
 }
