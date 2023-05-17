@@ -213,7 +213,8 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
         padding={
           'w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold'
         }
-        elementId={'guest-book-modal'}>
+        elementId={'modal-root2'}
+        canOpenModal={false}>
         <DeleteGuestBookModal
           onClose={handleCloseDeleteModal}
           commentId={commentId}
@@ -226,8 +227,9 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
         isOpen={isShowWriteModal}
         onClose={handleCloseWriteModal}
         padding={'align-middle transition-all transform'}
-        elementId={'guest-book-modal'}
-        styleType={2}>
+        elementId={'modal-root2'}
+        styleType={2}
+        canOpenModal={false}>
         <WriteGuestBookModal
           onClose={handleCloseWriteModal}
           type={type}

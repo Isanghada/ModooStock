@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery, useLazyGetUserMypageVisitorsQuery } from 'Store/api';
+import { useGetUsersTravelInfoQuery, useLazyGetUsersRandomQuery } from 'Store/api';
 import Loading from 'Components/Common/Loading';
 import Modal from 'Components/Main/Modal';
 import GuestBookList from './GuestBookList';
@@ -174,7 +174,7 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
           />
         )}
       </div>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={true}>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={false}>
         <GuestBookList
           onClose={handleCloseModal}
           clickBtn={clickBtn}
@@ -190,18 +190,6 @@ function BottomButtons(nickname: BottomButtonsType): JSX.Element {
 function Travel(): JSX.Element {
   const { nickname } = useParams() as { nickname: string };
   const { data: user, isLoading, isError } = useGetUsersTravelInfoQuery(nickname);
-  const [visitor, setVisitor] = useState<number>(1);
-  const [getVisitors, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUserMypageVisitorsQuery();
-
-  useEffect(() => {
-    const getVisit = async () => {
-      const { data, result } = await getVisitors(nickname).unwrap();
-      if (data) {
-        setVisitor(data);
-      }
-    };
-    getVisit();
-  }, [nickname, getVisitors]);
 
   const navigate = useNavigate();
 
@@ -224,10 +212,6 @@ function Travel(): JSX.Element {
         <div className="hidden items-center w-full h-full justify-evenly max-w-[80rem] min-h-[43rem] max-h-[46.5rem] my-auto mx-auto lg:flex">
           <div className="flex justify-center items-center lg:w-[33%] lg:pl-[2%] xl:pl-0 xl:w-[27%]">
             <div className="flex flex-col items-center justify-center w-full p-2 font-extrabold bg-white rounded-3xl drop-shadow-lg">
-              {/* 방문자수 */}
-              <div className="flex justify-end w-full px-2">
-                <p className="font-base text-center text-[#707070]">{visitor}명 방문 👀</p>
-              </div>
               {/* 프로필 이미지 */}
               <div className="flex justify-center mt-5 p-2 w-[5rem] h-[5rem] lg:w-[8rem] lg:h-[8rem] max-w-[10rem] max-h-[10rem] rounded-full  bg-[#fb7c7c]">
                 <img
@@ -254,11 +238,6 @@ function Travel(): JSX.Element {
               <div
                 className="flex items-center justify-between w-5/6 px-2 py-2"
                 title="주식, 은행, 소품을 포함한 금액 입니다!">
-                {/* <img
-                  className="w-[2rem] h-[1.5rem] object-contain"
-                  src={process.env.REACT_APP_S3_URL + '/images/icons/coin.png'}
-                  alt="돈"
-                /> */}
                 <span className="text-base min-w-fit">총 자산</span>
                 <span className="w-[17.5rem] font-bold text-right text-black text-lg">
                   {user?.data.totalCash?.toLocaleString()}원
@@ -277,12 +256,8 @@ function Travel(): JSX.Element {
               {/* 여기에 넣음 */}
               <div className="flex flex-col w-full font-extrabold">
                 <div className="flex flex-col items-center justify-center px-6 py-2 bg-white rounded-2xl drop-shadow-lg">
-                  {/* 방문자수 */}
-                  <div className="flex justify-end w-full mt-1">
-                    <p className="text-xs text-center text-[#707070]">{visitor}명 방문 👀</p>
-                  </div>
                   {/* 프로필 이미지 */}
-                  <div className="flex justify-center p-2 w-[5rem] h-[5rem] lg:w-[7rem] lg:h-[7rem] max-w-[7rem] max-h-[7rem] rounded-full  bg-[#fb7c7c]">
+                  <div className="flex justify-center p-2 w-[5rem] h-[5rem] lg:w-[7rem] lg:h-[7rem] max-w-[7rem] max-h-[7rem] rounded-full  bg-[#fb7c7c] mt-1">
                     <img
                       className="object-contain m-2 rounded-full"
                       src={user?.data.profileImagePath}
@@ -303,12 +278,10 @@ function Travel(): JSX.Element {
                   </div>
                   {/* 라인 */}
                   <div className="w-full text-center mt-2 border-b border-solid border-[#E0E0E0] leading-[0.1em]" />
-                  <div className="flex items-center justify-between w-full py-2">
-                    <img
-                      className="w-[1.5rem] h-[1.5rem] object-contain"
-                      src={process.env.REACT_APP_S3_URL + '/images/icons/coin.png'}
-                      alt="돈"
-                    />
+                  <div
+                    className="flex items-center justify-between w-full py-2"
+                    title="주식, 은행, 소품을 포함한 금액 입니다!">
+                    <span className="text-base min-w-fit">총 자산</span>
                     <p className="text-[1rem] font-bold text-right text-black">
                       {user?.data.totalCash?.toLocaleString()}원
                     </p>
