@@ -166,9 +166,9 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
             {/* map */}
             {data?.data.length !== 0 && (
               <div className="grid grid-cols-2 gap-4 px-4 py-4 md:grid-cols-3 lg:grid-cols-4">
-                {data?.data.map((item: ReturnGuestBookItem, index) => (
+                {data?.data.map((item: ReturnGuestBookItem, idx: number) => (
                   <GuestBookItem
-                    key={index}
+                    key={idx}
                     authorResDto={item.authorResDto}
                     commentResDto={item.commentResDto}
                     isAuthor={item.isAuthor}
