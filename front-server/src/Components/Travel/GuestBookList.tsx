@@ -142,9 +142,9 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/mailBox.png'}
-              className="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px] object-cover"
+              className="w-[36px] h-[36px] md:w-[40px] md:h-[40px] lg:w-[60px] lg:h-[60px] object-cover"
             />
-            <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
+            <p className="text-xl md:text-3xl lg:text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
           </div>
           <button
             className="object-cover round-full"
@@ -155,7 +155,7 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/multiply.png'}
-              className="w-[2rem] h-[2rem] lg:w-[3rem] lg:h-[3rem] object-cover round-full"
+              className="w-[1.7rem] h-[1.7rem] md:w-[2rem] md:h-[2rem] lg:w-[3rem] lg:h-[3rem] object-cover round-full"
             />
           </button>
         </div>
@@ -181,8 +181,8 @@ function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, erro
             {data?.data.length === 0 && (
               <div className="w-[456px] md:w-[688px] lg:w-[912px] h-full flex items-center py-2">
                 <div className="flex flex-col items-center justify-center w-full gap-4 lg:">
-                  <span className=" font-semibold text-xl text-[#707070]">아직 방명록이 없어요!</span>
-                  <Lottie animationData={mailbox} className="w-[10rem] h-[10rem] lg:w-[12rem] lg:h-[12rem]" />
+                  <span className=" font-semibold text-lg lg:text-xl text-[#707070]">아직 방명록이 없어요!</span>
+                  <Lottie animationData={mailbox} className="w-[8rem] h-[8rem] lg:w-[12rem] lg:h-[12rem]" />
                 </div>
               </div>
             )}
