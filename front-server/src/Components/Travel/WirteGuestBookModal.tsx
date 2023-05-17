@@ -69,7 +69,7 @@ function WriteGuestBookModal({
 
   return (
     <>
-      <div className="w-[28rem] h-[12rem] lg:w-[31.25rem] lg:h-[18rem] relative">
+      <div className="w-[26rem] h-[12rem] lg:w-[31.25rem] lg:h-[18rem] relative">
         <div className="absolute w-[40%] h-fit rounded-t-xl bg-[#ff7b7b] pb-4">
           <div className="flex items-center justify-start w-full ml-4 leading-6 text-start lg:text-xl lg:font-bold">
             <img
@@ -85,7 +85,7 @@ function WriteGuestBookModal({
         <div className="absolute w-full top-[2rem] lg:top-[2.4rem] p-3 overflow-hidden shadow-xl lg:p-4 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold bg-white">
           <div className={`w-full pb-2`}>
             <textarea
-              className="w-full h-[6rem] lg:h-[10.75rem] rounded-lg bg-[#fff6f2] border-2 border-[#fde2e2] focus:outline-[#FFC1B7] font-medium p-2  lg:p-4"
+              className="w-full h-[5rem] lg:h-[10.75rem] rounded-lg bg-[#fff6f2] border-2 border-[#fde2e2] focus:outline-[#FFC1B7] font-medium p-2  lg:p-4"
               style={{ resize: 'none' }}
               placeholder={'방명록을 남겨보세요!'}
               onChange={handleContentChange}
