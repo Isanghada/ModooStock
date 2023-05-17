@@ -50,13 +50,14 @@ function AuctionModal({isOpen, setIsOpen,item ,what}:Props): JSX.Element {
 
     useEffect(() => {
         const handleClickOutside = (event:MouseEvent) => {
+            cancelClickBtn.play();
             if(modalRef.current && !modalRef.current.contains(event.target as Node)){
                 setIsOpen(false)
             }
         }
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
-          }
+        }
         return () => {
           document.removeEventListener('mousedown', handleClickOutside)
         }
