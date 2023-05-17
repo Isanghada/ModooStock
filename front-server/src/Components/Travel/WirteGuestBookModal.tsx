@@ -37,6 +37,12 @@ function WriteGuestBookModal({
   const { nickname } = useParams() as { nickname: string };
 
   const handleComment = async () => {
+    if (content.length === 0) {
+      errorFxSound.play();
+      toast.error('방명록 내용을 작성해주세요');
+      return;
+    }
+
     if (type === 'WRITE') {
       try {
         const { data, result } = await postComment({ content: content, nickname: nickname }).unwrap();
