@@ -163,10 +163,11 @@ function Menu(): JSX.Element {
               <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%]">
                 <a
                   target="_blank"
-                  href="https://www.youtube.com/@hminor3510"
+                  href="https://general-library-f31.notion.site/2febe6c2eb7f4be68f4d6d2391504d29"
                   className="decoration-transparent hover:text-red-300">
-                  문의 : 천재 기타리스트 HMinor
+                  확률정보
                 </a>
+                <span>문의 : cinamon3344@gmail.com</span>
               </div>
               <div className="flex justify-between w-3/4">
                 <div
