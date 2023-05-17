@@ -20,8 +20,11 @@ function Main(): JSX.Element {
   const clickSound = useAppSelector((state) => {
     return state.clickBtn;
   });
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
   const clickBtn = new Audio(clickSound);
-
+  const cancelClickBtn = new Audio(cancelClickSound);
   if (getAdmin?.data === true) {
     navigate('/admin');
   }
@@ -82,14 +85,17 @@ function Main(): JSX.Element {
   const [openGuide, setOpenGuide] = useState(false);
 
   const handleOpenModal = () => {
+    clickBtn.play();
     setIsOpen(true);
   };
 
   const handleCloseModal = () => {
+    cancelClickBtn.play();
     setIsOpen(false);
   };
 
   const handleOpenGuide = () => {
+    clickBtn.play();
     setOpenGuide(true);
   };
 
