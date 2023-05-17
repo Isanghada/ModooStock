@@ -64,7 +64,7 @@ function Menu(): JSX.Element {
   // 회원탈퇴
   const deleteUser = async () => {
     try {
-      await postDeleteUsers("").unwrap();
+      await postDeleteUsers('').unwrap();
       // 메뉴 닫기
       dispatch(changeMenuStatus(false));
       localStorage.clear();
@@ -110,7 +110,7 @@ function Menu(): JSX.Element {
     imgPrivacy.onload = () => {
       setIsPrivacyLoaded(true);
     };
-    imgPrivacy.src = '/images/PrivacyPolicy.png';
+    imgPrivacy.src = process.env.REACT_APP_S3_URL + '/images/privacyPolicy/PrivacyPolicy.png';
   }, []);
   return (
     <>
