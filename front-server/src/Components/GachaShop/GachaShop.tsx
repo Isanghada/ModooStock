@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { usePostGotchaLevelMutation } from 'Store/api';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { openPlay } from 'Store/store';
+import { openPlay, playClick } from 'Store/store';
 
 interface AssetDataInterFace {
   assetCategory: string;
@@ -58,6 +58,8 @@ function GachaShop(): JSX.Element {
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const currentMoney = Number(currentMoneyStatus.replaceAll(',', ''));
+    // 클릭 효과음
+    dispatch(playClick());
     switch (target.ariaLabel) {
       case '일반':
         if (currentMoney < 500000) {
@@ -182,7 +184,7 @@ function GachaShop(): JSX.Element {
   useEffect(() => {
     if (giftOpenStatus) {
       setTimeout(() => {
-        dispatch(openPlay("play"));
+        dispatch(openPlay());
         setGiftOpenStatus(false);
         setItemOpenStatus(true);
       }, 3900);

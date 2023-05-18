@@ -4,7 +4,7 @@ import Lottie from 'lottie-react';
 import moneyT from 'Components/Common/Lottie/money2.json';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeLoginStatus } from 'Store/store';
+import { changeLoginStatus, playBGM } from 'Store/store';
 
 function Intro(): JSX.Element {
   const [showLogin, setShowLogin] = useState<boolean>(true);

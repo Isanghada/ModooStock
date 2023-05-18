@@ -173,19 +173,37 @@ const isClickInvenAssetStore = createSlice({
 const clickBtn = createSlice({
   name: 'clickBtn',
   initialState: process.env.REACT_APP_S3_URL + '/sound/fx/click.wav',
-  reducers: {}
+  reducers: {
+    playClick(state) {
+      const openSound = new Audio(process.env.REACT_APP_S3_URL + '/sound/fx/click.wav');
+      openSound.play();
+      return state;
+    }
+  }
 });
 // 취소 클릭 버튼
 const cancelClick = createSlice({
   name: 'cancelClick',
   initialState: process.env.REACT_APP_S3_URL + '/sound/fx/cancelClick.wav',
-  reducers: {}
+  reducers: {
+    cancelPlay(state) {
+      const cancelSound = new Audio(process.env.REACT_APP_S3_URL + '/sound/fx/cancelClick.wav');
+      cancelSound.play();
+      return state;
+    }
+  }
 });
 // 요청 성공 FX
 const successFx = createSlice({
   name: 'successFx',
   initialState: process.env.REACT_APP_S3_URL + '/sound/fx/success.wav',
-  reducers: {}
+  reducers: {
+    successClick(state) {
+      const successSound = new Audio(process.env.REACT_APP_S3_URL + '/sound/fx/success.wav');
+      successSound.play();
+      return state;
+    }
+  }
 });
 // 요청 실패 FX
 const errorFx = createSlice({
@@ -198,16 +216,34 @@ const openFx = createSlice({
   name: 'openFx',
   initialState: '',
   reducers: {
-    openPlay(state, action) {
-      const openSound = new Audio("/open.wav");
+    openPlay(state) {
+      const openSound = new Audio('/open.wav');
       openSound.play();
-      return (state = action.payload);
+      return state;
     }
-
   }
 });
 
 // ------------------------ BGM ------------------------
+const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
+modoostockBGM.loop = true;
+modoostockBGM.volume = 0.15;
+
+const BGM = createSlice({
+  name: 'BGM',
+  initialState: false,
+  reducers: {
+    playBGM(state, action) {
+      modoostockBGM.play();
+      // modoostockBGM.volume = 0.15;
+      return (state = action.payload);
+    },
+    pauseBGM(state, action) {
+      modoostockBGM.pause();
+      return (state = action.payload);
+    }
+  }
+});
 
 export const store = configureStore({
   // store에서 만든 state를 전역에서 사용할 수 있도록 등록하기
@@ -239,6 +275,7 @@ export const store = configureStore({
     errorFx: errorFx.reducer,
     openFx: openFx.reducer,
     // ------------- BGM -------------
+    BGM: BGM.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(Api.middleware).concat(NonAuthApi.middleware)
 });
@@ -263,8 +300,13 @@ export const { changeClickAssetPosition } = clickAssetPosition.actions;
 export const { changeClickAssetRotation } = clickAssetRotation.actions;
 export const { changeIsAuctionClickInvenAsset } = isAuctionClickInvenAsset.actions;
 export const { changeIsClickInvenAssetStore } = isClickInvenAssetStore.actions;
-// ------------- 음악 -------------
+// ------------- 효과음 -------------
 export const { openPlay } = openFx.actions;
+export const { playClick } = clickBtn.actions;
+export const { successClick } = successFx.actions;
+export const { cancelPlay } = cancelClick.actions;
+// ------------- BGM -------------
+export const { playBGM, pauseBGM } = BGM.actions;
 
 // store의 타입 미리 export 해둔 것.
 export type RootState = ReturnType<typeof store.getState>;

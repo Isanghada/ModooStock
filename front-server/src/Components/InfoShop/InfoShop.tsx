@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetNewsInfoQuery } from 'Store/api';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { cancelPlay, playClick } from 'Store/store';
 import InfoModal from './InfoModal';
 
 interface infoDataInterFace {
@@ -37,6 +38,7 @@ function InfoShop(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   // 모달 창 닫기
   function closeModal() {
+    dispatch(cancelPlay())
     setModalOpen(false);
   }
 
@@ -65,6 +67,7 @@ function InfoShop(): JSX.Element {
   });
   // 클릭 이벤트 처리
   const onClick = async (e: React.MouseEvent) => {
+    dispatch(playClick());
     const target = e.currentTarget as HTMLElement;
     const name = target.ariaLabel;
     const color = target.dataset.color;

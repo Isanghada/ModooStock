@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
-import { changeMenuStatus, changePrivacyStatus, changeUpdateStatus } from 'Store/store';
+import { changeMenuStatus, changePrivacyStatus, changeUpdateStatus, pauseBGM } from 'Store/store';
 import { motion } from 'framer-motion';
 import UpdateInfo from './UpdateInfo';
 import { useLazyGetUsersLogoutQuery, useDeleteUsersMutation } from 'Store/api';
@@ -22,6 +22,9 @@ function Menu(): JSX.Element {
   // 회원탈퇴 모달 관련
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  // 배경음 관련
+  const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
+
   // 모달 창 닫기
   function closeModal() {
     setModalOpen(false);
@@ -59,6 +62,7 @@ function Menu(): JSX.Element {
     dispatch(changeMenuStatus(false));
     localStorage.clear();
     toast.info('로그아웃 하셨습니다');
+    dispatch(pauseBGM(false))
     window.location.replace('/');
   };
   // 회원탈퇴
@@ -69,6 +73,7 @@ function Menu(): JSX.Element {
       dispatch(changeMenuStatus(false));
       localStorage.clear();
       toast.info('회원탈퇴 하셨습니다');
+      dispatch(pauseBGM(false))
       window.location.replace('/');
     } catch (error) {
       // console.log(error, '회원탈퇴 에러');
