@@ -1,13 +1,18 @@
+import ConfirmModal from 'Components/Common/ConfirmModal';
 import InfoNewsDetailModal from 'Components/InfoShop/InfoNewsDetailModal';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetNewsInfoQuery, useGetNewsListQuery } from 'Store/api';
 
+// 파이어베이스
+import { dbService } from '../../firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+
 interface NewsModalType {
   isNewsClick: boolean;
   setIsNewsClick: React.Dispatch<React.SetStateAction<boolean>>;
-  clickBtn: HTMLAudioElement;
-  cancelClickBtn: HTMLAudioElement;
+  roomName: string;
+  myProfile: string;
 }
 interface NewsPropsInterFace {
   color: string;
@@ -30,8 +35,11 @@ interface newsInterFace {
   ];
 }
 
-function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: NewsModalType): JSX.Element {
+function NewsInfo({ isNewsClick, setIsNewsClick, roomName, myProfile }: NewsModalType): JSX.Element {
   const navigate = useNavigate();
+  // 유저 프로필 데이터
+  const myEmail = localStorage.getItem('nickname');
+  const nickname = localStorage.getItem('nickname');
   // 뉴스 데이터 API
   const { data: dataNewsInfo } = useGetNewsInfoQuery('');
   // 내 뉴스정보 API
@@ -50,16 +58,34 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
     date: '',
     kind: ''
   });
-  // 뉴스모달 상태
-  const [newsModalOpen, setNewsModalOpen] = useState(false);
-  // 뉴스모달 창 닫기
+  // 공유모달 상태
+  const [newsShareOpen, setNewsShareOpen] = useState(false);
+  // 공유모달 창 닫기
   function closeModal() {
-    setNewsModalOpen(false);
+    setNewsShareOpen(false);
   }
-  // 디테일 모달창
-  const showNewsDetail = (data: NewsPropsInterFace) => {
+  // 공유 모달창
+  const showNewsShare = (data: NewsPropsInterFace) => {
     setNewsModalData(data);
-    setNewsModalOpen(true);
+    setNewsShareOpen(true);
+  };
+  // 정보 공유 (파이어베이스)
+  const shareInfo = async (newsModalData: NewsPropsInterFace) => {
+    const { content, kind, color, date } = newsModalData;
+    // 메시지 데이터에 추가
+    await addDoc(collection(dbService, roomName), {
+      type: "news",
+      email: myEmail,
+      nickname: nickname,
+      kind,
+      content,
+      color,
+      date,
+      createdAt: serverTimestamp(),
+      profilePath: myProfile
+    });
+    setNewsShareOpen(false);
+    setIsNewsClick(false)
   };
 
   // 안에 뉴스 내용들
@@ -102,10 +128,20 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
       const data = { ...news, color };
       return (
         <>
+          <ConfirmModal
+            isOpen={newsShareOpen}
+            msg={`정말 ${newsModalData?.kind}정보를 공유하실건가요?`}
+            propsFunction={() => {
+              shareInfo(newsModalData);
+            }}
+            closeModal={closeModal}
+            accept={'공유하기'}
+            cancel={'취소'}
+          />
           <div
             key={news.date}
             onClick={() => {
-              showNewsDetail(data);
+              showNewsShare(data);
             }}
             className="w-full cursor-pointer py-[2px] flex-col justify-start items-center space-y-1 rounded-sm bg-[#ebebeb] hover:bg-[#d0d0d0] ">
             <div className="flex items-center justify-between w-full">
@@ -132,36 +168,28 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
     const number = Number(target.dataset.number);
     switch (e.currentTarget.ariaLabel) {
       case '닫기':
-        cancelClickBtn.play();
         setIsNewsClick((pre) => !pre);
         break;
       case '전체':
-        clickBtn.play();
         setIsClickNum(0);
         break;
       case '정보상':
-        clickBtn.play();
         setIsNewsClick(false);
         navigate('/infoshop');
         break;
     }
     // 부득이하게 숫자로 구분
-
     switch (number) {
       case 0:
-        clickBtn.play();
         setIsClickNum(1);
         break;
       case 1:
-        clickBtn.play();
         setIsClickNum(2);
         break;
       case 2:
-        clickBtn.play();
         setIsClickNum(3);
         break;
       case 3:
-        clickBtn.play();
         setIsClickNum(4);
         break;
     }
@@ -176,7 +204,6 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
   }, [dataNewsInfo]);
   return (
     <>
-      <InfoNewsDetailModal isOpen={newsModalOpen} propsData={newsModalData} closeModal={closeModal} />
       {isNewsClick ? (
         <div
           ref={ref}
@@ -189,7 +216,7 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
           <div className="flex flex-col justify-center bg-white border drop-shadow-2xl w-[75%] max-w-[28rem] md:w-[65%] md:max-w-[35rem] lg:w-[42%] lg:min-w-[40rem] lg:max-w-[40rem] px-7 rounded-xl space-y-2 lg:space-y-4 py-2 lg:py-4">
             <div className="w-full flex justify-center items-center text-[1.2rem] h-10 lg:h-16 lg:text-[2rem] font-black">
               <img className="w-auto h-full" src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'} alt="news" />
-              <span>뉴스 스크랩</span>
+              <span>공유하실 정보를 선택해주세요</span>
             </div>
             <div className="flex items-end justify-start w-full space-x-6 px-2 text-sm lg:text-[1.3rem] font-semibold border-b-2 py-1 cursor-pointer text-[#6F6F6F]">
               <div
@@ -247,4 +274,4 @@ function NewsModal({ isNewsClick, setIsNewsClick, clickBtn, cancelClickBtn }: Ne
   );
 }
 
-export default NewsModal;
+export default NewsInfo;

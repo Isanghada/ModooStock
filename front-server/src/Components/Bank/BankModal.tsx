@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useAppSelector } from 'Store/hooks';
 import BankSection1 from './BankSection1';
 import BankSection2 from './BankSection2';
 import BankSection3 from './BankSection3';
@@ -7,9 +8,21 @@ interface ModalType {
   clickNum: number;
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
-function BankModal({ clickNum, setIsClick, currentMoney }: ModalType): JSX.Element {
+function BankModal({
+  clickNum,
+  setIsClick,
+  currentMoney,
+  clickBtn,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: ModalType): JSX.Element {
   const ref = useRef(null);
   let money = '';
   currentMoney.split(',').map((liMoney: string) => (money += liMoney));
@@ -24,13 +37,37 @@ function BankModal({ clickNum, setIsClick, currentMoney }: ModalType): JSX.Eleme
           }
         }}>
         {clickNum === 1 && (
-          <BankSection1 setIsClick={setIsClick} currentMoney={currentMoney} IntAfterCurrentMoney={parseInt(money)} />
+          <BankSection1
+            setIsClick={setIsClick}
+            currentMoney={currentMoney}
+            IntAfterCurrentMoney={parseInt(money)}
+            clickBtn={clickBtn}
+            cancelClickBtn={cancelClickBtn}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
+          />
         )}
         {clickNum === 2 && (
-          <BankSection2 setIsClick={setIsClick} currentMoney={currentMoney} IntAfterCurrentMoney={parseInt(money)} />
+          <BankSection2
+            setIsClick={setIsClick}
+            currentMoney={currentMoney}
+            IntAfterCurrentMoney={parseInt(money)}
+            clickBtn={clickBtn}
+            cancelClickBtn={cancelClickBtn}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
+          />
         )}
         {clickNum === 3 && (
-          <BankSection3 setIsClick={setIsClick} currentMoney={currentMoney} IntAfterCurrentMoney={parseInt(money)} />
+          <BankSection3
+            setIsClick={setIsClick}
+            currentMoney={currentMoney}
+            IntAfterCurrentMoney={parseInt(money)}
+            clickBtn={clickBtn}
+            cancelClickBtn={cancelClickBtn}
+            successFxSound={successFxSound}
+            errorFxSound={errorFxSound}
+          />
         )}
       </div>
     </>

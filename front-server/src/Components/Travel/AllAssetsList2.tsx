@@ -36,7 +36,7 @@ function AllAssetsList2({ len, pos, rot }: AllAssetsListType): JSX.Element {
             <mesh
               key={idx}
               geometry={geo[idx]}
-              material={materials[Object.keys(materials)[0]]}
+              material={materials[asset.type]}
               position={[asset.pos_x, asset.pos_y, asset.pos_z]}
               rotation={[asset.rot_x, asset.rot_y, asset.rot_z]}
               visible={true}

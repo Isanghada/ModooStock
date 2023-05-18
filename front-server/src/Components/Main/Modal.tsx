@@ -42,7 +42,7 @@ const Modal: FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full  overflow-auto bg-gray-800 bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full overflow-auto bg-gray-800 bg-opacity-50">
       {styleType === 1 && (
         <div
           ref={modalRef}

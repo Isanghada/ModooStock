@@ -61,10 +61,10 @@ function Message({
                 {date}
               </div>
               {date && (
-                <div className="flex flex-col items-center px-2 py-1 break-all bg-[#FB6B9F] rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]">
-                  {data.downLoadUrl && (
-                    <img src={data.downLoadUrl} alt={data.downLoadUrl} />
-                  )}
+                <div className={`${data.type === "text" ? `bg-[#FB6B9F]` : `bg-[#8f2b50]`} flex flex-col items-center px-2 py-1 break-all  rounded-tr-none lg:px-3 lg:py-2 rounded-2xl w-fit max-w-[60%] lg:max-w-[80%]`}>
+                    {data.type === "news" && (
+                      <img className="w-1/2" src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'} alt="news" />
+                    )}
                   {data.content}
                 </div>
               )}
@@ -77,9 +77,9 @@ function Message({
               {checkSameNick ? (
                 <div className="flex items-center w-fit">
                   {data.profilePath && (
-                    <div className="w-6 h-6 overflow-hidden rounded-full lg:w-10 lg:h-10">
+                    <div className="w-6 h-6 rounded-full lg:w-10 lg:h-10">
                       <img
-                        className="object-fill"
+                        className="w-6 h-6 lg:w-10 lg:h-10"
                         src={data.profilePath}
                         alt={data.profilePath}
                       />
@@ -90,9 +90,9 @@ function Message({
               ) : null}
               <div className="flex items-end my-[0.1rem] lg:my-[0.3rem] ml-8 lg:ml-12">
                 {date && (
-                  <div className="flex flex-col items-center py-1 px-2 lg:px-3 lg:py-2 text-black border-[0.1rem] border-[#ffa7c7] rounded-tl-none rounded-2xl break-all w-fit max-w-[60%] lg:max-w-[80%]">
-                    {data.downLoadUrl && (
-                      <img src={data.downLoadUrl} alt={data.downLoadUrl} />
+                  <div className={`${data.type === "text" ? `border-[#ffa7c7]` : `border-[#8f2b50]`} flex flex-col items-center py-1 px-2 lg:px-3 lg:py-2 text-black border-[0.1rem]  rounded-tl-none rounded-2xl break-all w-fit max-w-[60%] lg:max-w-[80%]`}>
+                    {data.type === "news" && (
+                      <img className="w-1/2" src={process.env.REACT_APP_S3_URL + '/images/icons/news.png'} alt="news" />
                     )}
                     {data.content}
                   </div>

@@ -3,19 +3,20 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAppSelector } from 'Store/hooks';
 import Login from 'Components/Login/Login';
 import SignUp from 'Components/SignUp/SignUp';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from 'Components/Common/Navbar';
 
 function Layout(): JSX.Element {
   const navigate = useNavigate();
   // 현재 주소 가져올 useLocation
   const location = useLocation();
+  const layoutRef = useRef<HTMLDivElement>(null);
   const [screenHeight, setScreenHeight] = useState<string>('');
   // 현재 브라우저 윈도우 너비 값
   const [screenWidth, setScreenWidth] = useState<number>(0);
   // 네브바 상태 체크
   const [isNavBar, setIsNavBar] = useState<boolean>(false);
-
+  const [clickBgm, setClickBgm] = useState<boolean>(false);
   // 로그인 창 상태
   const loginStatus = useAppSelector((state) => {
     return state.loginStatus;
@@ -24,6 +25,14 @@ function Layout(): JSX.Element {
   const signUpStatus = useAppSelector((state) => {
     return state.signUpStatus;
   });
+
+  const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
+  modoostockBGM.loop = true;
+  modoostockBGM.volume = 0.05;
+
+  useEffect(() => {
+    modoostockBGM.play();
+  }, [clickBgm]);
 
   useEffect(() => {
     // 창크기 변할때마다 실행
@@ -54,12 +63,32 @@ function Layout(): JSX.Element {
   useEffect(() => {
     // 레이아웃 최소값 세팅
     const height = window.screen.height;
-    setScreenHeight(`${height * 3/10}px`);
+    setScreenHeight(`${(height * 3) / 10}px`);
   }, [window.screen.height]);
+
+  // const [play, setPlay] = useState<boolean>(true);
+  // const player = useRef<any>();
+  // const Player = () => (
+  //   <AudioPlayer
+  //     ref={player}
+  //     autoPlay={true}
+  //     src={process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3'}
+  //     loop
+  //     onPlay={(e) => console.log('onPlay')}
+  //     style={{ display: 'none' }}
+  //     volume={0.1}
+  //     // other props here
+  //   />
+  // );
 
   return (
     <>
-      <div className="bg-[#FFF9F9] w-screen relative flex">
+      <div
+        ref={layoutRef}
+        className="bg-[#FFF9F9] w-screen relative flex"
+        onClick={() => {
+          setClickBgm(true);
+        }}>
         <div
           style={window.screen.height >= 800 ? { minHeight: screenHeight } : {}}
           className={`${
@@ -73,17 +102,19 @@ function Layout(): JSX.Element {
         {/* 로그인 컴포넌트 */}
         <AnimatePresence>
           {loginStatus && (
-            <motion.div
-              className="max-h-screen min-h-full overflow-hidden"
-              initial={{ width: 0 }}
-              animate={screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{
-                duration: 0.7,
-                ease: 'easeInOut'
-              }}>
-              {signUpStatus ? <SignUp /> : <Login />}
-            </motion.div>
+            <>
+              <motion.div
+                className="max-h-screen min-h-full overflow-hidden"
+                initial={{ width: 0 }}
+                animate={screenWidth <= 1024 ? { width: '40vw' } : { width: '30vw' }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{
+                  duration: 0.7,
+                  ease: 'easeInOut'
+                }}>
+                {signUpStatus ? <SignUp /> : <Login />}
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>

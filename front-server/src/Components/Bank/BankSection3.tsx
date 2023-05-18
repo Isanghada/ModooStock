@@ -12,10 +12,22 @@ interface SetIsClickType {
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   currentMoney: string;
   IntAfterCurrentMoney: number;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
 // 송금
-function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsClickType): JSX.Element {
+function BankSection3({
+  setIsClick,
+  currentMoney,
+  IntAfterCurrentMoney,
+  clickBtn,
+  cancelClickBtn,
+  successFxSound,
+  errorFxSound
+}: SetIsClickType): JSX.Element {
   const ref = useRef<HTMLInputElement>(null);
   const ref2 = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -25,7 +37,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
 
   const [postBankTransfer, { isLoading: isLoading1, isError: isError1 }] = usePostBankTransferMutation();
   const [getUsersNickname, { isLoading: isLoading2, isError: isError2 }] = useLazyGetUsersNicknameQuery();
-  const [postSendPushMessage ] = usePostSendPushMutation();
+  const [postSendPushMessage] = usePostSendPushMutation();
 
   useEffect(() => {
     if (IntAfterCurrentMoney > 0) {
@@ -89,50 +101,49 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
 
   // 송금
   const postTransfer = async (money: number, receiver: string) => {
-    if (money > 0) {
-      const body = {
-        money: money,
-        receiver: receiver
-      };
-      console.log(body);
+    try {
+      if (money > 0) {
+        const body = {
+          money: money,
+          receiver: receiver
+        };
 
-      const { data, result } = await postBankTransfer(body).unwrap();
-      console.log('data', data);
-      console.log('result', result);
-      console.log('nicknameCheck', nicknameCheck);
-
-      if (result === 'SUCCESS' && nicknameCheck) {
-        console.log(IntAfterCurrentMoney);
-        console.log(money);
-        dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
-        toast.success('송금을 성공했습니다!');
-        setIsClick(false);
-        // 웹 푸시용
-        const docRef = doc(dbService, 'PushToken', receiver);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const pushToken = docSnap.data().token;
-          const message = {
-            notification: {
-              title: '모두의 주식',
-              body: `${localStorage.getItem("nickname")}님이 당신에게 송금하였습니다`,
-              icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
-            },
-            to: pushToken
-          };
-          const {data} = await postSendPushMessage(message).unwrap()
-          console.log(data, "푸쉬후 데이터");
+        const { data, result } = await postBankTransfer(body).unwrap();
+        if (result === 'SUCCESS' && nicknameCheck) {
+          dispatch(changeCurrentMoneyStatusStatus((IntAfterCurrentMoney - money).toLocaleString()));
+          toast.success('송금을 성공했습니다!');
+          successFxSound.play();
+          setIsClick(false);
+          // 웹 푸시용
+          const docRef = doc(dbService, 'PushToken', receiver);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const pushToken = docSnap.data().token;
+            const message = {
+              notification: {
+                title: '모두의 주식',
+                body: `${localStorage.getItem('nickname')}님이 당신에게 송금하였습니다`,
+                icon: `${process.env.REACT_APP_S3_URL}/images/logos/pushLogo.png`
+              },
+              to: pushToken
+            };
+            const { data } = await postSendPushMessage(message).unwrap();
+          } else {
+            // docSnap.data() will be undefined in this case
+          }
+        } else if (nicknameCheck === false) {
+          errorFxSound.play();
+          toast.error('닉네임을 확인해주세요!');
         } else {
-          // docSnap.data() will be undefined in this case
-          console.log('No such document!');
+          errorFxSound.play();
+          toast.error('요청에 실패했습니다!');
         }
-      } else if (nicknameCheck === false) {
-        toast.error('닉네임을 확인해주세요!');
       } else {
-        toast.error('요청에 실패했습니다!');
+        toast.error('금액을 입력해주세요!');
+        errorFxSound.play();
       }
-    } else {
-      toast.error('금액을 입력해주세요!');
+    } catch (e: any) {
+      toast.error(e.data?.message);
     }
   };
 
@@ -142,12 +153,15 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
       // 현재 닉네임이 바뀔 수 있는 경우 -> 즉 해당 닉네임의 유저가 없다면
       if (data) {
         setNicknameCheck(false);
+        errorFxSound.play();
         toast.error('전송할 수 없는 닉네임입니다.');
       } else {
         setNicknameCheck(true);
+        clickBtn.play();
         toast.success('전송 가능한 닉네임입니다.');
       }
     } else {
+      errorFxSound.play();
       toast.error('요청에 문제가 생겼습니다.');
     }
   };
@@ -159,6 +173,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
     const intMoney: number = parseInt(money);
     switch (target.ariaLabel) {
       case '지우기':
+        clickBtn.play();
         if (ref.current) {
           if (ref.current.value !== '0' && ref.current.value !== '') {
             let inputvalueMoney = '';
@@ -173,21 +188,27 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         niceknameCheck();
         break;
       case '1만원':
+        clickBtn.play();
         clickTransfer(intMoney, 10000);
         break;
       case '5만원':
+        clickBtn.play();
         clickTransfer(intMoney, 50000);
         break;
       case '10만원':
+        clickBtn.play();
         clickTransfer(intMoney, 100000);
         break;
       case '100만원':
+        clickBtn.play();
         clickTransfer(intMoney, 1000000);
         break;
       case '1000만원':
+        clickBtn.play();
         clickTransfer(intMoney, 10000000);
         break;
       case '전액':
+        clickBtn.play();
         clickTransfer(intMoney, intMoney);
         break;
       case '송금 하기':
@@ -232,7 +253,7 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
                 />
               </div>
               <div aria-label="확인" className="w-[35%] flex  text-center my-auto text-white" onClick={click}>
-                <span className="w-full h-[70%] px-2 text-[0.7rem] lg:text-[0.8rem] py-[1px] hover:scale-105 transition-all duration-300 rounded-full bg-[#2C94EA]">
+                <span className="w-full h-[70%] px-2 text-[0.7rem] lg:text-[0.8rem] py-[1px] hover:scale-105 transition-all duration-300 rounded-full cursor-pointer bg-[#2C94EA]">
                   확인
                 </span>
               </div>
@@ -306,7 +327,10 @@ function BankSection3({ setIsClick, currentMoney, IntAfterCurrentMoney }: SetIsC
         <div className="flex justify-center pb-4 space-x-3 font-bold text-white text-[0.8rem] lg:text-[1rem] pt-1 lg:pt-0">
           <div
             className="bg-[#B2B9C2] px-8 lg:px-10 rounded-full drop-shadow-lg py-1 hover:scale-105 transition-all duration-300 cursor-pointer"
-            onClick={() => setIsClick((pre) => !pre)}>
+            onClick={() => {
+              setIsClick((pre) => !pre);
+              cancelClickBtn.play();
+            }}>
             <span>닫기</span>
           </div>
           <div

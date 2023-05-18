@@ -220,6 +220,7 @@ interface ReturnMyRoomAsset {
     rot_x: number;
     rot_y: number;
     rot_z: number;
+    type: string;
   }>;
   result: string;
 }
@@ -469,6 +470,18 @@ export const Api = createApi({
           url: `/users`,
           method: 'PUT',
           body: data
+        };
+      },
+      invalidatesTags: (result, error, arg) => {
+        return [{ type: 'UserApi' }];
+      }
+    }),
+    // 6. 회원탈퇴
+    deleteUsers: builder.mutation<ReturnBasicInterFace, string>({
+      query: () => {
+        return {
+          url: `/users`,
+          method: 'DELETE'
         };
       },
       invalidatesTags: (result, error, arg) => {
@@ -754,7 +767,7 @@ export const Api = createApi({
           method: 'POST'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'UserApi' }]
     }),
     // 5. 판매 취소
     deleteAuctionAuctionId: builder.mutation<ReturnBasicInterFace, string>({
@@ -764,7 +777,7 @@ export const Api = createApi({
           method: 'DELETE'
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }]
+      invalidatesTags: (result, error, arg) => [{ type: 'AuctionApi' }, { type: 'InvenApi' }]
     }),
     // 6. 마이페이지에서 판매 취소
     deleteAuctionMyAssetId: builder.mutation<ReturnBasicInterFace, number>({
@@ -786,7 +799,7 @@ export const Api = createApi({
     }),
     // 2. 마이페이지 방문자 수 조회
     getUserMypageVisitors: builder.query<ReturnVisitors, string>({
-      query: (nickname) => `/mypage/${nickname}​/visitor`,
+      query: (nickname) => `/mypage/visit?nickname=${nickname}`,
       providesTags: (result, error, arg) => {
         return [{ type: 'UserMypageApi' }];
       }
@@ -934,6 +947,15 @@ export const Api = createApi({
       providesTags: (result, error, arg) => {
         return [{ type: 'AdminUserApi' }];
       }
+    }),
+
+    // ----------- 어드민 유저 판별 ------------
+    // 1. 닉네임으로 회원 목록 검색
+    getAdminUserCheck: builder.query<ReturnBasicInterFace, string>({
+      query: () => `/admin/user/isadmin`,
+      providesTags: (result, error, arg) => {
+        return [];
+      }
     })
   })
 });
@@ -948,6 +970,7 @@ export const {
   useLazyGetUsersLogoutQuery,
   useLazyGetUsersNicknameQuery,
   usePutUsersInfoMutation,
+  useDeleteUsersMutation,
   useGetUsersTravelInfoQuery,
 
   // ------------- 은행 -------------
@@ -1003,7 +1026,7 @@ export const {
   useLazyGetAuctionMyQuery,
   // ----------- 방문 ------------
   useLazyGetUserMypageQuery,
-  useGetUserMypageVisitorsQuery,
+  useLazyGetUserMypageVisitorsQuery,
   // ----------- 방명록 ------------
   useGetCommentListQuery,
   useLazyGetCommentListQuery,
@@ -1029,5 +1052,8 @@ export const {
   usePutAdminUserSelectMutation,
   useDeleteAdminUserSelectMutation,
   useLazyGetAdminUserNickQuery,
-  useGetAdminUserNickQuery
+  useGetAdminUserNickQuery,
+  // ----------- 관리자 유저 체크 ------------
+  useGetAdminUserCheckQuery,
+  useLazyGetAdminUserCheckQuery
 } = Api;

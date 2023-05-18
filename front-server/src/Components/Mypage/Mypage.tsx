@@ -52,6 +52,23 @@ function Mypage(): JSX.Element {
     return state.isAuctionClickInvenAsset;
   });
 
+  // 효과음
+  const cancelClickSound = useAppSelector((state) => {
+    return state.cancelClick;
+  });
+  const successFx = useAppSelector((state) => {
+    return state.successFx;
+  });
+  const errorFx = useAppSelector((state) => {
+    return state.errorFx;
+  });
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const clickBtn = new Audio(clickSound);
+  const cancelClickBtn = new Audio(cancelClickSound);
+  const successFxSound = new Audio(successFx);
+  const errorFxSound = new Audio(errorFx);
   useEffect(() => {
     // 선택한 애가 경매에 등록됐을 경우 -> 옥션상태로 변경
     if (isAuctionClickInvenAsset) {
@@ -93,9 +110,11 @@ function Mypage(): JSX.Element {
     switch (e.currentTarget.ariaLabel) {
       case '경매장 등록':
         setIsModalClick((pre) => !pre);
+        successFxSound.play();
         break;
       case '닫기':
         setIsModalClick(false);
+        cancelClickBtn.play();
         break;
       case '판매 취소':
         const deleteAuction = async () => {
@@ -103,8 +122,10 @@ function Mypage(): JSX.Element {
           console.log(data, result);
           if (result === 'SUCCESS') {
             toast.success('물품을 반환했습니다.');
+            successFxSound.play();
           } else {
-            toast.error('요청에 실패했습니다.');
+            toast.error('요청 실패!');
+            errorFxSound.play();
           }
           settingMethod();
         };
@@ -122,15 +143,20 @@ function Mypage(): JSX.Element {
                 const { data, result } = await postAuction(body).unwrap();
                 if (data) {
                   toast.success('판매등록 되었습니다!');
+                  successFxSound.play();
                 } else {
-                  toast.error('요청에 문제가 생겼습니다!');
+                  toast.error('요청 실패!');
+                  errorFxSound.play();
                 }
                 setIsModalClick(false);
                 dispatch(changeIsAuctionClickInvenAsset(true));
               };
-              auction();
+              auction().catch((e: any) => {
+                toast.error(e.data?.message);
+              });
             } else {
               toast.error('숫자를 입력해주세요!');
+              errorFxSound.play();
             }
           });
         }
@@ -140,8 +166,10 @@ function Mypage(): JSX.Element {
           const { data, result } = await postStorageResale(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {
             toast.success('판매 완료!');
+            successFxSound.play();
           } else {
             toast.error('요청 실패!');
+            errorFxSound.play();
           }
           settingMethod();
         };
@@ -154,8 +182,10 @@ function Mypage(): JSX.Element {
           const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {
             toast.success('창고에 넣었습니다!');
+            clickBtn.play();
           } else {
             toast.error('요청 실패!');
+            errorFxSound.play();
           }
           settingMethod();
         };
@@ -176,8 +206,10 @@ function Mypage(): JSX.Element {
           const { data, result } = await putMypage(body).unwrap();
           if (result === 'SUCCESS') {
             toast.success('배치 완료!');
+            clickBtn.play();
           } else {
             toast.error('요청 실패!');
+            errorFxSound.play();
           }
         };
         settingAsset();
@@ -193,8 +225,10 @@ function Mypage(): JSX.Element {
           const { data, result } = await postMypage(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {
             toast.success('마이룸에 추가했습니다.');
+            clickBtn.play();
           } else {
-            toast.error('마이룸에 추가했습니다.');
+            toast.error('요청 실패!');
+            errorFxSound.play();
           }
           dispatch(changeIsClickInvenAssetStore(false));
         };
@@ -275,6 +309,11 @@ function Mypage(): JSX.Element {
                 {clickAsseData.assetLevel === 'UNIQUE' && (
                   <div className="bg-[#FFC34F] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
                     <span>유니크</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>레전더리</span>
                   </div>
                 )}
                 <div className="flex flex-col w-full space-y-1">
@@ -366,6 +405,7 @@ function Mypage(): JSX.Element {
                   rot={[1.75, 0, -0.8]}
                   isClickAsset={isClickAsset}
                   setIsClickAsset={setIsClickAsset}
+                  clickBtn={clickBtn}
                 />
               </Canvas>
             </Suspense>
@@ -674,6 +714,7 @@ function Mypage(): JSX.Element {
                   rot={[1.75, 0, -0.8]}
                   isClickAsset={isClickAsset}
                   setIsClickAsset={setIsClickAsset}
+                  clickBtn={clickBtn}
                 />
               </Canvas>
             </Suspense>
@@ -934,7 +975,7 @@ function Mypage(): JSX.Element {
           </div>
         </div>
       </motion.div>
-      <MypageInven setIsClickAsset={setIsClickAsset} />
+      <MypageInven setIsClickAsset={setIsClickAsset} clickBtn={clickBtn} />
     </>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
 import Loading from 'Components/Common/Loading';
+import texture from '/Texture_2048.png';
 interface AssetType {
   userAssetId: number;
   assetName: string;
@@ -21,6 +22,7 @@ interface AssetType {
   rot_x: number;
   rot_y: number;
   rot_z: number;
+  type: string;
 }
 
 interface AllAssetsListType {
@@ -29,9 +31,10 @@ interface AllAssetsListType {
   rot: any;
   isClickAsset: boolean;
   setIsClickAsset: React.Dispatch<React.SetStateAction<boolean>>;
+  clickBtn: HTMLAudioElement;
 }
 
-function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAssetsListType): JSX.Element {
+function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn }: AllAssetsListType): JSX.Element {
   const dispatch = useAppDispatch();
   const [getLazyMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
   const { data: getMypage, isLoading: isLoading2, isError: isError2 } = useGetMypageQuery('');
@@ -75,9 +78,6 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
   };
 
   useEffect(() => {
-    // if (isClickAsset) {
-    // console.log('clickAsseData: ', clickAsseData);
-
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
       let geo: any = [];
@@ -97,7 +97,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
             <mesh
               key={idx}
               geometry={geo[idx]}
-              material={materials[Object.keys(materials)[0]]}
+              // material={materials['Material']} // funiture
+              material={materials[asset.type]} // funiture
               position={
                 isClick
                   ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
@@ -111,6 +112,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset }: AllAsse
               visible={true}
               onClick={(e) => {
                 e.stopPropagation();
+                clickBtn.play();
                 changeClick(
                   // 이름. position, rotation
                   asset,

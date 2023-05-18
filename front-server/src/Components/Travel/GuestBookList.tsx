@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DeleteGuestBookModal from './DeleteGuestBookModal';
 import WriteGuestBookModal from './WirteGuestBookModal';
 import Modal from 'Components/Main/Modal';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetCommentListQuery } from 'Store/api';
 import Lottie from 'lottie-react';
 import mailbox from 'Components/Common/Lottie/mailbox.json';
 import Loading from 'Components/Common/Loading';
 
 interface Props {
-  onClose: React.MouseEventHandler<HTMLButtonElement>;
+  onClose: () => void;
+  clickBtn: HTMLAudioElement;
+  cancelClickBtn: HTMLAudioElement;
+  successFxSound: HTMLAudioElement;
+  errorFxSound: HTMLAudioElement;
 }
 
 interface CommentResDtoProps {
@@ -41,14 +45,20 @@ function GuestBookItem({
   handleOpenDeleteModal,
   handleOpenModifyModal
 }: GuestBookItemProps): JSX.Element {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="w-[13rem] h-[12.75rem] rounded-xl bg-white border border-[#fde2e2] p-4">
-        <div className="flex flex-row mb-2">
+        <div
+          className="flex flex-row mb-2 transition-all duration-300 cursor-pointer w-fit hover:scale-105"
+          onClick={() => navigate(`/travel/${author.nickname}`)}>
           <div className="flex justify-center w-6 h-6 lg:w-6 lg:h-6 rounded-full  bg-[#FCCACA] mr-2">
-            <img className="m-1 rounded-full object-contain" src={`${author.profileImagePath}`} alt="프로필 이미지" />
+            <img className="object-contain m-1 rounded-full" src={`${author.profileImagePath}`} alt="프로필 이미지" />
           </div>
-          <p className="w-[6rem] h-[1.625rem] text-base font-semibold text-left text-[#454545]">{author.nickname}</p>
+          <p className="h-[1.625rem] text-base font-semibold text-left text-[#454545] hover:font-bold">
+            {author.nickname}
+          </p>
         </div>
         <p className="w-[10.875rem] h-[7.5rem] text-base text-left text-[#747474] overflow-hidden">{comment.content}</p>
         {/* 오른쪽 아래 수정 및 삭제 버튼 */}
@@ -75,21 +85,11 @@ function GuestBookItem({
   );
 }
 
-function GuestBookList({ onClose }: Props): JSX.Element {
+function GuestBookList({ onClose, clickBtn, cancelClickBtn, successFxSound, errorFxSound }: Props): JSX.Element {
   // 방명록 리스트 가져오기
+  const ref = useRef<HTMLDivElement>(null);
   const { nickname } = useParams() as { nickname: string };
   const { data, isLoading: isLoading1, isError: isError1 } = useGetCommentListQuery(nickname);
-  // const [getCommentList, { isLoading: isLoading1, isError: isError1 }] = useLazyGetCommentListQuery();
-
-  // useEffect(() => {
-  //   const getComment = async () => {
-  //     const { data, result } = await getCommentList(nickname).unwrap();
-  //     if (data) {
-  //       setCommentList(commentList);
-  //     }
-  //   };
-  //   getComment();
-  // }, [nickname, commentList, getCommentList]);
 
   const [commentId, setCommentId] = useState<number>(0);
   const [comment, setComment] = useState<CommentResDtoProps | undefined>();
@@ -136,7 +136,7 @@ function GuestBookList({ onClose }: Props): JSX.Element {
 
   return (
     <>
-      <div className={`flex flex-col w-fit `} id="guest-book-modal">
+      <div ref={ref} className={`flex flex-col w-fit `} id="guest-book-modal">
         <div className="flex w-full rounded-tl-lg rounded-tr-lg bg-[#fde2e2] items-center pl-4 pr-2 lg:pl-8 lg:pr-4 py-2 justify-between">
           <div className="flex items-center">
             <img
@@ -146,7 +146,12 @@ function GuestBookList({ onClose }: Props): JSX.Element {
             />
             <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-center text-[#ff6060] pl-4">방명록</p>
           </div>
-          <button className="object-cover round-full" onClick={onClose}>
+          <button
+            className="object-cover round-full"
+            onClick={() => {
+              onClose();
+              cancelClickBtn.play();
+            }}>
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/multiply.png'}
@@ -160,7 +165,7 @@ function GuestBookList({ onClose }: Props): JSX.Element {
           <>
             {/* map */}
             {data?.data.length !== 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
+              <div className="grid grid-cols-2 gap-4 px-4 py-4 md:grid-cols-3 lg:grid-cols-4">
                 {data?.data.map((item: ReturnGuestBookItem, index) => (
                   <GuestBookItem
                     key={index}
@@ -168,13 +173,14 @@ function GuestBookList({ onClose }: Props): JSX.Element {
                     commentResDto={item.commentResDto}
                     isAuthor={item.isAuthor}
                     handleOpenDeleteModal={handleOpenDeleteModal}
-                    handleOpenModifyModal={handleOpenModifyModal}></GuestBookItem>
+                    handleOpenModifyModal={handleOpenModifyModal}
+                  />
                 ))}
               </div>
             )}
             {data?.data.length === 0 && (
               <div className="w-[456px] md:w-[688px] lg:w-[912px] h-full flex items-center py-2">
-                <div className="w-full flex flex-col justify-center items-center lg: gap-4">
+                <div className="flex flex-col items-center justify-center w-full gap-4 lg:">
                   <span className=" font-semibold text-xl text-[#707070]">아직 방명록이 없어요!</span>
                   <Lottie animationData={mailbox} className="w-[10rem] h-[10rem] lg:w-[12rem] lg:h-[12rem]" />
                 </div>
@@ -189,7 +195,10 @@ function GuestBookList({ onClose }: Props): JSX.Element {
 
           <button
             className="absolute bottom-4 right-4 flex justify-center items-center w-[2.8rem] h-[2.8rem] lg:w-[3.75rem] lg:h-[3.75rem] rounded-full bg-white border-2 border-[#fde2e2] shadow-lg pt-1"
-            onClick={handleOpenWriteModal}>
+            onClick={() => {
+              handleOpenWriteModal();
+              clickBtn.play();
+            }}>
             <img
               alt=""
               src={process.env.REACT_APP_S3_URL + '/images/visits/pencil.png'}
@@ -205,7 +214,13 @@ function GuestBookList({ onClose }: Props): JSX.Element {
           'w-full max-w-xs p-4 overflow-hidden align-middle transition-all transform bg-white shadow-xl lg:p-6 lg:max-w-lg rounded-2xl text-center text-sm font-semibold leading-6 lg:text-xl lg:font-bold'
         }
         elementId={'guest-book-modal'}>
-        <DeleteGuestBookModal onClose={handleCloseDeleteModal} commentId={commentId} />
+        <DeleteGuestBookModal
+          onClose={handleCloseDeleteModal}
+          commentId={commentId}
+          cancelClickBtn={cancelClickBtn}
+          successFxSound={successFxSound}
+          errorFxSound={errorFxSound}
+        />
       </Modal>
       <Modal
         isOpen={isShowWriteModal}
@@ -213,7 +228,14 @@ function GuestBookList({ onClose }: Props): JSX.Element {
         padding={'align-middle transition-all transform'}
         elementId={'guest-book-modal'}
         styleType={2}>
-        <WriteGuestBookModal onClose={handleCloseWriteModal} type={type} comment={comment} />
+        <WriteGuestBookModal
+          onClose={handleCloseWriteModal}
+          type={type}
+          comment={comment}
+          cancelClickBtn={cancelClickBtn}
+          successFxSound={successFxSound}
+          errorFxSound={errorFxSound}
+        />
       </Modal>
     </>
   );

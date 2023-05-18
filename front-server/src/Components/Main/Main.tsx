@@ -7,16 +7,26 @@ import VisitModal from './VisitModal';
 import Guide from './Guide';
 import MyHomeAsset from './MyHomeAsset';
 import AssetLoading from 'Components/Common/AssetLoading';
+import MyHomeAsset2 from './MyHomeAsset2';
+import { useGetAdminUserCheckQuery } from 'Store/api';
+import { useAppSelector } from 'Store/hooks';
 
 function Main(): JSX.Element {
+  const navigate = useNavigate();
   const [floor, setFloor] = useState(
     window.screen.width <= 1280 ? `${2 + (window.screen.width - 1024) * (1 / 140)}rem` : '4rem'
   );
-  const navigate = useNavigate();
+  const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+  const clickBtn = new Audio(clickSound);
+
+  if (getAdmin?.data === true) {
+    navigate('/admin');
+  }
 
   useEffect(() => {
-    // console.log(window.screen.width - 1024);
-
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -36,6 +46,7 @@ function Main(): JSX.Element {
 
   const click = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
+    clickBtn.play();
     switch (target.ariaLabel) {
       case '은행':
         navigate('/bank');
@@ -59,7 +70,7 @@ function Main(): JSX.Element {
         navigate('/auction');
         break;
       case '마이룸':
-        navigate('/mypage');
+        navigate(`/travel/${localStorage.getItem('nickname')}`);
         break;
 
       default:
@@ -384,7 +395,7 @@ function Main(): JSX.Element {
               }}>
               <ambientLight intensity={0.5} />
               <pointLight distance={2000} position={10} power={8} />
-              <MyHomeAsset len={0.004} pos={[0, -0.98, -8]} rot={[1.75, 0, 0.2]} />
+              <MyHomeAsset2 len={0.004} pos={[0, -1.02, -8]} rot={[1.75, 0, 0.2]} />
             </Canvas>
           </Suspense>
         </div>
