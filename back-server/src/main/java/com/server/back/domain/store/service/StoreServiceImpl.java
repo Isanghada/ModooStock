@@ -109,9 +109,9 @@ public class StoreServiceImpl implements StoreService {
         DealEntity deal=new DealEntity(user,DealType.LOSE_MONEY_FOR_ASSET,price);
         dealRepository.save(deal);
 
-        log.info(String.valueOf(price));
+        // log.info(String.valueOf(price));
         user.decreaseCurrentMoney(price);
-        log.info(String.valueOf(user.getCurrentMoney()));
+        // log.info(String.valueOf(user.getCurrentMoney()));
 
         // asset 반환
         return fromEntity(asset);

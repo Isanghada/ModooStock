@@ -16,15 +16,12 @@ import com.server.back.domain.user.repository.UserRepository;
 import com.server.back.domain.user.service.UserService;
 import com.server.back.exception.CustomException;
 import com.server.back.exception.ErrorCode;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
 
 @Service
@@ -36,7 +33,8 @@ public class BankServiceImpl implements BankService {
     private final AuthService authService;
     private final UserService userService;
 
-    public static Integer BANK_PERIOD = 6;
+    // 3시간이후 이자 지급
+    public static Integer BANK_PERIOD = 3;
 
     /**
      * 예금하기

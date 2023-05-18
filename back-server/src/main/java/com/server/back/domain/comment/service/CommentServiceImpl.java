@@ -92,7 +92,7 @@ public class CommentServiceImpl implements CommentService{
     public void updateComment(Long commentId, String content) {
         Long userId=authService.getUserId();
         CommentEntity comment=commentRepository.findByIdAndAndIsDeleted(commentId,IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
-        if(userId!=comment.getAuthorId())throw new CustomException(ErrorCode.NO_ACCESS);
+        if(!userId.equals(comment.getAuthorId()))throw new CustomException(ErrorCode.NO_ACCESS);
         comment.update(content);
     }
 
@@ -106,7 +106,7 @@ public class CommentServiceImpl implements CommentService{
     public void deleteComment(Long commentId) {
         Long userId=authService.getUserId();
         CommentEntity comment=commentRepository.findByIdAndAndIsDeleted(commentId,IsDeleted.N).orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
-        if(userId!=comment.getAuthorId())throw new CustomException(ErrorCode.NO_ACCESS);
+        if(!userId.equals(comment.getAuthorId()))throw new CustomException(ErrorCode.NO_ACCESS);
         comment.update(IsDeleted.Y);
     }
 

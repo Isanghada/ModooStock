@@ -18,7 +18,7 @@ public class BankReqDto {
                 .user(user)
                 .price(price)
                 .dealType(DealType.LOSE_MONEY_FOR_DEPOSIT)
-                .interest(Math.round(price * 0.01))
+                .interest(Math.round(price * 0.02))
                 .build();
     }
 }
