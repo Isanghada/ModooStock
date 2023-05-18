@@ -292,7 +292,7 @@ function Navbar(): JSX.Element {
       <div
         aria-label="브금"
         onClick={click}
-        className="fixed right-1 bottom-1 lg:right-6 lg:bottom-6 min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
+        className="fixed z-20 right-2 bottom-2 lg:right-6 lg:bottom-6 min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
         <img className="w-full" src={bgmStatus ? process.env.REACT_APP_S3_URL + '/images/icons/Off.png' : process.env.REACT_APP_S3_URL + '/images/icons/On.png' } alt="On" />
       </div>
       {menuStatus && <Menu />}
