@@ -143,7 +143,7 @@ function InfoShop(): JSX.Element {
               <div className="text-xs lg:text-base">게임 속 시간</div>
               <div className="text-sm font-bold lg:text-xl">
                 {newsData.dateList[currentDataIndex]
-                  ? newsData.dateList[currentDataIndex].date
+                  ? `${newsData?.dateList[currentDataIndex].date.slice(5, 7)}월`
                   : '오늘 장 종료하였습니다.'}
               </div>
             </div>
@@ -174,12 +174,11 @@ function InfoShop(): JSX.Element {
             <div className="my-2 text-[0.5rem] lg:text-sm font-semibold text-gray-600 break-keep w-2/3 lg:w-full text-center">
               구매한 뉴스는 뉴스 스크랩에서 확인 가능합니다
             </div>
-
             <div className="flex flex-col items-center justify-end h-[50%]">
               <div className="text-2xl font-bold lg:text-3xl">
                 {newsData?.dateList[currentDataIndex].date.slice(5, 7)}월
               </div>
-              <div className="text-xs font-semibold lg:text-base">뉴스를 구매하실 수 있습니다</div>
+              <div className="text-xs font-semibold lg:text-base">{newsData?.dateList[currentDataIndex].date.slice(5, 7)}월 뉴스를 구매하실 수 있습니다</div>
               <div className="text-xs font-semibold text-red-500 lg:text-base">"날짜를 주의깊게 확인해주세요"</div>
             </div>
           </div>
