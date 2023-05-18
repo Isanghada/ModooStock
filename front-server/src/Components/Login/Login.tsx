@@ -92,13 +92,13 @@ function Login(): JSX.Element {
       {/* 오른쪽 폼 */}
       <div
         className={`w-5/6 lg:w-4/5 flex flex-col justify-center items-center ${
-          screenHeight >= 800 ? 'lg:min-h-[38rem] min-h-[19rem]' : ''
+          screenHeight >= 800 ? 'lg:min-h-[38rem]' : ''
         }`}>
         <div className={`w-full font-bold text-2xl lg:text-5xl text-center text-[#fca699]`}>로그인</div>
         <form
           onSubmit={onSubmitLoginForm}
           className={`flex flex-col items-center w-5/6 text-xs lg:text-sm text-black h-[45vh] lg:h-[25vh] justify-evenly ${
-            screenHeight >= 800 ? 'min-h-[12rem]' : ''
+            screenHeight >= 800 ? 'lg:min-h-[12rem]' : ''
           }`}>
           <input
             onChange={onChangeAccount}
