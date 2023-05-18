@@ -91,13 +91,17 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
   useEffect(() => {
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
+      console.log('data: ', data);
       let geo: any = [];
       data.map((asset, idx) => {
         geo = [...geo, nodes[asset.assetName].geometry];
       });
       // 데이터
+
       setMyAssets(
         data.map((asset, idx: number) => {
+          console.log('asset: ', asset.type);
+
           let isClick = false;
           if (asset.assetName === clickAsseData.assetName && asset.userAssetId === clickAsseData.userAssetId) {
             isClick = true;
@@ -106,7 +110,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
             <mesh
               key={idx}
               geometry={geo[idx]}
-              material={materials[asset.type]} // funiture
+              material={materials[asset.type]} // funiture_1
               position={
                 isClick
                   ? [clickAssetPosition[0], clickAssetPosition[1], clickAssetPosition[2]]
@@ -117,6 +121,7 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
                   ? [clickAssetRotation[0], clickAssetRotation[1], clickAssetRotation[2]]
                   : [asset.rot_x, asset.rot_y, asset.rot_z]
               }
+              scale={asset.type === 'Material' ? 1.6 : 1}
               visible={true}
               onClick={(e) => {
                 e.stopPropagation();
