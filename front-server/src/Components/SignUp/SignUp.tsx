@@ -176,7 +176,7 @@ function SignUp(): JSX.Element {
     img.onload = () => {
       setIsLoaded(true);
     };
-    img.src = '/images/PrivacyPolicy.png';
+    img.src = process.env.REACT_APP_S3_URL + '/images/privacyPolicy/PrivacyPolicy.png';
   }, []);
 
   return (
