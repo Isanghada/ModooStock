@@ -15,7 +15,10 @@
     content: '뒤로 돌아가';
   }
 } */
+
 * {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
