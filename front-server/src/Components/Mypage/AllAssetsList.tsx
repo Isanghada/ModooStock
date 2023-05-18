@@ -10,8 +10,8 @@ import {
   changeIsClickInvenAssetStore
 } from 'Store/store';
 import React, { useEffect, useRef, useState } from 'react';
-import Loading from 'Components/Common/Loading';
-import texture from '/Texture_2048.png';
+import * as THREE from 'three';
+
 interface AssetType {
   userAssetId: number;
   assetName: string;
@@ -35,10 +35,10 @@ interface AllAssetsListType {
 }
 
 function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn }: AllAssetsListType): JSX.Element {
+  const boxRef = useRef<THREE.Mesh>(null);
   const dispatch = useAppDispatch();
   const [getLazyMypage, { isLoading: isLoading1, isError: isError1 }] = useLazyGetMypageQuery();
   const { data: getMypage, isLoading: isLoading2, isError: isError2 } = useGetMypageQuery('');
-  // const { data: getStorage, isLoading: isLoading3, isError: isError3 } = useGetStorageQuery('');
   const { nodes, materials }: any = useGLTF(process.env.REACT_APP_S3_URL + '/assets/AllAssetsFile.gltf');
   const [scale, setScale] = useState(len);
   const [myAssets, setMyAssets] = useState<any>();
@@ -55,6 +55,8 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
     return state.isAuctionClickInvenAsset;
   });
   const ref = useRef<any>(null);
+  const outlineMeshRef = useRef<any>(null);
+
   const changeClick = (asset: any, pos: number[], rot: number[]) => {
     dispatch(
       changeClickAsseData({
@@ -77,6 +79,15 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
     dispatch(changeIsAuctionClickInvenAsset(false));
   };
 
+  const handleClick = () => {
+    const box = boxRef.current;
+    // console.log('box: ', box);
+
+    // 클릭한 asset의 테두리 스타일 설정
+    // box.material.color.set(0xff0000);
+    // box.scale.multiplyScalar(1.1); // 크기를 키워서 테두리 효과 표시
+  };
+
   useEffect(() => {
     const getMyRoomAssets = async () => {
       const { data, result } = await getLazyMypage('').unwrap();
@@ -88,8 +99,6 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
       setMyAssets(
         data.map((asset, idx: number) => {
           let isClick = false;
-          // position => [x: -200 ~ 200 ,y: -200 ~ 200 ,z: -400 ~ 0]
-          // rotation => [x: -1.5 ~ 1.5 ,y: -1.5 ~ 1.5 ,z: -3 ~ 3]
           if (asset.assetName === clickAsseData.assetName && asset.userAssetId === clickAsseData.userAssetId) {
             isClick = true;
           }
@@ -97,7 +106,6 @@ function AllAssetsList({ len, pos, rot, isClickAsset, setIsClickAsset, clickBtn 
             <mesh
               key={idx}
               geometry={geo[idx]}
-              // material={materials['Material']} // funiture
               material={materials[asset.type]} // funiture
               position={
                 isClick

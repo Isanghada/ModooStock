@@ -83,7 +83,7 @@ function BankSection1({
 
   const isValidInput = async (input: string) => {
     const regex = await /^[0-9,]*$/;
-    console.log('regex: ', regex);
+    // console.log('regex: ', regex);
     return regex.test(input);
   };
 
@@ -94,7 +94,7 @@ function BankSection1({
         if (target.value !== '' && ref.current) {
           await isValidInput(ref.current.value).then((r) => {
             if (r === true && ref.current) {
-              console.log(ref.current.value);
+              // console.log(ref.current.value);
 
               const intValue = parseInt(ref.current.value.replaceAll(',', ''));
               const checkMoney: number = IntAfterCurrentMoney - intValue;

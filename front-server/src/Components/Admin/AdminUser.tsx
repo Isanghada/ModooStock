@@ -68,7 +68,6 @@ function AdminUser(): JSX.Element {
     } else {
       const getMarket = async () => {
         const { data, result } = await getAdminUser('').unwrap();
-        console.log(data);
         setTbodyData(
           data.map((user, idx) => {
             return (
@@ -95,7 +94,6 @@ function AdminUser(): JSX.Element {
   useEffect(() => {
     const getMarket = async () => {
       const { data, result } = await getAdminUser('').unwrap();
-      console.log(data);
       setTbodyData(
         data.map((user, idx) => {
           return (
@@ -124,9 +122,9 @@ function AdminUser(): JSX.Element {
       {isLoading3 ? (
         <Loading />
       ) : (
-        <div className="w-full flex-col flex justify-center items-center">
+        <div className="flex flex-col items-center justify-center w-full">
           <div className="w-full flex justify-center text-[2.2rem] text-[#A87E6E] font-bold mb-3">유저 관리</div>
-          <div className="w-full mb-4 font-bold flex justify-between">
+          <div className="flex justify-between w-full mb-4 font-bold">
             <span className="text-[1.4rem] text-[#A87E6E] border-b-4 border-b-[#A87E6E]/70">유저</span>
             <div className="flex justify-center items-center text-[#A87E6E] space-x-2">
               <input
@@ -140,7 +138,7 @@ function AdminUser(): JSX.Element {
             </div>
           </div>
           <div className="overflow-y-auto h-[50vh] w-full">
-            <div className="flex justify-center items-start ">
+            <div className="flex items-start justify-center ">
               <table className="w-full">
                 <thead>
                   <tr className="border-y-4 border-y-[#A87E6E] lg:text-[0.8rem] xl:text-[1.2rem] text-[#A87E6E] bg-[#ffe8d5]">

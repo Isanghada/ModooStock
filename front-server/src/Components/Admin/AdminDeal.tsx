@@ -37,7 +37,6 @@ function AdminDeal(): JSX.Element {
   useEffect(() => {
     const getDeal = async () => {
       const { data, result } = await getAdminDeal('').unwrap();
-      console.log(data);
       setTbodyData(
         data.map((deal, idx) => {
           return (
@@ -75,13 +74,13 @@ function AdminDeal(): JSX.Element {
       ) : (
         <>
           {isClick && <AdminDealModal selectDealData={selectDealData} setIsClick={setIsClick} />}
-          <div className="w-full flex-col flex justify-center items-center">
+          <div className="flex flex-col items-center justify-center w-full">
             <div className="w-full flex justify-center text-[2.2rem] text-[#A87E6E] font-bold mb-3">거래 내역 관리</div>
-            <div className="w-full mb-4 font-bold flex justify-between">
+            <div className="flex justify-between w-full mb-4 font-bold">
               <span className="text-[1.4rem] text-[#A87E6E] border-b-4 border-b-[#A87E6E]/70">내역</span>
             </div>
             <div className="overflow-y-auto h-[50vh] w-full">
-              <div className="flex justify-center items-start ">
+              <div className="flex items-start justify-center ">
                 <table className="w-full">
                   <thead>
                     <tr className="border-y-4 border-y-[#A87E6E] lg:text-[0.8rem] xl:text-[1.2rem] text-[#A87E6E] bg-[#ffe8d5]">

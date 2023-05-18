@@ -234,7 +234,6 @@ function Exchange(): JSX.Element {
     };
 
     eventSource.onerror = () => {
-      console.log('연결에러 재연결.');
       eventSource.close();
       const token = localStorage.getItem('accessToken');
 
@@ -254,7 +253,6 @@ function Exchange(): JSX.Element {
   }
 
   if (!eventSource) {
-    console.log('연결 안되어있음.');
     const token = localStorage.getItem('accessToken');
 
     const newEventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}stock/connect`, {
@@ -395,7 +393,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매수할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매수할 개수를 입력해주세요!');
+                } else {
+                  toast.error('매수할 수 있는 개수를 초과했습니다!');
+                }
+              }
             }
           };
           posrStock();
@@ -430,7 +434,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매수할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매수할 개수를 입력해주세요!');
+                } else {
+                  toast.error('매수할 수 있는 개수를 초과했습니다!');
+                }
+              }
             }
           };
           posrStock();
@@ -466,7 +476,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매도할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매도할 개수를 입력해주세요!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+              }
             }
           };
           stockDelete();
@@ -501,7 +517,13 @@ function Exchange(): JSX.Element {
               }
             } catch {
               errorFxSound.play();
-              toast.error('매도할 수 있는 개수를 초과했습니다!');
+              if (inputRef.current) {
+                if (inputRef.current.value === '0') {
+                  toast.error('매도할 개수를 입력해주세요!');
+                } else {
+                  toast.error('요청에 문제가 생겼습니다!');
+                }
+              }
             }
           };
           stockDelete();
@@ -587,6 +609,8 @@ function Exchange(): JSX.Element {
 
   // 차트 데이터
   useEffect(() => {
+    console.log(inputRef.current && typeof inputRef.current.value);
+
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
@@ -909,7 +933,7 @@ function Exchange(): JSX.Element {
                             )
                           </span>
                         )}
-                        {sseData && sseData.stockChartResDto.length >= 1 && (
+                        {sseData && sseData.stockChartResDto.length > 1 && (
                           <span
                             // 현재 주식 데이터가 여러개일 경우
                             className={`text-[1rem] flex pt-2 items-end ${
@@ -940,7 +964,7 @@ function Exchange(): JSX.Element {
                     </div>
                   </div>
                   {/* 차트 */}
-                  <div className="w-full h-[15rem] text-[0.6rem] bg-white">
+                  <div className="w-full h-[15rem] text-[0.6rem] bg-white font-semibold">
                     <Chart data={selectChartData} />
                   </div>
                 </div>
@@ -953,7 +977,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(oilData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={oilData} />
                     </div>
                   </div>
@@ -965,7 +989,7 @@ function Exchange(): JSX.Element {
                       </div>
                       {TagSetting(goldData)}
                     </div>
-                    <div className="w-full h-[9rem] text-[0.7rem] font-normal">
+                    <div className="w-full h-[9rem] text-[0.7rem] font-medium">
                       <Chart data={goldData} />
                     </div>
                   </div>
@@ -1033,7 +1057,7 @@ function Exchange(): JSX.Element {
                               )
                             </span>
                           )}
-                          {sseData && sseData.stockChartResDto.length >= 1 && (
+                          {sseData && sseData.stockChartResDto.length >= 2 && (
                             <span
                               // 현재 주식 데이터가 여러개일 경우
                               className={`text-[0.6rem] pb-1 flex pt-2 items-end ${
@@ -1154,8 +1178,8 @@ function Exchange(): JSX.Element {
                     <div className="flex items-center justify-between w-full text-center text-[1rem] lg:text-[1.5rem] text-white font-semibold pt-1">
                       <div
                         aria-label="매도"
-                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          sseData && sseData.amount > 0
+                        className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400 ${
+                          sseData && sseData.amount > 0 && inputRef.current && inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}
@@ -1164,11 +1188,13 @@ function Exchange(): JSX.Element {
                       </div>
                       <div
                         aria-label="매수"
-                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                        className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400  ${
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', '')) &&
+                          inputRef.current &&
+                          inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
-                        }`}
+                        } `}
                         onClick={click}>
                         <span>매수</span>
                       </div>
@@ -1238,7 +1264,7 @@ function Exchange(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-[9rem] text-[0.75rem] font-normal">
+                  <div className="w-full h-[9rem] text-[0.75rem] font-medium">
                     {clickNational === 0 && <Chart data={usdData} />}
                     {clickNational === 1 && <Chart data={jypData} />}
                     {clickNational === 2 && <Chart data={euroData} />}
@@ -1351,7 +1377,7 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매도2"
                         className={`w-[45%] py-1 bg-[#2C94EA] shadow-md rounded-xl shadow-gray-400${
-                          sseData && sseData?.amount > 0
+                          sseData && sseData?.amount > 0 && inputRef.current && inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#1860ef] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}
@@ -1361,7 +1387,9 @@ function Exchange(): JSX.Element {
                       <div
                         aria-label="매수2"
                         className={`w-[45%] py-1 bg-[#EA455D] shadow-md rounded-xl shadow-gray-400${
-                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', ''))
+                          parseInt(afterMoney.replaceAll(',', '')) <= parseInt(currentMoney.replaceAll(',', '')) &&
+                          inputRef.current &&
+                          inputRef.current.value !== '0'
                             ? 'cursor-pointer hover:bg-[#f90025fd] hover:scale-105 transition-all duration-300 '
                             : 'disabled cursor-not-allowed'
                         }`}

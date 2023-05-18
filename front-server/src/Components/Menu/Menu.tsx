@@ -59,19 +59,19 @@ function Menu(): JSX.Element {
     dispatch(changeMenuStatus(false));
     localStorage.clear();
     toast.info('로그아웃 하셨습니다');
-    navigate('/');
+    window.location.replace('/');
   };
   // 회원탈퇴
   const deleteUser = async () => {
     try {
-      await postDeleteUsers("").unwrap();
+      await postDeleteUsers('').unwrap();
       // 메뉴 닫기
       dispatch(changeMenuStatus(false));
       localStorage.clear();
       toast.info('회원탈퇴 하셨습니다');
-      navigate('/');
+      window.location.replace('/');
     } catch (error) {
-      console.log(error, '회원탈퇴 에러');
+      // console.log(error, '회원탈퇴 에러');
     }
   };
   // 클릭 이벤트 처리
@@ -110,7 +110,7 @@ function Menu(): JSX.Element {
     imgPrivacy.onload = () => {
       setIsPrivacyLoaded(true);
     };
-    imgPrivacy.src = '/images/PrivacyPolicy.png';
+    imgPrivacy.src = process.env.REACT_APP_S3_URL + '/images/privacyPolicy/PrivacyPolicy.png';
   }, []);
   return (
     <>
@@ -160,13 +160,14 @@ function Menu(): JSX.Element {
               <div className="w-1/2 mb-2 lg:mb-4">
                 <img className="w-full" src={src} alt="logo" />
               </div>
-              <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%]">
+              <div className="text-[0.5rem] lg:text-base font-bold text-gray-600 h-[10%] flex flex-col justify-center">
                 <a
                   target="_blank"
-                  href="https://www.youtube.com/@hminor3510"
+                  href="https://general-library-f31.notion.site/2febe6c2eb7f4be68f4d6d2391504d29"
                   className="decoration-transparent hover:text-red-300">
-                  문의 : 천재 기타리스트 HMinor
+                  확률정보
                 </a>
+                    <div>문의 : cinamon3344@gmail.com</div>
               </div>
               <div className="flex justify-between w-3/4">
                 <div

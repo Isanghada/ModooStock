@@ -26,7 +26,9 @@ import AssetLoading from 'Components/Common/AssetLoading';
 function Mypage(): JSX.Element {
   const dispatch = useAppDispatch();
   const auctionInput = useRef<HTMLInputElement>(null);
+  const resaleRef = useRef<HTMLDivElement>(null);
   const [isModalClick, setIsModalClick] = useState<boolean>(false);
+  const [isResaleModalClick, setIsResaleModalClick] = useState<boolean>(false);
   const [isClickAsset, setIsClickAsset] = useState<boolean>(false);
   const [isAuction, setIsAuction] = useState<boolean>(false);
   const [auctionMoney, setAuctionMoney] = useState<number>(0);
@@ -110,7 +112,11 @@ function Mypage(): JSX.Element {
     switch (e.currentTarget.ariaLabel) {
       case '경매장 등록':
         setIsModalClick((pre) => !pre);
-        successFxSound.play();
+        clickBtn.play();
+        break;
+      case '판매모달닫기':
+        setIsResaleModalClick(false);
+        cancelClickBtn.play();
         break;
       case '닫기':
         setIsModalClick(false);
@@ -119,7 +125,7 @@ function Mypage(): JSX.Element {
       case '판매 취소':
         const deleteAuction = async () => {
           const { data, result } = await deleteAuctionMyAssetId(clickAsseData.userAssetId).unwrap();
-          console.log(data, result);
+          // console.log(data, result);
           if (result === 'SUCCESS') {
             toast.success('물품을 반환했습니다.');
             successFxSound.play();
@@ -140,16 +146,19 @@ function Mypage(): JSX.Element {
                 userAssetId: clickAsseData.userAssetId
               };
               const auction = async () => {
-                const { data, result } = await postAuction(body).unwrap();
-                if (data) {
-                  toast.success('판매등록 되었습니다!');
-                  successFxSound.play();
-                } else {
-                  toast.error('요청 실패!');
-                  errorFxSound.play();
-                }
+                await postAuction(body)
+                  .unwrap()
+                  .then((result) => {
+                    toast.info('판매등록');
+                    successFxSound.play();
+                    dispatch(changeIsAuctionClickInvenAsset(true));
+                  })
+                  .catch((error) => {
+                    toast.error(error.data.message);
+                    errorFxSound.play();
+                  });
+
                 setIsModalClick(false);
-                dispatch(changeIsAuctionClickInvenAsset(true));
               };
               auction().catch((e: any) => {
                 toast.error(e.data?.message);
@@ -160,6 +169,10 @@ function Mypage(): JSX.Element {
             }
           });
         }
+        break;
+      case '판매모달':
+        setIsResaleModalClick(true);
+        clickBtn.play();
         break;
       case '판매':
         const resale = async () => {
@@ -172,12 +185,13 @@ function Mypage(): JSX.Element {
             errorFxSound.play();
           }
           settingMethod();
+          setIsResaleModalClick(false);
         };
         resale();
         break;
       case '창고':
       case '창고M':
-        console.log('clickAsseData: ', clickAsseData.userAssetId);
+        // console.log('clickAsseData: ', clickAsseData.userAssetId);
         const goInven = async () => {
           const { data, result } = await deleteMypage(clickAsseData.userAssetId).unwrap();
           if (result === 'SUCCESS') {
@@ -277,7 +291,8 @@ function Mypage(): JSX.Element {
           className="fixed flex items-center z-50 justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0"
           onClick={(e) => {
             if (e.target === ref.current) {
-              setIsModalClick((pre) => !pre);
+              cancelClickBtn.play();
+              setIsModalClick(false);
             }
           }}>
           <div className="bg-[#FEF3F3] border-[#D9D9D9] border-2 flex flex-col max-w-[30rem] min-w-[30rem] lg:max-w-[32rem] lg:min-w-[32rem] rounded-lg px-10 py-2 lg:py-4">
@@ -361,9 +376,77 @@ function Mypage(): JSX.Element {
     );
   };
 
+  const ResaleModal = () => {
+    return (
+      <>
+        <div
+          ref={resaleRef}
+          className="fixed flex items-center z-50 justify-center right-0 left-0 top-0 bottom-0 bg-[#707070]/50 pt-5 lg:pt-0"
+          onClick={(e) => {
+            if (e.target === resaleRef.current) {
+              cancelClickBtn.play();
+              setIsResaleModalClick(false);
+            }
+          }}>
+          <div className="bg-[#FEF3F3] border-[#D9D9D9] border-2 flex flex-col max-w-[30rem] min-w-[30rem] lg:max-w-[32rem] lg:min-w-[32rem] rounded-lg px-10 py-2 lg:py-4">
+            <div className="flex flex-col items-center w-full py-2 border-b-2 border-white">
+              <span className="text-[1.2rem] lg:text-[1.5rem] font-semibold">판매</span>
+            </div>
+            <div className="flex flex-col items-center justify-center w-full py-4 space-x-6">
+              <div className="flex flex-col items-start justify-center w-full px-2 py-2 bg-white rounded-lg">
+                {clickAsseData.assetLevel === 'RARE' && (
+                  <div className="bg-[#4fb3ff] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>레어</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'EPIC' && (
+                  <div className="bg-[#b73bec] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>에픽</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'UNIQUE' && (
+                  <div className="bg-[#FFC34F] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>유니크</span>
+                  </div>
+                )}
+                {clickAsseData.assetLevel === 'LEGENDARY' && (
+                  <div className="bg-[#26c744] text-white font-extrabold shadow-md shadow-gray-400 px-5 lg:px-7 py-[1px] lg:py-[2.5px] rounded-full">
+                    <span>레전더리</span>
+                  </div>
+                )}
+                <div className="flex flex-col items-center justify-start w-full bg-white rounded-lg">
+                  <img
+                    className="max-w-[15rem] max-h-[15rem] lg:max-w-[25rem] lg:max-h-[25rem]"
+                    src={process.env.REACT_APP_S3_URL + `/assets/img/${clickAsseData.assetName}.png`}
+                    alt="가구"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex w-full justify-between text-[0.9rem] lg:text-[1.1rem] text-center font-bold text-white">
+              <div
+                aria-label="판매모달닫기"
+                className="bg-[#858484] cursor-pointer hover:bg-[#6a6868] hover:scale-105 active:bg-[#6a6868] active:scale-105 transition-all duration-300 py-1 w-[48%] rounded-md"
+                onClick={click}>
+                <span>닫기</span>
+              </div>
+              <div
+                aria-label="판매"
+                className="bg-[#fa5353] cursor-pointer hover:bg-[#fd3434] hover:scale-105 active:bg-[#fd3434] active:scale-105 transition-all duration-300 py-1 w-[48%] rounded-md"
+                onClick={click}>
+                <span>판매</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       {isModalClick && <Auction />}
+      {isResaleModalClick && <ResaleModal />}
       {/* 데스크탑 */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -437,7 +520,7 @@ function Mypage(): JSX.Element {
                 {isAuction !== true && clickAsseData.assetName !== '' && !isAuctionClickInvenAsset ? (
                   <div className="flex items-center justify-between text-white">
                     <div
-                      aria-label="판매"
+                      aria-label="판매모달"
                       className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1"
                       onClick={click}>
                       <span>판매</span>
@@ -745,7 +828,7 @@ function Mypage(): JSX.Element {
               {isAuction !== true && clickAsseData.assetName !== '' && !isAuctionClickInvenAsset ? (
                 <div className="z-20 flex items-center justify-between text-white">
                   <div
-                    aria-label="판매"
+                    aria-label="판매모달"
                     className="px-3 cursor-pointer py-[2px] hover:scale-105 transition-all duration-300 drop-shadow-lg bg-[#EA455D] rounded-full mr-1"
                     onClick={click}>
                     <span>판매</span>

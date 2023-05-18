@@ -34,6 +34,7 @@ function BankModal({
         onClick={(e) => {
           if (e.target === ref.current) {
             setIsClick((pre) => !pre);
+            cancelClickBtn.play();
           }
         }}>
         {clickNum === 1 && (
