@@ -1,11 +1,19 @@
 import Error from 'Components/Common/Error';
 import Loading from 'Components/Common/Loading';
+import { useAppSelector } from 'Store/hooks';
 import { useGetAuctionQuery, useGetAuctionMyQuery, useLazyGetAuctionQuery, useLazyGetAuctionMyQuery } from 'Store/api';
 import { useEffect, useState } from 'react';
 import AuctionModal from './AuctionModal';
 import { motion } from 'framer-motion';
 
 function Auction(): JSX.Element {
+  const clickSound = useAppSelector((state) => {
+    return state.clickBtn;
+  });
+
+  const clickBtn = new Audio(clickSound);
+
+
   const { data: items, isLoading: isLoading1, isError: isError1 } = useGetAuctionQuery('');
   const { data: myItems, isLoading: isLoading2, isError: isError2 } = useGetAuctionMyQuery('');
   const [getItems, { isLoading: isLoading3, isError: isError3 }] = useLazyGetAuctionQuery();
@@ -18,6 +26,7 @@ function Auction(): JSX.Element {
   const [getAuction, setGetAuction] = useState<any>();
   const [myAuction, setMyAuction] = useState<any>();
   const [selectItem, setSelectItem] = useState<any>();
+  const [search, setSearch] = useState<string>('');
 
   // getAuction.data를 정렬한 새로운 배열 생성
   useEffect(() => {
@@ -71,7 +80,7 @@ function Auction(): JSX.Element {
     setGetAuction({ ...getAuction, data: sortedData });
   }, [selectSort, items, myItems]);
 
-  let auctionIds =
+  const auctionIds =
     myAuction && myAuction.data && Array.isArray(myAuction.data)
       ? myAuction.data.map((item: any) => item.auctionId)
       : [];
@@ -110,7 +119,7 @@ function Auction(): JSX.Element {
     );
   }
 
-  const levelStyle = `rounded-full lg:px-7 px-5 lg:py-1 mr-2 lg:text-[1rem] text-[0.8rem] font-bold shadow cursor-pointer`;
+  const levelStyle = `rounded-full lg:px-7 px-3 lg:py-1 py-[0.1rem] mr-2 lg:text-[0.9rem] text-[0.8rem] font-bold shadow cursor-pointer`;
 
   const sortStyle = `px-2 text-[#888888] lg:text-[0.8rem] text-[0.7rem] my-auto`;
   return (
@@ -124,11 +133,20 @@ function Auction(): JSX.Element {
           ease: 'easeInOut'
         }}
         className="w-full h-full lg:pt-[13vh] pt-[14vh] p-2">
-        <div className="lg:text-[2.2rem] text-[1.5rem] font-bold">
-          경매장
-          <span className="lg:text-[1rem] text-[0.8rem] px-2 text-[#7a7a7a] font-medium">
-            필요없는 아이템을 팔고, 필요한 아이템을 구매해보세요!
-          </span>
+        <div className="lg:text-[2.2rem] text-[1.5rem] font-bold flex justify-between">
+          <div>
+            경매장
+            <span className="lg:text-[1rem] text-[0.8rem] px-2 text-[#7a7a7a] font-medium">
+              필요없는 아이템을 팔고, 필요한 아이템을 구매해보세요!
+            </span>
+          </div>
+          <div className="w-fit">
+            <input
+                className="font-medium lg_w-[15rem] w-[10rem] lg:text-[0.9rem] text-[0.8rem] py-[0.1rem] px-4 rounded-xl bg-[#fde2e2] outline-none focus:border-[#f98270] border-2 border-[#FFC1B7]"
+                onChange={(event) => setSearch(event?.target.value)}
+                placeholder='아이템 검색'>
+            </input>
+          </div>
         </div>
         <div className="bg-[#ffffff] lg:p-2 px-2 py-1 lg:my-2 my-1 rounded-lg bg-opacity-40 shadow-md h-[85%]">
           <div className="flex justify-between my-1">
@@ -142,6 +160,7 @@ function Auction(): JSX.Element {
                 onClick={() => {
                   setSelectLevel('');
                   setSelectNum(0);
+                  clickBtn.play();
                 }}>
                 전체
               </div>
@@ -151,7 +170,7 @@ function Auction(): JSX.Element {
                     ? 'bg-[#FF8C8C] text-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                     : 'text-[#a5a5a5] bg-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                 } `}
-                onClick={() => setSelectLevel('RARE')}>
+                onClick={() => {setSelectLevel('RARE'); clickBtn.play();}}>
                 레어
               </div>
               <div
@@ -160,7 +179,7 @@ function Auction(): JSX.Element {
                     ? 'bg-[#FF8C8C] text-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                     : 'text-[#a5a5a5] bg-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                 } `}
-                onClick={() => setSelectLevel('EPIC')}>
+                onClick={() => {setSelectLevel('EPIC'); clickBtn.play();}}>
                 에픽
               </div>
               <div
@@ -169,7 +188,7 @@ function Auction(): JSX.Element {
                     ? 'bg-[#FF8C8C] text-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                     : 'text-[#a5a5a5] bg-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                 }`}
-                onClick={() => setSelectLevel('UNIQUE')}>
+                onClick={() => {setSelectLevel('UNIQUE'); clickBtn.play();}}>
                 유니크
               </div>
               <div
@@ -178,7 +197,7 @@ function Auction(): JSX.Element {
                     ? 'bg-[#FF8C8C] text-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                     : 'text-[#a5a5a5] bg-[#ffffff] hover:scale-105 duration-300 transition-all active:scale-105'
                 }`}
-                onClick={() => setSelectLevel('LEGENDARY')}>
+                onClick={() => {setSelectLevel('LEGENDARY'); clickBtn.play();}}>
                 레전더리
               </div>
             </div>
@@ -190,6 +209,7 @@ function Auction(): JSX.Element {
                 onClick={() => {
                   setSelectSort('최신순');
                   setSelectNum(0);
+                  clickBtn.play();
                 }}>
                 최신순
               </div>
@@ -200,6 +220,7 @@ function Auction(): JSX.Element {
                 onClick={() => {
                   setSelectSort('높은가격순');
                   setSelectNum(0);
+                  clickBtn.play();
                 }}>
                 높은가격순
               </div>
@@ -210,6 +231,7 @@ function Auction(): JSX.Element {
                 onClick={() => {
                   setSelectSort('낮은가격순');
                   setSelectNum(0);
+                  clickBtn.play();
                 }}>
                 낮은가격순
               </div>
@@ -220,6 +242,7 @@ function Auction(): JSX.Element {
                 onClick={() => {
                   setSelectLevel('MY');
                   setSelectNum(0);
+                  clickBtn.play();
                 }}>
                 판매중
               </div>
@@ -236,9 +259,10 @@ function Auction(): JSX.Element {
                   <div
                     key={index}
                     className={`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer ${
-                      !item?.assetResDto.assetLevel.includes(selectLevel) && 'hidden'
-                    }`}
-                    onClick={() => setSelectNum(index)}>
+                      !item?.assetResDto.assetLevel.includes(selectLevel) && 'hidden' 
+                    } ${
+                      !item?.assetResDto.assetNameKor.includes(search) && 'hidden' }`} 
+                    onClick={() => {clickBtn.play(); setSelectNum(index)}}>
                     <div
                       className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${
                         item?.assetResDto.assetLevel === 'RARE'
@@ -249,10 +273,16 @@ function Auction(): JSX.Element {
                           ? 'bg-[#26c744]'
                           : 'bg-[#FFC34F]'
                       }`}>
-                      {item?.assetResDto.assetLevel}
+                      {item?.assetResDto.assetLevel === 'RARE'
+                          ? '레어'
+                          : item?.assetResDto.assetLevel === 'EPIC'
+                          ? '에픽'
+                          : item?.assetResDto.assetLevel === 'LEGENDARY'
+                          ? '레전더리'
+                          : '유니크'}
                     </div>
                     <img
-                      className="block w-full lg:h-[60%] h-[54%] object-cover"
+                      className="block w-full lg:h-[60%] h-[54%] object-cover scale-125"
                       src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`}
                     />
                     <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">
@@ -274,7 +304,8 @@ function Auction(): JSX.Element {
                 myAuction?.data?.map((item: any, index: number) => (
                   <div
                     key={index}
-                    className={`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer`}
+                    className={`shadow my-2 lg:mr-4 mr-2 lg:h-44 rounded-lg lg:w-44 h-32 w-24 overflow-hidden cursor-pointer ${
+                      !item?.assetResDto.assetNameKor.includes(search) && 'hidden' }`}
                     onClick={() => setSelectNum(index)}>
                     <div
                       className={`lg:px-3 lg:text-[0.8rem] px-2 text-[0.7rem] rounded-full rounded-bl-none w-fit text-[#ffffff] font-bold ${
@@ -286,10 +317,16 @@ function Auction(): JSX.Element {
                           ? 'bg-[#26c744]'
                           : 'bg-[#FFC34F]'
                       }`}>
-                      {item?.assetResDto.assetLevel}
+                        {item?.assetResDto.assetLevel === 'RARE'
+                          ? '레어'
+                          : item?.assetResDto.assetLevel === 'EPIC'
+                          ? '에픽'
+                          : item?.assetResDto.assetLevel === 'LEGENDARY'
+                          ? '레전더리'
+                          : '유니크'}
                     </div>
                     <img
-                      className="block w-full lg:h-[60%] h-[54%] object-cover"
+                      className="block w-full lg:h-[60%] h-[54%] object-cover scale-125"
                       src={process.env.REACT_APP_S3_URL + `/assets/img/${item?.assetResDto.assetName}.png`}
                     />
                     <div className="text-[#7c7c7c] lg:text-[1.0rem] text-[0.8rem] border-t-[0.01rem] mx-2 truncate">
@@ -344,12 +381,20 @@ function Auction(): JSX.Element {
                         ? 'bg-[#26c744]'
                         : 'bg-[#FFC34F]'
                     } `}>
-                    {selectItem?.assetResDto.assetLevel}
+                        {selectItem?.assetResDto.assetLevel === 'RARE'
+                        ? '레어'
+                        : selectItem?.assetResDto.assetLevel === 'EPIC'
+                        ? '에픽'
+                        : selectItem?.assetResDto.assetLevel === 'LEGENDARY'
+                        ? '레전더리'
+                        : '유니크'}
                   </div>
-                  <img
-                    className="block w-full lg:h-[60%] h-[54%] object-cover"
-                    src={process.env.REACT_APP_S3_URL + `/assets/img/${selectItem?.assetResDto.assetName}.png`}
-                  />
+                  <div className='overflow-hidden'>
+                    <img
+                      className="block w-full object-cover lg:scale-125 scale-110"
+                      src={process.env.REACT_APP_S3_URL + `/assets/img/${selectItem?.assetResDto.assetName}.png`}
+                    />
+                  </div>
                   <div className="mb-2">
                     <div className="lg:block flex px-2 border-t-[0.01rem] mx-2 lg:text-[1.2rem] text-[0.8rem]">
                       <div>

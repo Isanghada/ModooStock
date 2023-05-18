@@ -1,4 +1,4 @@
-
+import axios from 'axios';
 
 self.addEventListener('message', (event) => {
   console.log(event.data)
@@ -7,12 +7,10 @@ self.addEventListener('message', (event) => {
   }
 });
 self.addEventListener('install', function (e) {
-  console.log('fcm sw install..');
   self.skipWaiting();
 });
 
 self.addEventListener('activate', function (e) {
-  console.log('fcm sw activate..');
 });
 
 self.addEventListener('push', function (e) {
@@ -29,7 +27,13 @@ self.addEventListener('push', function (e) {
     tag: resultData.tag,
     ...resultData
   };
-  console.log('2 push: ', { resultData, notificationTitle, notificationOptions });
+  // console.log('2 push: ', { resultData, notificationTitle, notificationOptions });
+  // // 내 정보 이벤트실행시 API
+  // const getUsers = () => {
+  //   console.log("유저정보가져오기")
+  // }
+  // getUsers();
+
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });

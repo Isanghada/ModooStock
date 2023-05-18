@@ -57,25 +57,25 @@ function Login(): JSX.Element {
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('nickname', nickname);
       // 웹푸시용 토큰
-      const permission = await Notification.requestPermission();
-      if (permission === 'denied') {
-        console.log('알림 권한 허용 안됨');
-      } else if (permission === 'granted') {
-        const token = await getToken(messaging, {
-          vapidKey: process.env.REACT_APP_FCM_VAPID
-        });
-        if (token) {
-          SetPushToken(nickname, token);
-        } else {
-          console.log('Can not get Token');
-        }
-      }
+      // const permission = await Notification.requestPermission();
+      // if (permission === 'denied') {
+      //   console.log('알림 권한 허용 안됨');
+      // } else if (permission === 'granted') {
+      //   const token = await getToken(messaging, {
+      //     vapidKey: process.env.REACT_APP_FCM_VAPID
+      //   });
+      //   if (token) {
+      //     SetPushToken(nickname, token);
+      //   } else {
+      //     console.log('Can not get Token');
+      //   }
+      // }
       closeLogin();
       toast.success('어서오세요!!');
       navigate('/main');
     } else {
       toast.error('아이디와 비밀번호를 확인해주세요!!');
-      console.log('로그인 에러 :', loginData.error);
+      // console.log('로그인 에러 :', loginData.error);
     }
   };
 

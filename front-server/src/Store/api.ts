@@ -542,7 +542,7 @@ export const Api = createApi({
     // 5. 송금 하기
     postBankTransfer: builder.mutation<ReturnBasicInterFace, { money: number; receiver: string }>({
       query: (body) => {
-        console.log(body);
+        // console.log(body);
 
         return {
           url: `/bank/transfer`,

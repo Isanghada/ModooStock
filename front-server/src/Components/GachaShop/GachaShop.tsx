@@ -10,7 +10,8 @@ import redopen from 'Components/Common/Lottie/redopen.json';
 import { useEffect, useState } from 'react';
 import { usePostGotchaLevelMutation } from 'Store/api';
 import { toast } from 'react-toastify';
-import { useAppSelector } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { openPlay, playClick } from 'Store/store';
 
 interface AssetDataInterFace {
   assetCategory: string;
@@ -21,6 +22,7 @@ interface AssetDataInterFace {
 }
 
 function GachaShop(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [isHover, setIsHover] = useState<string | null>('');
   const [giftWaitData, setGiftWaitData] = useState<any>(null);
   const [giftOpenData, setGiftOpenData] = useState<any>(null);
@@ -33,6 +35,8 @@ function GachaShop(): JSX.Element {
   const [giftGradeShadow, setGiftGradeShadow] = useState<string>('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
   // 선물 등급에 따른 레벨가격
   const [giftGradeName, setGiftGradeName] = useState<string>('bg-[#2079c2]');
+  // 선물 등급이름
+  const [giftLevel, setGiftLevel] = useState<string>('');
   // 아이템 확인 딜레이
   const [ItemCloseDelay, setItemCloseDelay] = useState<boolean>(false);
 
@@ -54,6 +58,8 @@ function GachaShop(): JSX.Element {
   const onClick = async (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const currentMoney = Number(currentMoneyStatus.replaceAll(',', ''));
+    // 클릭 효과음
+    dispatch(playClick());
     switch (target.ariaLabel) {
       case '일반':
         if (currentMoney < 500000) {
@@ -103,14 +109,17 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
           }
           setGiftOpenStatus(true);
@@ -124,14 +133,17 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
           }
           setGiftOpenStatus(true);
@@ -145,18 +157,22 @@ function GachaShop(): JSX.Element {
             case 'RARE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,255)]');
               setGiftGradeName('bg-[#2079c2]');
+              setGiftLevel('레어');
               break;
             case 'EPIC':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,000,255)]');
               setGiftGradeName('bg-[#e23bab]');
+              setGiftLevel('에픽');
               break;
             case 'UNIQUE':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(255,255,000)]');
               setGiftGradeName('bg-[#e4ab00]');
+              setGiftLevel('유니크');
               break;
             case 'LEGENDARY':
               setGiftGradeShadow('drop-shadow-[0_20px_70px_rgba(000,255,000)]');
               setGiftGradeName('bg-[#09811f]');
+              setGiftLevel('레전더리');
               break;
           }
           setGiftOpenStatus(true);
@@ -168,6 +184,7 @@ function GachaShop(): JSX.Element {
   useEffect(() => {
     if (giftOpenStatus) {
       setTimeout(() => {
+        dispatch(openPlay());
         setGiftOpenStatus(false);
         setItemOpenStatus(true);
       }, 3900);
@@ -292,7 +309,7 @@ function GachaShop(): JSX.Element {
             enterTo={`${giftGradeShadow} opacity-100`}>
             <div
               className={`${giftGradeName} py-1 px-4 text-sm border-2 lg:border-[3px] lg:px-8 lg:text-lg font-bold text-white rounded-3xl`}>
-              {assetData?.assetLevel}
+              {giftLevel}
             </div>
           </Transition.Child>
           <Transition.Child

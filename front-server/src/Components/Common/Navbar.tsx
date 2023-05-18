@@ -6,7 +6,10 @@ import {
   changeChattingStatus,
   changeCurrentMoneyStatusStatus,
   changeMenuStatus,
-  getCurrentDataIndex
+  getCurrentDataIndex,
+  pauseBGM,
+  playBGM,
+  playClick
 } from 'Store/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import schedule from 'node-schedule';
@@ -23,7 +26,6 @@ function Navbar(): JSX.Element {
   const [myProfile, setMyProfile] = useState<string>('');
   const [currentMoney, setCurrentMoney] = useState<string>('');
   const [totalStockReturn, setTotalStockReturn] = useState<number>(0);
-  const [isUnmounted, setIsUnmounted] = useState(false);
   const [isPageVisible, setPageVisible] = useState(true);
   // 내 정보 API
   const { data: dataUserInfo } = useGetUsersInfoQuery('');
@@ -55,6 +57,11 @@ function Navbar(): JSX.Element {
   // 현재 잔역 보임 여부 상태
   const currentMoneyHideStatus = useAppSelector((state) => {
     return state.currentMoneyHideStatus;
+  });
+
+  // 브금 상태
+  const bgmStatus = useAppSelector((state) => {
+    return state.BGM;
   });
 
   // 채팅 창 띄우기
@@ -117,6 +124,7 @@ function Navbar(): JSX.Element {
   // 클릭 이벤트 처리
   const click = (e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
+    dispatch(playClick());
     switch (target.ariaLabel) {
       case '마이페이지':
         navigate(`/travel/${localStorage.getItem('nickname')}`);
@@ -126,6 +134,13 @@ function Navbar(): JSX.Element {
         break;
       case '채팅':
         showChatting();
+        break;
+      case '브금':
+        if (bgmStatus) {
+          dispatch(pauseBGM(false));
+        } else {
+          dispatch(playBGM(true));
+        }
         break;
       case '메뉴':
         // 채팅 켜져있으면 끄기
@@ -147,12 +162,12 @@ function Navbar(): JSX.Element {
     // 계산
     let index = 0;
     const diff = now.getTime() - start.getTime();
-    const dayOfWeek = now.getDate(); // 일요일 ~ 토요일
+    const dayOfWeek = now.getDay(); // 일요일 ~ 토요일
     const hour = now.getHours();
     // 짝수일때
     const isEvenDay = dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6;
     // 짝수와 시간체크
-    if ((isEvenDay && hour < 10) || hour > 22) {
+    if (isEvenDay && hour < 10 || hour > 22) {
       index = 180;
     }
     if (isEvenDay && hour >= 10 && hour <= 22) {
@@ -176,11 +191,11 @@ function Navbar(): JSX.Element {
         if (isPageVisible) {
           toast.info('새로운 하루의 정보가 갱신되었습니다');
         }
-        // 내정보 갱신
-        setTimeout(async () => {
-          getUser();
-        }, 1000);
       }
+      // 내정보 갱신 (백에서 갱신되어야 하기떄문에 약간 시간초)
+      setTimeout(async () => {
+        await getUser();
+      }, 2000);
     });
     getUser();
     getIndex();
@@ -273,6 +288,12 @@ function Navbar(): JSX.Element {
             <img className="w-full" src={process.env.REACT_APP_S3_URL + '/images/icons/setting.png'} alt="setting" />
           </div>
         </div>
+      </div>
+      <div
+        aria-label="브금"
+        onClick={click}
+        className="fixed right-1 bottom-1 lg:right-6 lg:bottom-6 min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
+        <img className="w-full" src={bgmStatus ? process.env.REACT_APP_S3_URL + '/images/icons/Off.png' : process.env.REACT_APP_S3_URL + '/images/icons/On.png' } alt="On" />
       </div>
       {menuStatus && <Menu />}
       {/* 채팅 관련 */}

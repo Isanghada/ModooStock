@@ -5,7 +5,6 @@ import LotteryModal from './LotteryModal';
 import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import { toast } from 'react-toastify';
 import { changeCurrentMoneyHideStatus } from 'Store/store';
-import { motion } from 'framer-motion';
 
 type LotteryProps = {
   title: string;
@@ -66,22 +65,37 @@ function Lottery(): JSX.Element {
   const [postMiniGameDark, { isError: isError2 }] = usePostMiniGameDarkMutation();
 
   const handleOpenModal = async (isDark: boolean) => {
-    const moneyLimit = isDark ? 100_0000 : 1_0000;
+    const moneyLimit = isDark ? 100_0000 : 5_0000;
     if (currentMoneyStatus < moneyLimit) {
-      toast.error(`보유돈이 ${moneyLimit}원보다 작습니다...`);
+      toast.error(`보유돈이 ${moneyLimit.toLocaleString()}원보다 작습니다...`);
       return;
     }
 
-    try {
-      const { data } = isDark ? await postMiniGameDark('').unwrap() : await postMiniGameBright('').unwrap();
-      setResult(data);
-    } catch (error) {
-      toast.error('오류 발생....');
-      return;
+    if (isDark) {
+      await postMiniGameDark('')
+        .unwrap()
+        .then((data) => {
+          setResult(data.data);
+          setIsDark(isDark);
+          setIsOpen(true);
+        })
+        .catch((error) => {
+          toast.error(error.data.message);
+          return;
+        });
+    } else {
+      await postMiniGameBright('')
+        .unwrap()
+        .then((data) => {
+          setResult(data.data);
+          setIsDark(isDark);
+          setIsOpen(true);
+        })
+        .catch((error) => {
+          toast.error(error.data.message);
+          return;
+        });
     }
-
-    setIsDark(isDark);
-    setIsOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -98,10 +112,6 @@ function Lottery(): JSX.Element {
     setCanOpenModal(canOpenModal);
   };
 
-  if (isError1 || isError2) {
-    toast.error('오류 발생....');
-  }
-
   useEffect(() => {
     if (isOpen) {
       dispatch(changeCurrentMoneyHideStatus(true));
@@ -112,15 +122,7 @@ function Lottery(): JSX.Element {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          duration: 1,
-          ease: 'easeInOut'
-        }}
-        className="flex items-center w-full h-full justify-evenly max-w-[80rem] max-h-[46.5rem] pt-6 my-auto mx-auto">
+      <div className="flex items-center w-full h-full justify-evenly max-w-[80rem] max-h-[46.5rem] pt-6 my-auto mx-auto">
         {/* 1. 스피드 복권 */}
         <LotteryCard
           title="스피드 복권"
@@ -139,7 +141,7 @@ function Lottery(): JSX.Element {
           description={['모 아님 도', '백만원으로 7억원 vs 꽝']}
           descriptionColor="#ffffff"
         />
-      </motion.div>
+      </div>
       <Modal isOpen={isOpen} onClose={handleCloseModal} canOpenModal={canOpenModal}>
         <LotteryModal isDark={isDark} result={result} timestamp={Date.now()} handleCanOpenModal={handleCanOpenModal} />
       </Modal>
