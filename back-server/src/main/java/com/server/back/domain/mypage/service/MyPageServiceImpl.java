@@ -130,7 +130,7 @@ public class MyPageServiceImpl implements MyPageService{
      */
     @Override
     public Long getVisitorCount(String nickname, HttpServletRequest request, HttpServletResponse response) {
-        log.info(nickname);
+        // log.info(nickname);
         UserEntity user = userRepository.findByNicknameAndIsDeleted(nickname, IsDeleted.N)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -138,7 +138,7 @@ public class MyPageServiceImpl implements MyPageService{
         String ipAddress = getClientIpAddress(request);
         String cookieName = "visitor_id_" + ipAddress.replaceAll(":", "_") + "_to_" + userId;
 
-        log.info(cookieName);
+        // log.info(cookieName);
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {

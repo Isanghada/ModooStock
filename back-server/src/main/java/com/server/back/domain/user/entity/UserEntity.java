@@ -69,7 +69,7 @@ public class UserEntity extends CommonEntity implements UserDetails {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
         for(String role : role.getDescription().split(",")){
-            log.info("[ROLE] role {}", role);
+            // log.info("[ROLE] role {}", role);
             authorities.add(new SimpleGrantedAuthority(role));
         }
         return authorities;

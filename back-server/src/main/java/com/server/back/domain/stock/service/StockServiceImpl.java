@@ -124,7 +124,6 @@ public class StockServiceImpl implements StockService {
         Long userId = authService.getUserId();
         SseEmitter emitter = userEmitterMap.get(userId);
         if(emitter == null) {
-            System.out.println("emitter가 없대 재연결!");
             SseEmitter emitter2 = new SseEmitter(5L * 60 * 1000);
             // 연결된 사용자 목록에 userId와 SseEmitter 추가
             userEmitterMap.put(userId, emitter2);
@@ -298,7 +297,7 @@ public class StockServiceImpl implements StockService {
                chartPrice = (long) (chartPrice * change.get().getChangeRate());
            }
 
-           log.info("[StockService-calRate] 변화율 : " + chartPrice);
+           // log.info("[StockService-calRate] 변화율 : " + chartPrice);
 
             final Long finalChartPrice = chartPrice;
             List<UserDealEntity> usersDeal = userDealRepository.findAllByStockId(stock.getId());

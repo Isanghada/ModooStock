@@ -59,7 +59,7 @@ public class SchedulerService {
 
         // java.sql.Date 타입으로 반환되므로 LocalDate로 변환하여 사용
         List<Date> marketDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(pivotDate, 360);
-        log.info(pivotDate+", "+marketDate.toString());
+        // log.info(pivotDate+", "+marketDate.toString());
         if(marketDate.size() == 0){
             return;
         }
@@ -87,7 +87,7 @@ public class SchedulerService {
                 pivotDate = pivot.plusDays(rand);
 
                 marketDate = chartRepository.getMarketDateByDateGreaterThanEqualAndLimit(pivotDate, 360);
-                log.info(pivotDate+", "+marketDate.toString());
+                // log.info(pivotDate+", "+marketDate.toString());
                 if(marketDate.size() == 0){
                     return;
                 }

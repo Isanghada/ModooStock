@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService{
 
         usersModifyReqDto.setPassword(passwordEncoder.encode(usersModifyReqDto.getPassword()));
         userRepository.save(usersModifyReqDto.toEntity(user));
-        log.info("[updateUser] getUserById(userId): {}", getUserById(userId));
+        // log.info("[updateUser] getUserById(userId): {}", getUserById(userId));
     }
 
     /**
@@ -305,7 +305,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserResDto> getUserList(String search) {
-        List<UserEntity> userList= userRepository.findByAccountContainingOrNicknameContainingAndIsDeleted(search, search,IsDeleted.N);
+        List<UserEntity> userList= userRepository.findByAccountContainingAndIsDeletedOrNicknameContainingAndIsDeleted(search,IsDeleted.N, search,IsDeleted.N);
         return UserResDto.fromEnityList(userList);
     }
 
