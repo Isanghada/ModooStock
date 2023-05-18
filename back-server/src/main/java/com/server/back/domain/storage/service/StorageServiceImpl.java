@@ -129,7 +129,7 @@ public class StorageServiceImpl implements StorageService {
         //해당 에셋
         Long AssetId =userAsset.getAsset().getId();
 
-        log.info(String.valueOf(AssetId));
+        // log.info(String.valueOf(AssetId));
 
         //경매 완료된 리스트
         List<AuctionEntity> auctionEntityList=auctionRepository.findAllByUserAssetAssetIdAndIsCompletedAndIsDeletedOrderByCreatedAtDesc(AssetId, IsCompleted.Y,IsDeleted.N);
