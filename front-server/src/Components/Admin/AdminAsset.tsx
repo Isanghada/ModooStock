@@ -70,7 +70,7 @@ function AdminAsset(): JSX.Element {
                   <th className="py-1 border-x-4 border-x-[#A87E6E]/80">assetId</th>
                   <th className="py-1 border-x-4 border-x-[#A87E6E]/80">assetCategory</th>
                   <th className="py-1 border-x-4 border-x-[#A87E6E]/80">assetLevel</th>
-                  <th className="py-1 border-x-4 border-x-[#A87E6E]/80">assetImagePath</th>
+                  {/* <th className="py-1 border-x-4 border-x-[#A87E6E]/80">assetImagePath</th> */}
                 </tr>
               </thead>
               <tbody>{tbodyData}</tbody>
