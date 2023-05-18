@@ -187,16 +187,9 @@
 <br>
 
 ## 💾 실행방법
-- **Frontend**
-```
-yarn install
-yarn start
-```
 
-- **Backend**
-```
-백엔드 실행방법
-```
+### [🔗 포팅 메뉴얼 바로가기](https://lab.ssafy.com/s08-final/S08P31E206/-/blob/Develop/exec/porting_manual.md)
+- exec 폴더 내 포팅 메뉴얼 참조
 
 <br>
 
