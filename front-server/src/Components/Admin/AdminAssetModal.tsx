@@ -50,7 +50,7 @@ function AdminAssetModal({ selectAssetData, setIsClick }: AdminUsertModalProps):
           onChange={change}
         /> */}
       </th>
-      <th className="py-1 border-x-2 border-x-[#A87E6E]">{selectAssetData.assetImagePath}</th>
+      {/* <th className="py-1 border-x-2 border-x-[#A87E6E]">{selectAssetData.assetImagePath}</th> */}
     </tr>
   );
   return (
@@ -64,7 +64,7 @@ function AdminAssetModal({ selectAssetData, setIsClick }: AdminUsertModalProps):
           }
         }}>
         <div className="bg-white flex justify-center items-center px-10 py-14 rounded-xl text-[#A87E6E] relative">
-          {/* <div className="absolute justify-center w-full flex space-x-2 bottom-3 ">
+          {/* <div className="absolute flex justify-center w-full space-x-2 bottom-3 ">
             <div
               className="border-2 border-[#A87E6E] hover:scale-105 transition-all duration-300 cursor-pointer rounded-lg font-semibold px-2 hover:bg-white hover:text-[#ff9797]"
               onClick={() => {
@@ -91,7 +91,7 @@ function AdminAssetModal({ selectAssetData, setIsClick }: AdminUsertModalProps):
                 <th className="px-10 py-2 border-r-2 border-[#A87E6E]">assetId</th>
                 <th className="px-10 py-2 border-r-2 border-[#A87E6E]">assetLevel</th>
                 <th className="px-10 py-2 border-r-2 border-[#A87E6E]">category</th>
-                <th className="px-10 py-2 border-r-2 border-[#A87E6E]">assetImagePath</th>
+                {/* <th className="px-10 py-2 border-r-2 border-[#A87E6E]">assetImagePath</th> */}
               </tr>
             </thead>
             <tbody className="border-2 border-[#A87E6E]">{tbodyData}</tbody>
