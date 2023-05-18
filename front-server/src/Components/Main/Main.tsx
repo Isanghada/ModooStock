@@ -8,7 +8,7 @@ import Guide from './Guide';
 import MyHomeAsset from './MyHomeAsset';
 import AssetLoading from 'Components/Common/AssetLoading';
 import MyHomeAsset2 from './MyHomeAsset2';
-import { useGetAdminUserCheckQuery } from 'Store/api';
+import { useLazyGetAdminUserCheckQuery } from 'Store/api';
 import { useAppSelector } from 'Store/hooks';
 
 function Main(): JSX.Element {
@@ -16,7 +16,8 @@ function Main(): JSX.Element {
   const [floor, setFloor] = useState(
     window.screen.width <= 1280 ? `${2 + (window.screen.width - 1024) * (1 / 140)}rem` : '4rem'
   );
-  const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
+  // const { data: getAdmin, isLoading, isError } = useGetAdminUserCheckQuery('');
+  const [getAdmin, { isLoading, isError }] = useLazyGetAdminUserCheckQuery();
   const clickSound = useAppSelector((state) => {
     return state.clickBtn;
   });
@@ -25,9 +26,16 @@ function Main(): JSX.Element {
   });
   const clickBtn = new Audio(clickSound);
   const cancelClickBtn = new Audio(cancelClickSound);
-  if (getAdmin?.data === true) {
-    navigate('/admin');
-  }
+
+  useEffect(() => {
+    const adminCheck = async () => {
+      const { data, result } = await getAdmin('').unwrap();
+      if (data) {
+        navigate('/admin');
+      }
+    };
+    adminCheck();
+  }, []);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
