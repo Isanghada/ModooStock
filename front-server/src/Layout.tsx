@@ -1,12 +1,14 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppSelector } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
 import Login from 'Components/Login/Login';
 import SignUp from 'Components/SignUp/SignUp';
 import { useEffect, useRef, useState } from 'react';
 import Navbar from 'Components/Common/Navbar';
+import { playBGM } from 'Store/store';
 
 function Layout(): JSX.Element {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   // 현재 주소 가져올 useLocation
   const location = useLocation();
@@ -25,14 +27,12 @@ function Layout(): JSX.Element {
   const signUpStatus = useAppSelector((state) => {
     return state.signUpStatus;
   });
-
-  const modoostockBGM = new Audio(process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3');
-  modoostockBGM.loop = true;
-  modoostockBGM.volume = 0.15;
-
-  useEffect(() => {
-    modoostockBGM.play();
-  }, [clickBgm]);
+  
+  // useEffect(() => {
+  //   if (!clickBgm) {
+  //     dispatch(playBGM(true))
+  //   }
+  // }, [clickBgm]);
 
   useEffect(() => {
     // 창크기 변할때마다 실행
@@ -66,20 +66,6 @@ function Layout(): JSX.Element {
     setScreenHeight(`${(height * 3) / 10}px`);
   }, [window.screen.height]);
 
-  // const [play, setPlay] = useState<boolean>(true);
-  // const player = useRef<any>();
-  // const Player = () => (
-  //   <AudioPlayer
-  //     ref={player}
-  //     autoPlay={true}
-  //     src={process.env.REACT_APP_S3_URL + '/sound/bgm/mainBGM.mp3'}
-  //     loop
-  //     onPlay={(e) => console.log('onPlay')}
-  //     style={{ display: 'none' }}
-  //     volume={0.1}
-  //     // other props here
-  //   />
-  // );
 
   return (
     <>
@@ -87,7 +73,10 @@ function Layout(): JSX.Element {
         ref={layoutRef}
         className="bg-[#FFF9F9] w-screen relative flex"
         onClick={() => {
-          setClickBgm(true);
+          if (!clickBgm) {
+            dispatch(playBGM(true));
+            setClickBgm(true);
+          }
         }}>
         <div
           style={window.screen.height >= 800 ? { minHeight: screenHeight } : {}}

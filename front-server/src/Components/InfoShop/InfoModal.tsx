@@ -2,7 +2,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { usePostNewsBuyMutation } from 'Store/api';
-import { useAppSelector } from 'Store/hooks';
+import { useAppDispatch, useAppSelector } from 'Store/hooks';
+import { cancelPlay, successClick } from 'Store/store';
 import InfoNewsDetailModal from './InfoNewsDetailModal';
 
 interface ModalInterFace {
@@ -21,6 +22,7 @@ interface NewsPropsInterFace {
 }
 
 export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, cancel }: ModalInterFace) {
+  const dispatch = useAppDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
   const [src, setSrc] = useState('');
 
@@ -35,6 +37,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   const [newsModalOpen, setNewsModalOpen] = useState(false);
   // 뉴스 디테일 모달 창 닫기
   const closeNewsModal = () => {
+    dispatch(cancelPlay())
     setNewsModalOpen(false);
   };
   // 현재 잔액 상태
@@ -45,6 +48,7 @@ export default function InfoModal({ closeModal, propsData, isOpen, msg, accept, 
   const [buyNews] = usePostNewsBuyMutation();
   // 뉴스 구입 요청
   const buyNewsPaper = async (price: number, color: string) => {
+    dispatch(successClick())
     const currentMoney = Number(currentMoneyStatus.replaceAll(',', ''));
     const newColor = color.replace('text', 'bg');
     if (currentMoney < price) {
