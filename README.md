@@ -1,4 +1,4 @@
-![모두의주식로고](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/42933cd3-76ce-403e-a015-855203fdcceb)
+![모두의주식로고](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/dd215029-ffd7-40e7-bb72-fe9a8398052c)
 
 # 📈 모두의 주식
 > ⚡말랑말랑 (부울경 2반 6조)
