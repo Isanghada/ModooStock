@@ -45,6 +45,7 @@ public class ChartEntity {
         this.buy += amount;
         this.changeRate = (float) (1+((buy-sell)/100)*0.001);
         this.changeRate = changeRate > 1.1F ? 1.1F : changeRate;
+        this.changeRate = changeRate < 0.9F ? 0.9F : changeRate;
     }
 
     public void sell(Integer amount){
