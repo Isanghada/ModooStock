@@ -41,7 +41,7 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(user.getCreatedAt(), now);
-        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+        // if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         if(user.getCurrentMoney()<50000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(50000L);
@@ -102,7 +102,7 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(user.getCreatedAt(), now);
-        if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
+        // if(duration.getSeconds() < 10800) throw new CustomException(ErrorCode.IMPOSSIBLE_FUNCTION);
 
         if(user.getCurrentMoney()<1000_000L)throw new CustomException(ErrorCode.LACK_OF_MONEY);
         user.decreaseCurrentMoney(1000_000L);
