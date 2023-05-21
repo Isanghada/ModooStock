@@ -108,6 +108,7 @@ function App() {
             </Route>
             <Route path="/error" element={<Error />} />
             <Route path="/loading" element={<Loading />} />
+            <Route path="*" element={<Error />} />
           </Routes>
         </>
       ) : (

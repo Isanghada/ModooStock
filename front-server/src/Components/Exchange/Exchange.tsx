@@ -609,8 +609,7 @@ function Exchange(): JSX.Element {
 
   // 차트 데이터
   useEffect(() => {
-    console.log(inputRef.current && typeof inputRef.current.value);
-
+    // 차트 데이터
     const firstLogin = async () => {
       const { data, result } = await lazyGetStock('').unwrap();
       setLazyGetStockData(data);
