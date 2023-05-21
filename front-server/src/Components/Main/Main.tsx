@@ -10,6 +10,7 @@ import AssetLoading from 'Components/Common/AssetLoading';
 import MyHomeAsset2 from './MyHomeAsset2';
 import { useLazyGetAdminUserCheckQuery } from 'Store/api';
 import { useAppSelector } from 'Store/hooks';
+import SundayModal from './SundayModal';
 
 function Main(): JSX.Element {
   const navigate = useNavigate();
@@ -26,8 +27,16 @@ function Main(): JSX.Element {
   });
   const clickBtn = new Audio(clickSound);
   const cancelClickBtn = new Audio(cancelClickSound);
+  const [isSunday, setIsSunday] = useState<boolean>(false);
+  const [sundayModal, setSundayModal] = useState<boolean>(false);
 
   useEffect(() => {
+    // 일요일 체크
+    const nowDate = new Date();
+    if (nowDate.getDay() === 0) {
+      setIsSunday(true);
+    }
+
     const adminCheck = async () => {
       const { data, result } = await getAdmin('').unwrap();
       if (data) {
@@ -63,10 +72,18 @@ function Main(): JSX.Element {
         navigate('/bank');
         break;
       case '주식 거래소':
-        navigate('/exchange');
+        if (!isSunday) {
+          navigate('/exchange');
+        } else {
+          setSundayModal(true);
+        }
         break;
       case '정보상':
-        navigate('/infoshop');
+        if (!isSunday) {
+          navigate('/infoshop');
+        } else {
+          setSundayModal(true);
+        }
         break;
       case '랭킹':
         navigate('/rank');
@@ -113,6 +130,7 @@ function Main(): JSX.Element {
 
   return (
     <>
+      {sundayModal && <SundayModal setSundayModal={setSundayModal} />}
       {/* 데스크탑 */}
       <motion.div
         initial={{ opacity: 0 }}

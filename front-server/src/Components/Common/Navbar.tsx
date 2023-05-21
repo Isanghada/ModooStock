@@ -167,7 +167,7 @@ function Navbar(): JSX.Element {
     // 짝수일때
     const isEvenDay = dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6;
     // 짝수와 시간체크
-    if (isEvenDay && hour < 10 || hour > 22) {
+    if ((isEvenDay && hour < 10) || hour > 22) {
       index = 180;
     }
     if (isEvenDay && hour >= 10 && hour <= 22) {
@@ -187,7 +187,7 @@ function Navbar(): JSX.Element {
     // 스케쥴러 4분마다 실행
     const job = schedule.scheduleJob('*/4 10-22 * * *', () => {
       getIndex();
-      if (hour >= 10 && hour < 22) {
+      if (hour >= 10 && hour < 22 && now.getDay() !== 0) {
         if (isPageVisible) {
           toast.info('새로운 하루의 정보가 갱신되었습니다');
         }
@@ -293,7 +293,15 @@ function Navbar(): JSX.Element {
         aria-label="브금"
         onClick={click}
         className="fixed z-20 right-2 bottom-2 lg:right-6 lg:bottom-6 min-w-[9vh] w-[4vw] cursor-pointer hover:scale-105">
-        <img className="w-full" src={bgmStatus ? process.env.REACT_APP_S3_URL + '/images/icons/Off.png' : process.env.REACT_APP_S3_URL + '/images/icons/On.png' } alt="On" />
+        <img
+          className="w-full"
+          src={
+            bgmStatus
+              ? process.env.REACT_APP_S3_URL + '/images/icons/Off.png'
+              : process.env.REACT_APP_S3_URL + '/images/icons/On.png'
+          }
+          alt="On"
+        />
       </div>
       {menuStatus && <Menu />}
       {/* 채팅 관련 */}
