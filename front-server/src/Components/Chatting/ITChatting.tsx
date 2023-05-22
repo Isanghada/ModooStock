@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
-import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { query, orderBy, onSnapshot, addDoc, collection, serverTimestamp  } from 'firebase/firestore';
 
 // 컴포넌트
 import Message from './Message';
