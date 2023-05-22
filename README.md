@@ -1,11 +1,14 @@
-![모두의주식로고](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/42933cd3-76ce-403e-a015-855203fdcceb)
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239406992-dd215029-ffd7-40e7-bb72-fe9a8398052c.png"  width="450"/>
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239470612-eebb549c-d64b-4775-b6c1-5675b85648de.gif"  width="450"/>
+
+<br>
 
 # 📈 모두의 주식
 > ⚡말랑말랑 (부울경 2반 6조)
 >
 > 모의주식투자게임
 >
-> 프로젝트 기간 : 2023.04.10 - 2023.05.19
+> 프로젝트 기간 : 2023.04.10 - 2023.05.19 (6주)
 
 <br>
 
@@ -123,52 +126,59 @@
 - 회원이 시장 지표와 정보를 이용해 원하는 주식을 매도/매수 할 수 있다.
 - IR데이터 및 뉴스스크랩(보유 뉴스) 조회 가능
 
-![PPT_매도매수_IR](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/4c2a2628-4c82-440f-8b04-b057ed83d903)
+![PPT_매도매수_IR](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126910-4c2a2628-4c82-440f-8b04-b057ed83d903.gif)
 ---
 
 ## 📌 - 정보 거래소
 - 회원이 주식에 대한 정보를 게임 머니를 이용하여 살 수 있다.
 
-![04_정보상](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/de57422c-dc6a-4606-a7c0-b966b356f57f)
+![04_정보상](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126861-de57422c-dc6a-4606-a7c0-b966b356f57f.gif)
 ---
 
 ## 📌 - 뽑기 상점
 - 3가지 뽑기 ( 일반, 고급, 전설)를 선택하여 아이템을 뽑을 수 있다.
 
-![PPT_뽑기](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/dffa9e5a-ddae-4687-8a87-ce8a86aaae4c)
+![PPT_뽑기](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126728-dffa9e5a-ddae-4687-8a87-ce8a86aaae4c.gif)
 ---
 
 ## 📌 - 경매장
 - 다른 사용자들이 경매장에 올린 아이템을 구입할 수 있다.
 
-![PPT_경매장](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/a4ee6982-055e-4ffc-baed-a9568971f5c1)
+![PPT_경매장](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239127123-a4ee6982-055e-4ffc-baed-a9568971f5c1.gif)
 ---
 
 ## 📌 - 랭킹
 - 총 자산(은행 예산 + 지갑 돈 + 보유 주식 + ASSET 보유 자산)을 토대로 랭킹을 매겨 확인 가능
 - ASSET보유자산 : 내가 뽑은 꾸미기 아이템의 가치
 
-![12_랭킹확인](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/d6a1973b-60bf-4063-a792-6e50cc26b1cf)
+![12_랭킹확인](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239127110-d6a1973b-60bf-4063-a792-6e50cc26b1cf.gif)
 ---
 
 ## 📌 - 채팅
 - 실시간 채팅을 통해 정보를 교환 할 수 있다.
 
-![PPT_채팅](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/f12a7e4a-7e3f-4b58-9734-1db8dd9853b9)
+![PPT_채팅](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126734-f12a7e4a-7e3f-4b58-9734-1db8dd9853b9.gif)
 ---
 
 ## 📌 - 은행
 - 회원은 은행에 회원의 게임 머니를 예금/출금/송금 할 수 있다.
 - 송금 : 회원들끼리도 머니를 주고 받을 수 있다
 
-![PPT_은행](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/a303c127-59b6-498d-b715-73621cc61069)
+![PPT_은행](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239136565-a303c127-59b6-498d-b715-73621cc61069.gif)
 ---
 
 ## 📌 - 마이페이지
 - 회원이 자신의 땅(홈피)를 꾸밀 수 있고 다른 사람 홈피에 방문할 수 있다.
 - 경매장에 필요없는 아이템을 판매등록 하거나, 되팔기를 할 수 있다.
 
-![PPT_방꾸미기](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/cc94ea60-b07c-4e2c-b711-51deb650a33f)
+![PPT_방꾸미기](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239136570-cc94ea60-b07c-4e2c-b711-51deb650a33f.gif)
+---
+
+
+## 📌 - 방문하기
+- 다른 사람의 홈피에 방문할 수 있다.
+- 방명록 작성
+![15_방문_방명록작성하기2](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239468719-1f86f21d-cd00-42e6-b901-9f5063bcb77a.gif)
 ---
 
 ## 📌 - 알람
@@ -180,8 +190,13 @@
 - 상시 진행 가능한 미니 게임을 통해 시드머니를 불릴 수 있다.
 - ex) 스피드 복권, 어둠의 복권
 
-![PPT_복권당첨](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/58a5c276-388d-40a9-8a3f-563571f405d0)
+![PPT_복권당첨](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239136562-58a5c276-388d-40a9-8a3f-563571f405d0.gif)
+---
 
+## 📌 - 회원가입 및 로그인
+- 회원가입
+- 로그인
+![03_로그인화면](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239470618-616998d8-8cf5-4586-a4ba-c59f9479609c.gif)
 ---
 
 <br>
@@ -190,6 +205,9 @@
 
 ### [🔗 포팅 메뉴얼 바로가기](https://lab.ssafy.com/s08-final/S08P31E206/-/blob/Develop/exec/porting_manual.md)
 - exec 폴더 내 포팅 메뉴얼 참조
+
+### [🔗 원스토어에서 설치](https://m.onestore.co.kr/mobilepoc/apps/appsDetail.omp?prodId=0000769506)
+![원스토어](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/1061e911-17da-41cd-9087-9de3452aed94)
 
 <br>
 
@@ -261,20 +279,20 @@
 <br>
 
 ## ⚙ 기술 아키텍쳐
-![data-env1](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/c443f505-4cee-4d8c-98c6-2cd86e93ffaa)
-![data-env2](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/b41540e6-2bce-4bd3-99f7-8dbe11d5e161)
+![data-env1](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126108-c443f505-4cee-4d8c-98c6-2cd86e93ffaa.png)
+![data-env2](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126111-b41540e6-2bce-4bd3-99f7-8dbe11d5e161.png)
 
 <br>
 
 ## 💎 [ERD 다이어그램](https://www.erdcloud.com/d/PW3gYYNc6SHaCHFgF)
-![모두의주식 DB](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/dbbf3d11-5cf1-4305-ab58-b4f89a15d6b4)
+![모두의주식 DB](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126109-dbbf3d11-5cf1-4305-ab58-b4f89a15d6b4.png)
 
 <br>
 
 ## 📘 [API 명세서](https://general-library-f31.notion.site/API-Docs-50a1643d76084de2bb1a5a888960570c)
-![API 명세서](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/4c1b6c7a-ed6c-49bd-a69a-35425b1fb28a)
+![API 명세서](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126502-4c1b6c7a-ed6c-49bd-a69a-35425b1fb28a.png)
 
 <br>
 
 ## 🍏[와이어프레임](https://www.figma.com/file/ocCbArvgYMHlgsbHpZorDI/%EC%99%80%EC%9D%B4%EC%96%B4%ED%94%84%EB%A0%88%EC%9E%84?type=design&node-id=0-1&t=cUmd4vz0pqWgg1Py-0)
-![와이어프레임](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/7d4e06c3-5f90-41e2-981a-5999c85adb8e)
+![와이어프레임](https://github-production-user-asset-6210df.s3.amazonaws.com/109887404/239126593-7d4e06c3-5f90-41e2-981a-5999c85adb8e.png)

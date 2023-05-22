@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {  motion } from 'framer-motion';
 // 파이어베이스
 import { dbService } from '../../firebase';
-import { query, orderBy, onSnapshot, collection } from 'firebase/firestore';
+import { query, orderBy, onSnapshot, collection, limit } from 'firebase/firestore';
 
 // 컴포넌트
 import { useAppDispatch } from 'Store/hooks';
@@ -29,9 +29,8 @@ const SystemChatting = () => {
     const content = query(
       // 여기 중요.. 바로 router에서 가져와서 해야함.. 안그러니까 한박자 느리네
       collection(dbService, roomName),
-      orderBy('createdAt')
+      orderBy('createdAt'),
     );
-
     // 실시간 변화 감지 최신버전
     onSnapshot(content, (snapshot) => {
       const contentSnapshot = snapshot.docs.map((con) => {
@@ -40,7 +39,7 @@ const SystemChatting = () => {
           id: con.id
         };
       });
-      setMessageDatas((prev) => [...contentSnapshot]);
+      setMessageDatas((prev) => [...contentSnapshot.slice(-100)]);
     });
   };
 
