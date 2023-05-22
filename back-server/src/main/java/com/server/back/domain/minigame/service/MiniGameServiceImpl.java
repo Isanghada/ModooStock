@@ -113,7 +113,7 @@ public class MiniGameServiceImpl implements MiniGameService{
 
         //확률
         Random random=new Random();
-        int rd=random.nextInt(1000);
+        int rd=random.nextInt(7000);
 
         Integer ranking=2;
         Long money=0L;
