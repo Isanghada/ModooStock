@@ -203,10 +203,10 @@
 
 ## 💾 실행방법
 
-### [🔗 포팅 메뉴얼 바로가기](https://lab.ssafy.com/s08-final/S08P31E206/-/blob/Develop/exec/porting_manual.md)
+### [🔗 포팅 메뉴얼 바로가기](https://github.com/Isanghada/ModooStock/blob/main/exec/porting_manual.md)
 - exec 폴더 내 포팅 메뉴얼 참조
 
-### [🔗 원스토어에서 설치](https://m.onestore.co.kr/mobilepoc/apps/appsDetail.omp?prodId=0000769506)
+### [🔗 ~~원스토어에서 설치~~](https://m.onestore.co.kr/mobilepoc/apps/appsDetail.omp?prodId=0000769506) : 종료
 ![원스토어](https://github.com/hyeonaseome/trycatchAnswer/assets/109887404/1061e911-17da-41cd-9087-9de3452aed94)
 
 <br>
