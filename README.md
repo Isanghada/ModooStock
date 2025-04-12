@@ -10,7 +10,7 @@
 >
 > 프로젝트 기간 : 2023.04.10 - 2023.05.26 (7주)
 >
-> Notion : [모두의 주식](https://www.notion.so/honeysuckle-nova-d4d/1d3da99d72c880b28140d7777f5d4c15?pvs=4)
+> Notion : [모두의 주식](https://honeysuckle-nova-d4d.notion.site/1d3da99d72c880b28140d7777f5d4c15?pvs=4)
 
 <br>
 
